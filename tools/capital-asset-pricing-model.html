@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capital Asset Pricing Model - Coming Soon</title>
+    <title>Capital Asset Pricing Model - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
@@ -16,666 +16,550 @@
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="building-2" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Capital Asset Pricing Model</h1>
+                    <p class="text-gray-600">Calculate expected returns using CAPM.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capital Asset Pricing Model Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="building-2" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Capital Asset Pricing Model</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate expected returns using CAPM.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Capital Asset Pricing Model Calculator</h1>
+        <p class="text-gray-600">Calculate expected returns using CAPM and analyze risk-return relationships for investment decisions.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="capmCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="building-2" class="h-5 w-5"></i>
+                    CAPM Parameters
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Risk-Free Rate (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="2.50"
+                        x-model="riskFreeRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(riskFreeRate) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Return on risk-free securities (e.g., Treasury bonds)</p>
+                    <p x-show="parseFloat(riskFreeRate) < 0" class="text-sm text-red-600">Risk-free rate cannot be negative</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Market Return (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="8.00"
+                        x-model="marketReturn"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(marketReturn) <= parseFloat(riskFreeRate) }"
+                    />
+                    <p class="text-sm text-gray-500">Expected return of the overall market (e.g., S&P 500)</p>
+                    <p x-show="parseFloat(marketReturn) <= parseFloat(riskFreeRate)" class="text-sm text-red-600">Market return should exceed risk-free rate</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Beta (β)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="1.20"
+                        x-model="beta"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p class="text-sm text-gray-500">Measure of systematic risk relative to the market</p>
+                    <div class="text-xs text-gray-400 mt-1">
+                        <p>β = 1.0: Same risk as market</p>
+                        <p>β > 1.0: More volatile than market</p>
+                        <p>β < 1.0: Less volatile than market</p>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4 space-y-4">
+                    <h3 class="font-medium text-gray-900">Portfolio Analysis (Optional)</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Investment Amount ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="10000.00"
+                            x-model="investmentAmount"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(investmentAmount) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Amount to invest for return calculations</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Investment Period (Years)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="5"
+                            x-model="investmentPeriod"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(investmentPeriod) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Time horizon for investment</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About CAPM</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>CAPM calculates the expected return of an asset based on its systematic risk.</p>
+                        <p>It assumes investors are compensated for time value of money and risk.</p>
+                        <p>Higher beta means higher expected return but also higher risk.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    CAPM Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Expected Return -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Expected Return</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatPercentage(results.expectedReturn)"></p>
+                        <p class="text-sm text-gray-500 mt-2">Based on CAPM formula</p>
+                    </div>
+
+                    <!-- CAPM Components -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Risk-Free Rate:</span>
+                            <span class="font-semibold" x-text="formatPercentage(parseFloat(riskFreeRate))"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Market Return:</span>
+                            <span class="font-semibold" x-text="formatPercentage(parseFloat(marketReturn))"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Market Risk Premium:</span>
+                            <span class="font-semibold text-blue-600" x-text="formatPercentage(results.marketRiskPremium)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Beta (β):</span>
+                            <span class="font-semibold" x-text="parseFloat(beta).toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">Risk Premium:</span>
+                            <span class="font-bold text-lg text-green-600" x-text="formatPercentage(results.riskPremium)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Risk Assessment -->
+                    <div class="p-4 rounded-lg" :class="results.riskLevel === 'Low' ? 'bg-green-50' : results.riskLevel === 'Moderate' ? 'bg-yellow-50' : 'bg-red-50'">
+                        <h4 class="font-medium mb-3" :class="results.riskLevel === 'Low' ? 'text-green-900' : results.riskLevel === 'Moderate' ? 'text-yellow-900' : 'text-red-900'">Risk Assessment</h4>
+                        <div class="text-sm space-y-2" :class="results.riskLevel === 'Low' ? 'text-green-800' : results.riskLevel === 'Moderate' ? 'text-yellow-800' : 'text-red-800'">
+                            <p><strong>Risk Level:</strong> <span x-text="results.riskLevel"></span></p>
+                            <p><strong>Beta Interpretation:</strong> <span x-text="results.betaInterpretation"></span></p>
+                            <p><strong>Volatility:</strong> <span x-text="results.volatilityDescription"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- Investment Projections -->
+                    <div class="p-4 bg-gray-50 rounded-lg" x-show="parseFloat(investmentAmount) > 0">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="calculator" class="h-4 w-4"></i>
+                            Investment Projections
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Initial Investment:</span>
+                                <span class="font-semibold" x-text="formatCurrency(parseFloat(investmentAmount))"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Expected Annual Return:</span>
+                                <span class="font-semibold text-green-600" x-text="formatCurrency(results.expectedAnnualReturn)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Expected Value After <span x-text="parseFloat(investmentPeriod)"></span> Years:</span>
+                                <span class="font-semibold text-green-600" x-text="formatCurrency(results.expectedFutureValue)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm border-t pt-2">
+                                <span class="text-gray-600 font-medium">Total Expected Gain:</span>
+                                <span class="font-bold text-green-600" x-text="formatCurrency(results.totalExpectedGain)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Beta Sensitivity Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+                Beta Sensitivity Analysis
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Beta Scenarios -->
+                <div>
+                    <h4 class="font-medium mb-4">Expected Returns by Beta</h4>
+                    <div class="space-y-3">
+                        <template x-for="betaValue in [0.5, 0.8, 1.0, 1.2, 1.5, 2.0]" :key="betaValue">
+                            <div class="flex justify-between items-center p-3 rounded" :class="Math.abs(betaValue - parseFloat(beta)) < 0.01 ? 'bg-blue-50' : 'bg-gray-50'">
+                                <div>
+                                    <div class="font-medium" x-text="`β = ${betaValue}`"></div>
+                                    <div class="text-sm text-gray-600" x-text="getBetaDescription(betaValue)"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-lg" x-text="formatPercentage(calculateExpectedReturn(betaValue))"></div>
+                                    <div class="text-sm text-gray-500">expected return</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Risk-Return Visualization -->
+                <div>
+                    <h4 class="font-medium mb-4">Risk-Return Trade-off</h4>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <h5 class="font-medium text-green-900 mb-2">Conservative (β < 1.0)</h5>
+                            <div class="text-sm text-green-800">
+                                <p>Lower risk, lower expected return</p>
+                                <p>Less volatile than market</p>
+                                <p>Suitable for risk-averse investors</p>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <h5 class="font-medium text-blue-900 mb-2">Market Risk (β = 1.0)</h5>
+                            <div class="text-sm text-blue-800">
+                                <p>Same risk as market</p>
+                                <p>Expected return equals market return</p>
+                                <p>Diversified portfolio behavior</p>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-red-50 rounded-lg">
+                            <h5 class="font-medium text-red-900 mb-2">Aggressive (β > 1.0)</h5>
+                            <div class="text-sm text-red-800">
+                                <p>Higher risk, higher expected return</p>
+                                <p>More volatile than market</p>
+                                <p>Suitable for risk-tolerant investors</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Market Scenarios -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                Market Scenario Analysis
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Market Return Scenarios -->
+                <div>
+                    <h4 class="font-medium mb-4">Market Return Scenarios</h4>
+                    <div class="space-y-3">
+                        <template x-for="scenario in marketScenarios" :key="scenario.name">
+                            <div class="p-3 rounded" :class="scenario.type + '-50'">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium" :class="scenario.type + '-900'" x-text="scenario.name"></div>
+                                        <div class="text-sm" :class="scenario.type + '-700'" x-text="`Market: ${formatPercentage(scenario.marketReturn)}`"></div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-lg" :class="scenario.type + '-600'" x-text="formatPercentage(calculateExpectedReturnForMarket(scenario.marketReturn))"></div>
+                                        <div class="text-sm" :class="scenario.type + '-700'">expected return</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Portfolio Impact -->
+                <div x-show="parseFloat(investmentAmount) > 0">
+                    <h4 class="font-medium mb-4">Portfolio Value Impact</h4>
+                    <div class="space-y-3">
+                        <template x-for="scenario in marketScenarios" :key="scenario.name + '_portfolio'">
+                            <div class="p-3 rounded" :class="scenario.type + '-50'">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium" :class="scenario.type + '-900'" x-text="scenario.name"></div>
+                                        <div class="text-sm" :class="scenario.type + '-700'" x-text="`After ${parseFloat(investmentPeriod)} years`"></div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-lg" :class="scenario.type + '-600'" x-text="formatCurrency(calculateFutureValueForMarket(scenario.marketReturn))"></div>
+                                        <div class="text-sm" :class="scenario.type + '-700'" x-text="`${formatPercentage(((calculateFutureValueForMarket(scenario.marketReturn) - parseFloat(investmentAmount)) / parseFloat(investmentAmount)) * 100, true)} gain`"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding CAPM
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is CAPM?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>The Capital Asset Pricing Model (CAPM) describes the relationship between systematic risk and expected return for assets.</p>
+                        <p>It helps investors understand the minimum return they should expect for taking on investment risk.</p>
+                        <p>CAPM is widely used in finance for pricing risky securities and generating expected returns.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">Key Assumptions</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Efficient Markets:</strong> All investors have access to the same information</p>
+                        <p><strong>Rational Investors:</strong> Investors are risk-averse and seek to maximize returns</p>
+                        <p><strong>No Transaction Costs:</strong> No fees or taxes affect investment decisions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium mb-2">CAPM Formula</h4>
+                <div class="bg-white p-3 rounded border text-sm font-mono mb-2">
+                    Expected Return = Risk-Free Rate + Beta × (Market Return - Risk-Free Rate)
+                </div>
+                <div class="text-sm text-gray-600">
+                    <p><strong>Risk-Free Rate:</strong> Return on government bonds (typically 10-year Treasury)</p>
+                    <p><strong>Beta:</strong> Measure of systematic risk relative to the market</p>
+                    <p><strong>Market Risk Premium:</strong> Additional return for taking market risk</p>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Beta Interpretation</h4>
+                    <div class="text-sm text-blue-800">
+                        <p><strong>β = 0:</strong> Risk-free asset</p>
+                        <p><strong>β < 1:</strong> Less risky than market</p>
+                        <p><strong>β = 1:</strong> Same risk as market</p>
+                        <p><strong>β > 1:</strong> Riskier than market</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">CAPM Applications</h4>
+                    <div class="text-sm text-green-800">
+                        <p>• Portfolio optimization</p>
+                        <p>• Cost of equity calculation</p>
+                        <p>• Investment performance evaluation</p>
+                        <p>• Risk-adjusted returns</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium text-yellow-900 mb-2">Limitations</h4>
+                    <div class="text-sm text-yellow-800">
+                        <p>• Assumes perfect markets</p>
+                        <p>• Beta may not be stable</p>
+                        <p>• Single-factor model</p>
+                        <p>• Historical data dependency</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-red-50 rounded-lg">
+                <h4 class="font-medium text-red-900 mb-2">Important Considerations</h4>
+                <ul class="text-sm text-red-800 space-y-1">
+                    <li>• CAPM provides theoretical expected returns, not guaranteed returns</li>
+                    <li>• Beta is calculated using historical data and may not predict future risk</li>
+                    <li>• Market conditions and company fundamentals can change</li>
+                    <li>• Consider using CAPM alongside other valuation methods</li>
+                    <li>• Diversification can help reduce unsystematic risk not captured by beta</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Capital Asset Pricing Model. Check back soon!');
+function capmCalculator() {
+    return {
+        riskFreeRate: '2.50',
+        marketReturn: '8.00',
+        beta: '1.20',
+        investmentAmount: '10000.00',
+        investmentPeriod: '5',
+        
+        marketScenarios: [
+            { name: 'Bear Market', marketReturn: 3, type: 'red' },
+            { name: 'Recession', marketReturn: 5, type: 'orange' },
+            { name: 'Normal Market', marketReturn: 8, type: 'blue' },
+            { name: 'Bull Market', marketReturn: 12, type: 'green' },
+            { name: 'Strong Bull', marketReturn: 15, type: 'green' }
+        ],
+        
+        get results() {
+            const riskFreeRate = parseFloat(this.riskFreeRate) || 0;
+            const marketReturn = parseFloat(this.marketReturn) || 0;
+            const beta = parseFloat(this.beta) || 0;
+            const investmentAmount = parseFloat(this.investmentAmount) || 0;
+            const investmentPeriod = parseFloat(this.investmentPeriod) || 1;
+            
+            const marketRiskPremium = marketReturn - riskFreeRate;
+            const riskPremium = beta * marketRiskPremium;
+            const expectedReturn = riskFreeRate + riskPremium;
+            
+            // Risk assessment
+            let riskLevel, betaInterpretation, volatilityDescription;
+            
+            if (beta < 0.7) {
+                riskLevel = 'Low';
+                betaInterpretation = 'Conservative investment with low systematic risk';
+                volatilityDescription = 'Significantly less volatile than the market';
+            } else if (beta < 1.3) {
+                riskLevel = 'Moderate';
+                betaInterpretation = 'Moderate risk similar to market average';
+                volatilityDescription = 'Similar volatility to the overall market';
+            } else {
+                riskLevel = 'High';
+                betaInterpretation = 'Aggressive investment with high systematic risk';
+                volatilityDescription = 'Significantly more volatile than the market';
+            }
+            
+            // Investment projections
+            const expectedAnnualReturn = investmentAmount * (expectedReturn / 100);
+            const expectedFutureValue = investmentAmount * Math.pow(1 + expectedReturn / 100, investmentPeriod);
+            const totalExpectedGain = expectedFutureValue - investmentAmount;
+            
+            return {
+                expectedReturn,
+                marketRiskPremium,
+                riskPremium,
+                riskLevel,
+                betaInterpretation,
+                volatilityDescription,
+                expectedAnnualReturn,
+                expectedFutureValue,
+                totalExpectedGain
+            };
+        },
+        
+        calculateExpectedReturn(betaValue) {
+            const riskFreeRate = parseFloat(this.riskFreeRate) || 0;
+            const marketReturn = parseFloat(this.marketReturn) || 0;
+            const marketRiskPremium = marketReturn - riskFreeRate;
+            return riskFreeRate + (betaValue * marketRiskPremium);
+        },
+        
+        calculateExpectedReturnForMarket(marketReturnValue) {
+            const riskFreeRate = parseFloat(this.riskFreeRate) || 0;
+            const beta = parseFloat(this.beta) || 0;
+            const marketRiskPremium = marketReturnValue - riskFreeRate;
+            return riskFreeRate + (beta * marketRiskPremium);
+        },
+        
+        calculateFutureValueForMarket(marketReturnValue) {
+            const investmentAmount = parseFloat(this.investmentAmount) || 0;
+            const investmentPeriod = parseFloat(this.investmentPeriod) || 1;
+            const expectedReturn = this.calculateExpectedReturnForMarket(marketReturnValue);
+            return investmentAmount * Math.pow(1 + expectedReturn / 100, investmentPeriod);
+        },
+        
+        getBetaDescription(betaValue) {
+            if (betaValue < 0.7) return 'Conservative';
+            if (betaValue < 1.3) return 'Market-like';
+            return 'Aggressive';
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
 
@@ -684,7 +568,26 @@ function notifyMe() {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.234597
+            v1.0.0.235295
+        </div>
+    </div>
+    
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.235295
         </div>
     </div>
     
