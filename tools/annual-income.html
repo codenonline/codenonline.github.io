@@ -3,723 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annual Income Calculator - Coming Soon</title>
+    <title>Annual Income Calculator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="banknote" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Annual Income Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate annual income from hourly, weekly, or monthly wages.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="banknote" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Annual Income Calculator</h1>
+                    <p class="text-gray-600">Calculate annual income from hourly, weekly, or monthly wages.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="annualIncomeCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="banknote" class="h-5 w-5"></i>
+                Income Details
+            </h2>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Pay Rate</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    placeholder="25.00"
+                    x-model="payRate"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Pay Period</label>
+                <select x-model="payPeriod" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="hourly">Hourly</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Bi-weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+
+            <!-- Hourly-specific inputs -->
+            <div x-show="payPeriod === 'hourly'" class="space-y-4">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Hours per Week</label>
+                    <input
+                        type="number"
+                        placeholder="40"
+                        x-model="hoursPerWeek"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Weeks per Year</label>
+                    <input
+                        type="number"
+                        placeholder="52"
+                        x-model="weeksPerYear"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p class="text-sm text-gray-500">Account for vacation time (e.g., 50 weeks if you take 2 weeks off)</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Overtime Hours per Week</label>
+                    <input
+                        type="number"
+                        placeholder="0"
+                        x-model="overtimeHours"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Overtime Multiplier</label>
+                    <select x-model="overtimeMultiplier" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="1.5">1.5x (Time and a half)</option>
+                        <option value="2.0">2.0x (Double time)</option>
+                        <option value="1.0">1.0x (Regular rate)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Daily-specific inputs -->
+            <div x-show="payPeriod === 'daily'" class="space-y-4">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Days per Week</label>
+                    <input
+                        type="number"
+                        placeholder="5"
+                        x-model="daysPerWeek"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Weeks per Year</label>
+                    <input
+                        type="number"
+                        placeholder="52"
+                        x-model="weeksPerYear"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Results Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="calculator" class="h-5 w-5"></i>
+                Income Breakdown
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <!-- Annual Income Display -->
+                <div class="text-center p-6 bg-green-50 rounded-lg border-2 border-green-200">
+                    <p class="text-sm text-gray-600 mb-2">Annual Income</p>
+                    <p class="text-3xl font-bold text-green-600" x-text="formatCurrency(results.annualIncome)"></p>
+                    <p class="text-sm text-green-700 mt-2">Before taxes and deductions</p>
+                </div>
+
+                <!-- Income Breakdown by Period -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Monthly</p>
+                        <p class="text-xl font-bold text-blue-600" x-text="formatCurrency(results.monthlyIncome)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Weekly</p>
+                        <p class="text-xl font-bold text-purple-600" x-text="formatCurrency(results.weeklyIncome)"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-orange-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Daily</p>
+                        <p class="text-xl font-bold text-orange-600" x-text="formatCurrency(results.dailyIncome)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-red-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Hourly</p>
+                        <p class="text-xl font-bold text-red-600" x-text="formatCurrency(results.hourlyIncome)"></p>
+                    </div>
+                </div>
+
+                <!-- Overtime Details (if applicable) -->
+                <div x-show="payPeriod === 'hourly' && parseFloat(overtimeHours) > 0" class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium mb-3 flex items-center gap-2">
+                        <i data-lucide="clock" class="h-4 w-4"></i>
+                        Overtime Breakdown
+                    </h4>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <div class="flex justify-between">
+                            <span>Regular hours per week:</span>
+                            <span class="font-medium" x-text="hoursPerWeek"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Overtime hours per week:</span>
+                            <span class="font-medium" x-text="overtimeHours"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Overtime rate:</span>
+                            <span class="font-medium" x-text="formatCurrency(parseFloat(payRate) * parseFloat(overtimeMultiplier))"></span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2">
+                            <span class="font-semibold">Annual overtime income:</span>
+                            <span class="font-semibold text-yellow-600" x-text="formatCurrency(results.annualOvertimeIncome)"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Income Summary -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-medium mb-2 flex items-center gap-2">
+                        <i data-lucide="info" class="h-4 w-4"></i>
+                        Income Summary
+                    </h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p x-text="`• Base pay rate: ${formatCurrency(parseFloat(payRate))} per ${payPeriod}`"></p>
+                        <p x-show="payPeriod === 'hourly'" x-text="`• Working ${hoursPerWeek} hours/week for ${weeksPerYear} weeks/year`"></p>
+                        <p x-show="payPeriod === 'daily'" x-text="`• Working ${daysPerWeek} days/week for ${weeksPerYear} weeks/year`"></p>
+                        <p x-show="payPeriod === 'hourly' && parseFloat(overtimeHours) > 0" x-text="`• Including ${overtimeHours} overtime hours/week at ${overtimeMultiplier}x rate`"></p>
+                        <p class="font-medium text-green-600" x-text="`• Total annual income: ${formatCurrency(results.annualIncome)}`"></p>
+                    </div>
+                </div>
+
+                <!-- Tax Considerations -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium mb-2 flex items-center gap-2">
+                        <i data-lucide="receipt" class="h-4 w-4"></i>
+                        Tax Considerations
+                    </h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>• This is your gross income before taxes and deductions</p>
+                        <p>• Federal, state, and local taxes will reduce your take-home pay</p>
+                        <p>• Consider FICA taxes (Social Security and Medicare)</p>
+                        <p>• Factor in benefits deductions (health insurance, 401k, etc.)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Financial Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-        <a href="/tools/compound-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Compound Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate compound interest with customizable compounding periods and additional contributions.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/simple-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate simple interest on principal amount over time.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/loan-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Loan Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly payments, total interest, and amortization schedule for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/mortgage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Mortgage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly mortgage payments, total interest, and amortization schedule.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/emi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">EMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Equated Monthly Installments for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/savings-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Savings Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate future value of regular savings with compound interest.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/future-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Future Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate the future value of your current investments and savings.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/tax-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate federal income tax, state tax, and take-home pay based on current tax brackets.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/apr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Annual Percentage Rate for loans and credit products.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/debt-to-income-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Debt to Income Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate debt to income ratio for personal finance.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/emergency-fund.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Emergency Fund Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how much you need in your emergency fund.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/rule-of-72.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Rule of 72 Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how long it takes for money to double at a given interest rate.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Annual Income Calculator. Check back soon!');
+function annualIncomeCalculator() {
+    return {
+        ...CalculatorMixins.FinancialCalculatorMixin,
+        
+        payRate: '25.00',
+        payPeriod: 'hourly',
+        hoursPerWeek: '40',
+        weeksPerYear: '52',
+        overtimeHours: '0',
+        overtimeMultiplier: '1.5',
+        daysPerWeek: '5',
+        
+        get results() {
+            const rate = parseFloat(this.payRate) || 0;
+            const hoursWeek = parseFloat(this.hoursPerWeek) || 40;
+            const weeksYear = parseFloat(this.weeksPerYear) || 52;
+            const overtimeHrs = parseFloat(this.overtimeHours) || 0;
+            const overtimeMult = parseFloat(this.overtimeMultiplier) || 1.5;
+            const daysWeek = parseFloat(this.daysPerWeek) || 5;
+            
+            let annualIncome = 0;
+            let annualOvertimeIncome = 0;
+            
+            switch (this.payPeriod) {
+                case 'hourly':
+                    // Regular income
+                    annualIncome = rate * hoursWeek * weeksYear;
+                    // Overtime income
+                    annualOvertimeIncome = rate * overtimeMult * overtimeHrs * weeksYear;
+                    annualIncome += annualOvertimeIncome;
+                    break;
+                case 'daily':
+                    annualIncome = rate * daysWeek * weeksYear;
+                    break;
+                case 'weekly':
+                    annualIncome = rate * weeksYear;
+                    break;
+                case 'biweekly':
+                    annualIncome = rate * 26; // 26 bi-weekly periods per year
+                    break;
+                case 'monthly':
+                    annualIncome = rate * 12;
+                    break;
+                case 'yearly':
+                    annualIncome = rate;
+                    break;
+            }
+            
+            const monthlyIncome = annualIncome / 12;
+            const weeklyIncome = annualIncome / 52;
+            const dailyIncome = weeklyIncome / 5; // Assuming 5-day work week
+            const hourlyIncome = dailyIncome / 8; // Assuming 8-hour work day
+            
+            return {
+                annualIncome,
+                monthlyIncome,
+                weeklyIncome,
+                dailyIncome,
+                hourlyIncome,
+                annualOvertimeIncome
+            };
+        }
+    }
 }
 </script>
+    </div>
+</div>
 
     
     <script>

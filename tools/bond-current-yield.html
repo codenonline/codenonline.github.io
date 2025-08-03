@@ -3,635 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bond Current Yield - Coming Soon</title>
+    <title>Bond Current Yield - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="landmark" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Bond Current Yield</h1>
+                    <p class="text-gray-600">Calculate current yield of bonds.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Current Yield Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="landmark" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Bond Current Yield</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate current yield of bonds.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Bond Current Yield Calculator</h1>
+        <p class="text-gray-600">Calculate the current yield of bonds and compare with other investment options.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="bondCurrentYieldCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="landmark" class="h-5 w-5"></i>
+                    Bond Information
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Annual Coupon Payment ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="50.00"
+                        x-model="annualCoupon"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(annualCoupon) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Total annual coupon payments received</p>
+                    <p x-show="parseFloat(annualCoupon) <= 0" class="text-sm text-red-600">Please enter a valid coupon amount</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Current Bond Price ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="950.00"
+                        x-model="bondPrice"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(bondPrice) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Current market price of the bond</p>
+                    <p x-show="parseFloat(bondPrice) <= 0" class="text-sm text-red-600">Please enter a valid bond price</p>
+                </div>
+
+                <!-- Alternative Input Method -->
+                <div class="border-t pt-4">
+                    <h3 class="font-medium mb-3">Alternative: Calculate from Bond Details</h3>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Face Value ($)</label>
+                            <input
+                                type="number"
+                                placeholder="1000"
+                                x-model="faceValue"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Coupon Rate (%)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                placeholder="5.00"
+                                x-model="couponRate"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Bond Price (% of Face Value)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                placeholder="95.00"
+                                x-model="pricePercentage"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <p class="text-sm text-gray-500">Price as percentage of face value (e.g., 95 = $950 for $1000 bond)</p>
+                        </div>
+
+                        <button 
+                            @click="useCalculatedValues()"
+                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Use Calculated Values
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About Current Yield</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>Current yield measures the annual return based on the bond's current market price.</p>
+                        <p>It doesn't account for capital gains/losses at maturity, unlike yield to maturity.</p>
+                        <p>Useful for comparing income-generating investments.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    Yield Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Current Yield -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Current Yield</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatPercentage(results.currentYield)"></p>
+                        <p class="text-sm text-gray-500 mt-2">Annual return based on current price</p>
+                    </div>
+
+                    <!-- Bond Details -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Annual Coupon:</span>
+                            <span class="font-semibold" x-text="formatCurrency(parseFloat(annualCoupon))"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Current Price:</span>
+                            <span class="font-semibold" x-text="formatCurrency(parseFloat(bondPrice))"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Price vs Par:</span>
+                            <span class="font-semibold" :class="results.priceVsPar > 0 ? 'text-red-600' : results.priceVsPar < 0 ? 'text-green-600' : 'text-gray-600'">
+                                <span x-text="results.priceVsPar > 0 ? 'Premium' : results.priceVsPar < 0 ? 'Discount' : 'At Par'"></span>
+                                <span x-show="results.priceVsPar !== 0" x-text="` (${formatPercentage(Math.abs(results.priceVsPar))})`"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Yield Comparison -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                            Yield Comparison
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Current Yield:</span>
+                                <span class="font-semibold text-green-600" x-text="formatPercentage(results.currentYield)"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Coupon Rate:</span>
+                                <span class="font-semibold" x-text="formatPercentage(results.couponRate)"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Yield Premium/Discount:</span>
+                                <span class="font-semibold" :class="results.yieldDifference > 0 ? 'text-green-600' : 'text-red-600'" x-text="formatPercentage(Math.abs(results.yieldDifference), true)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market Comparison -->
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-medium mb-3 text-blue-900">Market Rate Comparison</h4>
+                        <div class="space-y-2">
+                            <template x-for="rate in [2, 3, 4, 5, 6, 7, 8]" :key="rate">
+                                <div class="flex justify-between items-center text-sm" :class="{ 'bg-blue-200 rounded px-2 py-1': Math.abs(results.currentYield - rate) < 0.5 }">
+                                    <span x-text="`${rate}% Market Rate:`"></span>
+                                    <span x-text="results.currentYield > rate ? `+${formatPercentage(results.currentYield - rate, true)} above` : results.currentYield < rate ? `${formatPercentage(results.currentYield - rate, true)} below` : 'Equal'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Formula -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-2">Formula</h4>
+                        <div class="bg-white p-3 rounded text-sm font-mono mb-2">
+                            Current Yield = (Annual Coupon ÷ Current Price) × 100
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            <p>Example: (<span x-text="formatCurrency(parseFloat(annualCoupon))"></span> ÷ <span x-text="formatCurrency(parseFloat(bondPrice))"></span>) × 100 = <span x-text="formatPercentage(results.currentYield)"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- Investment Analysis -->
+                    <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                        <h4 class="font-medium mb-2 text-yellow-900">Investment Analysis</h4>
+                        <div class="text-sm text-yellow-800 space-y-1">
+                            <p x-show="results.currentYield > results.couponRate">✅ Higher current yield than coupon rate (bond trading at discount)</p>
+                            <p x-show="results.currentYield < results.couponRate">⚠️ Lower current yield than coupon rate (bond trading at premium)</p>
+                            <p x-show="Math.abs(results.currentYield - results.couponRate) < 0.01">ℹ️ Current yield equals coupon rate (bond trading near par)</p>
+                            <p class="mt-2">Remember: Current yield doesn't include capital gains/losses at maturity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding Bond Current Yield
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is Current Yield?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>Current yield is a bond's annual coupon payment divided by its current market price, expressed as a percentage.</p>
+                        <p>It represents the annual return you would receive if you bought the bond at its current price and held it for one year.</p>
+                        <p>Unlike yield to maturity, it doesn't consider the bond's price appreciation or depreciation until maturity.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">When to Use Current Yield</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Comparing income from different bonds</li>
+                        <li>• Evaluating bonds vs dividend stocks</li>
+                        <li>• Quick assessment of bond attractiveness</li>
+                        <li>• Income-focused investment strategies</li>
+                        <li>• Short-term holding period analysis</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Discount Bonds</h4>
+                    <div class="text-sm text-green-800">
+                        <p>Price < Face Value</p>
+                        <p>Current Yield > Coupon Rate</p>
+                        <p>Higher income yield due to lower purchase price</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Par Bonds</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>Price = Face Value</p>
+                        <p>Current Yield = Coupon Rate</p>
+                        <p>Yield equals stated coupon rate</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">Premium Bonds</h4>
+                    <div class="text-sm text-red-800">
+                        <p>Price > Face Value</p>
+                        <p>Current Yield < Coupon Rate</p>
+                        <p>Lower income yield due to higher purchase price</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">⚠️ Limitations of Current Yield</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• Doesn't account for capital gains/losses at maturity</li>
+                    <li>• Ignores the time value of money</li>
+                    <li>• Doesn't consider reinvestment of coupon payments</li>
+                    <li>• Less useful for long-term investment decisions</li>
+                    <li>• Should be used alongside yield to maturity for complete analysis</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Bond Current Yield. Check back soon!');
+function bondCurrentYieldCalculator() {
+    return {
+        annualCoupon: '50.00',
+        bondPrice: '950.00',
+        faceValue: '1000',
+        couponRate: '5.00',
+        pricePercentage: '95.00',
+        
+        get results() {
+            const coupon = parseFloat(this.annualCoupon) || 0;
+            const price = parseFloat(this.bondPrice) || 1;
+            const face = parseFloat(this.faceValue) || 1000;
+            
+            const currentYield = (coupon / price) * 100;
+            const couponRate = (coupon / face) * 100;
+            const yieldDifference = currentYield - couponRate;
+            
+            // Determine if bond is at premium, discount, or par
+            let priceVsPar = 0;
+            if (face > 0) {
+                priceVsPar = ((price - face) / face) * 100;
+            }
+            
+            return {
+                currentYield,
+                couponRate,
+                yieldDifference,
+                priceVsPar
+            };
+        },
+        
+        useCalculatedValues() {
+            const face = parseFloat(this.faceValue) || 1000;
+            const rate = parseFloat(this.couponRate) || 0;
+            const pricePercent = parseFloat(this.pricePercentage) || 100;
+            
+            this.annualCoupon = (face * rate / 100).toFixed(2);
+            this.bondPrice = (face * pricePercent / 100).toFixed(2);
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
 
     
     <script>

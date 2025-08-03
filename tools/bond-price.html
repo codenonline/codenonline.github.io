@@ -3,635 +3,490 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bond Price Calculator - Coming Soon</title>
+    <title>Bond Price Calculator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="landmark" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Bond Price Calculator</h1>
+                    <p class="text-gray-600">Calculate bond prices based on yield and terms.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Price Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="landmark" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Bond Price Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate bond prices based on yield and terms.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Bond Price Calculator</h1>
+        <p class="text-gray-600">Calculate bond prices using present value calculations and analyze price sensitivity to yield changes.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="bondPriceCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="landmark" class="h-5 w-5"></i>
+                    Bond Parameters
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Face Value ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="1000.00"
+                        x-model="faceValue"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(faceValue) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Par value of the bond at maturity</p>
+                    <p x-show="parseFloat(faceValue) <= 0" class="text-sm text-red-600">Please enter a valid face value</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Coupon Rate (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="5.00"
+                        x-model="couponRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(couponRate) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Annual coupon rate as percentage of face value</p>
+                    <p x-show="parseFloat(couponRate) < 0" class="text-sm text-red-600">Please enter a valid coupon rate</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Required Yield (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="4.50"
+                        x-model="requiredYield"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(requiredYield) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Market yield or required rate of return</p>
+                    <p x-show="parseFloat(requiredYield) < 0" class="text-sm text-red-600">Please enter a valid yield</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Years to Maturity</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        placeholder="10"
+                        x-model="yearsToMaturity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(yearsToMaturity) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Time until bond matures</p>
+                    <p x-show="parseFloat(yearsToMaturity) <= 0" class="text-sm text-red-600">Please enter a valid maturity period</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Payment Frequency</label>
+                    <select
+                        x-model="paymentFrequency"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="1">Annual</option>
+                        <option value="2">Semi-annual</option>
+                        <option value="4">Quarterly</option>
+                        <option value="12">Monthly</option>
+                    </select>
+                    <p class="text-sm text-gray-500">How often coupon payments are made</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About Bond Pricing</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>Bond price is the present value of all future cash flows (coupons + principal).</p>
+                        <p>When yield > coupon rate, bond trades at discount (below par).</p>
+                        <p>When yield < coupon rate, bond trades at premium (above par).</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    Bond Valuation
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Bond Price -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Bond Price</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatCurrency(results.bondPrice)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="formatPercentage(results.priceAsPercentOfPar)"></span> of par value
+                        </p>
+                    </div>
+
+                    <!-- Price Components -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Present Value of Coupons:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvCoupons)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Present Value of Principal:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvPrincipal)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">Total Bond Price:</span>
+                            <span class="font-bold text-lg" x-text="formatCurrency(results.bondPrice)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bond Classification -->
+                    <div class="p-4 rounded-lg" :class="results.bondType === 'Premium' ? 'bg-red-50' : results.bondType === 'Discount' ? 'bg-green-50' : 'bg-blue-50'">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Bond Type:</span>
+                            <span class="font-semibold" :class="results.bondType === 'Premium' ? 'text-red-600' : results.bondType === 'Discount' ? 'text-green-600' : 'text-blue-600'" x-text="results.bondType"></span>
+                        </div>
+                        <p class="text-sm mt-1" :class="results.bondType === 'Premium' ? 'text-red-700' : results.bondType === 'Discount' ? 'text-green-700' : 'text-blue-700'">
+                            <span x-show="results.bondType === 'Premium'">Trading above par - yield < coupon rate</span>
+                            <span x-show="results.bondType === 'Discount'">Trading below par - yield > coupon rate</span>
+                            <span x-show="results.bondType === 'At Par'">Trading at par - yield = coupon rate</span>
+                        </p>
+                    </div>
+
+                    <!-- Duration Analysis -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="clock" class="h-4 w-4"></i>
+                            Duration Analysis
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Macaulay Duration:</span>
+                                <span class="font-semibold" x-text="results.macaulayDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Modified Duration:</span>
+                                <span class="font-semibold" x-text="results.modifiedDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Modified duration estimates price sensitivity to yield changes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Price Sensitivity Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+                Price Sensitivity Analysis
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Yield Change Impact -->
+                <div>
+                    <h4 class="font-medium mb-4">Impact of Yield Changes</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-2, -1, -0.5, 0, 0.5, 1, 2]" :key="change">
+                            <div class="flex justify-between items-center p-2 rounded" :class="change === 0 ? 'bg-blue-50' : ''">
+                                <span class="text-sm" x-text="`${change > 0 ? '+' : ''}${change}% yield change:`"></span>
+                                <div class="text-right">
+                                    <div class="font-semibold" x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></div>
+                                    <div class="text-xs text-gray-500" x-show="change !== 0" x-text="formatPercentage(((calculatePriceAtYield(parseFloat(requiredYield) + change) - results.bondPrice) / results.bondPrice) * 100, true)"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Duration Estimates vs Actual -->
+                <div>
+                    <h4 class="font-medium mb-4">Duration Estimate Accuracy</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-1, -0.5, 0.5, 1]" :key="change">
+                            <div class="p-2 rounded bg-gray-50">
+                                <div class="flex justify-between text-sm">
+                                    <span x-text="`${change > 0 ? '+' : ''}${change}% yield:`"></span>
+                                    <span>Actual vs Duration Estimate</span>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></span>
+                                    <span x-text="formatCurrency(results.bondPrice * (1 - results.modifiedDuration * change / 100))"></span>
+                                </div>
+                                <div class="text-xs text-gray-500 text-center mt-1">
+                                    Error: <span x-text="formatPercentage(Math.abs((calculatePriceAtYield(parseFloat(requiredYield) + change) - (results.bondPrice * (1 - results.modifiedDuration * change / 100))) / calculatePriceAtYield(parseFloat(requiredYield) + change)) * 100)"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding Bond Pricing
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">Bond Pricing Formula</h4>
+                    <div class="bg-white p-3 rounded border text-sm font-mono mb-3">
+                        P = Σ(C/(1+r)^t) + F/(1+r)^n
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p><strong>P</strong> = Bond Price</p>
+                        <p><strong>C</strong> = Coupon Payment</p>
+                        <p><strong>r</strong> = Required Yield (per period)</p>
+                        <p><strong>t</strong> = Time period</p>
+                        <p><strong>F</strong> = Face Value</p>
+                        <p><strong>n</strong> = Number of periods</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">Duration Concepts</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Macaulay Duration:</strong> Weighted average time to receive cash flows</p>
+                        <p><strong>Modified Duration:</strong> Price sensitivity measure</p>
+                        <p><strong>Formula:</strong> Modified Duration = Macaulay Duration ÷ (1 + yield/frequency)</p>
+                        <p><strong>Price Change ≈</strong> -Modified Duration × Yield Change</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Discount Bonds</h4>
+                    <div class="text-sm text-green-800">
+                        <p>Yield > Coupon Rate</p>
+                        <p>Price < Face Value</p>
+                        <p>Capital appreciation at maturity</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Par Bonds</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>Yield = Coupon Rate</p>
+                        <p>Price = Face Value</p>
+                        <p>No capital gain/loss</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">Premium Bonds</h4>
+                    <div class="text-sm text-red-800">
+                        <p>Yield < Coupon Rate</p>
+                        <p>Price > Face Value</p>
+                        <p>Capital loss at maturity</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">Key Insights</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• Bond prices move inversely to yield changes</li>
+                    <li>• Longer maturity bonds are more sensitive to yield changes</li>
+                    <li>• Lower coupon bonds have higher duration and price sensitivity</li>
+                    <li>• Duration provides a linear approximation of price changes</li>
+                    <li>• Convexity becomes important for large yield changes</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Bond Price Calculator. Check back soon!');
+function bondPriceCalculator() {
+    return {
+        faceValue: '1000.00',
+        couponRate: '5.00',
+        requiredYield: '4.50',
+        yearsToMaturity: '10',
+        paymentFrequency: '2',
+        
+        get results() {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const yield = parseFloat(this.requiredYield) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            // Calculate periodic values
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = yield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            // Calculate present value of coupon payments
+            let pvCoupons = 0;
+            let weightedCashFlows = 0; // For Macaulay duration calculation
+            
+            if (periodicYield === 0) {
+                // Special case: zero yield
+                pvCoupons = periodicCoupon * totalPeriods;
+                weightedCashFlows = periodicCoupon * totalPeriods * (totalPeriods + 1) / 2;
+            } else {
+                // Standard present value calculation
+                for (let t = 1; t <= totalPeriods; t++) {
+                    const pv = periodicCoupon / Math.pow(1 + periodicYield, t);
+                    pvCoupons += pv;
+                    weightedCashFlows += pv * t;
+                }
+            }
+            
+            // Calculate present value of principal
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            weightedCashFlows += pvPrincipal * totalPeriods;
+            
+            // Total bond price
+            const bondPrice = pvCoupons + pvPrincipal;
+            
+            // Calculate Macaulay Duration
+            const macaulayDuration = (weightedCashFlows / bondPrice) / periodsPerYear;
+            
+            // Calculate Modified Duration
+            const modifiedDuration = macaulayDuration / (1 + periodicYield);
+            
+            // Determine bond type
+            const priceAsPercentOfPar = (bondPrice / face) * 100;
+            let bondType = 'At Par';
+            if (bondPrice > face * 1.001) bondType = 'Premium';
+            else if (bondPrice < face * 0.999) bondType = 'Discount';
+            
+            return {
+                bondPrice,
+                pvCoupons,
+                pvPrincipal,
+                priceAsPercentOfPar,
+                bondType,
+                macaulayDuration,
+                modifiedDuration
+            };
+        },
+        
+        calculatePriceAtYield(newYield) {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = newYield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            let pvCoupons = 0;
+            
+            if (periodicYield === 0) {
+                pvCoupons = periodicCoupon * totalPeriods;
+            } else {
+                for (let t = 1; t <= totalPeriods; t++) {
+                    pvCoupons += periodicCoupon / Math.pow(1 + periodicYield, t);
+                }
+            }
+            
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            
+            return pvCoupons + pvPrincipal;
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
 
     
     <script>

@@ -3,723 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Deposit Calculator - Coming Soon</title>
+    <title>Certificate of Deposit Calculator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="file-text" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Certificate of Deposit Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate returns on CD investments with different terms.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="file-text" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Certificate of Deposit Calculator</h1>
+                    <p class="text-gray-600">Calculate returns on CD investments with different terms.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="certificateOfDepositCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="file-text" class="h-5 w-5"></i>
+                CD Details
+            </h2>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Initial Deposit</label>
+                <input
+                    type="number"
+                    placeholder="10000"
+                    x-model="initialDeposit"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Annual Interest Rate (%)</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    placeholder="3.5"
+                    x-model="interestRate"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">CD Term</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <input
+                        type="number"
+                        placeholder="12"
+                        x-model="termLength"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <select x-model="termUnit" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="months">Months</option>
+                        <option value="years">Years</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Compounding Frequency</label>
+                <select x-model="compoundingFrequency" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <template x-for="option in compoundingOptions" :key="option.value">
+                        <option :value="option.value" x-text="option.label"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Early Withdrawal Section -->
+            <div class="border-t pt-4">
+                <div class="flex items-center gap-2 mb-4">
+                    <input type="checkbox" x-model="calculateEarlyWithdrawal" id="earlyWithdrawal" class="rounded">
+                    <label for="earlyWithdrawal" class="text-sm font-medium text-gray-700">Calculate Early Withdrawal</label>
+                </div>
+                
+                <div x-show="calculateEarlyWithdrawal" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Withdrawal After (Months)</label>
+                        <input
+                            type="number"
+                            placeholder="6"
+                            x-model="withdrawalMonth"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Early Withdrawal Penalty</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input
+                                type="number"
+                                step="0.1"
+                                placeholder="3"
+                                x-model="penaltyAmount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <select x-model="penaltyType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="months">Months Interest</option>
+                                <option value="percentage">% of Principal</option>
+                                <option value="flat">Flat Fee ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h4 class="font-medium text-blue-900 mb-2">About CDs</h4>
+                <div class="text-sm text-blue-800 space-y-1">
+                    <p>Certificates of Deposit offer guaranteed returns in exchange for locking up your money for a fixed term.</p>
+                    <p>Early withdrawal typically results in penalties that reduce your earnings.</p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Results Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                CD Results
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <!-- Maturity Value -->
+                <div class="text-center p-6 bg-green-50 rounded-lg border-2 border-green-200">
+                    <p class="text-sm text-gray-600 mb-2">Maturity Value</p>
+                    <p class="text-3xl font-bold text-green-600" x-text="formatCurrency(results.maturityValue)"></p>
+                    <p class="text-sm text-green-700 mt-2" x-text="`After ${getTermDisplay()}`"></p>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Interest Earned</p>
+                        <p class="text-xl font-bold text-blue-600" x-text="formatCurrency(results.interestEarned)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Effective APY</p>
+                        <p class="text-xl font-bold text-purple-600" x-text="formatPercentage(results.effectiveAPY, 3)"></p>
+                    </div>
+                </div>
+
+                <!-- CD Summary -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Initial Deposit:</span>
+                        <span class="font-semibold" x-text="formatCurrency(parseFloat(initialDeposit))"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Interest Rate:</span>
+                        <span class="font-semibold" x-text="formatPercentage(parseFloat(interestRate))"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Term:</span>
+                        <span class="font-semibold" x-text="getTermDisplay()"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Compounding:</span>
+                        <span class="font-semibold" x-text="getCompoundingLabel()"></span>
+                    </div>
+                </div>
+
+                <!-- Early Withdrawal Analysis -->
+                <div x-show="calculateEarlyWithdrawal" class="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
+                    <h4 class="font-medium mb-3 flex items-center gap-2 text-red-800">
+                        <i data-lucide="alert-triangle" class="h-4 w-4"></i>
+                        Early Withdrawal Analysis
+                    </h4>
+                    <div class="text-sm space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Value at withdrawal:</span>
+                            <span class="font-medium" x-text="formatCurrency(results.earlyWithdrawal.valueAtWithdrawal)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Penalty amount:</span>
+                            <span class="font-medium text-red-600" x-text="formatCurrency(results.earlyWithdrawal.penaltyAmount)"></span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2">
+                            <span class="font-semibold text-gray-800">Net amount received:</span>
+                            <span class="font-bold" :class="results.earlyWithdrawal.netAmount >= parseFloat(initialDeposit) ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.earlyWithdrawal.netAmount)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Opportunity cost:</span>
+                            <span class="font-medium text-red-600" x-text="formatCurrency(results.earlyWithdrawal.opportunityCost)"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Growth Timeline -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-medium mb-3 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                        Growth Timeline
+                    </h4>
+                    <div class="space-y-2 text-sm">
+                        <template x-for="milestone in results.growthMilestones" :key="milestone.period">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600" x-text="milestone.label"></span>
+                                <span class="font-medium" x-text="formatCurrency(milestone.value)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- CD Summary -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium mb-2 flex items-center gap-2">
+                        <i data-lucide="info" class="h-4 w-4"></i>
+                        CD Summary
+                    </h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p x-text="`• Initial deposit: ${formatCurrency(parseFloat(initialDeposit))}`"></p>
+                        <p x-text="`• Interest rate: ${interestRate}% annually`"></p>
+                        <p x-text="`• Term: ${getTermDisplay()}`"></p>
+                        <p x-text="`• Compounding: ${getCompoundingLabel()}`"></p>
+                        <p x-text="`• Maturity value: ${formatCurrency(results.maturityValue)}`"></p>
+                        <p x-text="`• Total interest earned: ${formatCurrency(results.interestEarned)}`"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Financial Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-        <a href="/tools/compound-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Compound Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate compound interest with customizable compounding periods and additional contributions.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/simple-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate simple interest on principal amount over time.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/loan-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Loan Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly payments, total interest, and amortization schedule for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/mortgage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Mortgage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly mortgage payments, total interest, and amortization schedule.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/emi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">EMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Equated Monthly Installments for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/savings-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Savings Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate future value of regular savings with compound interest.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/future-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Future Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate the future value of your current investments and savings.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/tax-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate federal income tax, state tax, and take-home pay based on current tax brackets.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/apr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Annual Percentage Rate for loans and credit products.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/debt-to-income-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Debt to Income Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate debt to income ratio for personal finance.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/emergency-fund.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Emergency Fund Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how much you need in your emergency fund.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/rule-of-72.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Rule of 72 Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how long it takes for money to double at a given interest rate.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Certificate of Deposit Calculator. Check back soon!');
+function certificateOfDepositCalculator() {
+    return {
+        ...CalculatorMixins.FinancialCalculatorMixin,
+        
+        initialDeposit: '10000',
+        interestRate: '3.5',
+        termLength: '12',
+        termUnit: 'months',
+        compoundingFrequency: '12',
+        calculateEarlyWithdrawal: false,
+        withdrawalMonth: '6',
+        penaltyAmount: '3',
+        penaltyType: 'months',
+        
+        compoundingOptions: [
+            { value: '1', label: 'Annually' },
+            { value: '2', label: 'Semi-annually' },
+            { value: '4', label: 'Quarterly' },
+            { value: '12', label: 'Monthly' },
+            { value: '365', label: 'Daily' }
+        ],
+        
+        get results() {
+            const principal = parseFloat(this.initialDeposit) || 0;
+            const rate = parseFloat(this.interestRate) || 0;
+            const termInYears = this.getTermInYears();
+            const n = parseFloat(this.compoundingFrequency) || 1;
+            
+            // Calculate maturity value using compound interest formula
+            const maturityValue = principal * Math.pow(1 + (rate / 100) / n, n * termInYears);
+            const interestEarned = maturityValue - principal;
+            
+            // Calculate effective APY
+            const effectiveAPY = (Math.pow(1 + (rate / 100) / n, n) - 1) * 100;
+            
+            // Growth milestones
+            const growthMilestones = this.calculateGrowthMilestones();
+            
+            // Early withdrawal calculation
+            let earlyWithdrawal = null;
+            if (this.calculateEarlyWithdrawal) {
+                earlyWithdrawal = this.calculateEarlyWithdrawalPenalty();
+            }
+            
+            return {
+                maturityValue,
+                interestEarned,
+                effectiveAPY,
+                growthMilestones,
+                earlyWithdrawal
+            };
+        },
+        
+        getTermInYears() {
+            const length = parseFloat(this.termLength) || 0;
+            return this.termUnit === 'years' ? length : length / 12;
+        },
+        
+        getTermDisplay() {
+            const length = parseFloat(this.termLength) || 0;
+            return `${length} ${this.termUnit}`;
+        },
+        
+        getCompoundingLabel() {
+            const option = this.compoundingOptions.find(opt => opt.value === this.compoundingFrequency);
+            return option?.label || 'Monthly';
+        },
+        
+        calculateGrowthMilestones() {
+            const principal = parseFloat(this.initialDeposit) || 0;
+            const rate = parseFloat(this.interestRate) || 0;
+            const termInYears = this.getTermInYears();
+            const n = parseFloat(this.compoundingFrequency) || 1;
+            
+            const milestones = [];
+            const intervals = Math.min(5, Math.ceil(termInYears));
+            
+            for (let i = 1; i <= intervals; i++) {
+                const time = (termInYears / intervals) * i;
+                const value = principal * Math.pow(1 + (rate / 100) / n, n * time);
+                
+                let label;
+                if (termInYears >= 1) {
+                    label = `Year ${(time).toFixed(1)}`;
+                } else {
+                    label = `Month ${Math.round(time * 12)}`;
+                }
+                
+                milestones.push({
+                    period: i,
+                    label,
+                    value
+                });
+            }
+            
+            return milestones;
+        },
+        
+        calculateEarlyWithdrawalPenalty() {
+            const principal = parseFloat(this.initialDeposit) || 0;
+            const rate = parseFloat(this.interestRate) || 0;
+            const withdrawalMonths = parseFloat(this.withdrawalMonth) || 0;
+            const n = parseFloat(this.compoundingFrequency) || 1;
+            const penaltyAmount = parseFloat(this.penaltyAmount) || 0;
+            
+            // Calculate value at withdrawal time
+            const timeAtWithdrawal = withdrawalMonths / 12;
+            const valueAtWithdrawal = principal * Math.pow(1 + (rate / 100) / n, n * timeAtWithdrawal);
+            
+            // Calculate penalty based on type
+            let penalty = 0;
+            switch (this.penaltyType) {
+                case 'months':
+                    // Penalty is X months of interest
+                    const monthlyInterestRate = rate / 100 / 12;
+                    penalty = principal * monthlyInterestRate * penaltyAmount;
+                    break;
+                case 'percentage':
+                    // Penalty is X% of principal
+                    penalty = principal * (penaltyAmount / 100);
+                    break;
+                case 'flat':
+                    // Flat fee penalty
+                    penalty = penaltyAmount;
+                    break;
+            }
+            
+            const netAmount = Math.max(0, valueAtWithdrawal - penalty);
+            
+            // Calculate opportunity cost (what you would have earned if held to maturity)
+            const maturityValue = principal * Math.pow(1 + (rate / 100) / n, n * this.getTermInYears());
+            const opportunityCost = maturityValue - netAmount;
+            
+            return {
+                valueAtWithdrawal,
+                penaltyAmount: penalty,
+                netAmount,
+                opportunityCost
+            };
+        }
+    }
 }
 </script>
+    </div>
+</div>
 
     
     <script>

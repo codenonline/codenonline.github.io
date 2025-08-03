@@ -3,635 +3,513 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Profit Calculator - Coming Soon</title>
+    <title>Crypto Profit Calculator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="bitcoin" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Crypto Profit Calculator</h1>
+                    <p class="text-gray-600">Calculate profits from cryptocurrency investments.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Profit Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="bitcoin" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Crypto Profit Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate profits from cryptocurrency investments.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Crypto Profit Calculator</h1>
+        <p class="text-gray-600">Calculate profits, losses, and returns from cryptocurrency investments including fees and tax implications.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="cryptoProfitCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="bitcoin" class="h-5 w-5"></i>
+                    Investment Details
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Buy Price ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="45000.00"
+                        x-model="buyPrice"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(buyPrice) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Price per unit when purchased</p>
+                    <p x-show="parseFloat(buyPrice) <= 0" class="text-sm text-red-600">Please enter a valid buy price</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Sell Price ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="50000.00"
+                        x-model="sellPrice"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(sellPrice) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Price per unit when sold (or current price)</p>
+                    <p x-show="parseFloat(sellPrice) <= 0" class="text-sm text-red-600">Please enter a valid sell price</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Quantity</label>
+                    <input
+                        type="number"
+                        step="0.00000001"
+                        placeholder="1.5"
+                        x-model="quantity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(quantity) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Amount of cryptocurrency bought/sold</p>
+                    <p x-show="parseFloat(quantity) <= 0" class="text-sm text-red-600">Please enter a valid quantity</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Buy Fee (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.25"
+                        x-model="buyFeePercent"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(buyFeePercent) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Exchange fee when buying (typically 0.1% - 1%)</p>
+                    <p x-show="parseFloat(buyFeePercent) < 0" class="text-sm text-red-600">Please enter a valid fee percentage</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Sell Fee (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.25"
+                        x-model="sellFeePercent"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(sellFeePercent) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Exchange fee when selling</p>
+                    <p x-show="parseFloat(sellFeePercent) < 0" class="text-sm text-red-600">Please enter a valid fee percentage</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Holding Period (Days)</label>
+                    <input
+                        type="number"
+                        placeholder="365"
+                        x-model="holdingPeriodDays"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(holdingPeriodDays) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Days held for tax classification (365+ = long-term)</p>
+                    <p x-show="parseFloat(holdingPeriodDays) < 0" class="text-sm text-red-600">Please enter a valid holding period</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About Crypto Trading</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>Cryptocurrency gains are subject to capital gains tax in most jurisdictions.</p>
+                        <p>Exchange fees can significantly impact your net returns.</p>
+                        <p>Consider transaction costs and tax implications when trading.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    Profit Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Net Profit/Loss -->
+                    <div class="text-center p-6 rounded-lg" :class="results.netProfit >= 0 ? 'bg-green-50' : 'bg-red-50'">
+                        <p class="text-sm text-gray-600 mb-2">Net Profit/Loss</p>
+                        <p class="text-4xl font-bold" :class="results.netProfit >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.netProfit)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="formatPercentage(results.returnPercentage)"></span> return
+                        </p>
+                    </div>
+
+                    <!-- Investment Breakdown -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Initial Investment:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.totalCost)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Gross Proceeds:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.grossProceeds)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Fees:</span>
+                            <span class="font-semibold text-red-600" x-text="formatCurrency(results.totalFees)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">Net Proceeds:</span>
+                            <span class="font-bold text-lg" x-text="formatCurrency(results.netProceeds)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Fee Breakdown -->
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="receipt" class="h-4 w-4"></i>
+                            Fee Breakdown
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Buy Fee:</span>
+                                <span class="font-semibold" x-text="formatCurrency(results.buyFee)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Sell Fee:</span>
+                                <span class="font-semibold" x-text="formatCurrency(results.sellFee)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm border-t pt-2">
+                                <span class="text-gray-600">Total Fees:</span>
+                                <span class="font-semibold text-red-600" x-text="formatCurrency(results.totalFees)"></span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Fees as % of investment: <span x-text="formatPercentage(results.feePercentage)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-medium mb-3 text-blue-900">Performance Metrics</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-blue-700">Return %:</span>
+                                <span class="font-semibold" :class="results.returnPercentage >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatPercentage(results.returnPercentage)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-blue-700">Annualized Return:</span>
+                                <span class="font-semibold" :class="results.annualizedReturn >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatPercentage(results.annualizedReturn)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-blue-700">Holding Period:</span>
+                                <span class="font-semibold text-blue-600" x-text="results.holdingPeriodText"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Tax Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="calculator" class="h-5 w-5"></i>
+                Tax Implications
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Tax Classification -->
+                <div>
+                    <h4 class="font-medium mb-4">Tax Classification</h4>
+                    <div class="p-4 rounded-lg" :class="results.isLongTerm ? 'bg-green-50' : 'bg-yellow-50'">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i :data-lucide="results.isLongTerm ? 'check-circle' : 'clock'" class="h-5 w-5" :class="results.isLongTerm ? 'text-green-600' : 'text-yellow-600'"></i>
+                            <span class="font-medium" :class="results.isLongTerm ? 'text-green-900' : 'text-yellow-900'" x-text="results.isLongTerm ? 'Long-term Capital Gain' : 'Short-term Capital Gain'"></span>
+                        </div>
+                        <p class="text-sm" :class="results.isLongTerm ? 'text-green-700' : 'text-yellow-700'">
+                            <span x-show="results.isLongTerm">Held for more than 365 days - typically taxed at lower rates</span>
+                            <span x-show="!results.isLongTerm">Held for 365 days or less - typically taxed as ordinary income</span>
+                        </p>
+                        <div class="mt-2 text-sm" :class="results.isLongTerm ? 'text-green-700' : 'text-yellow-700'">
+                            Holding period: <span x-text="results.holdingPeriodText"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Estimates -->
+                <div>
+                    <h4 class="font-medium mb-4">Estimated Tax Impact (US)</h4>
+                    <div class="space-y-3" x-show="results.netProfit > 0">
+                        <template x-for="bracket in results.taxBrackets" :key="bracket.rate">
+                            <div class="p-3 bg-gray-50 rounded">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium" x-text="bracket.label"></span>
+                                    <span class="font-semibold" x-text="formatPercentage(bracket.rate)"></span>
+                                </div>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-xs text-gray-600">Tax owed:</span>
+                                    <span class="text-sm font-semibold text-red-600" x-text="formatCurrency(bracket.tax)"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-gray-600">After-tax profit:</span>
+                                    <span class="text-sm font-semibold text-green-600" x-text="formatCurrency(results.netProfit - bracket.tax)"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="results.netProfit <= 0" class="p-3 bg-blue-50 rounded">
+                        <p class="text-sm text-blue-800">
+                            <i data-lucide="info" class="h-4 w-4 inline mr-1"></i>
+                            Capital losses can offset capital gains and up to $3,000 of ordinary income per year.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">⚠️ Important Tax Considerations</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• Tax rates vary by jurisdiction and individual circumstances</li>
+                    <li>• Crypto-to-crypto trades are also taxable events in most countries</li>
+                    <li>• Keep detailed records of all transactions for tax reporting</li>
+                    <li>• Consider consulting a tax professional for complex situations</li>
+                    <li>• Some jurisdictions have different rules for crypto taxation</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Crypto Investment Guide
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">Profit Calculation</h4>
+                    <div class="bg-white p-3 rounded border text-sm font-mono mb-3">
+                        Net Profit = (Sell Price × Quantity) - (Buy Price × Quantity) - Total Fees
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p><strong>Total Cost:</strong> (Buy Price × Quantity) + Buy Fee</p>
+                        <p><strong>Gross Proceeds:</strong> Sell Price × Quantity</p>
+                        <p><strong>Net Proceeds:</strong> Gross Proceeds - Sell Fee</p>
+                        <p><strong>Return %:</strong> (Net Profit ÷ Total Cost) × 100</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">Key Factors</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Exchange Fees:</strong> Can range from 0.1% to 1% per transaction</p>
+                        <p><strong>Spread:</strong> Difference between buy and sell prices</p>
+                        <p><strong>Volatility:</strong> Crypto prices can change rapidly</p>
+                        <p><strong>Timing:</strong> Holding period affects tax treatment</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Long-term Holding</h4>
+                    <div class="text-sm text-green-800">
+                        <p>365+ days</p>
+                        <p>Lower tax rates (0%, 15%, 20%)</p>
+                        <p>Better for tax efficiency</p>
+                        <p>Reduced trading fees</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium text-yellow-900 mb-2">Short-term Trading</h4>
+                    <div class="text-sm text-yellow-800">
+                        <p>Less than 365 days</p>
+                        <p>Ordinary income tax rates</p>
+                        <p>Higher tax burden</p>
+                        <p>More trading fees</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Fee Management</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>Compare exchange rates</p>
+                        <p>Consider maker vs taker fees</p>
+                        <p>Volume discounts available</p>
+                        <p>Factor into strategy</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-red-50 rounded-lg">
+                <h4 class="font-medium text-red-900 mb-2">Risk Considerations</h4>
+                <ul class="text-sm text-red-800 space-y-1">
+                    <li>• Cryptocurrency investments are highly volatile and risky</li>
+                    <li>• Prices can fluctuate dramatically in short periods</li>
+                    <li>• Regulatory changes can impact value and legality</li>
+                    <li>• Exchange security and custody risks</li>
+                    <li>• Never invest more than you can afford to lose</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Crypto Profit Calculator. Check back soon!');
+function cryptoProfitCalculator() {
+    return {
+        buyPrice: '45000.00',
+        sellPrice: '50000.00',
+        quantity: '1.5',
+        buyFeePercent: '0.25',
+        sellFeePercent: '0.25',
+        holdingPeriodDays: '365',
+        
+        get results() {
+            const buyPrice = parseFloat(this.buyPrice) || 0;
+            const sellPrice = parseFloat(this.sellPrice) || 0;
+            const quantity = parseFloat(this.quantity) || 0;
+            const buyFeePercent = parseFloat(this.buyFeePercent) || 0;
+            const sellFeePercent = parseFloat(this.sellFeePercent) || 0;
+            const holdingDays = parseFloat(this.holdingPeriodDays) || 0;
+            
+            // Calculate costs and proceeds
+            const grossCost = buyPrice * quantity;
+            const buyFee = grossCost * (buyFeePercent / 100);
+            const totalCost = grossCost + buyFee;
+            
+            const grossProceeds = sellPrice * quantity;
+            const sellFee = grossProceeds * (sellFeePercent / 100);
+            const netProceeds = grossProceeds - sellFee;
+            
+            const totalFees = buyFee + sellFee;
+            const netProfit = netProceeds - totalCost;
+            
+            // Calculate returns
+            const returnPercentage = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+            const annualizedReturn = holdingDays > 0 ? (Math.pow(1 + returnPercentage / 100, 365 / holdingDays) - 1) * 100 : 0;
+            const feePercentage = totalCost > 0 ? (totalFees / totalCost) * 100 : 0;
+            
+            // Tax classification
+            const isLongTerm = holdingDays > 365;
+            const holdingPeriodText = holdingDays >= 365 
+                ? `${Math.floor(holdingDays / 365)} year(s), ${holdingDays % 365} days`
+                : `${holdingDays} days`;
+            
+            // Tax brackets (US estimates)
+            const taxBrackets = isLongTerm ? [
+                { label: 'Low Income (0%)', rate: 0, tax: 0 },
+                { label: 'Middle Income (15%)', rate: 15, tax: netProfit * 0.15 },
+                { label: 'High Income (20%)', rate: 20, tax: netProfit * 0.20 }
+            ] : [
+                { label: 'Low Bracket (12%)', rate: 12, tax: netProfit * 0.12 },
+                { label: 'Middle Bracket (22%)', rate: 22, tax: netProfit * 0.22 },
+                { label: 'High Bracket (32%)', rate: 32, tax: netProfit * 0.32 },
+                { label: 'Top Bracket (37%)', rate: 37, tax: netProfit * 0.37 }
+            ];
+            
+            return {
+                totalCost,
+                grossProceeds,
+                netProceeds,
+                buyFee,
+                sellFee,
+                totalFees,
+                netProfit,
+                returnPercentage,
+                annualizedReturn,
+                feePercentage,
+                isLongTerm,
+                holdingPeriodText,
+                taxBrackets: netProfit > 0 ? taxBrackets : []
+            };
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
 
     
     <script>

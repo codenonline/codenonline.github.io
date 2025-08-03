@@ -3,723 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>After-tax Cost of Debt - Coming Soon</title>
+    <title>After-tax Cost of Debt - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="minus-circle" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">After-tax Cost of Debt</h1>
+                    <p class="text-gray-600">Calculate after-tax cost of debt for financial analysis.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>After-tax Cost of Debt Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="minus-circle" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">After-tax Cost of Debt</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate after-tax cost of debt for financial analysis.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">After-tax Cost of Debt Calculator</h1>
+        <p class="text-gray-600">Calculate the true cost of debt after considering tax deductibility of interest payments.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="afterTaxCostDebtCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="calculator" class="h-5 w-5"></i>
+                    Debt & Tax Information
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Pre-tax Interest Rate (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="6.50"
+                        x-model="interestRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(interestRate) <= 0 }"
+                    />
+                    <p x-show="parseFloat(interestRate) <= 0" class="text-sm text-red-600">Please enter a valid interest rate</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Tax Rate (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="25.00"
+                        x-model="taxRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(taxRate) < 0 || parseFloat(taxRate) >= 100 }"
+                    />
+                    <p x-show="parseFloat(taxRate) < 0 || parseFloat(taxRate) >= 100" class="text-sm text-red-600">Tax rate must be between 0% and 99.99%</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Debt Amount (Optional - for examples)</label>
+                    <input
+                        type="number"
+                        placeholder="100000"
+                        x-model="debtAmount"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p class="text-sm text-gray-500">Used for calculating example interest payments</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Debt Type</label>
+                    <select
+                        x-model="debtType"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="business">Business Debt (Tax Deductible)</option>
+                        <option value="mortgage">Mortgage Interest (Tax Deductible)</option>
+                        <option value="investment">Investment Debt (Tax Deductible)</option>
+                        <option value="personal">Personal Debt (Not Tax Deductible)</option>
+                    </select>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">Tax Deductibility</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p x-show="debtType === 'business'">✅ Business debt interest is typically tax deductible</p>
+                        <p x-show="debtType === 'mortgage'">✅ Mortgage interest is deductible up to certain limits</p>
+                        <p x-show="debtType === 'investment'">✅ Investment debt interest may be deductible</p>
+                        <p x-show="debtType === 'personal'">❌ Personal debt interest is generally not tax deductible</p>
+                        <p class="text-xs mt-2">Consult a tax professional for specific situations</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-down" class="h-5 w-5"></i>
+                    Cost Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="text-center p-4 bg-red-50 rounded-lg">
+                            <p class="text-sm text-gray-600">Pre-tax Cost of Debt</p>
+                            <p class="text-2xl font-bold text-red-600" x-text="formatPercentage(parseFloat(interestRate))"></p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg" x-show="isDeductible">
+                            <p class="text-sm text-gray-600">After-tax Cost of Debt</p>
+                            <p class="text-2xl font-bold text-green-600" x-text="formatPercentage(results.afterTaxRate)"></p>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg" x-show="!isDeductible">
+                            <p class="text-sm text-gray-600">After-tax Cost of Debt</p>
+                            <p class="text-2xl font-bold text-yellow-600" x-text="formatPercentage(parseFloat(interestRate))"></p>
+                            <p class="text-xs text-gray-500 mt-1">Same as pre-tax (not deductible)</p>
+                        </div>
+                    </div>
+
+                    <!-- Tax Savings -->
+                    <div x-show="isDeductible" class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Tax Shield Value:</span>
+                            <span class="font-semibold text-green-600" x-text="formatPercentage(results.taxShield)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Interest Rate Reduction:</span>
+                            <span class="font-semibold text-blue-600" x-text="formatPercentage(results.rateReduction)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Effective Tax Rate:</span>
+                            <span class="font-semibold" x-text="formatPercentage(parseFloat(taxRate))"></span>
+                        </div>
+                    </div>
+
+                    <!-- Example Calculations -->
+                    <div x-show="parseFloat(debtAmount) > 0" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                            Annual Interest Example
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Debt Amount:</span>
+                                <span class="font-semibold" x-text="formatCurrency(parseFloat(debtAmount))"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Annual Interest (Pre-tax):</span>
+                                <span class="font-semibold text-red-600" x-text="formatCurrency(results.annualInterest)"></span>
+                            </div>
+                            <div x-show="isDeductible" class="flex justify-between">
+                                <span class="text-gray-600">Tax Savings:</span>
+                                <span class="font-semibold text-green-600" x-text="formatCurrency(results.taxSavings)"></span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2">
+                                <span class="text-gray-800 font-medium">Net Interest Cost:</span>
+                                <span class="font-bold" :class="isDeductible ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.netInterestCost)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formula Explanation -->
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-medium mb-2 text-blue-900">Formula</h4>
+                        <div class="text-sm text-blue-800 space-y-2">
+                            <div class="bg-white p-2 rounded font-mono text-xs">
+                                After-tax Cost = Pre-tax Rate × (1 - Tax Rate)
+                            </div>
+                            <div x-show="isDeductible">
+                                <p>Example: <span x-text="formatPercentage(parseFloat(interestRate))"></span> × (1 - <span x-text="formatPercentage(parseFloat(taxRate))"></span>) = <span x-text="formatPercentage(results.afterTaxRate)"></span></p>
+                            </div>
+                            <div x-show="!isDeductible">
+                                <p>Since this debt type is not tax deductible, the after-tax cost equals the pre-tax cost.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Table -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                            Tax Rate Comparison
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-2">Tax Rate</th>
+                                        <th class="text-right py-2">After-tax Cost</th>
+                                        <th class="text-right py-2">Savings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="rate in [15, 22, 24, 32, 35, 37]" :key="rate">
+                                        <tr class="border-b border-gray-100" :class="{ 'bg-blue-100': Math.abs(rate - parseFloat(taxRate)) < 1 }">
+                                            <td class="py-1" x-text="rate + '%'"></td>
+                                            <td class="text-right py-1" x-text="isDeductible ? formatPercentage(parseFloat(interestRate) * (1 - rate/100)) : formatPercentage(parseFloat(interestRate))"></td>
+                                            <td class="text-right py-1" x-text="isDeductible ? formatPercentage(parseFloat(interestRate) * rate/100) : '0.00%'"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding After-tax Cost of Debt
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is After-tax Cost of Debt?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>The after-tax cost of debt represents the true cost of borrowing after considering tax benefits from deductible interest payments.</p>
+                        <p>When interest is tax deductible, the government effectively subsidizes part of your borrowing cost through tax savings.</p>
+                        <p>This is crucial for business decisions, investment analysis, and comparing financing options.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">When to Use This Calculator</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Evaluating business loan costs</li>
+                        <li>• Comparing debt vs equity financing</li>
+                        <li>• Investment property analysis</li>
+                        <li>• Corporate financial planning</li>
+                        <li>• Tax planning strategies</li>
+                        <li>• WACC (Weighted Average Cost of Capital) calculations</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Tax Deductible Debt Types</h4>
+                    <ul class="text-sm text-green-800 space-y-1">
+                        <li>• Business loans and lines of credit</li>
+                        <li>• Mortgage interest (primary residence)</li>
+                        <li>• Investment property mortgages</li>
+                        <li>• Margin loans for investments</li>
+                        <li>• Equipment financing</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">Non-Deductible Debt Types</h4>
+                    <ul class="text-sm text-red-800 space-y-1">
+                        <li>• Personal credit cards</li>
+                        <li>• Personal loans</li>
+                        <li>• Auto loans (personal use)</li>
+                        <li>• Student loans (limited deduction)</li>
+                        <li>• Home equity loans (limited cases)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">⚠️ Important Considerations</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• Tax laws vary by jurisdiction and change over time</li>
+                    <li>• Deductibility may have limits or phase-outs</li>
+                    <li>• Alternative Minimum Tax (AMT) may affect deductions</li>
+                    <li>• State taxes may have different rules</li>
+                    <li>• Always consult a tax professional for specific situations</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Financial Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-        <a href="/tools/compound-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Compound Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate compound interest with customizable compounding periods and additional contributions.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/simple-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate simple interest on principal amount over time.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/loan-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Loan Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly payments, total interest, and amortization schedule for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/mortgage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Mortgage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly mortgage payments, total interest, and amortization schedule.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/emi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">EMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Equated Monthly Installments for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/savings-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Savings Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate future value of regular savings with compound interest.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/future-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Future Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate the future value of your current investments and savings.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/tax-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate federal income tax, state tax, and take-home pay based on current tax brackets.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/apr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Annual Percentage Rate for loans and credit products.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/debt-to-income-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Debt to Income Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate debt to income ratio for personal finance.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/emergency-fund.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Emergency Fund Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how much you need in your emergency fund.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/rule-of-72.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Rule of 72 Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how long it takes for money to double at a given interest rate.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of After-tax Cost of Debt. Check back soon!');
+function afterTaxCostDebtCalculator() {
+    return {
+        interestRate: '6.50',
+        taxRate: '25.00',
+        debtAmount: '100000',
+        debtType: 'business',
+        
+        get isDeductible() {
+            return this.debtType !== 'personal';
+        },
+        
+        get results() {
+            const preRate = parseFloat(this.interestRate) || 0;
+            const taxRateDecimal = (parseFloat(this.taxRate) || 0) / 100;
+            const debt = parseFloat(this.debtAmount) || 0;
+            
+            const afterTaxRate = this.isDeductible ? preRate * (1 - taxRateDecimal) : preRate;
+            const taxShield = this.isDeductible ? preRate * taxRateDecimal : 0;
+            const rateReduction = preRate - afterTaxRate;
+            
+            const annualInterest = debt * (preRate / 100);
+            const taxSavings = this.isDeductible ? annualInterest * taxRateDecimal : 0;
+            const netInterestCost = annualInterest - taxSavings;
+            
+            return {
+                afterTaxRate,
+                taxShield,
+                rateReduction,
+                annualInterest,
+                taxSavings,
+                netInterestCost
+            };
+        },
+        
+        formatPercentage(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
 
     
     <script>
