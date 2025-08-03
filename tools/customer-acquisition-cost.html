@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Acquisition Cost - Coming Soon</title>
+    <title>Customer Acquisition Cost - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
@@ -16,636 +16,611 @@
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="user-plus" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Customer Acquisition Cost</h1>
+                    <p class="text-gray-600">Calculate cost to acquire new customers.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Acquisition Cost Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="user-plus" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Customer Acquisition Cost</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate cost to acquire new customers.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Customer Acquisition Cost Calculator</h1>
+        <p class="text-gray-600">Calculate the cost to acquire new customers and analyze CAC to LTV ratios for sustainable growth.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="customerAcquisitionCostCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="user-plus" class="h-5 w-5"></i>
+                    Marketing & Sales Data
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-4">
+                    <h3 class="font-medium text-gray-900">Marketing Expenses</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Digital Advertising ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="15000.00"
+                            x-model="digitalAds"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(digitalAds) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Google Ads, Facebook, LinkedIn, etc.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Content Marketing ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="5000.00"
+                            x-model="contentMarketing"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(contentMarketing) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Blog, SEO, social media content</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Events & Trade Shows ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="8000.00"
+                            x-model="events"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(events) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Conferences, webinars, networking events</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Other Marketing ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="2000.00"
+                            x-model="otherMarketing"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(otherMarketing) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">PR, partnerships, referral programs</p>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4 space-y-4">
+                    <h3 class="font-medium text-gray-900">Sales Expenses</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Sales Team Salaries ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="25000.00"
+                            x-model="salesSalaries"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(salesSalaries) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Base salaries for sales team</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Sales Commissions ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="8000.00"
+                            x-model="salesCommissions"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(salesCommissions) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Variable compensation for sales</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Sales Tools & Software ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="3000.00"
+                            x-model="salesTools"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(salesTools) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">CRM, sales automation, lead tools</p>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4 space-y-4">
+                    <h3 class="font-medium text-gray-900">Results</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">New Customers Acquired</label>
+                        <input
+                            type="number"
+                            placeholder="150"
+                            x-model="newCustomers"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(newCustomers) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Number of new customers in the period</p>
+                        <p x-show="parseFloat(newCustomers) <= 0" class="text-sm text-red-600">Please enter a valid number of customers</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Time Period</label>
+                        <select
+                            x-model="timePeriod"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annually">Annually</option>
+                        </select>
+                        <p class="text-sm text-gray-500">Period for the above expenses and acquisitions</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About CAC</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>CAC measures how much it costs to acquire each new customer.</p>
+                        <p>Lower CAC means more efficient customer acquisition.</p>
+                        <p>CAC should be compared with Customer Lifetime Value (LTV).</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    CAC Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Customer Acquisition Cost -->
+                    <div class="text-center p-6 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Customer Acquisition Cost</p>
+                        <p class="text-4xl font-bold text-blue-600" x-text="formatCurrency(results.cac)"></p>
+                        <p class="text-sm text-gray-500 mt-2">Cost per new customer</p>
+                    </div>
+
+                    <!-- Cost Breakdown -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Marketing Costs:</span>
+                            <span class="font-semibold text-red-600" x-text="formatCurrency(results.totalMarketingCosts)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Sales Costs:</span>
+                            <span class="font-semibold text-red-600" x-text="formatCurrency(results.totalSalesCosts)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">Total Acquisition Costs:</span>
+                            <span class="font-bold text-lg text-red-600" x-text="formatCurrency(results.totalCosts)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">New Customers:</span>
+                            <span class="font-semibold text-green-600" x-text="parseFloat(newCustomers)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Cost Breakdown Chart -->
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="h-4 w-4"></i>
+                            Cost Breakdown
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Digital Advertising:</span>
+                                <div class="text-right">
+                                    <span class="font-semibold" x-text="formatCurrency(parseFloat(digitalAds))"></span>
+                                    <span class="text-xs text-gray-500 ml-2" x-text="'(' + formatPercentage(results.costBreakdown.digitalAds) + ')'"></span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Sales Team:</span>
+                                <div class="text-right">
+                                    <span class="font-semibold" x-text="formatCurrency(parseFloat(salesSalaries) + parseFloat(salesCommissions))"></span>
+                                    <span class="text-xs text-gray-500 ml-2" x-text="'(' + formatPercentage(results.costBreakdown.salesTeam) + ')'"></span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Content Marketing:</span>
+                                <div class="text-right">
+                                    <span class="font-semibold" x-text="formatCurrency(parseFloat(contentMarketing))"></span>
+                                    <span class="text-xs text-gray-500 ml-2" x-text="'(' + formatPercentage(results.costBreakdown.contentMarketing) + ')'"></span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Other Costs:</span>
+                                <div class="text-right">
+                                    <span class="font-semibold" x-text="formatCurrency(results.otherCosts)"></span>
+                                    <span class="text-xs text-gray-500 ml-2" x-text="'(' + formatPercentage(results.costBreakdown.other) + ')'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Efficiency Metrics -->
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h4 class="font-medium mb-3 text-green-900">Efficiency Metrics</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-green-700">Cost per Lead:</span>
+                                <span class="font-semibold text-green-600" x-text="formatCurrency(results.costPerLead)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-green-700">Conversion Rate:</span>
+                                <span class="font-semibold text-green-600" x-text="formatPercentage(results.conversionRate)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-green-700">Marketing ROI:</span>
+                                <span class="font-semibold text-green-600" x-text="formatPercentage(results.marketingROI)"></span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-green-700 mt-2">
+                            *Assumes 3:1 lead to customer ratio and 20% marketing ROI baseline
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- LTV to CAC Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="target" class="h-5 w-5"></i>
+                LTV to CAC Analysis
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LTV Input -->
+                <div>
+                    <h4 class="font-medium mb-4">Customer Lifetime Value (Optional)</h4>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Average Customer LTV ($)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                placeholder="1500.00"
+                                x-model="customerLTV"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <p class="text-sm text-gray-500">Total revenue expected from average customer</p>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Payback Period (Months)</label>
+                            <input
+                                type="number"
+                                placeholder="12"
+                                x-model="paybackPeriod"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <p class="text-sm text-gray-500">Expected time to recover CAC</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LTV:CAC Ratios -->
+                <div>
+                    <h4 class="font-medium mb-4">LTV:CAC Analysis</h4>
+                    <div class="space-y-3" x-show="parseFloat(customerLTV) > 0">
+                        <div class="p-4 rounded-lg" :class="results.ltvCacRatio >= 3 ? 'bg-green-50' : results.ltvCacRatio >= 2 ? 'bg-yellow-50' : 'bg-red-50'">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">LTV:CAC Ratio</span>
+                                <span class="text-2xl font-bold" :class="results.ltvCacRatio >= 3 ? 'text-green-600' : results.ltvCacRatio >= 2 ? 'text-yellow-600' : 'text-red-600'" x-text="results.ltvCacRatio.toFixed(1) + ':1'"></span>
+                            </div>
+                            <p class="text-sm mt-1" :class="results.ltvCacRatio >= 3 ? 'text-green-700' : results.ltvCacRatio >= 2 ? 'text-yellow-700' : 'text-red-700'">
+                                <span x-show="results.ltvCacRatio >= 3">✅ Excellent - Sustainable growth model</span>
+                                <span x-show="results.ltvCacRatio >= 2 && results.ltvCacRatio < 3">⚠️ Acceptable - Monitor closely</span>
+                                <span x-show="results.ltvCacRatio < 2">❌ Poor - Unsustainable acquisition costs</span>
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-blue-50 rounded">
+                                <div class="text-sm text-blue-700">Customer LTV</div>
+                                <div class="text-xl font-bold text-blue-600" x-text="formatCurrency(parseFloat(customerLTV))"></div>
+                            </div>
+                            <div class="p-3 bg-red-50 rounded">
+                                <div class="text-sm text-red-700">Customer CAC</div>
+                                <div class="text-xl font-bold text-red-600" x-text="formatCurrency(results.cac)"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-purple-50 rounded">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-purple-700">Net Customer Value:</span>
+                                <span class="font-bold text-purple-600" x-text="formatCurrency(parseFloat(customerLTV) - results.cac)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div x-show="parseFloat(customerLTV) <= 0" class="p-4 bg-gray-50 rounded">
+                        <p class="text-sm text-gray-600">Enter Customer LTV above to see LTV:CAC analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">Poor Ratio (< 2:1)</h4>
+                    <div class="text-sm text-red-800">
+                        <p>Unsustainable business model</p>
+                        <p>High acquisition costs</p>
+                        <p>Need to reduce CAC or increase LTV</p>
+                        <p>Risk of burning cash</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium text-yellow-900 mb-2">Acceptable (2:1 - 3:1)</h4>
+                    <div class="text-sm text-yellow-800">
+                        <p>Borderline sustainable</p>
+                        <p>Monitor closely</p>
+                        <p>Room for improvement</p>
+                        <p>Focus on optimization</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Excellent (> 3:1)</h4>
+                    <div class="text-sm text-green-800">
+                        <p>Sustainable growth model</p>
+                        <p>Efficient acquisition</p>
+                        <p>Good unit economics</p>
+                        <p>Scale with confidence</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding Customer Acquisition Cost
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is CAC?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>Customer Acquisition Cost (CAC) is the total cost of acquiring a new customer.</p>
+                        <p>It includes all marketing and sales expenses divided by the number of new customers acquired.</p>
+                        <p>CAC is a critical metric for understanding the efficiency of your growth strategy.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">Why CAC Matters</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Unit Economics:</strong> Determines if your business model is profitable</p>
+                        <p><strong>Growth Strategy:</strong> Helps optimize marketing spend allocation</p>
+                        <p><strong>Investor Metrics:</strong> Key indicator of business sustainability</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium mb-2">CAC Formula</h4>
+                <div class="bg-white p-3 rounded border text-sm font-mono mb-2">
+                    CAC = (Total Marketing Costs + Total Sales Costs) ÷ Number of New Customers
+                </div>
+                <div class="text-sm text-gray-600">
+                    <p><strong>Marketing Costs:</strong> Advertising, content, events, tools, and marketing team costs</p>
+                    <p><strong>Sales Costs:</strong> Sales team salaries, commissions, tools, and related expenses</p>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h4 class="font-medium text-blue-900 mb-2">Optimization Strategies</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h5 class="font-medium text-blue-800 mb-2">Reduce CAC</h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Improve targeting and segmentation</li>
+                            <li>• Optimize conversion rates</li>
+                            <li>• Focus on high-performing channels</li>
+                            <li>• Implement referral programs</li>
+                            <li>• Improve sales process efficiency</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-blue-800 mb-2">Increase LTV</h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Improve customer retention</li>
+                            <li>• Increase average order value</li>
+                            <li>• Develop upselling strategies</li>
+                            <li>• Enhance customer experience</li>
+                            <li>• Create subscription models</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">Common Mistakes</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• Not including all acquisition costs (overhead, tools, etc.)</li>
+                    <li>• Using too short a time period for measurement</li>
+                    <li>• Ignoring the relationship between CAC and LTV</li>
+                    <li>• Not segmenting CAC by channel or customer type</li>
+                    <li>• Focusing only on CAC without considering payback period</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/break-even.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Break Even Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate break-even point for business operations.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Customer Acquisition Cost. Check back soon!');
+function customerAcquisitionCostCalculator() {
+    return {
+        digitalAds: '15000.00',
+        contentMarketing: '5000.00',
+        events: '8000.00',
+        otherMarketing: '2000.00',
+        salesSalaries: '25000.00',
+        salesCommissions: '8000.00',
+        salesTools: '3000.00',
+        newCustomers: '150',
+        timePeriod: 'monthly',
+        customerLTV: '1500.00',
+        paybackPeriod: '12',
+        
+        get results() {
+            const digitalAds = parseFloat(this.digitalAds) || 0;
+            const contentMarketing = parseFloat(this.contentMarketing) || 0;
+            const events = parseFloat(this.events) || 0;
+            const otherMarketing = parseFloat(this.otherMarketing) || 0;
+            const salesSalaries = parseFloat(this.salesSalaries) || 0;
+            const salesCommissions = parseFloat(this.salesCommissions) || 0;
+            const salesTools = parseFloat(this.salesTools) || 0;
+            const newCustomers = parseFloat(this.newCustomers) || 1;
+            const ltv = parseFloat(this.customerLTV) || 0;
+            
+            const totalMarketingCosts = digitalAds + contentMarketing + events + otherMarketing;
+            const totalSalesCosts = salesSalaries + salesCommissions + salesTools;
+            const totalCosts = totalMarketingCosts + totalSalesCosts;
+            const otherCosts = events + otherMarketing + salesTools;
+            
+            const cac = totalCosts / newCustomers;
+            
+            // Cost breakdown percentages
+            const costBreakdown = {
+                digitalAds: totalCosts > 0 ? (digitalAds / totalCosts) * 100 : 0,
+                salesTeam: totalCosts > 0 ? ((salesSalaries + salesCommissions) / totalCosts) * 100 : 0,
+                contentMarketing: totalCosts > 0 ? (contentMarketing / totalCosts) * 100 : 0,
+                other: totalCosts > 0 ? (otherCosts / totalCosts) * 100 : 0
+            };
+            
+            // Efficiency metrics (estimated)
+            const estimatedLeads = newCustomers * 3; // Assume 3:1 lead to customer ratio
+            const costPerLead = estimatedLeads > 0 ? totalCosts / estimatedLeads : 0;
+            const conversionRate = estimatedLeads > 0 ? (newCustomers / estimatedLeads) * 100 : 0;
+            const marketingROI = totalMarketingCosts > 0 ? ((ltv * newCustomers - totalCosts) / totalMarketingCosts) * 100 : 0;
+            
+            // LTV:CAC ratio
+            const ltvCacRatio = cac > 0 ? ltv / cac : 0;
+            
+            return {
+                totalMarketingCosts,
+                totalSalesCosts,
+                totalCosts,
+                otherCosts,
+                cac,
+                costBreakdown,
+                costPerLead,
+                conversionRate,
+                marketingROI,
+                ltvCacRatio
+            };
+        },
+        
+        formatPercentage(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            }).format((value || 0) / 100);
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
 
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
     
     <script>
         // Initialize Lucide icons

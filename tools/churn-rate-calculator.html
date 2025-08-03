@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Churn Rate Calculator - Coming Soon</title>
+    <title>Churn Rate Calculator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
@@ -16,636 +16,616 @@
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="user-minus" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Churn Rate Calculator</h1>
+                    <p class="text-gray-600">Calculate customer churn rate for business analytics.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn Rate Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="user-minus" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Churn Rate Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate customer churn rate for business analytics.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Churn Rate Calculator</h1>
+        <p class="text-gray-600">Calculate customer churn rate, retention rate, and analyze revenue impact for business analytics.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="churnRateCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="user-minus" class="h-5 w-5"></i>
+                    Customer Data
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Time Period</label>
+                    <select
+                        x-model="timePeriod"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annually">Annually</option>
+                    </select>
+                    <p class="text-sm text-gray-500">Period for churn calculation</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Customers at Start of Period</label>
+                    <input
+                        type="number"
+                        placeholder="1000"
+                        x-model="customersAtStart"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(customersAtStart) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">Total customers at the beginning of the period</p>
+                    <p x-show="parseFloat(customersAtStart) <= 0" class="text-sm text-red-600">Please enter a valid number of customers</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Customers Lost During Period</label>
+                    <input
+                        type="number"
+                        placeholder="50"
+                        x-model="customersLost"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(customersLost) < 0 || parseFloat(customersLost) > parseFloat(customersAtStart) }"
+                    />
+                    <p class="text-sm text-gray-500">Number of customers who cancelled or stopped purchasing</p>
+                    <p x-show="parseFloat(customersLost) < 0" class="text-sm text-red-600">Cannot be negative</p>
+                    <p x-show="parseFloat(customersLost) > parseFloat(customersAtStart)" class="text-sm text-red-600">Cannot exceed starting customers</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">New Customers Acquired (Optional)</label>
+                    <input
+                        type="number"
+                        placeholder="75"
+                        x-model="newCustomers"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(newCustomers) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">New customers acquired during the period</p>
+                </div>
+
+                <div class="border-t pt-4 space-y-4">
+                    <h3 class="font-medium text-gray-900">Revenue Impact Analysis (Optional)</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Average Revenue per Customer ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="100.00"
+                            x-model="averageRevenuePerCustomer"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(averageRevenuePerCustomer) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Average revenue per customer per period</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Customer Lifetime Value ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="1200.00"
+                            x-model="customerLifetimeValue"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(customerLifetimeValue) < 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Total expected revenue from average customer</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About Churn Rate</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>Churn rate measures the percentage of customers who stop using your service.</p>
+                        <p>Lower churn rates indicate better customer satisfaction and retention.</p>
+                        <p>Industry benchmarks vary significantly across sectors and business models.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-down" class="h-5 w-5"></i>
+                    Churn Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Churn Rate -->
+                    <div class="text-center p-6 rounded-lg" :class="results.churnRate <= 5 ? 'bg-green-50' : results.churnRate <= 10 ? 'bg-yellow-50' : 'bg-red-50'">
+                        <p class="text-sm text-gray-600 mb-2">Churn Rate</p>
+                        <p class="text-4xl font-bold" :class="results.churnRate <= 5 ? 'text-green-600' : results.churnRate <= 10 ? 'text-yellow-600' : 'text-red-600'" x-text="formatPercentage(results.churnRate)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="results.churnRating"></span> churn rate
+                        </p>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Customers at Start:</span>
+                            <span class="font-semibold" x-text="parseFloat(customersAtStart).toLocaleString()"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Customers Lost:</span>
+                            <span class="font-semibold text-red-600" x-text="parseFloat(customersLost).toLocaleString()"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Retention Rate:</span>
+                            <span class="font-semibold text-green-600" x-text="formatPercentage(results.retentionRate)"></span>
+                        </div>
+                        <div class="flex justify-between items-center" x-show="parseFloat(newCustomers) > 0">
+                            <span class="text-gray-600">Net Growth Rate:</span>
+                            <span class="font-semibold" :class="results.netGrowthRate >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatPercentage(results.netGrowthRate, true)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">Customers at End:</span>
+                            <span class="font-bold text-lg" x-text="results.customersAtEnd.toLocaleString()"></span>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Impact -->
+                    <div class="p-4 bg-red-50 rounded-lg" x-show="parseFloat(averageRevenuePerCustomer) > 0">
+                        <h4 class="font-medium mb-3 text-red-900 flex items-center gap-2">
+                            <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                            Revenue Impact
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-red-700">Lost Revenue (Period):</span>
+                                <span class="font-semibold text-red-600" x-text="formatCurrency(results.lostRevenuePeriod)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm" x-show="parseFloat(customerLifetimeValue) > 0">
+                                <span class="text-red-700">Lost Lifetime Value:</span>
+                                <span class="font-semibold text-red-600" x-text="formatCurrency(results.lostLifetimeValue)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm" x-show="parseFloat(newCustomers) > 0">
+                                <span class="text-green-700">New Customer Revenue:</span>
+                                <span class="font-semibold text-green-600" x-text="formatCurrency(results.newCustomerRevenue)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm border-t pt-2" x-show="parseFloat(newCustomers) > 0">
+                                <span class="text-gray-700 font-medium">Net Revenue Impact:</span>
+                                <span class="font-bold" :class="results.netRevenueImpact >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.netRevenueImpact)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Churn Assessment -->
+                    <div class="p-4 rounded-lg" :class="results.churnRate <= 5 ? 'bg-green-50' : results.churnRate <= 10 ? 'bg-yellow-50' : 'bg-red-50'">
+                        <h4 class="font-medium mb-3" :class="results.churnRate <= 5 ? 'text-green-900' : results.churnRate <= 10 ? 'text-yellow-900' : 'text-red-900'">Churn Assessment</h4>
+                        <div class="text-sm space-y-2" :class="results.churnRate <= 5 ? 'text-green-800' : results.churnRate <= 10 ? 'text-yellow-800' : 'text-red-800'">
+                            <p><strong>Rating:</strong> <span x-text="results.churnRating"></span></p>
+                            <p><strong>Interpretation:</strong> <span x-text="results.interpretation"></span></p>
+                            <div class="mt-3">
+                                <p><strong>Recommendations:</strong></p>
+                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                    <template x-for="recommendation in results.recommendations" :key="recommendation">
+                                        <li x-text="recommendation"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Churn Projections -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="trending-down" class="h-5 w-5"></i>
+                Churn Impact Projections
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Customer Projections -->
+                <div>
+                    <h4 class="font-medium mb-4">Customer Base Projections</h4>
+                    <div class="space-y-3">
+                        <template x-for="period in [1, 3, 6, 12]" :key="period">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                <div>
+                                    <div class="font-medium" x-text="`After ${period} ${timePeriod === 'monthly' ? period === 1 ? 'month' : 'months' : timePeriod === 'quarterly' ? period === 1 ? 'quarter' : 'quarters' : period === 1 ? 'year' : 'years'}`"></div>
+                                    <div class="text-sm text-gray-600" x-text="`${formatPercentage(((Math.pow(1 - results.churnRate/100, period) - 1) * 100))} change`"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-lg" x-text="Math.round(parseFloat(customersAtStart) * Math.pow(1 - results.churnRate/100, period)).toLocaleString()"></div>
+                                    <div class="text-sm text-gray-500">customers</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Revenue Projections -->
+                <div x-show="parseFloat(averageRevenuePerCustomer) > 0">
+                    <h4 class="font-medium mb-4">Revenue Impact Projections</h4>
+                    <div class="space-y-3">
+                        <template x-for="period in [1, 3, 6, 12]" :key="period">
+                            <div class="p-3 bg-red-50 rounded">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-medium" x-text="`${period} ${timePeriod === 'monthly' ? period === 1 ? 'month' : 'months' : timePeriod === 'quarterly' ? period === 1 ? 'quarter' : 'quarters' : period === 1 ? 'year' : 'years'}`"></span>
+                                    <span class="font-bold text-red-600" x-text="formatCurrency((parseFloat(customersAtStart) - Math.round(parseFloat(customersAtStart) * Math.pow(1 - results.churnRate/100, period))) * parseFloat(averageRevenuePerCustomer))"></span>
+                                </div>
+                                <div class="text-sm text-red-700 mt-1">
+                                    Cumulative lost revenue from churn
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Industry Benchmarks -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+                Industry Benchmark Comparison
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Industry Benchmarks -->
+                <div>
+                    <h4 class="font-medium mb-4">Typical Industry Churn Rates (Monthly)</h4>
+                    <div class="space-y-3">
+                        <template x-for="industry in industryBenchmarks" :key="industry.name">
+                            <div class="flex justify-between items-center p-3 rounded" :class="isInRange(results.monthlyChurnRate, industry.min, industry.max) ? 'bg-green-50' : 'bg-gray-50'">
+                                <div>
+                                    <div class="font-medium" x-text="industry.name"></div>
+                                    <div class="text-sm text-gray-600" x-text="`${industry.min}% - ${industry.max}%`"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm" :class="isInRange(results.monthlyChurnRate, industry.min, industry.max) ? 'text-green-600 font-semibold' : 'text-gray-500'">
+                                        <span x-show="isInRange(results.monthlyChurnRate, industry.min, industry.max)">✓ In Range</span>
+                                        <span x-show="!isInRange(results.monthlyChurnRate, industry.min, industry.max)">Outside Range</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Churn Reduction Impact -->
+                <div>
+                    <h4 class="font-medium mb-4">Churn Reduction Impact</h4>
+                    <div class="space-y-3">
+                        <template x-for="reduction in [1, 2, 5, 10]" :key="reduction">
+                            <div class="p-3 bg-green-50 rounded">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-medium text-green-900" x-text="`-${reduction}% Churn Reduction`"></div>
+                                        <div class="text-sm text-green-700" x-text="`New rate: ${Math.max(0, results.churnRate - reduction).toFixed(1)}%`"></div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-green-600" x-text="Math.round(parseFloat(customersAtStart) * (reduction/100) * (results.churnRate/100)).toLocaleString()"></div>
+                                        <div class="text-sm text-green-700">customers saved</div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-green-700 mt-2" x-show="parseFloat(averageRevenuePerCustomer) > 0">
+                                    Revenue saved: <span class="font-semibold" x-text="formatCurrency(Math.round(parseFloat(customersAtStart) * (reduction/100) * (results.churnRate/100)) * parseFloat(averageRevenuePerCustomer))"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/break-even.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Break Even Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate break-even point for business operations.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding Churn Rate
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is Churn Rate?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>Churn rate is the percentage of customers who stop using your product or service during a given time period.</p>
+                        <p>It's a critical metric for subscription businesses and any company focused on customer retention.</p>
+                        <p>Lower churn rates indicate better customer satisfaction and business health.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">Why Churn Rate Matters</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Revenue Impact:</strong> High churn directly reduces recurring revenue</p>
+                        <p><strong>Growth Efficiency:</strong> Affects customer acquisition ROI</p>
+                        <p><strong>Business Health:</strong> Indicates product-market fit and satisfaction</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">Low Churn (< 5%)</h4>
+                    <div class="text-sm text-green-800">
+                        <p>Excellent customer retention</p>
+                        <p>Strong product-market fit</p>
+                        <p>Sustainable growth model</p>
+                        <p>High customer satisfaction</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium text-yellow-900 mb-2">Moderate Churn (5-10%)</h4>
+                    <div class="text-sm text-yellow-800">
+                        <p>Acceptable for many industries</p>
+                        <p>Room for improvement</p>
+                        <p>Monitor trends closely</p>
+                        <p>Focus on retention strategies</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">High Churn (> 10%)</h4>
+                    <div class="text-sm text-red-800">
+                        <p>Concerning retention issues</p>
+                        <p>May indicate product problems</p>
+                        <p>Unsustainable growth</p>
+                        <p>Immediate action required</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium mb-2">Churn Rate Formula</h4>
+                <div class="bg-white p-3 rounded border text-sm font-mono mb-2">
+                    Churn Rate = (Customers Lost ÷ Customers at Start) × 100
+                </div>
+                <div class="text-sm text-gray-600">
+                    <p><strong>Retention Rate:</strong> 100% - Churn Rate</p>
+                    <p><strong>Note:</strong> Don't include new customers acquired during the period in the denominator</p>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h4 class="font-medium text-blue-900 mb-2">Churn Reduction Strategies</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h5 class="font-medium text-blue-800 mb-2">Proactive Measures</h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Improve onboarding experience</li>
+                            <li>• Regular customer check-ins</li>
+                            <li>• Usage monitoring and alerts</li>
+                            <li>• Customer success programs</li>
+                            <li>• Product education and training</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-blue-800 mb-2">Reactive Measures</h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Exit interviews and surveys</li>
+                            <li>• Win-back campaigns</li>
+                            <li>• Retention offers and discounts</li>
+                            <li>• Product improvements based on feedback</li>
+                            <li>• Customer support optimization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Churn Rate Calculator. Check back soon!');
+function churnRateCalculator() {
+    return {
+        timePeriod: 'monthly',
+        customersAtStart: '1000',
+        customersLost: '50',
+        newCustomers: '75',
+        averageRevenuePerCustomer: '100.00',
+        customerLifetimeValue: '1200.00',
+        
+        industryBenchmarks: [
+            { name: 'SaaS (B2B)', min: 3, max: 7 },
+            { name: 'SaaS (B2C)', min: 5, max: 10 },
+            { name: 'E-commerce', min: 15, max: 25 },
+            { name: 'Subscription Media', min: 5, max: 15 },
+            { name: 'Telecom', min: 1, max: 3 },
+            { name: 'Banking', min: 10, max: 20 },
+            { name: 'Insurance', min: 5, max: 10 }
+        ],
+        
+        get results() {
+            const customersStart = parseFloat(this.customersAtStart) || 0;
+            const customersLost = parseFloat(this.customersLost) || 0;
+            const newCustomers = parseFloat(this.newCustomers) || 0;
+            const avgRevenue = parseFloat(this.averageRevenuePerCustomer) || 0;
+            const ltv = parseFloat(this.customerLifetimeValue) || 0;
+            
+            const churnRate = customersStart > 0 ? (customersLost / customersStart) * 100 : 0;
+            const retentionRate = 100 - churnRate;
+            const customersAtEnd = customersStart - customersLost + newCustomers;
+            const netGrowthRate = customersStart > 0 ? ((newCustomers - customersLost) / customersStart) * 100 : 0;
+            
+            // Convert to monthly churn rate for benchmark comparison
+            let monthlyChurnRate = churnRate;
+            if (this.timePeriod === 'quarterly') {
+                monthlyChurnRate = churnRate / 3;
+            } else if (this.timePeriod === 'annually') {
+                monthlyChurnRate = churnRate / 12;
+            }
+            
+            // Revenue impact calculations
+            const lostRevenuePeriod = customersLost * avgRevenue;
+            const lostLifetimeValue = customersLost * ltv;
+            const newCustomerRevenue = newCustomers * avgRevenue;
+            const netRevenueImpact = newCustomerRevenue - lostRevenuePeriod;
+            
+            // Churn assessment
+            let churnRating, interpretation, recommendations;
+            
+            if (churnRate <= 5) {
+                churnRating = 'Excellent';
+                interpretation = 'Outstanding customer retention with very low churn';
+                recommendations = [
+                    'Maintain current retention strategies',
+                    'Study what makes customers stay',
+                    'Use insights to improve acquisition',
+                    'Consider expanding to similar markets'
+                ];
+            } else if (churnRate <= 10) {
+                churnRating = 'Good';
+                interpretation = 'Acceptable churn rate with room for improvement';
+                recommendations = [
+                    'Identify common reasons for churn',
+                    'Improve customer onboarding',
+                    'Implement proactive customer success',
+                    'Monitor usage patterns for early warnings'
+                ];
+            } else if (churnRate <= 20) {
+                churnRating = 'Concerning';
+                interpretation = 'High churn rate requiring immediate attention';
+                recommendations = [
+                    'Conduct exit interviews with churned customers',
+                    'Review product-market fit',
+                    'Improve customer support quality',
+                    'Consider retention incentives'
+                ];
+            } else {
+                churnRating = 'Critical';
+                interpretation = 'Very high churn rate indicating serious issues';
+                recommendations = [
+                    'Pause acquisition until churn is addressed',
+                    'Comprehensive product and service review',
+                    'Emergency customer retention program',
+                    'Consider pivoting business model'
+                ];
+            }
+            
+            return {
+                churnRate,
+                retentionRate,
+                customersAtEnd,
+                netGrowthRate,
+                monthlyChurnRate,
+                lostRevenuePeriod,
+                lostLifetimeValue,
+                newCustomerRevenue,
+                netRevenueImpact,
+                churnRating,
+                interpretation,
+                recommendations
+            };
+        },
+        
+        isInRange(value, min, max) {
+            return value >= min && value <= max;
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
 
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
     
     <script>
         // Initialize Lucide icons

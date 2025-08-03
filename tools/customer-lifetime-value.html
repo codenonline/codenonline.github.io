@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Lifetime Value - Coming Soon</title>
+    <title>Customer Lifetime Value - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
@@ -16,636 +16,663 @@
 </head>
 <body class="bg-gray-50">
     
-<div class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="heart" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Customer Lifetime Value</h1>
+                    <p class="text-gray-600">Calculate lifetime value of customers.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Lifetime Value Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto p-6">
     <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="heart" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Customer Lifetime Value</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate lifetime value of customers.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Customer Lifetime Value Calculator</h1>
+        <p class="text-gray-600">Calculate customer lifetime value using different models and analyze CLV to CAC ratios for sustainable growth.</p>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+
+    <div x-data="customerLifetimeValueCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="heart" class="h-5 w-5"></i>
+                    Customer Data
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Calculation Method</label>
+                    <select
+                        x-model="calculationMethod"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="simple">Simple LTV Model</option>
+                        <option value="traditional">Traditional LTV Model</option>
+                        <option value="cohort">Cohort-based Model</option>
+                    </select>
+                    <p class="text-sm text-gray-500">Choose the calculation method that fits your business model</p>
+                </div>
+
+                <!-- Simple Model Inputs -->
+                <div x-show="calculationMethod === 'simple'" class="space-y-4">
+                    <h3 class="font-medium text-gray-900">Simple LTV Model</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Average Order Value ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="75.00"
+                            x-model="averageOrderValue"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(averageOrderValue) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Average amount spent per transaction</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Purchase Frequency (per year)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="4.5"
+                            x-model="purchaseFrequency"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(purchaseFrequency) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">How often customers make purchases per year</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Customer Lifespan (years)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="3.5"
+                            x-model="customerLifespan"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(customerLifespan) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Average time customers remain active</p>
+                    </div>
+                </div>
+
+                <!-- Traditional Model Inputs -->
+                <div x-show="calculationMethod === 'traditional'" class="space-y-4">
+                    <h3 class="font-medium text-gray-900">Traditional LTV Model</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Monthly Revenue per Customer ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="50.00"
+                            x-model="monthlyRevenue"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(monthlyRevenue) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Average monthly revenue per customer</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Gross Margin (%)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="60.0"
+                            x-model="grossMargin"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(grossMargin) <= 0 || parseFloat(grossMargin) > 100 }"
+                        />
+                        <p class="text-sm text-gray-500">Profit margin on sales</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Monthly Churn Rate (%)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="5.0"
+                            x-model="monthlyChurnRate"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(monthlyChurnRate) < 0 || parseFloat(monthlyChurnRate) > 100 }"
+                        />
+                        <p class="text-sm text-gray-500">Percentage of customers lost each month</p>
+                    </div>
+                </div>
+
+                <!-- Cohort Model Inputs -->
+                <div x-show="calculationMethod === 'cohort'" class="space-y-4">
+                    <h3 class="font-medium text-gray-900">Cohort-based Model</h3>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Initial Cohort Size</label>
+                        <input
+                            type="number"
+                            placeholder="1000"
+                            x-model="cohortSize"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            :class="{ 'border-red-300': parseFloat(cohortSize) <= 0 }"
+                        />
+                        <p class="text-sm text-gray-500">Number of customers in the cohort</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Month 1 Revenue per Customer ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="100.00"
+                            x-model="month1Revenue"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Month 1 Retention Rate (%)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="85.0"
+                            x-model="month1Retention"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Monthly Revenue Decline (%)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="10.0"
+                            x-model="revenueDecline"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <p class="text-sm text-gray-500">Monthly decrease in revenue per customer</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Monthly Retention Decline (%)</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="5.0"
+                            x-model="retentionDecline"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <p class="text-sm text-gray-500">Monthly decrease in retention rate</p>
+                    </div>
+                </div>
+
+                <!-- CAC Input -->
+                <div class="border-t pt-4 space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Customer Acquisition Cost ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="75.00"
+                        x-model="customerAcquisitionCost"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p class="text-sm text-gray-500">Cost to acquire each customer (optional)</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">About Customer LTV</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>Customer Lifetime Value predicts total revenue from a customer relationship.</p>
+                        <p>Higher LTV indicates more valuable customers and sustainable business models.</p>
+                        <p>LTV should be at least 3x higher than CAC for healthy unit economics.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    LTV Analysis
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Customer Lifetime Value -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Customer Lifetime Value</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatCurrency(results.ltv)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="calculationMethod.charAt(0).toUpperCase() + calculationMethod.slice(1)"></span> model
+                        </p>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center" x-show="calculationMethod === 'simple'">
+                            <span class="text-gray-600">Annual Customer Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.annualValue)"></span>
+                        </div>
+                        <div class="flex justify-between items-center" x-show="calculationMethod === 'traditional'">
+                            <span class="text-gray-600">Monthly Customer Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.monthlyValue)"></span>
+                        </div>
+                        <div class="flex justify-between items-center" x-show="calculationMethod === 'traditional'">
+                            <span class="text-gray-600">Average Lifespan:</span>
+                            <span class="font-semibold" x-text="results.averageLifespan.toFixed(1) + ' months'"></span>
+                        </div>
+                        <div class="flex justify-between items-center" x-show="calculationMethod === 'cohort'">
+                            <span class="text-gray-600">Total Cohort Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.totalCohortValue)"></span>
+                        </div>
+                        <div class="flex justify-between items-center" x-show="parseFloat(customerAcquisitionCost) > 0">
+                            <span class="text-gray-600">LTV:CAC Ratio:</span>
+                            <span class="font-semibold" :class="results.ltvCacRatio >= 3 ? 'text-green-600' : results.ltvCacRatio >= 2 ? 'text-yellow-600' : 'text-red-600'" x-text="results.ltvCacRatio.toFixed(1) + ':1'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Model-specific Details -->
+                    <div class="p-4 bg-gray-50 rounded-lg" x-show="calculationMethod === 'simple'">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="calculator" class="h-4 w-4"></i>
+                            Simple Model Breakdown
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Average Order Value:</span>
+                                <span x-text="formatCurrency(parseFloat(averageOrderValue))"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Purchase Frequency:</span>
+                                <span x-text="parseFloat(purchaseFrequency).toFixed(1) + ' times/year'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Customer Lifespan:</span>
+                                <span x-text="parseFloat(customerLifespan).toFixed(1) + ' years'"></span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 font-medium">
+                                <span>Total Lifetime Value:</span>
+                                <span x-text="formatCurrency(results.ltv)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-lg" x-show="calculationMethod === 'traditional'">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="calculator" class="h-4 w-4"></i>
+                            Traditional Model Breakdown
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Monthly Revenue:</span>
+                                <span x-text="formatCurrency(parseFloat(monthlyRevenue))"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Gross Margin:</span>
+                                <span x-text="parseFloat(grossMargin).toFixed(1) + '%'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Monthly Churn:</span>
+                                <span x-text="parseFloat(monthlyChurnRate).toFixed(1) + '%'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Monthly Profit:</span>
+                                <span x-text="formatCurrency(results.monthlyValue)"></span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 font-medium">
+                                <span>Total Lifetime Value:</span>
+                                <span x-text="formatCurrency(results.ltv)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profitability Analysis -->
+                    <div class="p-4 rounded-lg" :class="results.netValue >= 0 ? 'bg-green-50' : 'bg-red-50'" x-show="parseFloat(customerAcquisitionCost) > 0">
+                        <h4 class="font-medium mb-3" :class="results.netValue >= 0 ? 'text-green-900' : 'text-red-900'">Profitability Analysis</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span :class="results.netValue >= 0 ? 'text-green-700' : 'text-red-700'">Customer LTV:</span>
+                                <span class="font-semibold" x-text="formatCurrency(results.ltv)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span :class="results.netValue >= 0 ? 'text-green-700' : 'text-red-700'">Customer CAC:</span>
+                                <span class="font-semibold" x-text="formatCurrency(parseFloat(customerAcquisitionCost))"></span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 font-medium">
+                                <span :class="results.netValue >= 0 ? 'text-green-700' : 'text-red-700'">Net Customer Value:</span>
+                                <span class="font-bold" :class="results.netValue >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.netValue)"></span>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-xs" :class="results.netValue >= 0 ? 'text-green-700' : 'text-red-700'">
+                            <p x-show="results.ltvCacRatio >= 3">✅ Excellent unit economics - sustainable growth model</p>
+                            <p x-show="results.ltvCacRatio >= 2 && results.ltvCacRatio < 3">⚠️ Acceptable but monitor closely</p>
+                            <p x-show="results.ltvCacRatio < 2">❌ Poor unit economics - need to improve LTV or reduce CAC</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+    </div>
+
+    <!-- Cohort Analysis Table -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200" x-show="calculationMethod === 'cohort'">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="table" class="h-5 w-5"></i>
+                Cohort Analysis Projection
+            </h2>
         </div>
-      </div>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-2">Month</th>
+                            <th class="text-right py-2">Customers</th>
+                            <th class="text-right py-2">Retention %</th>
+                            <th class="text-right py-2">Revenue/Customer</th>
+                            <th class="text-right py-2">Total Revenue</th>
+                            <th class="text-right py-2">Cumulative LTV</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="month in results.cohortProjection" :key="month.month">
+                            <tr class="border-b">
+                                <td class="py-2" x-text="month.month"></td>
+                                <td class="text-right py-2" x-text="Math.round(month.customers)"></td>
+                                <td class="text-right py-2" x-text="month.retention.toFixed(1) + '%'"></td>
+                                <td class="text-right py-2" x-text="formatCurrency(month.revenuePerCustomer)"></td>
+                                <td class="text-right py-2" x-text="formatCurrency(month.totalRevenue)"></td>
+                                <td class="text-right py-2 font-semibold" x-text="formatCurrency(month.cumulativeLTV)"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
-          </svg>
-          Request Priority
-        </button>
-      </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Understanding Customer Lifetime Value
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">What is Customer LTV?</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p>Customer Lifetime Value (LTV or CLV) is the total revenue a business can expect from a single customer account.</p>
+                        <p>It helps businesses understand how much they can spend to acquire customers while remaining profitable.</p>
+                        <p>LTV is crucial for making informed decisions about marketing spend, customer service, and product development.</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">LTV Calculation Models</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Simple:</strong> AOV × Purchase Frequency × Customer Lifespan</p>
+                        <p><strong>Traditional:</strong> (Monthly Revenue × Gross Margin) ÷ Monthly Churn Rate</p>
+                        <p><strong>Cohort-based:</strong> Tracks actual customer behavior over time</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">High LTV Strategies</h4>
+                    <div class="text-sm text-green-800">
+                        <p>• Improve customer retention</p>
+                        <p>• Increase purchase frequency</p>
+                        <p>• Raise average order value</p>
+                        <p>• Develop loyalty programs</p>
+                        <p>• Enhance customer experience</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">LTV:CAC Ratios</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>• 3:1 or higher = Excellent</p>
+                        <p>• 2:1 to 3:1 = Acceptable</p>
+                        <p>• Below 2:1 = Problematic</p>
+                        <p>• 1:1 = Unsustainable</p>
+                        <p>• Monitor payback period</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h4 class="font-medium text-yellow-900 mb-2">Key Considerations</h4>
+                    <div class="text-sm text-yellow-800">
+                        <p>• Segment customers by value</p>
+                        <p>• Account for churn rates</p>
+                        <p>• Consider discount rates</p>
+                        <p>• Update calculations regularly</p>
+                        <p>• Use cohort analysis for accuracy</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium mb-2">Model Comparison</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Model</th>
+                                <th class="text-left py-2">Best For</th>
+                                <th class="text-left py-2">Pros</th>
+                                <th class="text-left py-2">Cons</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600">
+                            <tr class="border-b">
+                                <td class="py-2 font-medium">Simple</td>
+                                <td class="py-2">E-commerce, retail</td>
+                                <td class="py-2">Easy to calculate</td>
+                                <td class="py-2">Less accurate</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-medium">Traditional</td>
+                                <td class="py-2">SaaS, subscriptions</td>
+                                <td class="py-2">Accounts for churn</td>
+                                <td class="py-2">Assumes constant behavior</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 font-medium">Cohort-based</td>
+                                <td class="py-2">All business types</td>
+                                <td class="py-2">Most accurate</td>
+                                <td class="py-2">Requires more data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/break-even.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Break Even Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate break-even point for business operations.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
 </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Customer Lifetime Value. Check back soon!');
+function customerLifetimeValueCalculator() {
+    return {
+        calculationMethod: 'simple',
+        // Simple model
+        averageOrderValue: '75.00',
+        purchaseFrequency: '4.5',
+        customerLifespan: '3.5',
+        // Traditional model
+        monthlyRevenue: '50.00',
+        grossMargin: '60.0',
+        monthlyChurnRate: '5.0',
+        // Cohort model
+        cohortSize: '1000',
+        month1Revenue: '100.00',
+        month1Retention: '85.0',
+        revenueDecline: '10.0',
+        retentionDecline: '5.0',
+        // Common
+        customerAcquisitionCost: '75.00',
+        
+        get results() {
+            let ltv = 0;
+            let annualValue = 0;
+            let monthlyValue = 0;
+            let averageLifespan = 0;
+            let totalCohortValue = 0;
+            let cohortProjection = [];
+            
+            if (this.calculationMethod === 'simple') {
+                const aov = parseFloat(this.averageOrderValue) || 0;
+                const frequency = parseFloat(this.purchaseFrequency) || 0;
+                const lifespan = parseFloat(this.customerLifespan) || 0;
+                
+                annualValue = aov * frequency;
+                ltv = annualValue * lifespan;
+            } 
+            else if (this.calculationMethod === 'traditional') {
+                const monthlyRev = parseFloat(this.monthlyRevenue) || 0;
+                const margin = parseFloat(this.grossMargin) || 0;
+                const churnRate = parseFloat(this.monthlyChurnRate) || 1;
+                
+                monthlyValue = monthlyRev * (margin / 100);
+                averageLifespan = churnRate > 0 ? 1 / (churnRate / 100) : 0;
+                ltv = monthlyValue * averageLifespan;
+            }
+            else if (this.calculationMethod === 'cohort') {
+                const cohortSize = parseFloat(this.cohortSize) || 0;
+                const initialRevenue = parseFloat(this.month1Revenue) || 0;
+                const initialRetention = parseFloat(this.month1Retention) || 0;
+                const revDecline = parseFloat(this.revenueDecline) || 0;
+                const retDecline = parseFloat(this.retentionDecline) || 0;
+                
+                let customers = cohortSize;
+                let retention = 100; // Start at 100% for month 0
+                let revenuePerCustomer = initialRevenue;
+                let cumulativeRevenue = 0;
+                
+                // Project 24 months
+                for (let month = 1; month <= 24; month++) {
+                    if (month === 1) {
+                        retention = initialRetention;
+                        revenuePerCustomer = initialRevenue;
+                    } else {
+                        retention = Math.max(0, retention - retDecline);
+                        revenuePerCustomer = Math.max(0, revenuePerCustomer * (1 - revDecline / 100));
+                    }
+                    
+                    customers = customers * (retention / 100);
+                    const totalRevenue = customers * revenuePerCustomer;
+                    cumulativeRevenue += totalRevenue;
+                    
+                    cohortProjection.push({
+                        month,
+                        customers,
+                        retention,
+                        revenuePerCustomer,
+                        totalRevenue,
+                        cumulativeLTV: cumulativeRevenue / cohortSize
+                    });
+                    
+                    if (customers < 1) break; // Stop when virtually no customers remain
+                }
+                
+                totalCohortValue = cumulativeRevenue;
+                ltv = cohortSize > 0 ? cumulativeRevenue / cohortSize : 0;
+            }
+            
+            const cac = parseFloat(this.customerAcquisitionCost) || 0;
+            const ltvCacRatio = cac > 0 ? ltv / cac : 0;
+            const netValue = ltv - cac;
+            
+            return {
+                ltv,
+                annualValue,
+                monthlyValue,
+                averageLifespan,
+                totalCohortValue,
+                cohortProjection,
+                ltvCacRatio,
+                netValue
+            };
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
 }
 </script>
 
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.234597
+        </div>
+    </div>
+    
     
     <script>
         // Initialize Lucide icons
