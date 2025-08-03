@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAGR Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="activity" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">CAGR Calculator</h1>
+                    <p class="text-gray-600">Calculate Compound Annual Growth Rate for investments.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAGR Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">CAGR Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate the Compound Annual Growth Rate (CAGR) of your investments.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Beginning Value ($)</label>
+          <input type="number" id="beginningValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
+          <p class="text-xs text-gray-500 mt-1">Initial investment amount</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Ending Value ($)</label>
+          <input type="number" id="endingValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="15000" step="100">
+          <p class="text-xs text-gray-500 mt-1">Final investment value</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+          <div class="flex space-x-2">
+            <input type="number" id="timePeriod" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5" step="0.1">
+            <select id="timeUnit" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="years" selected>Years</option>
+              <option value="months">Months</option>
+              <option value="days">Days</option>
+            </select>
+          </div>
+        </div>
+        
+        <button onclick="calculateCAGR()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+          Calculate CAGR
+        </button>
+        
+        <div class="bg-blue-50 rounded-lg p-4">
+          <h4 class="font-semibold text-blue-800 mb-2">CAGR Formula</h4>
+          <p class="text-blue-700 text-sm">CAGR = (Ending Value ÷ Beginning Value)^(1/n) - 1</p>
+          <p class="text-blue-600 text-xs mt-1">Where n = number of years</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">CAGR Results</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">CAGR:</span>
+              <span id="cagrResult" class="font-bold text-xl text-blue-600">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Return:</span>
+              <span id="totalReturn" class="font-semibold text-green-600">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Gain:</span>
+              <span id="totalGain" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Investment Multiple:</span>
+              <span id="investmentMultiple" class="font-semibold">0x</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Performance Analysis</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Beginning Value:</span>
+              <span id="displayBeginning" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Ending Value:</span>
+              <span id="displayEnding" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Time Period:</span>
+              <span id="displayTime" class="font-semibold">0 years</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Doubling Time:</span>
+              <span id="doublingTime" class="font-semibold">0 years</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="performanceAssessment" class="rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Performance Assessment</h4>
+          <p id="assessmentText" class="text-sm"></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-gray-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Year-by-Year Growth</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left py-2">Year</th>
+              <th class="text-right py-2">Value</th>
+              <th class="text-right py-2">Annual Growth</th>
+              <th class="text-right py-2">Cumulative Return</th>
+            </tr>
+          </thead>
+          <tbody id="growthTable">
+            <!-- Growth projection will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">CAGR Benchmarks</h3>
+      <div class="grid md:grid-cols-3 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Stock Market:</h4>
+          <ul class="space-y-1">
+            <li>• S&P 500: ~10% CAGR</li>
+            <li>• NASDAQ: ~11% CAGR</li>
+            <li>• Dow Jones: ~9% CAGR</li>
+            <li>• International: ~7-8% CAGR</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Asset Classes:</h4>
+          <ul class="space-y-1">
+            <li>• Real Estate: ~6-8% CAGR</li>
+            <li>• Bonds: ~4-6% CAGR</li>
+            <li>• Gold: ~3-5% CAGR</li>
+            <li>• Commodities: ~2-4% CAGR</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Performance Levels:</h4>
+          <ul class="space-y-1">
+            <li>• Excellent: >15% CAGR</li>
+            <li>• Good: 10-15% CAGR</li>
+            <li>• Average: 6-10% CAGR</li>
+            <li>• Below Average: <6% CAGR</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function calculateCAGR() {
+  const beginningValue = parseFloat(document.getElementById('beginningValue').value) || 0;
+  const endingValue = parseFloat(document.getElementById('endingValue').value) || 0;
+  const timePeriod = parseFloat(document.getElementById('timePeriod').value) || 0;
+  const timeUnit = document.getElementById('timeUnit').value;
+  
+  if (beginningValue <= 0 || endingValue <= 0 || timePeriod <= 0) {
+    alert('Please enter valid positive values for all fields.');
+    return;
+  }
+  
+  // Convert time period to years
+  let timeInYears = timePeriod;
+  if (timeUnit === 'months') {
+    timeInYears = timePeriod / 12;
+  } else if (timeUnit === 'days') {
+    timeInYears = timePeriod / 365;
+  }
+  
+  // Calculate CAGR
+  const cagr = (Math.pow(endingValue / beginningValue, 1 / timeInYears) - 1) * 100;
+  const totalReturn = ((endingValue - beginningValue) / beginningValue) * 100;
+  const totalGain = endingValue - beginningValue;
+  const investmentMultiple = endingValue / beginningValue;
+  
+  // Calculate doubling time
+  const doublingTime = Math.log(2) / Math.log(1 + (cagr / 100));
+  
+  // Display results
+  document.getElementById('cagrResult').textContent = `${cagr.toFixed(2)}%`;
+  document.getElementById('totalReturn').textContent = `${totalReturn.toFixed(2)}%`;
+  document.getElementById('totalGain').textContent = `$${totalGain.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('investmentMultiple').textContent = `${investmentMultiple.toFixed(2)}x`;
+  document.getElementById('displayBeginning').textContent = `$${beginningValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('displayEnding').textContent = `$${endingValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('displayTime').textContent = `${timeInYears.toFixed(1)} years`;
+  document.getElementById('doublingTime').textContent = `${doublingTime.toFixed(1)} years`;
+  
+  // Update performance assessment
+  updatePerformanceAssessment(cagr, totalReturn, timeInYears);
+  
+  // Generate growth table
+  generateGrowthTable(beginningValue, cagr / 100, timeInYears);
+}
+
+function updatePerformanceAssessment(cagr, totalReturn, years) {
+  const assessmentDiv = document.getElementById('performanceAssessment');
+  const assessmentText = document.getElementById('assessmentText');
+  
+  let bgClass, textClass, assessment;
+  
+  if (cagr >= 15) {
+    bgClass = 'bg-green-50';
+    textClass = 'text-green-800';
+    assessment = 'Excellent performance! This CAGR significantly outperforms most market benchmarks and indicates exceptional investment returns.';
+  } else if (cagr >= 10) {
+    bgClass = 'bg-green-50';
+    textClass = 'text-green-800';
+    assessment = 'Good performance! This CAGR matches or exceeds typical stock market returns and shows solid investment growth.';
+  } else if (cagr >= 6) {
+    bgClass = 'bg-yellow-50';
+    textClass = 'text-yellow-800';
+    assessment = 'Average performance. This CAGR is reasonable but may not keep pace with inflation and market growth over time.';
+  } else if (cagr >= 0) {
+    bgClass = 'bg-orange-50';
+    textClass = 'text-orange-800';
+    assessment = 'Below average performance. This CAGR is low and may not provide adequate long-term wealth building.';
+  } else {
+    bgClass = 'bg-red-50';
+    textClass = 'text-red-800';
+    assessment = 'Negative performance. The investment has lost value over time. Consider reviewing your investment strategy.';
+  }
+  
+  // Add time context
+  if (years < 3) {
+    assessment += ' Note: Short time periods can show volatile results that may not reflect long-term performance.';
+  } else if (years >= 10) {
+    assessment += ' The long time period provides a reliable measure of consistent performance.';
+  }
+  
+  assessmentDiv.className = `rounded-lg p-4 ${bgClass}`;
+  assessmentText.className = `text-sm ${textClass}`;
+  assessmentText.textContent = assessment;
+}
+
+function generateGrowthTable(initialValue, annualRate, totalYears) {
+  const growthTable = document.getElementById('growthTable');
+  growthTable.innerHTML = '';
+  
+  let currentValue = initialValue;
+  const yearsToShow = Math.min(Math.ceil(totalYears), 10);
+  
+  for (let year = 1; year <= yearsToShow; year++) {
+    const yearFraction = year <= totalYears ? 1 : (totalYears - (year - 1));
+    const newValue = initialValue * Math.pow(1 + annualRate, year <= totalYears ? year : totalYears);
+    const annualGrowth = newValue - currentValue;
+    const cumulativeReturn = ((newValue - initialValue) / initialValue) * 100;
+    
+    const row = growthTable.insertRow();
+    row.innerHTML = `
+      <td class="py-2">${year <= totalYears ? year : totalYears.toFixed(1)}</td>
+      <td class="text-right py-2">$${newValue.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+      <td class="text-right py-2 text-green-600">+$${annualGrowth.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+      <td class="text-right py-2 text-blue-600">${cumulativeReturn.toFixed(1)}%</td>
+    `;
+    
+    currentValue = newValue;
+    
+    if (year >= totalYears) break;
+  }
+}
+
+// Auto-calculate on input change
+document.addEventListener('DOMContentLoaded', function() {
+  const inputs = ['beginningValue', 'endingValue', 'timePeriod', 'timeUnit'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', calculateCAGR);
+    document.getElementById(id).addEventListener('change', calculateCAGR);
+  });
+});
+</script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Value Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="arrow-down-left" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Present Value Calculator</h1>
+                    <p class="text-gray-600">Calculate present value of future cash flows and investments.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Value Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Present Value Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate the present value of future cash flows to make informed investment decisions.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Future Value ($)</label>
+          <input type="number" id="futureValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
+          <p class="text-xs text-gray-500 mt-1">The amount you expect to receive in the future</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Discount Rate (%)</label>
+          <input type="number" id="discountRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8" step="0.1">
+          <p class="text-xs text-gray-500 mt-1">Required rate of return or cost of capital</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+          <div class="flex space-x-2">
+            <input type="number" id="timePeriod" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5" step="0.1">
+            <select id="timeUnit" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="years" selected>Years</option>
+              <option value="months">Months</option>
+              <option value="quarters">Quarters</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Compounding Frequency</label>
+          <select id="compoundingFreq" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="1">Annually</option>
+            <option value="2">Semi-annually</option>
+            <option value="4">Quarterly</option>
+            <option value="12">Monthly</option>
+            <option value="365">Daily</option>
+          </select>
+        </div>
+        
+        <button onclick="calculatePresentValue()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+          Calculate Present Value
+        </button>
+        
+        <div class="bg-blue-50 rounded-lg p-4">
+          <h4 class="font-semibold text-blue-800 mb-2">Present Value Formula</h4>
+          <p class="text-blue-700 text-sm">PV = FV ÷ (1 + r/n)^(n×t)</p>
+          <p class="text-blue-600 text-xs mt-1">Where PV = Present Value, FV = Future Value, r = discount rate, n = compounding frequency, t = time</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Present Value Results</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Present Value:</span>
+              <span id="presentValueResult" class="font-bold text-xl text-blue-600">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Future Value:</span>
+              <span id="futureValueDisplay" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Discount Amount:</span>
+              <span id="discountAmount" class="font-semibold text-red-600">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Discount Factor:</span>
+              <span id="discountFactor" class="font-semibold">0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Analysis</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Effective Annual Rate:</span>
+              <span id="effectiveRate" class="font-semibold">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Time to Maturity:</span>
+              <span id="timeToMaturity" class="font-semibold">0 years</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Value per $1:</span>
+              <span id="valuePerDollar" class="font-semibold">$0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="investmentDecision" class="rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Investment Decision</h4>
+          <p id="decisionText" class="text-sm"></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Multiple Cash Flows Section -->
+    <div class="mt-8 bg-gray-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Multiple Cash Flows</h3>
+      <p class="text-gray-600 mb-4">Calculate present value of multiple future cash flows</p>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <div class="space-y-3">
+            <div class="grid grid-cols-3 gap-2 text-sm font-medium text-gray-700">
+              <span>Year</span>
+              <span>Cash Flow ($)</span>
+              <span>Present Value</span>
+            </div>
+            <div id="cashFlowInputs" class="space-y-2">
+              <!-- Cash flow inputs will be generated here -->
+            </div>
+            <button onclick="addCashFlow()" class="text-blue-600 hover:text-blue-800 text-sm">+ Add Cash Flow</button>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 border">
+          <h4 class="font-semibold text-gray-800 mb-3">Multiple Cash Flows Summary</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Present Value:</span>
+              <span id="totalPV" class="font-bold text-lg text-blue-600">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Future Value:</span>
+              <span id="totalFV" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Number of Cash Flows:</span>
+              <span id="cashFlowCount" class="font-semibold">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">Present Value Applications</h3>
+      <div class="grid md:grid-cols-2 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Investment Decisions:</h4>
+          <ul class="space-y-1">
+            <li>• Compare investment opportunities</li>
+            <li>• Evaluate bond prices</li>
+            <li>• Assess loan terms</li>
+            <li>• Value annuities and pensions</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Business Applications:</h4>
+          <ul class="space-y-1">
+            <li>• Capital budgeting decisions</li>
+            <li>• Project evaluation</li>
+            <li>• Asset valuation</li>
+            <li>• Financial planning</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let cashFlowCounter = 0;
+
+function calculatePresentValue() {
+  const futureValue = parseFloat(document.getElementById('futureValue').value) || 0;
+  const discountRate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const timePeriod = parseFloat(document.getElementById('timePeriod').value) || 0;
+  const timeUnit = document.getElementById('timeUnit').value;
+  const compoundingFreq = parseInt(document.getElementById('compoundingFreq').value) || 1;
+  
+  if (futureValue <= 0 || discountRate < 0 || timePeriod <= 0) {
+    alert('Please enter valid positive values for future value, discount rate, and time period.');
+    return;
+  }
+  
+  // Convert time period to years
+  let timeInYears = timePeriod;
+  if (timeUnit === 'months') {
+    timeInYears = timePeriod / 12;
+  } else if (timeUnit === 'quarters') {
+    timeInYears = timePeriod / 4;
+  }
+  
+  const rate = discountRate / 100;
+  const periodicRate = rate / compoundingFreq;
+  const totalPeriods = compoundingFreq * timeInYears;
+  
+  // Calculate present value
+  const presentValue = futureValue / Math.pow(1 + periodicRate, totalPeriods);
+  const discountAmount = futureValue - presentValue;
+  const discountFactor = presentValue / futureValue;
+  
+  // Calculate effective annual rate
+  const effectiveRate = Math.pow(1 + periodicRate, compoundingFreq) - 1;
+  
+  // Display results
+  document.getElementById('presentValueResult').textContent = `$${presentValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('futureValueDisplay').textContent = `$${futureValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('discountAmount').textContent = `$${discountAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('discountFactor').textContent = discountFactor.toFixed(4);
+  document.getElementById('effectiveRate').textContent = `${(effectiveRate * 100).toFixed(2)}%`;
+  document.getElementById('timeToMaturity').textContent = `${timeInYears.toFixed(1)} years`;
+  document.getElementById('valuePerDollar').textContent = `$${discountFactor.toFixed(4)}`;
+  
+  // Update investment decision
+  updateInvestmentDecision(discountRate, effectiveRate * 100, presentValue, futureValue);
+  
+  // Calculate multiple cash flows if any exist
+  calculateMultipleCashFlows();
+}
+
+function updateInvestmentDecision(nominalRate, effectiveRate, pv, fv) {
+  const decisionDiv = document.getElementById('investmentDecision');
+  const decisionText = document.getElementById('decisionText');
+  
+  let bgClass, textClass, decision;
+  
+  if (nominalRate > 10) {
+    bgClass = 'bg-red-50';
+    textClass = 'text-red-800';
+    decision = `High discount rate of ${nominalRate}% significantly reduces present value. Consider if this rate accurately reflects the investment risk.`;
+  } else if (nominalRate > 6) {
+    bgClass = 'bg-yellow-50';
+    textClass = 'text-yellow-800';
+    decision = `Moderate discount rate of ${nominalRate}%. The present value is ${((pv/fv)*100).toFixed(1)}% of the future value.`;
+  } else {
+    bgClass = 'bg-green-50';
+    textClass = 'text-green-800';
+    decision = `Low discount rate of ${nominalRate}% preserves more present value. Good for low-risk investments.`;
+  }
+  
+  decisionDiv.className = `rounded-lg p-4 ${bgClass}`;
+  decisionText.className = `text-sm ${textClass}`;
+  decisionText.textContent = decision;
+}
+
+function addCashFlow() {
+  cashFlowCounter++;
+  const cashFlowInputs = document.getElementById('cashFlowInputs');
+  
+  const cashFlowRow = document.createElement('div');
+  cashFlowRow.className = 'grid grid-cols-3 gap-2';
+  cashFlowRow.id = `cashFlow${cashFlowCounter}`;
+  cashFlowRow.innerHTML = `
+    <input type="number" class="px-2 py-1 border border-gray-300 rounded text-sm" value="${cashFlowCounter}" min="1" onchange="calculateMultipleCashFlows()">
+    <input type="number" class="px-2 py-1 border border-gray-300 rounded text-sm" placeholder="1000" step="0.01" onchange="calculateMultipleCashFlows()">
+    <span class="px-2 py-1 text-sm text-gray-600 cashflow-pv">$0</span>
+  `;
+  
+  cashFlowInputs.appendChild(cashFlowRow);
+  calculateMultipleCashFlows();
+}
+
+function calculateMultipleCashFlows() {
+  const discountRate = parseFloat(document.getElementById('discountRate').value) || 0;
+  const compoundingFreq = parseInt(document.getElementById('compoundingFreq').value) || 1;
+  
+  if (discountRate <= 0) return;
+  
+  const rate = discountRate / 100;
+  const periodicRate = rate / compoundingFreq;
+  
+  let totalPV = 0;
+  let totalFV = 0;
+  let count = 0;
+  
+  const cashFlowRows = document.querySelectorAll('[id^="cashFlow"]');
+  cashFlowRows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const year = parseFloat(inputs[0].value) || 0;
+    const cashFlow = parseFloat(inputs[1].value) || 0;
+    
+    if (year > 0 && cashFlow > 0) {
+      const totalPeriods = compoundingFreq * year;
+      const pv = cashFlow / Math.pow(1 + periodicRate, totalPeriods);
+      
+      const pvSpan = row.querySelector('.cashflow-pv');
+      pvSpan.textContent = `$${pv.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      
+      totalPV += pv;
+      totalFV += cashFlow;
+      count++;
+    }
+  });
+  
+  document.getElementById('totalPV').textContent = `$${totalPV.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('totalFV').textContent = `$${totalFV.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('cashFlowCount').textContent = count;
+}
+
+// Initialize with one cash flow
+document.addEventListener('DOMContentLoaded', function() {
+  addCashFlow();
+  
+  // Auto-calculate on input change
+  const inputs = ['futureValue', 'discountRate', 'timePeriod', 'timeUnit', 'compoundingFreq'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', calculatePresentValue);
+    document.getElementById(id).addEventListener('change', calculatePresentValue);
+  });
+});
+</script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

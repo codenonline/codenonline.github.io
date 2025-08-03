@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Break Even Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="crosshair" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Break Even Calculator</h1>
+                    <p class="text-gray-600">Calculate break-even point for business operations.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="breakEvenCalculator()" class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Break Even Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate the break-even point where total revenue equals total costs.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Fixed Costs ($)</label>
+          <input type="number" x-model.number="fixedCosts" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
+          <p class="text-xs text-gray-500 mt-1">Rent, salaries, insurance, etc.</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Variable Cost per Unit ($)</label>
+          <input type="number" x-model.number="variableCost" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="25" step="0.01">
+          <p class="text-xs text-gray-500 mt-1">Materials, labor, shipping per unit</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Selling Price per Unit ($)</label>
+          <input type="number" x-model.number="sellingPrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="50" step="0.01">
+          <p class="text-xs text-gray-500 mt-1">Price you charge customers</p>
+        </div>
+        
+        <div class="bg-blue-50 rounded-lg p-4">
+          <h4 class="font-semibold text-blue-800 mb-2">Break Even Formula</h4>
+          <p class="text-blue-700 text-sm">Break Even Point = Fixed Costs ÷ (Selling Price - Variable Cost)</p>
+          <p class="text-blue-600 text-xs mt-1">The contribution margin per unit covers fixed costs</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Break Even Analysis</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Break Even Units:</span>
+              <span class="font-bold text-xl text-blue-600" x-text="breakEvenUnits">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Break Even Revenue:</span>
+              <span class="font-semibold" x-text="formatCurrency(breakEvenRevenue)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Contribution Margin:</span>
+              <span class="font-semibold text-green-600" x-text="formatCurrency(contributionMargin)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Contribution Margin %:</span>
+              <span class="font-semibold" x-text="contributionMarginPercent.toFixed(1) + '%'">0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Scenario Analysis</h3>
+          <div class="space-y-4">
+            <div class="grid grid-cols-3 gap-2 text-sm font-medium text-gray-700">
+              <span>Units Sold</span>
+              <span>Total Revenue</span>
+              <span>Profit/Loss</span>
+            </div>
+            <div class="space-y-2">
+              <template x-for="scenario in scenarios" :key="scenario.units">
+                <div class="grid grid-cols-3 gap-2 text-sm">
+                  <span x-text="scenario.units.toLocaleString()"></span>
+                  <span x-text="formatCurrency(scenario.revenue)"></span>
+                  <span :class="scenario.profit >= 0 ? 'text-green-600' : 'text-red-600'" class="font-semibold" x-text="(scenario.profit >= 0 ? '+' : '') + formatCurrency(Math.abs(scenario.profit))"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-yellow-50 rounded-lg p-4">
+          <h4 class="font-semibold text-yellow-800 mb-2">Business Insights</h4>
+          <div class="text-yellow-700 text-sm space-y-1">
+            <template x-for="insight in businessInsights" :key="insight">
+              <div x-text="insight"></div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">Understanding Break Even Analysis</h3>
+      <div class="grid md:grid-cols-2 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Key Concepts:</h4>
+          <ul class="space-y-1">
+            <li>• Fixed costs remain constant regardless of production</li>
+            <li>• Variable costs change with production volume</li>
+            <li>• Contribution margin = Revenue - Variable costs</li>
+            <li>• Break even point = No profit, no loss</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Business Applications:</h4>
+          <ul class="space-y-1">
+            <li>• Set minimum sales targets</li>
+            <li>• Evaluate pricing strategies</li>
+            <li>• Assess business viability</li>
+            <li>• Plan production capacity</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function breakEvenCalculator() {
+  return {
+    fixedCosts: 10000,
+    variableCost: 25,
+    sellingPrice: 50,
+    
+    get contributionMargin() {
+      return this.sellingPrice - this.variableCost;
+    },
+    
+    get contributionMarginPercent() {
+      if (this.sellingPrice <= 0) return 0;
+      return (this.contributionMargin / this.sellingPrice) * 100;
+    },
+    
+    get breakEvenUnits() {
+      if (this.contributionMargin <= 0) return 0;
+      return Math.ceil(this.fixedCosts / this.contributionMargin);
+    },
+    
+    get breakEvenRevenue() {
+      return this.breakEvenUnits * this.sellingPrice;
+    },
+    
+    get scenarios() {
+      const breakEven = this.breakEvenUnits;
+      const scenarios = [
+        Math.floor(breakEven * 0.5),
+        Math.floor(breakEven * 0.75),
+        breakEven,
+        Math.floor(breakEven * 1.25),
+        Math.floor(breakEven * 1.5)
+      ];
+      
+      return scenarios.map(units => {
+        const revenue = units * this.sellingPrice;
+        const totalCosts = this.fixedCosts + (units * this.variableCost);
+        const profit = revenue - totalCosts;
+        
+        return { units, revenue, profit };
+      });
+    },
+    
+    get businessInsights() {
+      const insights = [];
+      
+      if (this.contributionMarginPercent > 60) {
+        insights.push('• Excellent contribution margin - strong pricing power');
+      } else if (this.contributionMarginPercent > 40) {
+        insights.push('• Good contribution margin - healthy business model');
+      } else if (this.contributionMarginPercent > 20) {
+        insights.push('• Moderate contribution margin - consider cost optimization');
+      } else {
+        insights.push('• Low contribution margin - review pricing and costs');
+      }
+      
+      if (this.breakEvenUnits < 100) {
+        insights.push('• Low break-even point - easier to achieve profitability');
+      } else if (this.breakEvenUnits < 1000) {
+        insights.push('• Moderate break-even point - achievable with good marketing');
+      } else {
+        insights.push('• High break-even point - requires strong sales strategy');
+      }
+      
+      const monthlyBreakEven = Math.ceil(this.breakEvenUnits / 12);
+      insights.push(`• Need to sell ${monthlyBreakEven} units per month to break even`);
+      
+      return insights;
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount || 0);
+    }
+  }
+}
+</script>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

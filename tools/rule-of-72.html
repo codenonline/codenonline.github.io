@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule of 72 Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="clock" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Rule of 72 Calculator</h1>
+                    <p class="text-gray-600">Calculate how long it takes for money to double at a given interest rate.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="ruleOf72Calculator()" class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Rule of 72 Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate how long it takes for money to double at a given interest rate using the Rule of 72.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Calculation Type</label>
+          <div class="flex space-x-4">
+            <label class="flex items-center">
+              <input type="radio" x-model="calculationType" value="time" class="mr-2">
+              <span>Find Doubling Time</span>
+            </label>
+            <label class="flex items-center">
+              <input type="radio" x-model="calculationType" value="rate" class="mr-2">
+              <span>Find Required Rate</span>
+            </label>
+          </div>
+        </div>
+        
+        <div x-show="calculationType === 'time'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Interest Rate (%)</label>
+          <input type="number" x-model.number="interestRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8" step="0.1" min="0.1">
+          <p class="text-xs text-gray-500 mt-1">Annual interest rate or return</p>
+        </div>
+        
+        <div x-show="calculationType === 'rate'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Desired Doubling Time (Years)</label>
+          <input type="number" x-model.number="doublingTime" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="9" step="0.1" min="0.1">
+          <p class="text-xs text-gray-500 mt-1">How many years to double your money</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Initial Amount ($) - Optional</label>
+          <input type="number" x-model.number="initialAmount" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="1000">
+          <p class="text-xs text-gray-500 mt-1">For visualization purposes</p>
+        </div>
+        
+        <div class="bg-blue-50 rounded-lg p-4">
+          <h4 class="font-semibold text-blue-800 mb-2">Rule of 72 Formula</h4>
+          <p class="text-blue-700 text-sm mb-2"><strong>Doubling Time = 72 ÷ Interest Rate</strong></p>
+          <p class="text-blue-600 text-xs">This is an approximation that works best for rates between 6% and 10%</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Rule of 72 Results</h3>
+          <div class="space-y-3">
+            <div x-show="calculationType === 'time'">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Interest Rate:</span>
+                <span class="font-semibold" x-text="interestRate.toFixed(1) + '%'">0%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Doubling Time:</span>
+                <span class="font-bold text-xl text-blue-600" x-text="ruleOf72Time.toFixed(1) + ' years'">0 years</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Exact Time:</span>
+                <span class="font-semibold text-green-600" x-text="exactTime.toFixed(1) + ' years'">0 years</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Accuracy:</span>
+                <span class="font-semibold" x-text="accuracy.toFixed(1) + '%'">0%</span>
+              </div>
+            </div>
+            
+            <div x-show="calculationType === 'rate'">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Doubling Time:</span>
+                <span class="font-semibold" x-text="doublingTime.toFixed(1) + ' years'">0 years</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Required Rate:</span>
+                <span class="font-bold text-xl text-blue-600" x-text="requiredRate.toFixed(1) + '%'">0%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Exact Rate:</span>
+                <span class="font-semibold text-green-600" x-text="exactRate.toFixed(1) + '%'">0%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Accuracy:</span>
+                <span class="font-semibold" x-text="rateAccuracy.toFixed(1) + '%'">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div x-show="initialAmount > 0" class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Growth Projection</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Initial Amount:</span>
+              <span class="font-semibold" x-text="formatCurrency(initialAmount)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">After Doubling:</span>
+              <span class="font-semibold text-green-600" x-text="formatCurrency(initialAmount * 2)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Growth:</span>
+              <span class="font-semibold text-blue-600" x-text="formatCurrency(initialAmount)">$0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div :class="getAccuracyClass()" class="rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Accuracy Note</h4>
+          <p class="text-sm" x-text="accuracyNote"></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Multiple Doublings Table -->
+    <div class="mt-8 bg-gray-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Multiple Doublings</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left py-2">Doubling #</th>
+              <th class="text-right py-2">Years</th>
+              <th class="text-right py-2">Multiple</th>
+              <th class="text-right py-2" x-show="initialAmount > 0">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="doubling in doublingTable" :key="doubling.number">
+              <tr class="border-b border-gray-200">
+                <td class="py-2" x-text="doubling.number"></td>
+                <td class="text-right py-2" x-text="doubling.years.toFixed(1)"></td>
+                <td class="text-right py-2" x-text="doubling.multiple + 'x'"></td>
+                <td class="text-right py-2" x-show="initialAmount > 0" x-text="formatCurrency(doubling.amount)"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">Rule of 72 Applications</h3>
+      <div class="grid md:grid-cols-2 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Investment Planning:</h4>
+          <ul class="space-y-1">
+            <li>• Quick estimate of investment growth</li>
+            <li>• Compare different investment options</li>
+            <li>• Set realistic financial goals</li>
+            <li>• Understand compound interest power</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Common Rates:</h4>
+          <ul class="space-y-1">
+            <li>• 6% rate: ~12 years to double</li>
+            <li>• 8% rate: ~9 years to double</li>
+            <li>• 10% rate: ~7.2 years to double</li>
+            <li>• 12% rate: ~6 years to double</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function ruleOf72Calculator() {
+  return {
+    calculationType: 'time',
+    interestRate: 8,
+    doublingTime: 9,
+    initialAmount: 10000,
+    
+    get ruleOf72Time() {
+      if (this.interestRate <= 0) return 0;
+      return 72 / this.interestRate;
+    },
+    
+    get exactTime() {
+      if (this.interestRate <= 0) return 0;
+      return Math.log(2) / Math.log(1 + this.interestRate / 100);
+    },
+    
+    get accuracy() {
+      if (this.exactTime === 0) return 0;
+      return 100 - Math.abs((this.ruleOf72Time - this.exactTime) / this.exactTime * 100);
+    },
+    
+    get requiredRate() {
+      if (this.doublingTime <= 0) return 0;
+      return 72 / this.doublingTime;
+    },
+    
+    get exactRate() {
+      if (this.doublingTime <= 0) return 0;
+      return (Math.pow(2, 1 / this.doublingTime) - 1) * 100;
+    },
+    
+    get rateAccuracy() {
+      if (this.exactRate === 0) return 0;
+      return 100 - Math.abs((this.requiredRate - this.exactRate) / this.exactRate * 100);
+    },
+    
+    get doublingTable() {
+      const rate = this.calculationType === 'time' ? this.interestRate : this.requiredRate;
+      if (rate <= 0) return [];
+      
+      const doublingTime = 72 / rate;
+      const table = [];
+      
+      for (let i = 1; i <= 5; i++) {
+        table.push({
+          number: i,
+          years: doublingTime * i,
+          multiple: Math.pow(2, i),
+          amount: this.initialAmount * Math.pow(2, i)
+        });
+      }
+      
+      return table;
+    },
+    
+    get accuracyNote() {
+      const currentAccuracy = this.calculationType === 'time' ? this.accuracy : this.rateAccuracy;
+      const rate = this.calculationType === 'time' ? this.interestRate : this.requiredRate;
+      
+      if (currentAccuracy >= 95) {
+        return 'Excellent accuracy! The Rule of 72 is very reliable for this rate.';
+      } else if (currentAccuracy >= 90) {
+        return 'Good accuracy. The Rule of 72 provides a reliable estimate.';
+      } else if (currentAccuracy >= 80) {
+        return 'Moderate accuracy. Consider using exact calculations for precise planning.';
+      } else {
+        return 'Lower accuracy. The Rule of 72 works best for rates between 6% and 10%.';
+      }
+    },
+    
+    getAccuracyClass() {
+      const currentAccuracy = this.calculationType === 'time' ? this.accuracy : this.rateAccuracy;
+      
+      if (currentAccuracy >= 90) {
+        return 'bg-green-50 text-green-800';
+      } else if (currentAccuracy >= 80) {
+        return 'bg-yellow-50 text-yellow-800';
+      } else {
+        return 'bg-red-50 text-red-800';
+      }
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount || 0);
+    }
+  }
+}
+</script>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

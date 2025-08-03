@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compound Interest Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="trending-up" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Compound Interest Calculator</h1>
+                    <p class="text-gray-600">Calculate compound interest with customizable compounding periods and additional contributions.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="compoundInterestCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="dollar-sign" class="h-5 w-5"></i>
+                Investment Details
+            </h2>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Initial Investment</label>
+                <input
+                    type="number"
+                    placeholder="10000"
+                    x-model="principal"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Annual Interest Rate (%)</label>
+                <input
+                    type="number"
+                    step="0.1"
+                    placeholder="7"
+                    x-model="rate"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Investment Period (Years)</label>
+                <input
+                    type="number"
+                    placeholder="10"
+                    x-model="time"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Compounding Frequency</label>
+                <select x-model="compoundFrequency" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <template x-for="option in compoundingOptions" :key="option.value">
+                        <option :value="option.value" x-text="option.label"></option>
+                    </template>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Monthly Contribution (Optional)</label>
+                <input
+                    type="number"
+                    placeholder="0"
+                    x-model="monthlyContribution"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                Investment Results
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Future Value</p>
+                        <p class="text-2xl font-bold text-green-600" x-text="formatCurrency(results.futureValue)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Total Interest</p>
+                        <p class="text-2xl font-bold text-blue-600" x-text="formatCurrency(results.totalInterest)"></p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Total Contributions:</span>
+                        <span class="font-semibold" x-text="formatCurrency(results.totalContributions)"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Interest Earned:</span>
+                        <span class="font-semibold text-green-600" x-text="formatCurrency(results.totalInterest)"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Effective Return:</span>
+                        <span class="text-sm px-3 py-1 bg-gray-900 text-white rounded-full" x-text="results.interestRate.toFixed(2) + '%'"></span>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-medium mb-2 flex items-center gap-2">
+                        <i data-lucide="calendar" class="h-4 w-4"></i>
+                        Investment Summary
+                    </h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p x-text="`• Initial investment of ${formatCurrency(parseFloat(principal) || 0)}`"></p>
+                        <p x-text="`• ${rate}% annual interest rate`"></p>
+                        <p x-text="`• ${getCompoundingLabel()} compounding`"></p>
+                        <p x-text="`• ${time} year investment period`"></p>
+                        <p x-show="parseFloat(monthlyContribution) > 0" x-text="`• ${formatCurrency(parseFloat(monthlyContribution))} monthly contributions`"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function compoundInterestCalculator() {
+    return {
+        principal: '10000',
+        rate: '7',
+        time: '10',
+        compoundFrequency: '12',
+        monthlyContribution: '0',
+        compoundingOptions: [
+            { value: '1', label: 'Annually' },
+            { value: '2', label: 'Semi-annually' },
+            { value: '4', label: 'Quarterly' },
+            { value: '12', label: 'Monthly' },
+            { value: '52', label: 'Weekly' },
+            { value: '365', label: 'Daily' }
+        ],
+        
+        get results() {
+            const P = parseFloat(this.principal) || 0;
+            const r = (parseFloat(this.rate) || 0) / 100;
+            const n = parseFloat(this.compoundFrequency) || 12;
+            const t = parseFloat(this.time) || 0;
+            const PMT = parseFloat(this.monthlyContribution) || 0;
+
+            // Compound interest formula: A = P(1 + r/n)^(nt)
+            const compoundInterest = P * Math.pow(1 + r/n, n*t);
+            
+            // Future value of annuity formula for monthly contributions
+            let annuityValue = 0;
+            if (PMT > 0) {
+                const monthlyRate = r / 12;
+                const months = t * 12;
+                if (monthlyRate > 0) {
+                    annuityValue = PMT * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+                } else {
+                    annuityValue = PMT * months;
+                }
+            }
+
+            const futureValue = compoundInterest + annuityValue;
+            const totalContributions = P + (PMT * 12 * t);
+            const totalInterest = futureValue - totalContributions;
+
+            return {
+                futureValue: futureValue,
+                totalContributions: totalContributions,
+                totalInterest: totalInterest,
+                interestRate: ((futureValue / totalContributions - 1) * 100)
+            };
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        },
+        
+        getCompoundingLabel() {
+            const option = this.compoundingOptions.find(opt => opt.value === this.compoundFrequency);
+            return option?.label || 'Monthly';
+        }
+    }
+}
+</script>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

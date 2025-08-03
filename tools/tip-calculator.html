@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="utensils" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Tip Calculator</h1>
+                    <p class="text-gray-600">Calculate tips and split bills among multiple people with customizable tip percentages.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="tipCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="dollar-sign" class="h-5 w-5"></i>
+                Bill Details
+            </h2>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Bill Amount</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    placeholder="50.00"
+                    x-model="billAmount"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-sm font-medium text-gray-700">Tip Percentage</label>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="preset in tipPresets" :key="preset">
+                        <button
+                            @click="setTipPreset(preset)"
+                            :class="tipPercentage == preset && !customTip ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                            class="flex-1 min-w-16 px-3 py-2 border rounded-lg transition-all"
+                            x-text="preset + '%'"
+                        ></button>
+                    </template>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Custom Tip (%)</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        placeholder="Enter custom percentage"
+                        x-model="customTip"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Number of People</label>
+                <input
+                    type="number"
+                    min="1"
+                    placeholder="1"
+                    x-model="numberOfPeople"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="users" class="h-5 w-5"></i>
+                Calculation Results
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Tip Amount</p>
+                        <p class="text-2xl font-bold text-green-600" x-text="formatCurrency(results.tipAmount)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Total Amount</p>
+                        <p class="text-2xl font-bold text-blue-600" x-text="formatCurrency(results.totalAmount)"></p>
+                    </div>
+                </div>
+
+                <div x-show="numberOfPeople > 1" class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Per Person Total</p>
+                        <p class="text-xl font-bold text-purple-600" x-text="formatCurrency(results.perPersonAmount)"></p>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Per Person Tip</p>
+                        <p class="text-xl font-bold text-orange-600" x-text="formatCurrency(results.perPersonTip)"></p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Bill Amount:</span>
+                        <span class="font-semibold" x-text="formatCurrency(parseFloat(billAmount) || 0)"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600" x-text="`Tip (${results.tipPercentage}%):`"></span>
+                        <span class="font-semibold text-green-600" x-text="formatCurrency(results.tipAmount)"></span>
+                    </div>
+                    <div class="flex justify-between items-center border-t pt-2">
+                        <span class="text-gray-600 font-medium">Total:</span>
+                        <span class="font-bold text-lg" x-text="formatCurrency(results.totalAmount)"></span>
+                    </div>
+                    <div x-show="numberOfPeople > 1" class="flex justify-between items-center">
+                        <span class="text-gray-600">Per Person:</span>
+                        <span class="text-sm px-3 py-1 bg-gray-900 text-white rounded-full" x-text="formatCurrency(results.perPersonAmount)"></span>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-medium mb-2 flex items-center gap-2">
+                        <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                        Bill Summary
+                    </h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p x-text="`• Bill amount: ${formatCurrency(parseFloat(billAmount) || 0)}`"></p>
+                        <p x-text="`• Tip percentage: ${results.tipPercentage}%`"></p>
+                        <p x-text="`• Number of people: ${numberOfPeople}`"></p>
+                        <p x-text="`• Service quality: ${getServiceQuality(results.tipPercentage)}`"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function tipCalculator() {
+    return {
+        billAmount: '50.00',
+        tipPercentage: '18',
+        numberOfPeople: '1',
+        customTip: '',
+        tipPresets: [15, 18, 20, 22, 25],
+        
+        get results() {
+            const bill = parseFloat(this.billAmount) || 0;
+            const tip = parseFloat(this.customTip || this.tipPercentage) || 0;
+            const people = parseInt(this.numberOfPeople) || 1;
+
+            const tipAmount = (bill * tip) / 100;
+            const totalAmount = bill + tipAmount;
+            const perPersonAmount = totalAmount / people;
+            const perPersonTip = tipAmount / people;
+
+            return {
+                tipAmount,
+                totalAmount,
+                perPersonAmount,
+                perPersonTip,
+                tipPercentage: tip
+            };
+        },
+        
+        setTipPreset(preset) {
+            this.tipPercentage = preset.toString();
+            this.customTip = '';
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        },
+        
+        getServiceQuality(tipPercentage) {
+            if (tipPercentage >= 20) return 'Excellent';
+            if (tipPercentage >= 18) return 'Good';
+            if (tipPercentage >= 15) return 'Standard';
+            return 'Below Average';
+        }
+    }
+}
+</script>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

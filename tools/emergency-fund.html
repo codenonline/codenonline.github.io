@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Fund Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="shield" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Emergency Fund Calculator</h1>
+                    <p class="text-gray-600">Calculate how much you need in your emergency fund.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div x-data="emergencyFundCalculator()" class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Emergency Fund Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate how much you need in your emergency fund based on your monthly expenses and financial situation.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Monthly Expenses ($)</label>
+          <input type="number" x-model.number="monthlyExpenses" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="4000" step="100">
+          <p class="text-xs text-gray-500 mt-1">Include rent, utilities, food, insurance, minimum debt payments</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Employment Situation</label>
+          <select x-model="employmentType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="stable">Stable Employment</option>
+            <option value="variable">Variable Income</option>
+            <option value="self-employed">Self-Employed</option>
+            <option value="single-income">Single Income Household</option>
+            <option value="dual-income">Dual Income Household</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Dependents</label>
+          <input type="number" x-model.number="dependents" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0" min="0" step="1">
+          <p class="text-xs text-gray-500 mt-1">Number of people who depend on your income</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Current Emergency Savings ($)</label>
+          <input type="number" x-model.number="currentSavings" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5000" step="500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Monthly Savings Goal ($)</label>
+          <input type="number" x-model.number="monthlySavings" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="500" step="50">
+          <p class="text-xs text-gray-500 mt-1">How much you can save per month</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Emergency Fund Target</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Recommended Months:</span>
+              <span class="font-semibold" x-text="recommendedMonths">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Target Amount:</span>
+              <span class="font-bold text-xl text-blue-600" x-text="formatCurrency(targetAmount)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Current Savings:</span>
+              <span class="font-semibold" x-text="formatCurrency(currentSavings)">$0</span>
+            </div>
+            <div class="flex justify-between border-t pt-3">
+              <span class="text-gray-800 font-semibold">Amount Needed:</span>
+              <span class="font-bold text-lg" :class="amountNeeded > 0 ? 'text-red-600' : 'text-green-600'" x-text="formatCurrency(Math.abs(amountNeeded))">$0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Savings Plan</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Monthly Savings:</span>
+              <span class="font-semibold" x-text="formatCurrency(monthlySavings)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Time to Goal:</span>
+              <span class="font-semibold" x-text="timeToGoal">0 months</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Progress:</span>
+              <span class="font-semibold" x-text="progressPercentage.toFixed(1) + '%'">0%</span>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <div class="flex justify-between text-sm mb-1">
+              <span>Progress to Goal</span>
+              <span x-text="progressPercentage.toFixed(1) + '%'"></span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="bg-blue-500 h-3 rounded-full transition-all duration-300" :style="`width: ${Math.min(progressPercentage, 100)}%`"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div :class="getRecommendationClass()" class="rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Recommendation</h4>
+          <p class="text-sm" x-text="recommendation"></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">Emergency Fund Guidelines</h3>
+      <div class="grid md:grid-cols-3 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">3-4 Months:</h4>
+          <ul class="space-y-1">
+            <li>• Stable employment</li>
+            <li>• Dual income household</li>
+            <li>• Good job security</li>
+            <li>• No dependents</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">6 Months:</h4>
+          <ul class="space-y-1">
+            <li>• Single income household</li>
+            <li>• Average job security</li>
+            <li>• Some dependents</li>
+            <li>• Standard recommendation</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">9-12 Months:</h4>
+          <ul class="space-y-1">
+            <li>• Self-employed</li>
+            <li>• Variable income</li>
+            <li>• Multiple dependents</li>
+            <li>• Unstable industry</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function emergencyFundCalculator() {
+  return {
+    monthlyExpenses: 4000,
+    employmentType: 'stable',
+    dependents: 0,
+    currentSavings: 5000,
+    monthlySavings: 500,
+    
+    get recommendedMonths() {
+      let baseMonths = 6; // Default recommendation
+      
+      switch (this.employmentType) {
+        case 'stable':
+          baseMonths = 3;
+          break;
+        case 'dual-income':
+          baseMonths = 4;
+          break;
+        case 'variable':
+          baseMonths = 8;
+          break;
+        case 'self-employed':
+          baseMonths = 12;
+          break;
+        case 'single-income':
+          baseMonths = 6;
+          break;
+      }
+      
+      // Add months for dependents
+      baseMonths += Math.min(this.dependents * 1, 3);
+      
+      return Math.max(3, Math.min(baseMonths, 12));
+    },
+    
+    get targetAmount() {
+      return this.monthlyExpenses * this.recommendedMonths;
+    },
+    
+    get amountNeeded() {
+      return this.targetAmount - this.currentSavings;
+    },
+    
+    get timeToGoal() {
+      if (this.amountNeeded <= 0) return 'Goal achieved!';
+      if (this.monthlySavings <= 0) return 'Set savings goal';
+      
+      const months = Math.ceil(this.amountNeeded / this.monthlySavings);
+      if (months <= 12) {
+        return `${months} months`;
+      } else {
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        return remainingMonths > 0 ? `${years}y ${remainingMonths}m` : `${years} years`;
+      }
+    },
+    
+    get progressPercentage() {
+      if (this.targetAmount === 0) return 0;
+      return Math.max(0, (this.currentSavings / this.targetAmount) * 100);
+    },
+    
+    get recommendation() {
+      if (this.amountNeeded <= 0) {
+        return `Congratulations! You've reached your emergency fund goal. Consider investing excess funds or increasing your target if your situation changes.`;
+      }
+      
+      const monthsToGoal = this.amountNeeded / (this.monthlySavings || 1);
+      
+      if (monthsToGoal <= 6) {
+        return `You're on track to reach your emergency fund goal in ${this.timeToGoal}. Keep up the great work!`;
+      } else if (monthsToGoal <= 24) {
+        return `It will take ${this.timeToGoal} to reach your goal. Consider increasing your monthly savings if possible.`;
+      } else {
+        return `At your current savings rate, it will take ${this.timeToGoal} to reach your goal. Consider increasing your monthly savings or reducing your target temporarily.`;
+      }
+    },
+    
+    getRecommendationClass() {
+      if (this.amountNeeded <= 0) {
+        return 'bg-green-50 text-green-800';
+      }
+      
+      const monthsToGoal = this.amountNeeded / (this.monthlySavings || 1);
+      
+      if (monthsToGoal <= 6) {
+        return 'bg-green-50 text-green-800';
+      } else if (monthsToGoal <= 24) {
+        return 'bg-yellow-50 text-yellow-800';
+      } else {
+        return 'bg-red-50 text-red-800';
+      }
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount || 0);
+    }
+  }
+}
+</script>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

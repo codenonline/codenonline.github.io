@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="target" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">ROI Calculator</h1>
+                    <p class="text-gray-600">Calculate Return on Investment for business and personal investments.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">ROI Calculator</h1>
+    <p class="text-gray-600 mb-8">Calculate Return on Investment (ROI) to measure the efficiency of your investments.</p>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Initial Investment ($)</label>
+          <input type="number" id="initialInvestment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
+          <p class="text-xs text-gray-500 mt-1">The amount you initially invested</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Final Value ($)</label>
+          <input type="number" id="finalValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="12500" step="100">
+          <p class="text-xs text-gray-500 mt-1">Current value or selling price</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Additional Costs ($)</label>
+          <input type="number" id="additionalCosts" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0" step="10">
+          <p class="text-xs text-gray-500 mt-1">Fees, taxes, maintenance costs (optional)</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+          <div class="flex space-x-2">
+            <input type="number" id="timePeriod" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="2" step="0.1">
+            <select id="timeUnit" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="years" selected>Years</option>
+              <option value="months">Months</option>
+              <option value="days">Days</option>
+            </select>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Investment holding period (optional for annualized ROI)</p>
+        </div>
+        
+        <button onclick="calculateROI()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+          Calculate ROI
+        </button>
+        
+        <div class="bg-blue-50 rounded-lg p-4">
+          <h4 class="font-semibold text-blue-800 mb-2">ROI Formula</h4>
+          <p class="text-blue-700 text-sm">ROI = (Final Value - Initial Investment - Costs) ÷ Initial Investment × 100</p>
+          <p class="text-blue-600 text-xs mt-1">Annualized ROI = ((Final Value ÷ Initial Investment)^(1/years) - 1) × 100</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">ROI Results</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total ROI:</span>
+              <span id="totalROI" class="font-bold text-xl text-blue-600">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Annualized ROI:</span>
+              <span id="annualizedROI" class="font-semibold">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Gain/Loss:</span>
+              <span id="totalGain" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Investment Multiple:</span>
+              <span id="investmentMultiple" class="font-semibold">0x</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Initial Investment:</span>
+              <span id="displayInitial" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Additional Costs:</span>
+              <span id="displayCosts" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Investment:</span>
+              <span id="totalInvestment" class="font-semibold">$0</span>
+            </div>
+            <div class="flex justify-between border-t pt-3">
+              <span class="text-gray-600">Final Value:</span>
+              <span id="displayFinal" class="font-semibold">$0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="roiInterpretation" class="rounded-lg p-4">
+          <h4 class="font-semibold mb-2">ROI Interpretation</h4>
+          <p id="interpretationText" class="text-sm"></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-green-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-green-800 mb-3">ROI Benchmarks</h3>
+      <div class="grid md:grid-cols-3 gap-6 text-green-700 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">Stock Market:</h4>
+          <ul class="space-y-1">
+            <li>• S&P 500 average: ~10% annually</li>
+            <li>• Conservative: 6-8% annually</li>
+            <li>• Aggressive: 12-15% annually</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Real Estate:</h4>
+          <ul class="space-y-1">
+            <li>• Rental properties: 8-12% annually</li>
+            <li>• REITs: 6-10% annually</li>
+            <li>• House flipping: 20-30% per project</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">Business:</h4>
+          <ul class="space-y-1">
+            <li>• Small business: 15-25% annually</li>
+            <li>• Startups: 25-50% (high risk)</li>
+            <li>• Marketing campaigns: 400-500%</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function calculateROI() {
+  const initialInvestment = parseFloat(document.getElementById('initialInvestment').value) || 0;
+  const finalValue = parseFloat(document.getElementById('finalValue').value) || 0;
+  const additionalCosts = parseFloat(document.getElementById('additionalCosts').value) || 0;
+  const timePeriod = parseFloat(document.getElementById('timePeriod').value) || 1;
+  const timeUnit = document.getElementById('timeUnit').value;
+  
+  if (initialInvestment <= 0) {
+    alert('Please enter a valid initial investment amount.');
+    return;
+  }
+  
+  if (finalValue < 0) {
+    alert('Please enter a valid final value.');
+    return;
+  }
+  
+  // Convert time period to years for annualized calculation
+  let timeInYears = timePeriod;
+  if (timeUnit === 'months') {
+    timeInYears = timePeriod / 12;
+  } else if (timeUnit === 'days') {
+    timeInYears = timePeriod / 365;
+  }
+  
+  const totalInvestmentAmount = initialInvestment + additionalCosts;
+  const totalGainLoss = finalValue - totalInvestmentAmount;
+  const totalROIPercent = (totalGainLoss / initialInvestment) * 100;
+  
+  // Calculate annualized ROI
+  let annualizedROIPercent = 0;
+  if (timeInYears > 0 && finalValue > 0 && initialInvestment > 0) {
+    annualizedROIPercent = (Math.pow(finalValue / totalInvestmentAmount, 1 / timeInYears) - 1) * 100;
+  }
+  
+  const investmentMultiple = finalValue / totalInvestmentAmount;
+  
+  // Display results
+  document.getElementById('totalROI').textContent = `${totalROIPercent.toFixed(2)}%`;
+  document.getElementById('annualizedROI').textContent = `${annualizedROIPercent.toFixed(2)}%`;
+  document.getElementById('totalGain').textContent = `$${totalGainLoss.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('investmentMultiple').textContent = `${investmentMultiple.toFixed(2)}x`;
+  
+  document.getElementById('displayInitial').textContent = `$${initialInvestment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('displayCosts').textContent = `$${additionalCosts.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('totalInvestment').textContent = `$${totalInvestmentAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  document.getElementById('displayFinal').textContent = `$${finalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  
+  // Update interpretation
+  updateROIInterpretation(totalROIPercent, annualizedROIPercent);
+}
+
+function updateROIInterpretation(totalROI, annualizedROI) {
+  const interpretationDiv = document.getElementById('roiInterpretation');
+  const interpretationText = document.getElementById('interpretationText');
+  
+  let bgClass, textClass, interpretation;
+  
+  if (totalROI > 20) {
+    bgClass = 'bg-green-50';
+    textClass = 'text-green-800';
+    interpretation = 'Excellent ROI! This investment has performed very well and significantly exceeded typical market returns.';
+  } else if (totalROI > 10) {
+    bgClass = 'bg-green-50';
+    textClass = 'text-green-800';
+    interpretation = 'Good ROI! This investment has performed well and beaten average market returns.';
+  } else if (totalROI > 0) {
+    bgClass = 'bg-yellow-50';
+    textClass = 'text-yellow-800';
+    interpretation = 'Positive ROI. The investment made money but may be below market averages. Consider if this meets your goals.';
+  } else if (totalROI > -10) {
+    bgClass = 'bg-orange-50';
+    textClass = 'text-orange-800';
+    interpretation = 'Small loss. The investment lost money but the loss is relatively minor. Consider your risk tolerance.';
+  } else {
+    bgClass = 'bg-red-50';
+    textClass = 'text-red-800';
+    interpretation = 'Significant loss. This investment has performed poorly. Review your investment strategy and risk management.';
+  }
+  
+  interpretationDiv.className = `rounded-lg p-4 ${bgClass}`;
+  interpretationText.className = `text-sm ${textClass}`;
+  interpretationText.textContent = interpretation;
+  
+  // Add annualized context if time period is provided
+  if (annualizedROI !== 0) {
+    interpretationText.textContent += ` The annualized return of ${annualizedROI.toFixed(2)}% helps compare this to other investments.`;
+  }
+}
+
+// Auto-calculate on input change
+document.addEventListener('DOMContentLoaded', function() {
+  const inputs = ['initialInvestment', 'finalValue', 'additionalCosts', 'timePeriod', 'timeUnit'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', calculateROI);
+    document.getElementById(id).addEventListener('change', calculateROI);
+  });
+});
+</script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

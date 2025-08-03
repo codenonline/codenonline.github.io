@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator - Developer & Financial Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+
+            </div>
+        </div>
+    </div>
+
+                <div class="text-center py-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="p-4 bg-blue-100 rounded-full">
+                            <i data-lucide="building" class="h-8 w-8 text-blue-600"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Mortgage Calculator</h1>
+                    <p class="text-gray-600">Calculate monthly mortgage payments, total interest, and amortization schedule.</p>
+                </div>
+
+    <!-- Tool Content -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+<div class="max-w-6xl mx-auto">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Mortgage Calculator</h1>
+    
+    <div class="grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-1 space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Home Price ($)</label>
+          <input type="number" id="homePrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="400000" step="1000">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment ($)</label>
+          <input type="number" id="downPayment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="80000" step="1000">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Interest Rate (%)</label>
+          <input type="number" id="interestRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="6.5" step="0.01">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Loan Term (Years)</label>
+          <select id="loanTerm" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="15">15 years</option>
+            <option value="20">20 years</option>
+            <option value="25">25 years</option>
+            <option value="30" selected>30 years</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Property Tax (Annual $)</label>
+          <input type="number" id="propertyTax" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5000" step="100">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Home Insurance (Annual $)</label>
+          <input type="number" id="homeInsurance" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1200" step="100">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">PMI (Monthly $)</label>
+          <input type="number" id="pmi" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="200" step="10">
+        </div>
+        
+        <button onclick="calculateMortgage()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+          Calculate Payment
+        </button>
+      </div>
+      
+      <div class="lg:col-span-2">
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly Payment Breakdown</h3>
+          <div id="paymentResults" class="grid md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Principal & Interest:</span>
+                <span id="principalInterest" class="font-semibold">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Property Tax:</span>
+                <span id="monthlyTax" class="font-semibold">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Home Insurance:</span>
+                <span id="monthlyInsurance" class="font-semibold">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">PMI:</span>
+                <span id="monthlyPMI" class="font-semibold">$0</span>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex justify-between border-t pt-3 md:border-t-0 md:pt-0">
+                <span class="text-gray-800 font-semibold">Total Monthly Payment:</span>
+                <span id="totalPayment" class="font-bold text-lg text-blue-600">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Loan Amount:</span>
+                <span id="loanAmount" class="font-semibold">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Total Interest:</span>
+                <span id="totalInterest" class="font-semibold text-red-600">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Total Cost:</span>
+                <span id="totalCost" class="font-semibold">$0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white border rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Payment Schedule (First 12 Months)</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b">
+                  <th class="text-left py-2">Month</th>
+                  <th class="text-right py-2">Payment</th>
+                  <th class="text-right py-2">Principal</th>
+                  <th class="text-right py-2">Interest</th>
+                  <th class="text-right py-2">Balance</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleTable">
+                <!-- Schedule will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function calculateMortgage() {
+  const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+  const loanTerm = parseInt(document.getElementById('loanTerm').value) || 30;
+  const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
+  const homeInsurance = parseFloat(document.getElementById('homeInsurance').value) || 0;
+  const pmi = parseFloat(document.getElementById('pmi').value) || 0;
+  
+  if (homePrice <= 0 || downPayment < 0 || interestRate <= 0) {
+    alert('Please enter valid values for home price, down payment, and interest rate.');
+    return;
+  }
+  
+  const loanAmount = homePrice - downPayment;
+  const monthlyRate = interestRate / 100 / 12;
+  const numPayments = loanTerm * 12;
+  
+  // Calculate monthly principal and interest payment
+  const monthlyPI = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                    (Math.pow(1 + monthlyRate, numPayments) - 1);
+  
+  const monthlyTax = propertyTax / 12;
+  const monthlyInsurance = homeInsurance / 12;
+  const totalMonthlyPayment = monthlyPI + monthlyTax + monthlyInsurance + pmi;
+  
+  const totalInterest = (monthlyPI * numPayments) - loanAmount;
+  const totalCost = homePrice + totalInterest + (propertyTax * loanTerm) + (homeInsurance * loanTerm) + (pmi * numPayments);
+  
+  // Display results
+  document.getElementById('principalInterest').textContent = `$${monthlyPI.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('monthlyTax').textContent = `$${monthlyTax.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('monthlyInsurance').textContent = `$${monthlyInsurance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('monthlyPMI').textContent = `$${pmi.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('totalPayment').textContent = `$${totalMonthlyPayment.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('loanAmount').textContent = `$${loanAmount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('totalInterest').textContent = `$${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  
+  // Generate amortization schedule for first 12 months
+  generateSchedule(loanAmount, monthlyRate, monthlyPI, 12);
+}
+
+function generateSchedule(loanAmount, monthlyRate, monthlyPayment, months) {
+  const scheduleTable = document.getElementById('scheduleTable');
+  scheduleTable.innerHTML = '';
+  
+  let balance = loanAmount;
+  
+  for (let month = 1; month <= months; month++) {
+    const interestPayment = balance * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    balance -= principalPayment;
+    
+    const row = scheduleTable.insertRow();
+    row.innerHTML = `
+      <td class="py-2">${month}</td>
+      <td class="text-right py-2">$${monthlyPayment.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+      <td class="text-right py-2">$${principalPayment.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+      <td class="text-right py-2">$${interestPayment.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+      <td class="text-right py-2">$${balance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
+    `;
+  }
+}
+
+// Auto-calculate on input change
+document.addEventListener('DOMContentLoaded', function() {
+  const inputs = ['homePrice', 'downPayment', 'interestRate', 'loanTerm', 'propertyTax', 'homeInsurance', 'pmi'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', calculateMortgage);
+    document.getElementById(id).addEventListener('change', calculateMortgage);
+  });
+});
+</script>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+    </div>
+</div>
+
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
