@@ -43,213 +43,41 @@
 
     <!-- Tool Content -->
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Tax Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
-</head>
-<body class="bg-gray-50">
-    
-<div class="max-w-4xl mx-auto">
+        <div x-data="salesTaxCalculator()" class="max-w-4xl mx-auto">
   <div class="bg-white rounded-lg shadow-lg p-6">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Sales Tax Calculator</h1>
-    <p class="text-gray-600 mb-8">Calculate sales tax amounts and total prices including tax for purchases and business transactions.</p>
+    <p class="text-gray-600 mb-8">Calculate sales tax and total price including tax.</p>
     
-    <div class="grid lg:grid-cols-2 gap-8">
-      <!-- Add Sales Tax -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Add Sales Tax</h3>
-        <p class="text-sm text-gray-600 mb-4">Calculate total price including sales tax</p>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Price Before Tax ($)</label>
-            <input type="number" id="priceBeforeTax" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100" step="0.01">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sales Tax Rate (%)</label>
-            <input type="number" id="taxRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8.25" step="0.01">
-          </div>
-          
-          <div class="bg-white rounded-lg p-4 border">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Price Before Tax:</span>
-                <span id="displayPriceBefore" class="font-semibold">$0.00</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Sales Tax:</span>
-                <span id="salesTaxAmount" class="font-semibold text-red-600">$0.00</span>
-              </div>
-              <div class="flex justify-between border-t pt-2">
-                <span class="text-gray-800 font-semibold">Total Price:</span>
-                <span id="totalWithTax" class="font-bold text-xl text-blue-600">$0.00</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Remove Sales Tax -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Remove Sales Tax</h3>
-        <p class="text-sm text-gray-600 mb-4">Calculate price before tax from total price</p>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Total Price ($)</label>
-            <input type="number" id="totalPrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="108.25" step="0.01">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sales Tax Rate (%)</label>
-            <input type="number" id="reverseTaxRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="8.25" step="0.01">
-          </div>
-          
-          <div class="bg-white rounded-lg p-4 border">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Total Price:</span>
-                <span id="displayTotalPrice" class="font-semibold">$0.00</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Sales Tax:</span>
-                <span id="reverseSalesTax" class="font-semibold text-red-600">$0.00</span>
-              </div>
-              <div class="flex justify-between border-t pt-2">
-                <span class="text-gray-800 font-semibold">Price Before Tax:</span>
-                <span id="priceWithoutTax" class="font-bold text-xl text-purple-600">$0.00</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Multiple Items Calculator -->
-    <div class="mt-8 bg-blue-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-blue-800 mb-4">Multiple Items Calculator</h3>
-      
-      <div class="grid md:grid-cols-2 gap-6">
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
         <div>
-          <div class="space-y-3">
-            <div class="grid grid-cols-4 gap-2 text-sm font-medium text-blue-700">
-              <span>Item</span>
-              <span>Price</span>
-              <span>Qty</span>
-              <span>Subtotal</span>
-            </div>
-            <div id="itemInputs" class="space-y-2">
-              <!-- Item inputs will be generated here -->
-            </div>
-            <button onclick="addItem()" class="text-blue-600 hover:text-blue-800 text-sm">+ Add Item</button>
-            
-            <div class="mt-4">
-              <label class="block text-sm font-medium text-blue-700 mb-2">Sales Tax Rate (%)</label>
-              <input type="number" id="multiTaxRate" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8.25" step="0.01">
-            </div>
-          </div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Price Before Tax ($)</label>
+          <input type="number" x-model.number="priceBeforeTax" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100" step="0.01">
         </div>
         
-        <div class="bg-white rounded-lg p-4 border border-blue-200">
-          <h4 class="font-semibold text-blue-800 mb-3">Receipt Summary</h4>
-          <div class="space-y-2">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tax Rate (%)</label>
+          <input type="number" x-model.number="taxRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="8.25" step="0.01">
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Results</h3>
+          <div class="space-y-3">
             <div class="flex justify-between">
-              <span class="text-gray-600">Subtotal:</span>
-              <span id="receiptSubtotal" class="font-semibold">$0.00</span>
+              <span class="text-gray-600">Price Before Tax:</span>
+              <span class="font-semibold" x-text="formatCurrency(priceBeforeTax)">$0</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">Sales Tax:</span>
-              <span id="receiptTax" class="font-semibold text-red-600">$0.00</span>
+              <span class="font-semibold text-red-600" x-text="formatCurrency(salesTax)">$0</span>
             </div>
-            <div class="flex justify-between border-t pt-2">
-              <span class="text-blue-800 font-bold">Total:</span>
-              <span id="receiptTotal" class="font-bold text-xl text-blue-800">$0.00</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Number of Items:</span>
-              <span id="itemCount" class="font-semibold">0</span>
+            <div class="flex justify-between border-t pt-3">
+              <span class="text-gray-800 font-semibold">Total Price:</span>
+              <span class="font-bold text-xl text-green-600" x-text="formatCurrency(totalPrice)">$0</span>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- US State Tax Rates Reference -->
-    <div class="mt-8 bg-green-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-green-800 mb-4">Common US Sales Tax Rates</h3>
-      <div class="grid md:grid-cols-4 gap-4 text-sm text-green-700">
-        <div>
-          <h4 class="font-semibold mb-2">High Tax States:</h4>
-          <ul class="space-y-1">
-            <li>• California: 7.25%</li>
-            <li>• Tennessee: 7.00%</li>
-            <li>• Rhode Island: 7.00%</li>
-            <li>• Indiana: 7.00%</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Medium Tax States:</h4>
-          <ul class="space-y-1">
-            <li>• Texas: 6.25%</li>
-            <li>• Florida: 6.00%</li>
-            <li>• Illinois: 6.25%</li>
-            <li>• New York: 4.00%</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Low Tax States:</h4>
-          <ul class="space-y-1">
-            <li>• Colorado: 2.90%</li>
-            <li>• Alabama: 4.00%</li>
-            <li>• Georgia: 4.00%</li>
-            <li>• Hawaii: 4.00%</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">No Sales Tax:</h4>
-          <ul class="space-y-1">
-            <li>• Alaska: 0.00%</li>
-            <li>• Delaware: 0.00%</li>
-            <li>• Montana: 0.00%</li>
-            <li>• New Hampshire: 0.00%</li>
-            <li>• Oregon: 0.00%</li>
-          </ul>
-        </div>
-      </div>
-      <p class="text-green-600 text-xs mt-3">Note: Local taxes may apply in addition to state rates. Rates shown are base state rates only.</p>
-    </div>
-    
-    <div class="mt-8 bg-gray-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Sales Tax Formulas</h3>
-      <div class="grid md:grid-cols-2 gap-6 text-sm text-gray-700">
-        <div>
-          <h4 class="font-semibold mb-2">Adding Sales Tax:</h4>
-          <ul class="space-y-1">
-            <li>• Sales Tax = Price × (Tax Rate ÷ 100)</li>
-            <li>• Total Price = Price + Sales Tax</li>
-            <li>• Or: Total Price = Price × (1 + Tax Rate ÷ 100)</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Removing Sales Tax:</h4>
-          <ul class="space-y-1">
-            <li>• Price Before Tax = Total Price ÷ (1 + Tax Rate ÷ 100)</li>
-            <li>• Sales Tax = Total Price - Price Before Tax</li>
-            <li>• Tax Rate = (Sales Tax ÷ Price Before Tax) × 100</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -257,123 +85,28 @@
 </div>
 
 <script>
-let itemCounter = 0;
-
-function calculateAddTax() {
-  const price = parseFloat(document.getElementById('priceBeforeTax').value) || 0;
-  const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
-  
-  if (price <= 0 || taxRate < 0) return;
-  
-  const salesTax = price * (taxRate / 100);
-  const total = price + salesTax;
-  
-  document.getElementById('displayPriceBefore').textContent = `$${price.toFixed(2)}`;
-  document.getElementById('salesTaxAmount').textContent = `$${salesTax.toFixed(2)}`;
-  document.getElementById('totalWithTax').textContent = `$${total.toFixed(2)}`;
-}
-
-function calculateRemoveTax() {
-  const total = parseFloat(document.getElementById('totalPrice').value) || 0;
-  const taxRate = parseFloat(document.getElementById('reverseTaxRate').value) || 0;
-  
-  if (total <= 0 || taxRate < 0) return;
-  
-  const priceBeforeTax = total / (1 + taxRate / 100);
-  const salesTax = total - priceBeforeTax;
-  
-  document.getElementById('displayTotalPrice').textContent = `$${total.toFixed(2)}`;
-  document.getElementById('reverseSalesTax').textContent = `$${salesTax.toFixed(2)}`;
-  document.getElementById('priceWithoutTax').textContent = `$${priceBeforeTax.toFixed(2)}`;
-}
-
-function addItem() {
-  itemCounter++;
-  const itemInputs = document.getElementById('itemInputs');
-  
-  const itemRow = document.createElement('div');
-  itemRow.className = 'grid grid-cols-4 gap-2';
-  itemRow.id = `item${itemCounter}`;
-  itemRow.innerHTML = `
-    <input type="text" class="px-2 py-1 border border-blue-300 rounded text-sm" placeholder="Item ${itemCounter}" onchange="calculateMultipleItems()">
-    <input type="number" class="px-2 py-1 border border-blue-300 rounded text-sm" placeholder="10.00" step="0.01" onchange="calculateMultipleItems()">
-    <input type="number" class="px-2 py-1 border border-blue-300 rounded text-sm" placeholder="1" min="1" onchange="calculateMultipleItems()">
-    <span class="px-2 py-1 text-sm text-gray-600 item-subtotal">$0.00</span>
-  `;
-  
-  itemInputs.appendChild(itemRow);
-  calculateMultipleItems();
-}
-
-function calculateMultipleItems() {
-  const taxRate = parseFloat(document.getElementById('multiTaxRate').value) || 0;
-  
-  let subtotal = 0;
-  let itemCount = 0;
-  
-  const itemRows = document.querySelectorAll('[id^="item"]');
-  itemRows.forEach(row => {
-    const inputs = row.querySelectorAll('input');
-    const price = parseFloat(inputs[1].value) || 0;
-    const quantity = parseInt(inputs[2].value) || 0;
+function salesTaxCalculator() {
+  return {
+    priceBeforeTax: 100,
+    taxRate: 8.25,
     
-    if (price > 0 && quantity > 0) {
-      const itemSubtotal = price * quantity;
-      const subtotalSpan = row.querySelector('.item-subtotal');
-      subtotalSpan.textContent = `$${itemSubtotal.toFixed(2)}`;
-      
-      subtotal += itemSubtotal;
-      itemCount += quantity;
+    get salesTax() {
+      return (this.priceBeforeTax * this.taxRate) / 100;
+    },
+    
+    get totalPrice() {
+      return this.priceBeforeTax + this.salesTax;
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(amount || 0);
     }
-  });
-  
-  const salesTax = subtotal * (taxRate / 100);
-  const total = subtotal + salesTax;
-  
-  document.getElementById('receiptSubtotal').textContent = `$${subtotal.toFixed(2)}`;
-  document.getElementById('receiptTax').textContent = `$${salesTax.toFixed(2)}`;
-  document.getElementById('receiptTotal').textContent = `$${total.toFixed(2)}`;
-  document.getElementById('itemCount').textContent = itemCount;
+  }
 }
-
-// Auto-calculate on input change
-document.addEventListener('DOMContentLoaded', function() {
-  // Add one initial item
-  addItem();
-  
-  // Add tax calculator
-  ['priceBeforeTax', 'taxRate'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateAddTax);
-  });
-  
-  // Remove tax calculator
-  ['totalPrice', 'reverseTaxRate'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateRemoveTax);
-  });
-  
-  // Multiple items calculator
-  document.getElementById('multiTaxRate').addEventListener('input', calculateMultipleItems);
-});
 </script>
-
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
-        </div>
-    </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
     </div>
 </div>
 
@@ -382,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
+            v1.0.0.320250
         </div>
     </div>
     

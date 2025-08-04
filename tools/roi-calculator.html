@@ -61,234 +61,267 @@
 </head>
 <body class="bg-gray-50">
     
-
-<!-- Assumes Tailwind + Alpine are already loaded -->
-<div x-data="roiCalc()" x-cloak class="max-w-4xl mx-auto">
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">ROI Calculator</h1>
-    <p class="text-gray-600 mb-8">Calculate Return on Investment (ROI) to measure the efficiency of your investments.</p>
-
-    <div class="grid md:grid-cols-2 gap-8">
-      <!-- Inputs -->
-      <div class="space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Initial Investment ($)</label>
-          <input type="number" x-model.number="initial" min="0" step="100"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 placeholder="10000">
-          <p class="text-xs text-gray-500 mt-1">The amount you initially invested</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Final Value ($)</label>
-          <input type="number" x-model.number="finalVal" min="0" step="100"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 placeholder="12500">
-          <p class="text-xs text-gray-500 mt-1">Current value or selling price</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Additional Costs ($)</label>
-          <input type="number" x-model.number="costs" min="0" step="10"
-                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 placeholder="0">
-          <p class="text-xs text-gray-500 mt-1">Fees, taxes, maintenance costs (optional)</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
-          <div class="flex space-x-2">
-            <input type="number" x-model.number="timePeriod" min="0" step="0.1"
-                   class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   placeholder="2">
-            <select x-model="timeUnit"
-                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="years">Years</option>
-              <option value="months">Months</option>
-              <option value="days">Days</option>
-            </select>
+  <!-- Assumes Tailwind + Alpine are already loaded -->
+  <div x-data="roiCalculator()" x-cloak="x-cloak" class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">ROI Calculator</h1>
+      <p class="text-gray-600 mb-8">Calculate Return on Investment (ROI) to measure the efficiency of your investments.</p>
+      <div
+        class="grid md:grid-cols-2 gap-8">
+        <!-- Inputs -->
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Initial Investment ($)</label>
+            <input
+              type="number"
+              x-model.number="initial"
+              min="0"
+              step="100"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="10000">
+              <p class="text-xs text-gray-500 mt-1">The amount you initially invested</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Final Value ($)</label>
+              <input
+                type="number"
+                x-model.number="finalVal"
+                min="0"
+                step="100"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="12500">
+                <p class="text-xs text-gray-500 mt-1">Current value or selling price</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Additional Costs ($)</label>
+                <input
+                  type="number"
+                  x-model.number="costs"
+                  min="0"
+                  step="10"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0">
+                  <p class="text-xs text-gray-500 mt-1">Fees, taxes, maintenance costs (optional)</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                  <div class="flex space-x-2">
+                    <input
+                      type="number"
+                      x-model.number="timePeriod"
+                      min="0"
+                      step="0.1"
+                      class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="2">
+                      <select
+                        x-model="timeUnit"
+                        class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="years">Years</option>
+                        <option value="months">Months</option>
+                        <option value="days">Days</option>
+                      </select>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Investment holding period (optional for annualized ROI)</p>
+                  </div>
+                  <!-- Optional button (reactive calc is automatic) -->
+                  <button
+                    type="button"
+                    @click="recalc"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+                    Calculate ROI
+                  </button>
+                  <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-blue-800 mb-2">ROI Formula</h4>
+                    <p class="text-blue-700 text-sm">ROI = (Final Value - Initial Investment - Costs) ÷ Initial Investment × 100</p>
+                    <p class="text-blue-600 text-xs mt-1">Annualized ROI = ((Final Value ÷ Initial Investment)^(1/years) - 1) × 100</p>
+                  </div>
+                </div>
+                <!-- Results -->
+                <div class="space-y-6">
+                  <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ROI Results</h3>
+                    <div class="space-y-3">
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Total ROI:</span>
+                        <span class="font-bold text-xl text-blue-600" x-text="pct(totalROI)"></span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Annualized ROI:</span>
+                        <span class="font-semibold" x-text="pct(annualizedROI)"></span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Total Gain/Loss:</span>
+                        <span class="font-semibold" x-text="money(gainLoss)"></span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Investment Multiple:</span>
+                        <span class="font-semibold" x-text="multiple.toFixed(2) + 'x'"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-white border rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
+                    <div class="space-y-3">
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Initial Investment:</span>
+                        <span class="font-semibold" x-text="money(initial)"></span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Additional Costs:</span>
+                        <span class="font-semibold" x-text="money(costs)"></span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Total Investment:</span>
+                        <span class="font-semibold" x-text="money(totalInvestment)"></span>
+                      </div>
+                      <div class="flex justify-between border-t pt-3">
+                        <span class="text-gray-600">Final Value:</span>
+                        <span class="font-semibold" x-text="money(finalVal)"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div :class="`rounded-lg p-4 ${interp.bg}`">
+                    <h4 class="font-semibold mb-2" x-text="interpTitle"></h4>
+                    <p class="text-sm" :class="interp.text" x-text="interpMsg"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 bg-green-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-3">ROI Benchmarks</h3>
+                <div class="grid md:grid-cols-3 gap-6 text-green-700 text-sm">
+                  <div>
+                    <h4 class="font-semibold mb-2">Stock Market:</h4>
+                    <ul class="space-y-1">
+                      <li>• S&P 500 average: ~10% annually</li>
+                      <li>• Conservative: 6-8% annually</li>
+                      <li>• Aggressive: 12-15% annually</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold mb-2">Real Estate:</h4>
+                    <ul class="space-y-1">
+                      <li>• Rental properties: 8-12% annually</li>
+                      <li>• REITs: 6-10% annually</li>
+                      <li>• House flipping: 20-30% per project</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold mb-2">Business:</h4>
+                    <ul class="space-y-1">
+                      <li>• Small business: 15-25% annually</li>
+                      <li>• Startups: 25-50% (high risk)</li>
+                      <li>• Marketing campaigns: 400-500%</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p class="text-xs text-gray-500 mt-1">Investment holding period (optional for annualized ROI)</p>
-        </div>
-
-        <!-- Optional button (reactive calc is automatic) -->
-        <button type="button" @click="recalc"
-                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
-          Calculate ROI
-        </button>
-
-        <div class="bg-blue-50 rounded-lg p-4">
-          <h4 class="font-semibold text-blue-800 mb-2">ROI Formula</h4>
-          <p class="text-blue-700 text-sm">ROI = (Final Value - Initial Investment - Costs) ÷ Initial Investment × 100</p>
-          <p class="text-blue-600 text-xs mt-1">Annualized ROI = ((Final Value ÷ Initial Investment)^(1/years) - 1) × 100</p>
-        </div>
-      </div>
-
-      <!-- Results -->
-      <div class="space-y-6">
-        <div class="bg-gray-50 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">ROI Results</h3>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total ROI:</span>
-              <span class="font-bold text-xl text-blue-600" x-text="pct(totalROI)"></span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Annualized ROI:</span>
-              <span class="font-semibold" x-text="pct(annualizedROI)"></span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total Gain/Loss:</span>
-              <span class="font-semibold" x-text="money(gainLoss)"></span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Investment Multiple:</span>
-              <span class="font-semibold" x-text="multiple.toFixed(2) + 'x'"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white border rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Initial Investment:</span>
-              <span class="font-semibold" x-text="money(initial)"></span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Additional Costs:</span>
-              <span class="font-semibold" x-text="money(costs)"></span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total Investment:</span>
-              <span class="font-semibold" x-text="money(totalInvestment)"></span>
-            </div>
-            <div class="flex justify-between border-t pt-3">
-              <span class="text-gray-600">Final Value:</span>
-              <span class="font-semibold" x-text="money(finalVal)"></span>
-            </div>
-          </div>
-        </div>
-
-        <div :class="`rounded-lg p-4 ${interp.bg}`">
-          <h4 class="font-semibold mb-2" x-text="interpTitle"></h4>
-          <p class="text-sm" :class="interp.text" x-text="interpMsg"></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-8 bg-green-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-green-800 mb-3">ROI Benchmarks</h3>
-      <div class="grid md:grid-cols-3 gap-6 text-green-700 text-sm">
-        <div>
-          <h4 class="font-semibold mb-2">Stock Market:</h4>
-          <ul class="space-y-1">
-            <li>• S&P 500 average: ~10% annually</li>
-            <li>• Conservative: 6-8% annually</li>
-            <li>• Aggressive: 12-15% annually</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Real Estate:</h4>
-          <ul class="space-y-1">
-            <li>• Rental properties: 8-12% annually</li>
-            <li>• REITs: 6-10% annually</li>
-            <li>• House flipping: 20-30% per project</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-2">Business:</h4>
-          <ul class="space-y-1">
-            <li>• Small business: 15-25% annually</li>
-            <li>• Startups: 25-50% (high risk)</li>
-            <li>• Marketing campaigns: 400-500%</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-document.addEventListener('alpine:init', () => {
-  Alpine.data('roiCalc', () => ({
-    // State (defaults)
-    initial: 10000,
-    finalVal: 12500,
-    costs: 0,
-    timePeriod: 2,
-    timeUnit: 'years',
-
-    // Helpers
-    money(n) {
-      return `$${(Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    },
-    pct(n) {
-      const v = Number.isFinite(n) ? n : 0;
-      return `${v.toFixed(2)}%`;
-    },
-    recalc() { /* values recompute automatically via getters */ },
-
-    // Derived
-    get timeYears() {
-      const t = Math.max(0, Number(this.timePeriod) || 0);
-      if (this.timeUnit === 'months') return t / 12;
-      if (this.timeUnit === 'days') return t / 365;
-      return t;
-    },
-    get totalInvestment() {
-      return (Number(this.initial) || 0) + (Number(this.costs) || 0);
-    },
-    get gainLoss() {
-      return (Number(this.finalVal) || 0) - this.totalInvestment;
-    },
-    get totalROI() {
-      const base = Number(this.initial) || 0;
-      if (base <= 0) return 0;
-      return (this.gainLoss / base) * 100;
-    },
-    get annualizedROI() {
-      const years = this.timeYears;
-      const denom = this.totalInvestment; // matches original script
-      const fv = Number(this.finalVal) || 0;
-      if (years > 0 && fv > 0 && denom > 0) {
-        return (Math.pow(fv / denom, 1 / years) - 1) * 100;
-      }
-      return 0;
-    },
-    get multiple() {
-      const denom = this.totalInvestment;
-      const fv = Number(this.finalVal) || 0;
-      return denom > 0 ? fv / denom : 0;
-    },
-
-    // Interpretation
-    get interp() {
-      const r = this.totalROI;
-      if (r > 20)  return { bg: 'bg-green-50', text: 'text-green-800', msg: 'Excellent ROI! This investment has performed very well and significantly exceeded typical market returns.' };
-      if (r > 10)  return { bg: 'bg-green-50', text: 'text-green-800', msg: 'Good ROI! This investment has performed well and beaten average market returns.' };
-      if (r > 0)   return { bg: 'bg-yellow-50', text: 'text-yellow-800', msg: 'Positive ROI. The investment made money but may be below market averages. Consider if this meets your goals.' };
-      if (r > -10) return { bg: 'bg-orange-50', text: 'text-orange-800', msg: 'Small loss. The investment lost money but the loss is relatively minor. Consider your risk tolerance.' };
-      return { bg: 'bg-red-50', text: 'text-red-800', msg: 'Significant loss. This investment has performed poorly. Review your investment strategy and risk management.' };
-    },
-    get interpTitle() {
-      return 'ROI Interpretation';
-    },
-    get interpMsg() {
-      const add = this.annualizedROI ? ` The annualized return of ${this.annualizedROI.toFixed(2)}% helps compare this to other investments.` : '';
-      return this.interp.msg + add;
-    }
-  }));
-});
-</script>
-
-
+          <script>
+            function roiCalculator() {
+              return {
+                // State (defaults)
+                initial: 10000,
+                finalVal: 12500,
+                costs: 0,
+                timePeriod: 2,
+                timeUnit: 'years',
+                // Helpers
+                money(n) {
+                  return `$${
+                    (Number(n) || 0).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })
+                  }`;
+                },
+                pct(n) {
+                  const v = Number.isFinite(n)
+                    ? n
+                    : 0;
+                  return `${
+                    v.toFixed(2)
+                  }%`;
+                },
+                recalc() { /* values recompute automatically via getters */
+                },
+                // Derived
+                get timeYears() {
+                  const t = Math.max(0, Number(this.timePeriod) || 0);
+                  if (this.timeUnit === 'months') 
+                    return t / 12;
+                  
+                  if (this.timeUnit === 'days') 
+                    return t / 365;
+                  
+                  return t;
+                },
+                get totalInvestment() {
+                  return(Number(this.initial) || 0) + (Number(this.costs) || 0);
+                },
+                get gainLoss() {
+                  return(Number(this.finalVal) || 0) - this.totalInvestment;
+                },
+                get totalROI() {
+                  const base = Number(this.initial) || 0;
+                  if (base <= 0) 
+                    return 0;
+                  
+                  return(this.gainLoss / base) * 100;
+                },
+                get annualizedROI() {
+                  const years = this.timeYears;
+                  const denom = this.totalInvestment; // matches original script
+                  const fv = Number(this.finalVal) || 0;
+                  if (years > 0 && fv > 0 && denom > 0) {
+                    return(Math.pow(fv / denom, 1 / years) - 1) * 100;
+                  }
+                  return 0;
+                },
+                get multiple() {
+                  const denom = this.totalInvestment;
+                  const fv = Number(this.finalVal) || 0;
+                  return denom > 0
+                    ? fv / denom
+                    : 0;
+                },
+                // Interpretation
+                get interp() {
+                  const r = this.totalROI;
+                  if (r > 20) 
+                    return {bg: 'bg-green-50', text: 'text-green-800', msg: 'Excellent ROI! This investment has performed very well and significantly exceeded typical market returns.'};
+                  
+                  if (r > 10) 
+                    return {bg: 'bg-green-50', text: 'text-green-800', msg: 'Good ROI! This investment has performed well and beaten average market returns.'};
+                  
+                  if (r > 0) 
+                    return {bg: 'bg-yellow-50', text: 'text-yellow-800', msg: 'Positive ROI. The investment made money but may be below market averages. Consider if this meets your goals.'};
+                  
+                  if (r > -10) 
+                    return {bg: 'bg-orange-50', text: 'text-orange-800', msg: 'Small loss. The investment lost money but the loss is relatively minor. Consider your risk tolerance.'};
+                  
+                  return {bg: 'bg-red-50', text: 'text-red-800', msg: 'Significant loss. This investment has performed poorly. Review your investment strategy and risk management.'};
+                },
+                get interpTitle() {
+                  return 'ROI Interpretation';
+                },
+                get interpMsg() {
+                  const add = this.annualizedROI
+                    ? ` The annualized return of ${
+                    this.annualizedROI.toFixed(2)
+                  }% helps compare this to other investments.` : '';
+                  return this.interp.msg + add;
+                }
+              }
+            }
+          </script>
+        
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
+            v1.0.0.320250
         </div>
     </div>
     
@@ -309,7 +342,7 @@ document.addEventListener('alpine:init', () => {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
+            v1.0.0.320250
         </div>
     </div>
     

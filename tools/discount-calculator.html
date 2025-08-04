@@ -43,214 +43,41 @@
 
     <!-- Tool Content -->
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discount Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
-</head>
-<body class="bg-gray-50">
-    
-<div class="max-w-4xl mx-auto">
+        <div x-data="discountCalculator()" class="max-w-4xl mx-auto">
   <div class="bg-white rounded-lg shadow-lg p-6">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Discount Calculator</h1>
-    <p class="text-gray-600 mb-8">Calculate discounted prices, savings amounts, and original prices with multiple discount scenarios.</p>
+    <p class="text-gray-600 mb-8">Calculate discounts, sale prices, and savings.</p>
     
-    <div class="grid lg:grid-cols-2 gap-8">
-      <!-- Basic Discount Calculator -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Calculate Discount</h3>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Original Price ($)</label>
-            <input type="number" id="originalPrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100" step="0.01">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Discount (%)</label>
-            <input type="number" id="discountPercent" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="20" step="0.1">
-          </div>
-          
-          <div class="bg-white rounded-lg p-4 border">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Discount Amount:</span>
-                <span id="discountAmount" class="font-semibold text-red-600">$0</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Final Price:</span>
-                <span id="finalPrice" class="font-bold text-xl text-green-600">$0</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">You Save:</span>
-                <span id="savings" class="font-semibold text-blue-600">$0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Reverse Calculator -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Find Original Price</h3>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sale Price ($)</label>
-            <input type="number" id="salePrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="80" step="0.01">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Discount (%)</label>
-            <input type="number" id="reverseDiscount" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="20" step="0.1">
-          </div>
-          
-          <div class="bg-white rounded-lg p-4 border">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Original Price:</span>
-                <span id="calculatedOriginal" class="font-bold text-xl text-purple-600">$0</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Discount Amount:</span>
-                <span id="calculatedDiscount" class="font-semibold text-red-600">$0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Multiple Discounts -->
-    <div class="mt-8 bg-blue-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-blue-800 mb-4">Multiple Discounts</h3>
-      <p class="text-blue-600 text-sm mb-4">Calculate the effect of applying multiple discounts sequentially</p>
-      
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-blue-700 mb-2">Original Price ($)</label>
-            <input type="number" id="multiOriginal" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="200" step="0.01">
-          </div>
-          
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-sm font-medium text-blue-700 mb-1">1st Discount (%)</label>
-              <input type="number" id="discount1" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="20" step="0.1">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-blue-700 mb-1">2nd Discount (%)</label>
-              <input type="number" id="discount2" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10" step="0.1">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-blue-700 mb-1">3rd Discount (%)</label>
-              <input type="number" id="discount3" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="5" step="0.1">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-blue-700 mb-1">4th Discount (%)</label>
-              <input type="number" id="discount4" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0" step="0.1">
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-lg p-4 border border-blue-200">
-          <h4 class="font-semibold text-blue-800 mb-3">Multiple Discount Results</h4>
-          <div id="multipleDiscountSteps" class="space-y-2 text-sm">
-            <!-- Steps will be populated here -->
-          </div>
-          <div class="border-t pt-3 mt-3">
-            <div class="flex justify-between font-semibold">
-              <span>Final Price:</span>
-              <span id="multiFinalPrice" class="text-blue-800">$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Total Savings:</span>
-              <span id="multiTotalSavings" class="text-green-600">$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Effective Discount:</span>
-              <span id="effectiveDiscount" class="text-purple-600">0%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Bulk Discount Calculator -->
-    <div class="mt-8 bg-green-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-green-800 mb-4">Bulk Purchase Calculator</h3>
-      
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-green-700 mb-2">Unit Price ($)</label>
-            <input type="number" id="unitPrice" class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="10" step="0.01">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-green-700 mb-2">Quantity</label>
-            <input type="number" id="quantity" class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="50" step="1">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-green-700 mb-2">Bulk Discount (%)</label>
-            <input type="number" id="bulkDiscount" class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="15" step="0.1">
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-lg p-4 border border-green-200">
-          <h4 class="font-semibold text-green-800 mb-3">Bulk Purchase Summary</h4>
-          <div class="space-y-2">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Regular Total:</span>
-              <span id="regularTotal" class="font-semibold">$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Bulk Discount:</span>
-              <span id="bulkDiscountAmount" class="font-semibold text-red-600">-$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Discounted Total:</span>
-              <span id="bulkTotal" class="font-bold text-xl text-green-600">$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Price per Unit:</span>
-              <span id="discountedUnitPrice" class="font-semibold">$0</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="mt-8 bg-gray-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Discount Formulas</h3>
-      <div class="grid md:grid-cols-2 gap-6 text-sm text-gray-700">
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="space-y-6">
         <div>
-          <h4 class="font-semibold mb-2">Basic Calculations:</h4>
-          <ul class="space-y-1">
-            <li>• Discount Amount = Original Price × (Discount % ÷ 100)</li>
-            <li>• Final Price = Original Price - Discount Amount</li>
-            <li>• Original Price = Sale Price ÷ (1 - Discount % ÷ 100)</li>
-          </ul>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Original Price ($)</label>
+          <input type="number" x-model.number="originalPrice" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="100" step="0.01">
         </div>
+        
         <div>
-          <h4 class="font-semibold mb-2">Multiple Discounts:</h4>
-          <ul class="space-y-1">
-            <li>• Applied sequentially, not additively</li>
-            <li>• Each discount applies to the already discounted price</li>
-            <li>• 20% + 10% ≠ 30% (it's actually 28%)</li>
-          </ul>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Discount (%)</label>
+          <input type="number" x-model.number="discountPercent" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="20" step="0.01">
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Results</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Original Price:</span>
+              <span class="font-semibold" x-text="formatCurrency(originalPrice)">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Discount Amount:</span>
+              <span class="font-semibold text-red-600" x-text="formatCurrency(discountAmount)">$0</span>
+            </div>
+            <div class="flex justify-between border-t pt-3">
+              <span class="text-gray-800 font-semibold">Sale Price:</span>
+              <span class="font-bold text-xl text-green-600" x-text="formatCurrency(salePrice)">$0</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -258,127 +85,28 @@
 </div>
 
 <script>
-function calculateBasicDiscount() {
-  const original = parseFloat(document.getElementById('originalPrice').value) || 0;
-  const discount = parseFloat(document.getElementById('discountPercent').value) || 0;
-  
-  if (original <= 0 || discount < 0 || discount > 100) return;
-  
-  const discountAmount = original * (discount / 100);
-  const finalPrice = original - discountAmount;
-  
-  document.getElementById('discountAmount').textContent = `$${discountAmount.toFixed(2)}`;
-  document.getElementById('finalPrice').textContent = `$${finalPrice.toFixed(2)}`;
-  document.getElementById('savings').textContent = `$${discountAmount.toFixed(2)}`;
-}
-
-function calculateReverseDiscount() {
-  const salePrice = parseFloat(document.getElementById('salePrice').value) || 0;
-  const discount = parseFloat(document.getElementById('reverseDiscount').value) || 0;
-  
-  if (salePrice <= 0 || discount <= 0 || discount >= 100) return;
-  
-  const originalPrice = salePrice / (1 - discount / 100);
-  const discountAmount = originalPrice - salePrice;
-  
-  document.getElementById('calculatedOriginal').textContent = `$${originalPrice.toFixed(2)}`;
-  document.getElementById('calculatedDiscount').textContent = `$${discountAmount.toFixed(2)}`;
-}
-
-function calculateMultipleDiscounts() {
-  const original = parseFloat(document.getElementById('multiOriginal').value) || 0;
-  const discounts = [
-    parseFloat(document.getElementById('discount1').value) || 0,
-    parseFloat(document.getElementById('discount2').value) || 0,
-    parseFloat(document.getElementById('discount3').value) || 0,
-    parseFloat(document.getElementById('discount4').value) || 0
-  ].filter(d => d > 0);
-  
-  if (original <= 0) return;
-  
-  const stepsDiv = document.getElementById('multipleDiscountSteps');
-  stepsDiv.innerHTML = '';
-  
-  let currentPrice = original;
-  let totalSavings = 0;
-  
-  stepsDiv.innerHTML += `<div class="flex justify-between"><span>Original Price:</span><span>$${original.toFixed(2)}</span></div>`;
-  
-  discounts.forEach((discount, index) => {
-    const discountAmount = currentPrice * (discount / 100);
-    currentPrice -= discountAmount;
-    totalSavings += discountAmount;
+function discountCalculator() {
+  return {
+    originalPrice: 100,
+    discountPercent: 20,
     
-    stepsDiv.innerHTML += `<div class="flex justify-between text-blue-600"><span>After ${discount}% discount:</span><span>$${currentPrice.toFixed(2)}</span></div>`;
-  });
-  
-  const effectiveDiscountPercent = ((original - currentPrice) / original) * 100;
-  
-  document.getElementById('multiFinalPrice').textContent = `$${currentPrice.toFixed(2)}`;
-  document.getElementById('multiTotalSavings').textContent = `$${totalSavings.toFixed(2)}`;
-  document.getElementById('effectiveDiscount').textContent = `${effectiveDiscountPercent.toFixed(1)}%`;
+    get discountAmount() {
+      return (this.originalPrice * this.discountPercent) / 100;
+    },
+    
+    get salePrice() {
+      return this.originalPrice - this.discountAmount;
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(amount || 0);
+    }
+  }
 }
-
-function calculateBulkDiscount() {
-  const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
-  const quantity = parseInt(document.getElementById('quantity').value) || 0;
-  const bulkDiscount = parseFloat(document.getElementById('bulkDiscount').value) || 0;
-  
-  if (unitPrice <= 0 || quantity <= 0) return;
-  
-  const regularTotal = unitPrice * quantity;
-  const bulkDiscountAmount = regularTotal * (bulkDiscount / 100);
-  const bulkTotal = regularTotal - bulkDiscountAmount;
-  const discountedUnitPrice = bulkTotal / quantity;
-  
-  document.getElementById('regularTotal').textContent = `$${regularTotal.toFixed(2)}`;
-  document.getElementById('bulkDiscountAmount').textContent = `$${bulkDiscountAmount.toFixed(2)}`;
-  document.getElementById('bulkTotal').textContent = `$${bulkTotal.toFixed(2)}`;
-  document.getElementById('discountedUnitPrice').textContent = `$${discountedUnitPrice.toFixed(2)}`;
-}
-
-// Auto-calculate on input change
-document.addEventListener('DOMContentLoaded', function() {
-  // Basic discount
-  ['originalPrice', 'discountPercent'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateBasicDiscount);
-  });
-  
-  // Reverse discount
-  ['salePrice', 'reverseDiscount'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateReverseDiscount);
-  });
-  
-  // Multiple discounts
-  ['multiOriginal', 'discount1', 'discount2', 'discount3', 'discount4'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateMultipleDiscounts);
-  });
-  
-  // Bulk discount
-  ['unitPrice', 'quantity', 'bulkDiscount'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateBulkDiscount);
-  });
-});
 </script>
-
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
-        </div>
-    </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
     </div>
 </div>
 
@@ -387,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
+            v1.0.0.320250
         </div>
     </div>
     

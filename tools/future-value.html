@@ -43,25 +43,7 @@
 
     <!-- Tool Content -->
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Future Value Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
-</head>
-<body class="bg-gray-50">
-    
-<div class="max-w-4xl mx-auto">
+        <div x-data="futureValueCalculator()" class="max-w-4xl mx-auto">
   <div class="bg-white rounded-lg shadow-lg p-6">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Future Value Calculator</h1>
     <p class="text-gray-600 mb-8">Calculate the future value of your current investments and savings.</p>
@@ -70,40 +52,17 @@
       <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Present Value ($)</label>
-          <input type="number" id="presentValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
-          <p class="text-xs text-gray-500 mt-1">Current amount you have to invest</p>
+          <input type="number" x-model.number="presentValue" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10000" step="100">
         </div>
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Annual Interest Rate (%)</label>
-          <input type="number" id="interestRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="7" step="0.1">
-          <p class="text-xs text-gray-500 mt-1">Expected annual return rate</p>
+          <input type="number" x-model.number="interestRate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="7" step="0.1">
         </div>
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Time Period (Years)</label>
-          <input type="number" id="timePeriod" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10" step="0.5">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Compounding Frequency</label>
-          <select id="compoundingFreq" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="1">Annually</option>
-            <option value="2">Semi-annually</option>
-            <option value="4">Quarterly</option>
-            <option value="12" selected>Monthly</option>
-            <option value="365">Daily</option>
-          </select>
-        </div>
-        
-        <button onclick="calculateFutureValue()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
-          Calculate Future Value
-        </button>
-        
-        <div class="bg-blue-50 rounded-lg p-4">
-          <h4 class="font-semibold text-blue-800 mb-2">Future Value Formula</h4>
-          <p class="text-blue-700 text-sm">FV = PV × (1 + r/n)^(n×t)</p>
-          <p class="text-blue-600 text-xs mt-1">Where FV = Future Value, PV = Present Value, r = annual rate, n = compounding frequency, t = time</p>
+          <input type="number" x-model.number="timePeriod" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="10" step="0.5">
         </div>
       </div>
       
@@ -113,200 +72,48 @@
           <div class="space-y-3">
             <div class="flex justify-between">
               <span class="text-gray-600">Future Value:</span>
-              <span id="futureValueResult" class="font-bold text-xl text-green-600">$0</span>
+              <span class="font-bold text-xl text-green-600" x-text="formatCurrency(futureValue)">$0</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">Present Value:</span>
-              <span id="presentValueDisplay" class="font-semibold">$0</span>
+              <span class="font-semibold" x-text="formatCurrency(presentValue)">$0</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">Total Growth:</span>
-              <span id="totalGrowth" class="font-semibold text-blue-600">$0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Growth Multiple:</span>
-              <span id="growthMultiple" class="font-semibold">0x</span>
+              <span class="font-semibold text-blue-600" x-text="formatCurrency(totalGrowth)">$0</span>
             </div>
           </div>
         </div>
-        
-        <div class="bg-white border rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Growth Analysis</h3>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Effective Annual Rate:</span>
-              <span id="effectiveRate" class="font-semibold">0%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total Return:</span>
-              <span id="totalReturn" class="font-semibold">0%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Doubling Time:</span>
-              <span id="doublingTime" class="font-semibold">0 years</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-green-50 rounded-lg p-4">
-          <h4 class="font-semibold text-green-800 mb-2">Investment Insights</h4>
-          <div id="investmentInsights" class="text-green-700 text-sm space-y-1">
-            <!-- Insights will be populated here -->
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="mt-8 bg-gray-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Growth Projection</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b">
-              <th class="text-left py-2">Year</th>
-              <th class="text-right py-2">Value</th>
-              <th class="text-right py-2">Growth</th>
-              <th class="text-right py-2">Total Growth</th>
-            </tr>
-          </thead>
-          <tbody id="projectionTable">
-            <!-- Projection will be populated here -->
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function calculateFutureValue() {
-  const presentValue = parseFloat(document.getElementById('presentValue').value) || 0;
-  const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
-  const years = parseFloat(document.getElementById('timePeriod').value) || 0;
-  const compoundingFreq = parseInt(document.getElementById('compoundingFreq').value) || 12;
-  
-  if (presentValue <= 0 || annualRate <= 0 || years <= 0) {
-    alert('Please enter valid positive values for all fields.');
-    return;
-  }
-  
-  const rate = annualRate / 100;
-  const periodicRate = rate / compoundingFreq;
-  const totalPeriods = compoundingFreq * years;
-  
-  // Calculate future value
-  const futureValue = presentValue * Math.pow(1 + periodicRate, totalPeriods);
-  const totalGrowth = futureValue - presentValue;
-  const growthMultiple = futureValue / presentValue;
-  const totalReturn = ((futureValue - presentValue) / presentValue) * 100;
-  
-  // Calculate effective annual rate
-  const effectiveRate = Math.pow(1 + periodicRate, compoundingFreq) - 1;
-  
-  // Calculate doubling time using Rule of 72
-  const doublingTime = Math.log(2) / Math.log(1 + rate);
-  
-  // Display results
-  document.getElementById('futureValueResult').textContent = `$${futureValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  document.getElementById('presentValueDisplay').textContent = `$${presentValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  document.getElementById('totalGrowth').textContent = `$${totalGrowth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  document.getElementById('growthMultiple').textContent = `${growthMultiple.toFixed(2)}x`;
-  document.getElementById('effectiveRate').textContent = `${(effectiveRate * 100).toFixed(2)}%`;
-  document.getElementById('totalReturn').textContent = `${totalReturn.toFixed(2)}%`;
-  document.getElementById('doublingTime').textContent = `${doublingTime.toFixed(1)} years`;
-  
-  // Generate insights
-  generateInsights(annualRate, years, growthMultiple, doublingTime);
-  
-  // Generate projection table
-  generateProjection(presentValue, periodicRate, compoundingFreq, years);
-}
-
-function generateInsights(rate, years, multiple, doublingTime) {
-  const insightsDiv = document.getElementById('investmentInsights');
-  const insights = [];
-  
-  if (rate >= 10) {
-    insights.push('• High return rate - excellent growth potential but higher risk');
-  } else if (rate >= 7) {
-    insights.push('• Good return rate - solid long-term growth expected');
-  } else if (rate >= 4) {
-    insights.push('• Moderate return rate - steady but conservative growth');
-  } else {
-    insights.push('• Low return rate - consider higher-yield investments');
-  }
-  
-  if (years >= 20) {
-    insights.push('• Long investment horizon maximizes compound growth');
-  } else if (years >= 10) {
-    insights.push('• Good time horizon for compound interest to work');
-  } else {
-    insights.push('• Short time horizon limits compound growth potential');
-  }
-  
-  if (multiple >= 3) {
-    insights.push(`• Investment will triple in value over ${years} years`);
-  } else if (multiple >= 2) {
-    insights.push(`• Investment will double in value over ${years} years`);
-  }
-  
-  insights.push(`• Money doubles every ${doublingTime.toFixed(1)} years at this rate`);
-  
-  insightsDiv.innerHTML = insights.join('<br>');
-}
-
-function generateProjection(pv, periodicRate, freq, years) {
-  const projectionTable = document.getElementById('projectionTable');
-  projectionTable.innerHTML = '';
-  
-  const yearlyRate = Math.pow(1 + periodicRate, freq) - 1;
-  let currentValue = pv;
-  
-  for (let year = 1; year <= Math.min(years, 10); year++) {
-    const newValue = pv * Math.pow(1 + periodicRate, freq * year);
-    const yearlyGrowth = newValue - currentValue;
-    const totalGrowth = newValue - pv;
+function futureValueCalculator() {
+  return {
+    presentValue: 10000,
+    interestRate: 7,
+    timePeriod: 10,
     
-    const row = projectionTable.insertRow();
-    row.innerHTML = `
-      <td class="py-2">${year}</td>
-      <td class="text-right py-2">$${newValue.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
-      <td class="text-right py-2 text-green-600">+$${yearlyGrowth.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
-      <td class="text-right py-2 text-blue-600">+$${totalGrowth.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</td>
-    `;
+    get futureValue() {
+      const rate = this.interestRate / 100;
+      return this.presentValue * Math.pow(1 + rate, this.timePeriod);
+    },
     
-    currentValue = newValue;
+    get totalGrowth() {
+      return this.futureValue - this.presentValue;
+    },
+    
+    formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(amount || 0);
+    }
   }
 }
-
-// Auto-calculate on input change
-document.addEventListener('DOMContentLoaded', function() {
-  const inputs = ['presentValue', 'interestRate', 'timePeriod', 'compoundingFreq'];
-  inputs.forEach(id => {
-    document.getElementById(id).addEventListener('input', calculateFutureValue);
-    document.getElementById(id).addEventListener('change', calculateFutureValue);
-  });
-});
 </script>
-
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
-        </div>
-    </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
     </div>
 </div>
 
@@ -315,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.264944
+            v1.0.0.320250
         </div>
     </div>
     
