@@ -10,6 +10,14 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="/utils/calculatorUtils.js"></script>
     <script src="/components/calculatorComponents.js"></script>
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
     <style>
         [x-cloak] { display: none !important; }
     </style>
@@ -84,15 +92,151 @@
           Browse Available Tools
         </a>
         
-        <button onclick="notifyMe()" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
+        <button onclick="upvoteTool('private-mortgage-insurance')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
             <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
           </svg>
-
-          Request Priority
+          Upvote Tool
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Email Capture for Coming Soon Tools -->
+  <div class="mt-8 max-w-md mx-auto">
+    
+    <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2">
+            
+                <i data-lucide="bell" class="h-5 w-5"></i>
+                Get Notified when Private Mortgage Insurance (PMI) is ready
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1">
+            
+                Be the first to know when Private Mortgage Insurance (PMI) is ready
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'private-mortgage-insurance', 'notify')">
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Notify Me When Ready
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-notify" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll notify you when Private Mortgage Insurance (PMI) is ready.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            posthog.identify(email, {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            });
+            
+            // Capture the email capture event
+            posthog.capture('email_captured', {
+                email: email,
+                tool_id: toolId,
+                tool_name: 'Private Mortgage Insurance (PMI)',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
   </div>
   
   <!-- Related Available Tools -->
@@ -838,7 +982,7 @@
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.333108 • Aug 4, 2025, 02:45 PM EDT</p>
+                <p>Build v1.0.0.399637 • Aug 5, 2025, 09:13 AM EDT</p>
                 
                 <p class="mt-1">main@7ceddee</p>
                 
@@ -848,17 +992,39 @@
     </div>
 
 <script>
-function notifyMe() {
-  alert('Thank you for your interest! We\'ll prioritize the development of Private Mortgage Insurance (PMI). Check back soon!');
+async function upvoteTool(toolId) {
+    try {
+        // Capture upvote with PostHog
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('tool_upvoted', {
+                tool_id: toolId,
+                tool_name: 'Private Mortgage Insurance (PMI)',
+                tool_category: 'financial',
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log('Tool upvoted with PostHog:', { toolId });
+        } else {
+            console.log('PostHog not available, tool upvote:', { toolId });
+        }
+        
+        // Show success message
+        alert('Thanks for your upvote! We\'ll prioritize the development of Private Mortgage Insurance (PMI).');
+        
+    } catch (error) {
+        console.error('Error upvoting tool:', error);
+        alert('Something went wrong. Please try again.');
+    }
 }
 </script>
+
 
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.333108
+            v1.0.0.399637
         </div>
     </div>
     
