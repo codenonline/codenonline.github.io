@@ -33,14 +33,14 @@
   <h1 class="text-4xl font-bold text-gray-900 mb-2">
     Client-Side Calculators & Utilities
     
-      <span class="text-xs font-normal text-gray-500 ml-2 block">v1.0.0.510872</span>
+      <span class="text-xs font-normal text-gray-500 ml-2 block">v1.0.0.510973</span>
     
   </h1>
   <p class="text-gray-600 text-lg">
     General-purpose mini-apps for everyday tasks—coding helpers, number crunchers, formatters, and converters. Runs entirely on your device with no accounts or tracking.
   </p>
 </div>
-            
+
             <!-- Search and Filter -->
             <div class="flex flex-col lg:flex-row gap-4 items-center justify-center">
                 <div class="relative w-full max-w-md">
@@ -159,6 +159,168 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No tools found</h3>
             <p class="text-gray-600">Try adjusting your search or filter criteria.</p>
+            <!-- Email Capture for Tools -->
+            <div class="mt-8 max-w-md mx-auto">
+                
+                <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="plus-circle" class="h-5 w-5 sm:mx-auto"></i>
+                Request a New Tool
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Can't find what you're looking for? Let us know what tool you need
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'tool-request', 'request')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="tool-request-input" class="block text-sm font-medium text-gray-700">What tool do you need?</label>
+                    <input 
+                        id="tool-request-input" 
+                        type="text" 
+                        name="toolRequest" 
+                        required 
+                        placeholder="e.g., Mortgage Calculator, Code Formatter, etc." 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Submit Tool Request
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-request" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll review your request and get back to you.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: '',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+            </div>
         </div>
     </div>
 
@@ -170,7 +332,7 @@
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.510872 • Aug 6, 2025, 04:07 PM EDT</p>
+                <p>Build v1.0.0.510973 • Aug 6, 2025, 04:09 PM EDT</p>
                 
                 <p class="mt-1">main@d83f9b9</p>
                 
@@ -215,7 +377,7 @@ function toolCatalog() {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.510872
+            v1.0.0.510973
         </div>
     </div>
     
