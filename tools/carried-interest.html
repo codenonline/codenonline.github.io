@@ -123,6 +123,7 @@
     <div class="p-6">
         <form onsubmit="handleEmailCapture(event, 'carried-interest', 'notify')">
             <div class="space-y-4">
+                
                 <div class="space-y-2">
                     <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
                     <input 
@@ -173,6 +174,7 @@ async function handleEmailCapture(event, toolId, captureType) {
     
     const form = event.target;
     const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
     const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
     const submitButton = form.querySelector('button[type="submit"]');
     
@@ -185,24 +187,36 @@ async function handleEmailCapture(event, toolId, captureType) {
         // Capture email with PostHog
         if (typeof posthog !== 'undefined') {
             // Identify the user with their email
-            posthog.identify(email, {
+            const identifyData = {
                 email: email,
                 tool_interest: toolId,
                 capture_type: captureType
-            });
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
             
             // Capture the email capture event
-            posthog.capture('email_captured', {
+            const eventData = {
                 email: email,
                 tool_id: toolId,
                 tool_name: 'Carried Interest Calculator',
                 capture_type: captureType,
                 timestamp: new Date().toISOString()
-            });
+            };
             
-            console.log('Email captured with PostHog:', { email, toolId, captureType });
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
         } else {
-            console.log('PostHog not available, email capture:', { email, toolId, captureType });
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
         }
         
         // Simulate API delay for better UX
@@ -850,7 +864,7 @@ async function handleEmailCapture(event, toolId, captureType) {
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.510213 • Aug 6, 2025, 03:56 PM EDT</p>
+                <p>Build v1.0.0.510831 • Aug 6, 2025, 04:07 PM EDT</p>
                 
                 <p class="mt-1">main@d83f9b9</p>
                 
@@ -892,7 +906,7 @@ async function upvoteTool(toolId) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.510213
+            v1.0.0.510831
         </div>
     </div>
     
