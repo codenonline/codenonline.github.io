@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-    Tip Calculator - Developer & Financial Tools</title>
+    <title>Tip Calculator - Coming Soon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
@@ -25,228 +24,104 @@
 </head>
 <body class="bg-gray-50">
     
-    <div
-        class="min-h-screen bg-gray-50">
-        <!-- Header -->
-        <div class="bg-white border-b">
-            <div class="container mx-auto px-4 py-6 max-w-7xl">
-                <div class="flex items-center gap-4">
-                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                        Back to Tools
-                    </a>
-                    <div class="h-6 w-px bg-gray-300"></div>
-                </div>
-            </div>
-        </div>
-        <div class="text-center py-8 px-10">
-            <div class="flex items-center justify-center mb-4">
-                <div class="p-4 bg-blue-100 rounded-full">
-                    <i data-lucide="utensils" class="h-8 w-8 text-blue-600"></i>
-                </div>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900">Tip Calculator</h1>
-            <p class="text-gray-600">Calculate tips and split bills among multiple people with customizable tip percentages.</p>
-        </div>
-        <!-- Tool Content -->
-        <div class="container mx-auto px-4 py-8 max-w-7xl">
-            <div x-data="tipCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Input Section -->
-    <div class="bg-white rounded-lg border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
-            <h2 class="text-lg font-semibold flex items-center gap-2">
-                <i data-lucide="dollar-sign" class="h-5 w-5"></i>
-                Bill Details
-            </h2>
-        </div>
-        <div class="p-6 space-y-6">
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Bill Amount</label>
-                <input
-                    type="number"
-                    step="0.01"
-                    placeholder="50.00"
-                    x-model="billAmount"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-            </div>
 
-            <div class="space-y-3">
-                <label class="block text-sm font-medium text-gray-700">Tip Percentage</label>
-                <div class="flex flex-wrap gap-2">
-                    <template x-for="preset in tipPresets" :key="preset">
-                        <button
-                            @click="setTipPreset(preset)"
-                            :class="tipPercentage == preset && !customTip ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
-                            class="flex-1 min-w-16 px-3 py-2 border rounded-lg transition-all"
-                            x-text="preset + '%'"
-                        ></button>
-                    </template>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Custom Tip (%)</label>
-                    <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Enter custom percentage"
-                        x-model="customTip"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                </div>
-            </div>
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6 max-w-7xl">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Back to Tools
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
 
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Number of People</label>
-                <input
-                    type="number"
-                    min="1"
-                    placeholder="1"
-                    x-model="numberOfPeople"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
             </div>
         </div>
     </div>
 
-    <!-- Results Section -->
-    <div class="bg-white rounded-lg border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
-            <h2 class="text-lg font-semibold flex items-center gap-2">
-                <i data-lucide="users" class="h-5 w-5"></i>
-                Calculation Results
-            </h2>
-        </div>
-        <div class="p-6">
-            <div class="space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="text-center p-4 bg-green-50 rounded-lg">
-                        <p class="text-sm text-gray-600">Tip Amount</p>
-                        <p class="text-2xl font-bold text-green-600" x-text="formatCurrency(results.tipAmount)"></p>
-                    </div>
-                    <div class="text-center p-4 bg-blue-50 rounded-lg">
-                        <p class="text-sm text-gray-600">Total Amount</p>
-                        <p class="text-2xl font-bold text-blue-600" x-text="formatCurrency(results.totalAmount)"></p>
-                    </div>
-                </div>
-
-                <div x-show="numberOfPeople > 1" class="grid grid-cols-2 gap-4">
-                    <div class="text-center p-4 bg-purple-50 rounded-lg">
-                        <p class="text-sm text-gray-600">Per Person Total</p>
-                        <p class="text-xl font-bold text-purple-600" x-text="formatCurrency(results.perPersonAmount)"></p>
-                    </div>
-                    <div class="text-center p-4 bg-orange-50 rounded-lg">
-                        <p class="text-sm text-gray-600">Per Person Tip</p>
-                        <p class="text-xl font-bold text-orange-600" x-text="formatCurrency(results.perPersonTip)"></p>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Bill Amount:</span>
-                        <span class="font-semibold" x-text="formatCurrency(parseFloat(billAmount) || 0)"></span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600" x-text="`Tip (${results.tipPercentage}%):`"></span>
-                        <span class="font-semibold text-green-600" x-text="formatCurrency(results.tipAmount)"></span>
-                    </div>
-                    <div class="flex justify-between items-center border-t pt-2">
-                        <span class="text-gray-600 font-medium">Total:</span>
-                        <span class="font-bold text-lg" x-text="formatCurrency(results.totalAmount)"></span>
-                    </div>
-                    <div x-show="numberOfPeople > 1" class="flex justify-between items-center">
-                        <span class="text-gray-600">Per Person:</span>
-                        <span class="text-sm px-3 py-1 bg-gray-900 text-white rounded-full" x-text="formatCurrency(results.perPersonAmount)"></span>
-                    </div>
-                </div>
-
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h4 class="font-medium mb-2 flex items-center gap-2">
-                        <i data-lucide="dollar-sign" class="h-4 w-4"></i>
-                        Bill Summary
-                    </h4>
-                    <div class="text-sm text-gray-600 space-y-1">
-                        <p x-text="`• Bill amount: ${formatCurrency(parseFloat(billAmount) || 0)}`"></p>
-                        <p x-text="`• Tip percentage: ${results.tipPercentage}%`"></p>
-                        <p x-text="`• Number of people: ${numberOfPeople}`"></p>
-                        <p x-text="`• Service quality: ${getServiceQuality(results.tipPercentage)}`"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="max-w-4xl my-4 mx-auto px-4">
+  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+    <div class="mb-8">
+      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i data-lucide="utensils" class="w-12 h-12 text-blue-600"></i>
+      </div>
+      
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Tip Calculator</h1>
+      <p class="text-lg text-gray-600 mb-6">Calculate tips and split bills among multiple people with customizable tip percentages.</p>
+      
+      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Coming Soon
+      </div>
     </div>
-</div>
-
-<script>
-function tipCalculator() {
-    return {
-        billAmount: '50.00',
-        tipPercentage: '18',
-        numberOfPeople: '1',
-        customTip: '',
-        tipPresets: [15, 18, 20, 22, 25],
-        
-        get results() {
-            const bill = parseFloat(this.billAmount) || 0;
-            const tip = parseFloat(this.customTip || this.tipPercentage) || 0;
-            const people = parseInt(this.numberOfPeople) || 1;
-
-            const tipAmount = (bill * tip) / 100;
-            const totalAmount = bill + tipAmount;
-            const perPersonAmount = totalAmount / people;
-            const perPersonTip = tipAmount / people;
-
-            return {
-                tipAmount,
-                totalAmount,
-                perPersonAmount,
-                perPersonTip,
-                tipPercentage: tip
-            };
-        },
-        
-        setTipPreset(preset) {
-            this.tipPercentage = preset.toString();
-            this.customTip = '';
-        },
-        
-        formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            }).format(amount);
-        },
-        
-        getServiceQuality(tipPercentage) {
-            if (tipPercentage >= 20) return 'Excellent';
-            if (tipPercentage >= 18) return 'Good';
-            if (tipPercentage >= 15) return 'Standard';
-            return 'Below Average';
-        }
-    }
-}
-</script>
+    
+    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
+      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Easy-to-use interface
         </div>
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Accurate calculations
+        </div>
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Detailed explanations
+        </div>
+      </div>
     </div>
-    <!-- Email Capture for Coming Soon Tools -->
-    <div class="mt-8 max-w-md mx-auto">
+    
+    <div class="space-y-4">
+      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Browse Available Tools
+        </a>
         
-        <!-- Email Capture Form -->
+        <button onclick="upvoteTool('tip-calculator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
+            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
+          </svg>
+          Upvote Tool
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Capture for Coming Soon Tools -->
+  <div class="mt-8 max-w-md mx-auto">
+    
+    <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
-                Get Results of Tip Calculator  via Email
+                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
+                Get Notified when Tip Calculator is ready
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Save your calculations and get detailed breakdowns
+                Be the first to know when Tip Calculator is ready
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'tip-calculator', 'result')">
+        <form onsubmit="handleEmailCapture(event, 'tip-calculator', 'notify')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -266,7 +141,7 @@ function tipCalculator() {
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Get Results via Email
+                        Notify Me When Ready
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -274,7 +149,7 @@ function tipCalculator() {
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-result" class="mt-4 hidden">
+        <div id="email-capture-message-notify" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -283,7 +158,7 @@ function tipCalculator() {
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll send your results to your inbox.
+                                Thanks! We'll notify you when Tip Calculator is ready.
                             
                         </p>
                     </div>
@@ -376,16 +251,93 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
+  </div>
+  
+  <!-- Related Available Tools -->
+  <div class="mt-12 px-4">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Utility Tools</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     </div>
+  </div>
+</div>
+<!-- Footer -->
     <!-- Footer -->
-        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.550858 • Aug 7, 2025, 03:14 AM EDT</p>
+                <p>Build v1.0.0.551790 • Aug 7, 2025, 03:29 AM EDT</p>
                 
                 <p class="mt-1">main@d83f9b9</p>
                 
@@ -394,12 +346,40 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
+<script>
+async function upvoteTool(toolId) {
+    try {
+        // Capture upvote with PostHog
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('tool_upvoted', {
+                tool_id: toolId,
+                tool_name: 'Tip Calculator',
+                tool_category: 'utility',
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log('Tool upvoted with PostHog:', { toolId });
+        } else {
+            console.log('PostHog not available, tool upvote:', { toolId });
+        }
+        
+        // Show success message
+        alert('Thanks for your upvote! We\'ll prioritize the development of Tip Calculator.');
+        
+    } catch (error) {
+        console.error('Error upvoting tool:', error);
+        alert('Something went wrong. Please try again.');
+    }
+}
+</script>
+
+
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.550858
+            v1.0.0.551790
         </div>
     </div>
     
