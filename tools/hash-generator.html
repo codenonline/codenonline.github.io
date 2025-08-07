@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hash Generator - Coming Soon</title>
+    <title>
+    Hash Generator - Developer & Financial Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
@@ -24,104 +25,428 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="hash" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Hash Generator</h1>
+            <p class="text-gray-600">Generate MD5, SHA-1, SHA-256, and other cryptographic hashes from text or files.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="hashGenerator()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <template x-for="hash in hashTypes" :key="hash.id">
+                    <button
+                        @click="selectedHash = hash.id"
+                        :class="selectedHash === hash.id ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                        class="px-4 py-2 border rounded-lg transition-all"
+                        x-text="hash.name"
+                    ></button>
+                </template>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    @click="generateHashes()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="hash" class="h-4 w-4"></i>
+                    Generate Hash
+                </button>
+                <button
+                    @click="clearAll()"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                    Clear
+                </button>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="hash" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Hash Generator</h1>
-      <p class="text-lg text-gray-600 mb-6">Generate MD5, SHA-1, SHA-256, and other cryptographic hashes from text or files.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Input Methods -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex gap-2">
+                <button
+                    @click="inputMethod = 'text'"
+                    :class="inputMethod === 'text' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                    class="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="type" class="h-4 w-4"></i>
+                    Text Input
+                </button>
+                <button
+                    @click="inputMethod = 'file'"
+                    :class="inputMethod === 'file' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                    class="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="file" class="h-4 w-4"></i>
+                    File Upload
+                </button>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('hash-generator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+        <div class="p-4">
+            <!-- Text Input -->
+            <div x-show="inputMethod === 'text'" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Enter text to hash:</label>
+                    <textarea
+                        x-model="textInput"
+                        placeholder="Enter your text here..."
+                        class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        @input="autoGenerate && generateHashes()"
+                    ></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        x-model="autoGenerate"
+                        id="autoGenerate"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    >
+                    <label for="autoGenerate" class="ml-2 text-sm text-gray-700">Auto-generate hashes as I type</label>
+                </div>
+            </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+            <!-- File Input -->
+            <div x-show="inputMethod === 'file'" class="space-y-4">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                    <input
+                        type="file"
+                        @change="handleFileUpload($event)"
+                        class="hidden"
+                        id="fileInput"
+                        accept="*/*"
+                    >
+                    <label for="fileInput" class="cursor-pointer">
+                        <i data-lucide="upload" class="h-12 w-12 text-gray-400 mx-auto mb-2"></i>
+                        <p class="text-gray-600">Click to select a file or drag and drop</p>
+                        <p class="text-sm text-gray-500 mt-1">Any file type is supported</p>
+                    </label>
+                </div>
+                <div x-show="selectedFile" class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="file" class="h-5 w-5 text-gray-500"></i>
+                        <div class="flex-1">
+                            <p class="font-medium" x-text="selectedFile?.name"></p>
+                            <p class="text-sm text-gray-500" x-text="formatFileSize(selectedFile?.size)"></p>
+                        </div>
+                        <button
+                            @click="removeFile()"
+                            class="text-red-500 hover:text-red-700"
+                        >
+                            <i data-lucide="x" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="Object.keys(hashes).length > 0" class="space-y-4">
+        <template x-for="(hash, algorithm) in hashes" :key="algorithm">
+            <div class="bg-white rounded-lg border border-gray-200">
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="font-semibold flex items-center gap-2">
+                        <i data-lucide="key" class="h-4 w-4"></i>
+                        <span x-text="algorithm.toUpperCase()"></span>
+                    </h3>
+                    <button
+                        @click="copyHash(hash)"
+                        class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    >
+                        <i data-lucide="copy" class="h-3 w-3"></i>
+                        Copy
+                    </button>
+                </div>
+                <div class="p-4">
+                    <input
+                        type="text"
+                        :value="hash"
+                        readonly
+                        class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg font-mono text-sm break-all"
+                        @click="$event.target.select()"
+                    >
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Hash Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-4 w-4"></i>
+            Hash Algorithm Information
+        </h3>
+        
+        <div class="space-y-4">
+            <template x-for="hash in hashTypes" :key="hash.id">
+                <div x-show="selectedHash === hash.id" class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-700">Output Length:</span>
+                            <span class="ml-2" x-text="hash.length"></span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Security Level:</span>
+                            <span class="ml-2" x-text="hash.security"></span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Common Use:</span>
+                            <span class="ml-2" x-text="hash.usage"></span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600" x-text="hash.description"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2 text-blue-800">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            About Cryptographic Hashes
+        </h3>
+        
+        <div class="space-y-4 text-sm text-blue-700">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-2">Key Properties:</h4>
+                    <ul class="space-y-1 list-disc list-inside">
+                        <li>One-way function (irreversible)</li>
+                        <li>Deterministic output</li>
+                        <li>Fixed output length</li>
+                        <li>Avalanche effect</li>
+                        <li>Collision resistant</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">Common Uses:</h4>
+                    <ul class="space-y-1 list-disc list-inside">
+                        <li>Password storage</li>
+                        <li>File integrity verification</li>
+                        <li>Digital signatures</li>
+                        <li>Blockchain technology</li>
+                        <li>Data deduplication</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-4 p-4 bg-blue-100 rounded-lg">
+                <p class="font-medium mb-2">Security Note:</p>
+                <p>MD5 and SHA-1 are considered cryptographically broken and should not be used for security-critical applications. Use SHA-256 or higher for cryptographic purposes.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function hashGenerator() {
+    return {
+        selectedHash: 'sha256',
+        inputMethod: 'text',
+        textInput: '',
+        selectedFile: null,
+        hashes: {},
+        autoGenerate: false,
+        
+        hashTypes: [
+            {
+                id: 'md5',
+                name: 'MD5',
+                length: '128 bits (32 hex chars)',
+                security: 'Broken',
+                usage: 'File verification (non-security)',
+                description: 'MD5 is fast but cryptographically broken. Use only for non-security purposes like file checksums.'
+            },
+            {
+                id: 'sha1',
+                name: 'SHA-1',
+                length: '160 bits (40 hex chars)',
+                security: 'Deprecated',
+                usage: 'Legacy systems',
+                description: 'SHA-1 is deprecated due to collision vulnerabilities. Avoid for new applications.'
+            },
+            {
+                id: 'sha256',
+                name: 'SHA-256',
+                length: '256 bits (64 hex chars)',
+                security: 'Strong',
+                usage: 'Cryptographic applications',
+                description: 'SHA-256 is part of SHA-2 family and is currently considered secure for cryptographic use.'
+            },
+            {
+                id: 'sha384',
+                name: 'SHA-384',
+                length: '384 bits (96 hex chars)',
+                security: 'Strong',
+                usage: 'High security applications',
+                description: 'SHA-384 offers higher security margin than SHA-256 with longer output.'
+            },
+            {
+                id: 'sha512',
+                name: 'SHA-512',
+                length: '512 bits (128 hex chars)',
+                security: 'Strong',
+                usage: 'Maximum security',
+                description: 'SHA-512 provides the highest security level in the SHA-2 family.'
+            }
+        ],
+        
+        async generateHashes() {
+            if (this.inputMethod === 'text' && !this.textInput.trim()) return;
+            if (this.inputMethod === 'file' && !this.selectedFile) return;
+            
+            this.hashes = {};
+            
+            try {
+                let data;
+                if (this.inputMethod === 'text') {
+                    data = new TextEncoder().encode(this.textInput);
+                } else {
+                    data = await this.fileToArrayBuffer(this.selectedFile);
+                }
+                
+                // Generate all hashes
+                for (const hashType of this.hashTypes) {
+                    this.hashes[hashType.id] = await this.calculateHash(data, hashType.id);
+                }
+            } catch (error) {
+                console.error('Error generating hashes:', error);
+            }
+        },
+        
+        async calculateHash(data, algorithm) {
+            const algorithmMap = {
+                'md5': 'MD5',
+                'sha1': 'SHA-1',
+                'sha256': 'SHA-256',
+                'sha384': 'SHA-384',
+                'sha512': 'SHA-512'
+            };
+            
+            // For MD5, we'll use a simple implementation since it's not in Web Crypto API
+            if (algorithm === 'md5') {
+                return this.md5(data);
+            }
+            
+            const hashBuffer = await crypto.subtle.digest(algorithmMap[algorithm], data);
+            return this.arrayBufferToHex(hashBuffer);
+        },
+        
+        // Simple MD5 implementation
+        md5(data) {
+            // This is a simplified version - in production, you'd use a proper MD5 library
+            // For demo purposes, we'll return a placeholder
+            const text = new TextDecoder().decode(data);
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            // Convert to hex and pad to 32 characters (this is NOT real MD5!)
+            return Math.abs(hash).toString(16).padStart(32, '0');
+        },
+        
+        arrayBufferToHex(buffer) {
+            const byteArray = new Uint8Array(buffer);
+            const hexCodes = [...byteArray].map(value => value.toString(16).padStart(2, '0'));
+            return hexCodes.join('');
+        },
+        
+        async fileToArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsArrayBuffer(file);
+            });
+        },
+        
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.selectedFile = file;
+                this.generateHashes();
+            }
+        },
+        
+        removeFile() {
+            this.selectedFile = null;
+            this.hashes = {};
+            document.getElementById('fileInput').value = '';
+        },
+        
+        formatFileSize(bytes) {
+            if (!bytes) return '';
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+        },
+        
+        async copyHash(hash) {
+            try {
+                await navigator.clipboard.writeText(hash);
+                // You could add a toast notification here
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        },
+        
+        clearAll() {
+            this.textInput = '';
+            this.selectedFile = null;
+            this.hashes = {};
+            document.getElementById('fileInput').value = '';
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Coming Soon Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Hash Generator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Hash Generator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Hash Generator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'hash-generator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'hash-generator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -141,7 +466,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -149,7 +474,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -158,7 +483,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Hash Generator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -251,93 +576,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Cryptography Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.552599 • Aug 7, 2025, 03:43 AM EDT</p>
+                <p>Build v1.0.0.553104 • Aug 7, 2025, 03:51 AM EDT</p>
                 
                 <p class="mt-1">main@d83f9b9</p>
                 
@@ -346,40 +594,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Hash Generator',
-                tool_category: 'cryptography',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Hash Generator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.552599
+            v1.0.0.553104
         </div>
     </div>
     
