@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Case Converter - Coming Soon</title>
+    <title>
+    Text Case Converter - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,373 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="type" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Text Case Converter</h1>
+            <p class="text-gray-600">Convert text between different cases (upper, lower, title, camel, etc.).</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="textCaseConverter()" class="space-y-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="type" class="h-4 w-4"></i>
+            Input Text
+        </h3>
+        <div class="space-y-4">
+            <textarea
+                x-model="inputText"
+                placeholder="Enter your text here..."
+                class="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            ></textarea>
+            <div class="flex flex-wrap gap-2">
+                <button
+                    @click="clearText()"
+                    class="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:border-gray-400 transition-colors"
+                >
+                    Clear
+                </button>
+                <button
+                    @click="pasteText()"
+                    class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded hover:border-blue-400 transition-colors"
+                >
+                    Paste
+                </button>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="type" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Text Case Converter</h1>
-      <p class="text-lg text-gray-600 mb-6">Convert text between different cases (upper, lower, title, camel, etc.).</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+    <!-- Conversion Options -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <template x-for="caseType in caseTypes" :key="caseType.id">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <i :data-lucide="caseType.icon" class="h-4 w-4 text-gray-600"></i>
+                        <h4 class="font-medium" x-text="caseType.name"></h4>
+                    </div>
+                    <button
+                        @click="copyResult(caseType.id)"
+                        x-show="getConvertedText(caseType.id)"
+                        class="text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                        <i data-lucide="copy" class="h-4 w-4"></i>
+                    </button>
+                </div>
+                <div class="bg-gray-50 rounded p-3 min-h-[80px] font-mono text-sm">
+                    <span 
+                        x-text="getConvertedText(caseType.id) || 'Converted text will appear here...'"
+                        :class="getConvertedText(caseType.id) ? 'text-gray-900' : 'text-gray-500'"
+                    ></span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2" x-text="caseType.description"></p>
+            </div>
+        </template>
     </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('text-case-converter')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Statistics -->
+    <div x-show="inputText.length > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Text Statistics
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Characters</p>
+                <p class="text-lg font-bold" x-text="stats.characters"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Characters (no spaces)</p>
+                <p class="text-lg font-bold" x-text="stats.charactersNoSpaces"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Words</p>
+                <p class="text-lg font-bold" x-text="stats.words"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Lines</p>
+                <p class="text-lg font-bold" x-text="stats.lines"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Sentences</p>
+                <p class="text-lg font-bold" x-text="stats.sentences"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Paragraphs</p>
+                <p class="text-lg font-bold" x-text="stats.paragraphs"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Guide -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="help-circle" class="h-4 w-4"></i>
+            Case Types Guide
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h4 class="font-medium">UPPER CASE</h4>
+                    <p class="text-sm text-gray-600">Converts all letters to uppercase. Used for emphasis, constants, or acronyms.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "HELLO WORLD"</p>
+                </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h4 class="font-medium">lower case</h4>
+                    <p class="text-sm text-gray-600">Converts all letters to lowercase. Standard format for many applications.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "hello world"</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h4 class="font-medium">Title Case</h4>
+                    <p class="text-sm text-gray-600">Capitalizes the first letter of each word. Used for titles and headings.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "Hello World"</p>
+                </div>
+                <div class="border-l-4 border-orange-500 pl-4">
+                    <h4 class="font-medium">Sentence case</h4>
+                    <p class="text-sm text-gray-600">Capitalizes the first letter of each sentence. Standard for paragraphs.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "Hello world. This is great."</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h4 class="font-medium">camelCase</h4>
+                    <p class="text-sm text-gray-600">First word lowercase, subsequent words capitalized. Used in programming.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "helloWorld"</p>
+                </div>
+                <div class="border-l-4 border-indigo-500 pl-4">
+                    <h4 class="font-medium">PascalCase</h4>
+                    <p class="text-sm text-gray-600">All words capitalized, no spaces. Used for class names in programming.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "HelloWorld"</p>
+                </div>
+                <div class="border-l-4 border-yellow-500 pl-4">
+                    <h4 class="font-medium">snake_case</h4>
+                    <p class="text-sm text-gray-600">All lowercase with underscores between words. Common in databases.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "hello_world"</p>
+                </div>
+                <div class="border-l-4 border-pink-500 pl-4">
+                    <h4 class="font-medium">kebab-case</h4>
+                    <p class="text-sm text-gray-600">All lowercase with hyphens between words. Used in URLs and CSS.</p>
+                    <p class="text-xs text-gray-500 font-mono">Example: "hello-world"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function textCaseConverter() {
+    return {
+        inputText: '',
+        
+        caseTypes: [
+            { id: 'upper', name: 'UPPER CASE', icon: 'arrow-up', description: 'All letters uppercase' },
+            { id: 'lower', name: 'lower case', icon: 'arrow-down', description: 'All letters lowercase' },
+            { id: 'title', name: 'Title Case', icon: 'type', description: 'First letter of each word capitalized' },
+            { id: 'sentence', name: 'Sentence case', icon: 'align-left', description: 'First letter of each sentence capitalized' },
+            { id: 'camel', name: 'camelCase', icon: 'code', description: 'First word lowercase, others capitalized' },
+            { id: 'pascal', name: 'PascalCase', icon: 'code-2', description: 'All words capitalized, no spaces' },
+            { id: 'snake', name: 'snake_case', icon: 'minus', description: 'Lowercase with underscores' },
+            { id: 'kebab', name: 'kebab-case', icon: 'minus', description: 'Lowercase with hyphens' },
+            { id: 'constant', name: 'CONSTANT_CASE', icon: 'square', description: 'Uppercase with underscores' },
+            { id: 'dot', name: 'dot.case', icon: 'circle', description: 'Lowercase with dots' },
+            { id: 'path', name: 'path/case', icon: 'folder', description: 'Lowercase with forward slashes' },
+            { id: 'toggle', name: 'tOGGLE cASE', icon: 'shuffle', description: 'Inverts the case of each letter' }
+        ],
+        
+        get stats() {
+            const text = this.inputText;
+            return {
+                characters: text.length,
+                charactersNoSpaces: text.replace(/\s/g, '').length,
+                words: text.trim() ? text.trim().split(/\s+/).length : 0,
+                lines: text ? text.split('\n').length : 0,
+                sentences: text.trim() ? (text.match(/[.!?]+/g) || []).length : 0,
+                paragraphs: text.trim() ? text.split(/\n\s*\n/).filter(p => p.trim()).length : 0
+            };
+        },
+        
+        getConvertedText(caseType) {
+            if (!this.inputText) return '';
+            
+            switch (caseType) {
+                case 'upper':
+                    return this.inputText.toUpperCase();
+                case 'lower':
+                    return this.inputText.toLowerCase();
+                case 'title':
+                    return this.toTitleCase(this.inputText);
+                case 'sentence':
+                    return this.toSentenceCase(this.inputText);
+                case 'camel':
+                    return this.toCamelCase(this.inputText);
+                case 'pascal':
+                    return this.toPascalCase(this.inputText);
+                case 'snake':
+                    return this.toSnakeCase(this.inputText);
+                case 'kebab':
+                    return this.toKebabCase(this.inputText);
+                case 'constant':
+                    return this.toConstantCase(this.inputText);
+                case 'dot':
+                    return this.toDotCase(this.inputText);
+                case 'path':
+                    return this.toPathCase(this.inputText);
+                case 'toggle':
+                    return this.toToggleCase(this.inputText);
+                default:
+                    return this.inputText;
+            }
+        },
+        
+        toTitleCase(text) {
+            return text.replace(/\w\S*/g, (txt) => 
+                txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+            );
+        },
+        
+        toSentenceCase(text) {
+            return text.toLowerCase().replace(/(^\w|[.!?]\s*\w)/g, (match) => 
+                match.toUpperCase()
+            );
+        },
+        
+        toCamelCase(text) {
+            return text
+                .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => 
+                    index === 0 ? word.toLowerCase() : word.toUpperCase()
+                )
+                .replace(/\s+/g, '')
+                .replace(/[^\w]/g, '');
+        },
+        
+        toPascalCase(text) {
+            return text
+                .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
+                .replace(/\s+/g, '')
+                .replace(/[^\w]/g, '');
+        },
+        
+        toSnakeCase(text) {
+            return text
+                .toLowerCase()
+                .replace(/\s+/g, '_')
+                .replace(/[^\w_]/g, '')
+                .replace(/_+/g, '_')
+                .replace(/^_|_$/g, '');
+        },
+        
+        toKebabCase(text) {
+            return text
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]/g, '')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        },
+        
+        toConstantCase(text) {
+            return text
+                .toUpperCase()
+                .replace(/\s+/g, '_')
+                .replace(/[^\w_]/g, '')
+                .replace(/_+/g, '_')
+                .replace(/^_|_$/g, '');
+        },
+        
+        toDotCase(text) {
+            return text
+                .toLowerCase()
+                .replace(/\s+/g, '.')
+                .replace(/[^\w.]/g, '')
+                .replace(/\.+/g, '.')
+                .replace(/^\.|\.$/g, '');
+        },
+        
+        toPathCase(text) {
+            return text
+                .toLowerCase()
+                .replace(/\s+/g, '/')
+                .replace(/[^\w/]/g, '')
+                .replace(/\/+/g, '/')
+                .replace(/^\/|\/$/g, '');
+        },
+        
+        toToggleCase(text) {
+            return text.split('').map(char => {
+                if (char === char.toUpperCase()) {
+                    return char.toLowerCase();
+                } else {
+                    return char.toUpperCase();
+                }
+            }).join('');
+        },
+        
+        clearText() {
+            this.inputText = '';
+        },
+        
+        async pasteText() {
+            try {
+                const text = await navigator.clipboard.readText();
+                this.inputText = text;
+            } catch (err) {
+                console.error('Failed to paste:', err);
+            }
+        },
+        
+        async copyResult(caseType) {
+            const text = this.getConvertedText(caseType);
+            try {
+                await navigator.clipboard.writeText(text);
+                // You could add a toast notification here
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Text Case Converter is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Text Case Converter  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Text Case Converter is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'text-case-converter', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'text-case-converter', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +440,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +448,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +457,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Text Case Converter is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +553,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +571,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Text Case Converter',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Text Case Converter.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

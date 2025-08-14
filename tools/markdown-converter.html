@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown Converter - Coming Soon</title>
+    <title>
+    Markdown Converter - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,511 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="file-code" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Markdown Converter</h1>
+            <p class="text-gray-600">Convert Markdown to HTML and vice versa with live preview and syntax highlighting.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="markdownConverter()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <button
+                    @click="mode = 'md-to-html'"
+                    :class="mode === 'md-to-html' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                    class="px-4 py-2 border rounded-lg transition-all"
+                >
+                    Markdown → HTML
+                </button>
+                <button
+                    @click="mode = 'html-to-md'"
+                    :class="mode === 'html-to-md' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                    class="px-4 py-2 border rounded-lg transition-all"
+                >
+                    HTML → Markdown
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    @click="insertSample()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="file-plus" class="h-4 w-4"></i>
+                    Sample
+                </button>
+                <button
+                    @click="clearAll()"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                    Clear
+                </button>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="file-code" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Markdown Converter</h1>
-      <p class="text-lg text-gray-600 mb-6">Convert Markdown to HTML and vice versa with live preview and syntax highlighting.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Converter Areas -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <!-- Input -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i :data-lucide="mode === 'md-to-html' ? 'type' : 'code'" class="h-4 w-4"></i>
+                    <span x-text="mode === 'md-to-html' ? 'Markdown Input' : 'HTML Input'"></span>
+                </h3>
+                <button
+                    @click="copyInput()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    x-show="inputContent"
+                >
+                    <i data-lucide="copy" class="h-3 w-3"></i>
+                    Copy
+                </button>
+            </div>
+            <div class="p-4">
+                <textarea
+                    x-model="inputContent"
+                    @input="convert()"
+                    :placeholder="getInputPlaceholder()"
+                    class="w-full h-96 p-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                ></textarea>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('markdown-converter')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <!-- Output -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i :data-lucide="mode === 'md-to-html' ? 'code' : 'type'" class="h-4 w-4"></i>
+                    <span x-text="mode === 'md-to-html' ? 'HTML Output' : 'Markdown Output'"></span>
+                </h3>
+                <button
+                    @click="copyOutput()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    x-show="outputContent"
+                >
+                    <i data-lucide="copy" class="h-3 w-3"></i>
+                    Copy
+                </button>
+            </div>
+            <div class="p-4">
+                <textarea
+                    x-model="outputContent"
+                    readonly
+                    placeholder="Converted content will appear here..."
+                    class="w-full h-96 p-3 border border-gray-300 rounded-lg font-mono text-sm bg-gray-50 resize-none"
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="bg-white rounded-lg border border-gray-200" x-show="mode === 'md-to-html'">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                    Live Preview
+                </h3>
+            </div>
+            <div class="p-4 h-96 overflow-y-auto">
+                <div class="prose max-w-none" x-html="previewContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div x-show="stats.input > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Statistics
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Input Characters</p>
+                <p class="text-lg font-bold" x-text="stats.input.toLocaleString()"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Output Characters</p>
+                <p class="text-lg font-bold" x-text="stats.output.toLocaleString()"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Input Lines</p>
+                <p class="text-lg font-bold" x-text="stats.inputLines"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Output Lines</p>
+                <p class="text-lg font-bold" x-text="stats.outputLines"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Markdown Reference -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            Markdown Quick Reference
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+                <h4 class="font-medium mb-2">Headers</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div># H1</div>
+                    <div>## H2</div>
+                    <div>### H3</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Text Formatting</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div>**bold**</div>
+                    <div>*italic*</div>
+                    <div>`code`</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Lists</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div>- Unordered</div>
+                    <div>1. Ordered</div>
+                    <div>- [x] Task</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Links & Images</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div>[link](url)</div>
+                    <div>![image](url)</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Code Blocks</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div>```language</div>
+                    <div>code here</div>
+                    <div>```</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Tables</h4>
+                <div class="text-sm text-gray-600 space-y-1 font-mono">
+                    <div>| Col1 | Col2 |</div>
+                    <div>|------|------|</div>
+                    <div>| Data | Data |</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function markdownConverter() {
+    return {
+        mode: 'md-to-html',
+        inputContent: '',
+        outputContent: '',
+        previewContent: '',
+        
+        get stats() {
+            return {
+                input: this.inputContent.length,
+                output: this.outputContent.length,
+                inputLines: this.inputContent.split('\n').length,
+                outputLines: this.outputContent.split('\n').length
+            };
+        },
+        
+        getInputPlaceholder() {
+            return this.mode === 'md-to-html' 
+                ? '# Hello World\n\nThis is **bold** and this is *italic*.\n\n- Item 1\n- Item 2\n- Item 3\n\n```javascript\nconsole.log("Hello!");\n```'
+                : '<h1>Hello World</h1>\n<p>This is <strong>bold</strong> and this is <em>italic</em>.</p>\n<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n  <li>Item 3</li>\n</ul>';
+        },
+        
+        convert() {
+            if (!this.inputContent.trim()) {
+                this.outputContent = '';
+                this.previewContent = '';
+                return;
+            }
+            
+            if (this.mode === 'md-to-html') {
+                this.outputContent = this.markdownToHtml(this.inputContent);
+                this.previewContent = this.outputContent;
+            } else {
+                this.outputContent = this.htmlToMarkdown(this.inputContent);
+                this.previewContent = '';
+            }
+        },
+        
+        markdownToHtml(markdown) {
+            let html = markdown;
+            
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold
+            html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+            html = html.replace(/__(.*?)__/gim, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.*)\*/gim, '<em>$1</em>');
+            html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
+            
+            // Code blocks
+            html = html.replace(/```(\w+)?\n([\s\S]*?)```/gim, '<pre><code class="language-$1">$2</code></pre>');
+            
+            // Inline code
+            html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
+            
+            // Images
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/gim, '<img alt="$1" src="$2">');
+            
+            // Unordered lists
+            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
+            
+            // Ordered lists
+            html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/gims, function(match) {
+                return match.includes('<ul>') ? match : '<ol>' + match + '</ol>';
+            });
+            
+            // Blockquotes
+            html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+            
+            // Horizontal rules
+            html = html.replace(/^---$/gim, '<hr>');
+            html = html.replace(/^\*\*\*$/gim, '<hr>');
+            
+            // Line breaks
+            html = html.replace(/\n\n/gim, '</p><p>');
+            html = html.replace(/\n/gim, '<br>');
+            
+            // Wrap in paragraphs
+            if (html && !html.startsWith('<')) {
+                html = '<p>' + html + '</p>';
+            }
+            
+            // Clean up multiple tags
+            html = html.replace(/<\/ul>\s*<ul>/gim, '');
+            html = html.replace(/<\/ol>\s*<ol>/gim, '');
+            html = html.replace(/<p><\/p>/gim, '');
+            html = html.replace(/<p>(<h[1-6]>)/gim, '$1');
+            html = html.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
+            
+            return html;
+        },
+        
+        htmlToMarkdown(html) {
+            let markdown = html;
+            
+            // Headers
+            markdown = markdown.replace(/<h1>(.*?)<\/h1>/gim, '# $1\n\n');
+            markdown = markdown.replace(/<h2>(.*?)<\/h2>/gim, '## $1\n\n');
+            markdown = markdown.replace(/<h3>(.*?)<\/h3>/gim, '### $1\n\n');
+            markdown = markdown.replace(/<h4>(.*?)<\/h4>/gim, '#### $1\n\n');
+            markdown = markdown.replace(/<h5>(.*?)<\/h5>/gim, '##### $1\n\n');
+            markdown = markdown.replace(/<h6>(.*?)<\/h6>/gim, '###### $1\n\n');
+            
+            // Bold
+            markdown = markdown.replace(/<strong>(.*?)<\/strong>/gim, '**$1**');
+            markdown = markdown.replace(/<b>(.*?)<\/b>/gim, '**$1**');
+            
+            // Italic
+            markdown = markdown.replace(/<em>(.*?)<\/em>/gim, '*$1*');
+            markdown = markdown.replace(/<i>(.*?)<\/i>/gim, '*$1*');
+            
+            // Code blocks
+            markdown = markdown.replace(/<pre><code(?:\s+class="language-(\w+)")?>([\s\S]*?)<\/code><\/pre>/gim, '```$1\n$2\n```\n\n');
+            
+            // Inline code
+            markdown = markdown.replace(/<code>(.*?)<\/code>/gim, '`$1`');
+            
+            // Links
+            markdown = markdown.replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/gim, '[$2]($1)');
+            
+            // Images
+            markdown = markdown.replace(/<img\s+(?:alt="([^"]*)")?\s*src="([^"]+)"[^>]*>/gim, '![$1]($2)');
+            
+            // Lists
+            markdown = markdown.replace(/<ul>/gim, '');
+            markdown = markdown.replace(/<\/ul>/gim, '\n');
+            markdown = markdown.replace(/<ol>/gim, '');
+            markdown = markdown.replace(/<\/ol>/gim, '\n');
+            markdown = markdown.replace(/<li>(.*?)<\/li>/gim, '- $1\n');
+            
+            // Blockquotes
+            markdown = markdown.replace(/<blockquote>(.*?)<\/blockquote>/gim, '> $1\n\n');
+            
+            // Horizontal rules
+            markdown = markdown.replace(/<hr\s*\/?>/gim, '---\n\n');
+            
+            // Paragraphs
+            markdown = markdown.replace(/<p>(.*?)<\/p>/gim, '$1\n\n');
+            
+            // Line breaks
+            markdown = markdown.replace(/<br\s*\/?>/gim, '\n');
+            
+            // Remove remaining HTML tags
+            markdown = markdown.replace(/<[^>]+>/gim, '');
+            
+            // Clean up extra whitespace
+            markdown = markdown.replace(/\n{3,}/gim, '\n\n');
+            markdown = markdown.trim();
+            
+            return markdown;
+        },
+        
+        insertSample() {
+            if (this.mode === 'md-to-html') {
+                this.inputContent = `# Sample Markdown Document
+
+This is a **sample document** to demonstrate *Markdown formatting*.
+
+## Features
+
+- **Bold text** using \`**text**\`
+- *Italic text* using \`*text*\`
+- \`Inline code\` using backticks
+- [Links](https://example.com)
+- ![Images](https://via.placeholder.com/150)
+
+### Code Block
+
+\`\`\`javascript
+function hello() {
+    console.log("Hello, World!");
+}
+\`\`\`
+
+### Lists
+
+1. First item
+2. Second item
+3. Third item
+
+### Table
+
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Data 1   | Data 2   | Data 3   |
+| Data 4   | Data 5   | Data 6   |
+
+> This is a blockquote example.
+
+---
+
+*End of sample document*`;
+            } else {
+                this.inputContent = `<h1>Sample HTML Document</h1>
+
+<p>This is a <strong>sample document</strong> to demonstrate <em>HTML to Markdown conversion</em>.</p>
+
+<h2>Features</h2>
+
+<ul>
+    <li><strong>Bold text</strong> using strong tags</li>
+    <li><em>Italic text</em> using em tags</li>
+    <li><code>Inline code</code> using code tags</li>
+    <li><a href="https://example.com">Links</a></li>
+    <li><img src="https://via.placeholder.com/150" alt="Images"></li>
+</ul>
+
+<h3>Code Block</h3>
+
+<pre><code class="language-javascript">
+function hello() {
+    console.log("Hello, World!");
+}
+</code></pre>
+
+<h3>Lists</h3>
+
+<ol>
+    <li>First item</li>
+    <li>Second item</li>
+    <li>Third item</li>
+</ol>
+
+<blockquote>This is a blockquote example.</blockquote>
+
+<hr>
+
+<p><em>End of sample document</em></p>`;
+            }
+            this.convert();
+        },
+        
+        clearAll() {
+            this.inputContent = '';
+            this.outputContent = '';
+            this.previewContent = '';
+        },
+        
+        async copyInput() {
+            try {
+                await navigator.clipboard.writeText(this.inputContent);
+            } catch (err) {
+                console.error('Failed to copy input:', err);
+            }
+        },
+        
+        async copyOutput() {
+            try {
+                await navigator.clipboard.writeText(this.outputContent);
+            } catch (err) {
+                console.error('Failed to copy output:', err);
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Markdown Converter is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Markdown Converter  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Markdown Converter is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'markdown-converter', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'markdown-converter', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +578,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +586,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +595,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Markdown Converter is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +691,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +709,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Markdown Converter',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Markdown Converter.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

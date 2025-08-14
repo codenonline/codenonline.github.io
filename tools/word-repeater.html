@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Repeater - Coming Soon</title>
+    <title>
+    Word Repeater - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,425 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="repeat" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Word Repeater</h1>
+            <p class="text-gray-600">Repeat words or text a specified number of times.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="wordRepeater()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Text to Repeat</label>
+                <input
+                    type="text"
+                    x-model="inputText"
+                    placeholder="Enter text to repeat..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Number of Repetitions</label>
+                <input
+                    type="number"
+                    x-model.number="repeatCount"
+                    min="1"
+                    max="10000"
+                    placeholder="Enter count..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Separator</label>
+                <select
+                    x-model="separator"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="">No Separator</option>
+                    <option value=" ">Space</option>
+                    <option value="\n">New Line</option>
+                    <option value=", ">Comma + Space</option>
+                    <option value=" | ">Pipe</option>
+                    <option value=" - ">Dash</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+        </div>
+        
+        <div x-show="separator === 'custom'" class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Custom Separator</label>
+            <input
+                type="text"
+                x-model="customSeparator"
+                placeholder="Enter custom separator..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+        </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+        <div class="flex flex-wrap gap-4 items-center mt-6">
+            <div class="flex items-center">
+                <input
+                    type="checkbox"
+                    id="addNumbers"
+                    x-model="addNumbers"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                >
+                <label for="addNumbers" class="ml-2 text-sm text-gray-700">Add numbering</label>
+            </div>
+            <div class="flex items-center">
+                <input
+                    type="checkbox"
+                    id="upperCase"
+                    x-model="upperCase"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                >
+                <label for="upperCase" class="ml-2 text-sm text-gray-700">Convert to uppercase</label>
+            </div>
+            <div class="flex items-center">
+                <input
+                    type="checkbox"
+                    id="lowerCase"
+                    x-model="lowerCase"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                >
+                <label for="lowerCase" class="ml-2 text-sm text-gray-700">Convert to lowercase</label>
+            </div>
+        </div>
 
+        <div class="flex gap-2 mt-6">
+            <button
+                @click="generateRepeatedText()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                :disabled="!inputText || !repeatCount"
+            >
+                <i data-lucide="repeat" class="h-4 w-4"></i>
+                Generate
+            </button>
+            <button
+                @click="clearAll()"
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="x" class="h-4 w-4"></i>
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Output -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="file-text" class="h-4 w-4"></i>
+                Repeated Text
+            </h3>
+            <button
+                @click="copyOutput()"
+                class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                x-show="outputText"
+            >
+                <i data-lucide="copy" class="h-3 w-3"></i>
+                Copy
+            </button>
+        </div>
+        <div class="p-4">
+            <textarea
+                x-model="outputText"
+                readonly
+                placeholder="Repeated text will appear here..."
+                class="w-full h-64 p-3 border border-gray-300 rounded-lg text-sm bg-gray-50 resize-none"
+                :class="{ 'font-mono': separator === '\n' || addNumbers }"
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div x-show="stats.totalLength > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Statistics
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Original Length</p>
+                <p class="text-lg font-bold" x-text="stats.originalLength + ' chars'"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Repetitions</p>
+                <p class="text-lg font-bold" x-text="stats.repetitions"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Total Length</p>
+                <p class="text-lg font-bold" x-text="stats.totalLength + ' chars'"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Word Count</p>
+                <p class="text-lg font-bold" x-text="stats.wordCount"></p>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="repeat" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Word Repeater</h1>
-      <p class="text-lg text-gray-600 mb-6">Repeat words or text a specified number of times.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Examples -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-4 w-4"></i>
+            Examples & Use Cases
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium mb-2">Common Examples:</h4>
+                <div class="space-y-2">
+                    <button
+                        @click="loadExample('Hello World', 5, ' ')"
+                        class="block w-full text-left p-2 text-sm bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                    >
+                        <span class="font-medium">Basic Repetition:</span> "Hello World" × 5
+                    </button>
+                    <button
+                        @click="loadExample('Lorem ipsum', 10, '\n')"
+                        class="block w-full text-left p-2 text-sm bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                    >
+                        <span class="font-medium">Line List:</span> "Lorem ipsum" × 10 (new lines)
+                    </button>
+                    <button
+                        @click="loadExample('Item', 20, ', ', true)"
+                        class="block w-full text-left p-2 text-sm bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                    >
+                        <span class="font-medium">Numbered List:</span> "Item" × 20 (with numbers)
+                    </button>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-medium mb-2">Use Cases:</h4>
+                <ul class="space-y-1 text-sm text-gray-600">
+                    <li>• Create placeholder content for testing</li>
+                    <li>• Generate repeated data for spreadsheets</li>
+                    <li>• Build lists for templates or forms</li>
+                    <li>• Create pattern text for design mockups</li>
+                    <li>• Generate test data for applications</li>
+                    <li>• Create numbered or bulleted lists</li>
+                </ul>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('word-repeater')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+<script>
+function wordRepeater() {
+    return {
+        inputText: '',
+        repeatCount: 1,
+        separator: ' ',
+        customSeparator: '',
+        outputText: '',
+        addNumbers: false,
+        upperCase: false,
+        lowerCase: false,
+        
+        get stats() {
+            const originalLength = this.inputText.length;
+            const totalLength = this.outputText.length;
+            const repetitions = this.repeatCount || 0;
+            const wordCount = this.outputText ? this.outputText.trim().split(/\s+/).length : 0;
+            
+            return { originalLength, totalLength, repetitions, wordCount };
+        },
+        
+        generateRepeatedText() {
+            if (!this.inputText || !this.repeatCount || this.repeatCount < 1) {
+                this.outputText = '';
+                return;
+            }
+            
+            let text = this.inputText;
+            
+            // Apply text transformations
+            if (this.upperCase && !this.lowerCase) {
+                text = text.toUpperCase();
+            } else if (this.lowerCase && !this.upperCase) {
+                text = text.toLowerCase();
+            }
+            
+            let results = [];
+            const actualSeparator = this.separator === 'custom' ? this.customSeparator : this.separator;
+            
+            for (let i = 1; i <= this.repeatCount; i++) {
+                let item = text;
+                
+                if (this.addNumbers) {
+                    item = `${i}. ${item}`;
+                }
+                
+                results.push(item);
+            }
+            
+            // Join with separator, handling newlines properly
+            if (actualSeparator === '\n') {
+                this.outputText = results.join('\n');
+            } else {
+                this.outputText = results.join(actualSeparator);
+            }
+        },
+        
+        loadExample(text, count, sep, numbered = false) {
+            this.inputText = text;
+            this.repeatCount = count;
+            this.separator = sep;
+            this.addNumbers = numbered;
+            this.upperCase = false;
+            this.lowerCase = false;
+            this.generateRepeatedText();
+        },
+        
+        clearAll() {
+            this.inputText = '';
+            this.repeatCount = 1;
+            this.separator = ' ';
+            this.customSeparator = '';
+            this.outputText = '';
+            this.addNumbers = false;
+            this.upperCase = false;
+            this.lowerCase = false;
+        },
+        
+        async copyOutput() {
+            if (!this.outputText) return;
+            
+            try {
+                await navigator.clipboard.writeText(this.outputText);
+                // Show success feedback
+                this.showCopyFeedback();
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                this.fallbackCopy();
+            }
+        },
+        
+        showCopyFeedback() {
+            // Create temporary feedback element
+            const feedback = document.createElement('div');
+            feedback.textContent = 'Copied to clipboard!';
+            feedback.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity';
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(feedback);
+                }, 300);
+            }, 2000);
+        },
+        
+        fallbackCopy() {
+            const textArea = document.createElement('textarea');
+            textArea.value = this.outputText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                this.showCopyFeedback();
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+            }
+            document.body.removeChild(textArea);
+        },
+        
+        init() {
+            // Watch for changes and auto-generate if both fields are filled
+            this.$watch('inputText', () => {
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('repeatCount', () => {
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('separator', () => {
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('customSeparator', () => {
+                if (this.separator === 'custom' && this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('addNumbers', () => {
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('upperCase', () => {
+                if (this.upperCase) {
+                    this.lowerCase = false;
+                }
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+            
+            this.$watch('lowerCase', () => {
+                if (this.lowerCase) {
+                    this.upperCase = false;
+                }
+                if (this.inputText && this.repeatCount > 0) {
+                    this.generateRepeatedText();
+                }
+            });
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Word Repeater is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Word Repeater  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Word Repeater is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'word-repeater', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'word-repeater', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +492,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +500,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +509,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Word Repeater is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +605,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +623,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Word Repeater',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Word Repeater.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

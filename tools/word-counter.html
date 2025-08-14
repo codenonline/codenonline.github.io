@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Counter - Coming Soon</title>
+    <title>
+    Word Counter - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,395 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="file-text" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Word Counter</h1>
+            <p class="text-gray-600">Count words, characters, paragraphs, and reading time for your text content.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="wordCounter()" class="space-y-8">
+    <!-- Text Input Area -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="type" class="h-4 w-4"></i>
+                Enter Your Text
+            </h3>
+            <div class="flex gap-2">
+                <button
+                    @click="pasteText()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                    <i data-lucide="clipboard" class="h-3 w-3"></i>
+                    Paste
+                </button>
+                <button
+                    @click="clearText()"
+                    class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                    x-show="text.length > 0"
+                >
+                    <i data-lucide="x" class="h-3 w-3"></i>
+                    Clear
+                </button>
+            </div>
+        </div>
+        <div class="p-4">
+            <textarea
+                x-model="text"
+                @input="updateCounts()"
+                placeholder="Type or paste your text here to analyze word count, character count, reading time, and more..."
+                class="w-full h-64 p-4 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                spellcheck="true"
+            ></textarea>
+        </div>
+    </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+            <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
+                <i data-lucide="hash" class="h-6 w-6 text-blue-600"></i>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" x-text="counts.words"></p>
+            <p class="text-sm text-gray-600">Words</p>
+        </div>
 
+        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+            <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3">
+                <i data-lucide="type" class="h-6 w-6 text-green-600"></i>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" x-text="counts.characters"></p>
+            <p class="text-sm text-gray-600">Characters</p>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+            <div class="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3">
+                <i data-lucide="file-text" class="h-6 w-6 text-purple-600"></i>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" x-text="counts.charactersNoSpaces"></p>
+            <p class="text-sm text-gray-600">Characters (no spaces)</p>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6 text-center">
+            <div class="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mx-auto mb-3">
+                <i data-lucide="align-left" class="h-6 w-6 text-orange-600"></i>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" x-text="counts.paragraphs"></p>
+            <p class="text-sm text-gray-600">Paragraphs</p>
+        </div>
+    </div>
+
+    <!-- Additional Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h4 class="font-semibold mb-3 flex items-center gap-2">
+                <i data-lucide="clock" class="h-4 w-4"></i>
+                Reading Time
+            </h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Slow (150 WPM):</span>
+                    <span class="font-medium" x-text="readingTime.slow"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Average (200 WPM):</span>
+                    <span class="font-medium" x-text="readingTime.average"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Fast (300 WPM):</span>
+                    <span class="font-medium" x-text="readingTime.fast"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h4 class="font-semibold mb-3 flex items-center gap-2">
+                <i data-lucide="mic" class="h-4 w-4"></i>
+                Speaking Time
+            </h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Slow (100 WPM):</span>
+                    <span class="font-medium" x-text="speakingTime.slow"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Average (130 WPM):</span>
+                    <span class="font-medium" x-text="speakingTime.average"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Fast (160 WPM):</span>
+                    <span class="font-medium" x-text="speakingTime.fast"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h4 class="font-semibold mb-3 flex items-center gap-2">
+                <i data-lucide="list" class="h-4 w-4"></i>
+                Text Structure
+            </h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Sentences:</span>
+                    <span class="font-medium" x-text="counts.sentences"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Lines:</span>
+                    <span class="font-medium" x-text="counts.lines"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Spaces:</span>
+                    <span class="font-medium" x-text="counts.spaces"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h4 class="font-semibold mb-3 flex items-center gap-2">
+                <i data-lucide="bar-chart" class="h-4 w-4"></i>
+                Averages
+            </h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Words/Sentence:</span>
+                    <span class="font-medium" x-text="averages.wordsPerSentence"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Words/Paragraph:</span>
+                    <span class="font-medium" x-text="averages.wordsPerParagraph"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Chars/Word:</span>
+                    <span class="font-medium" x-text="averages.charactersPerWord"></span>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="file-text" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Word Counter</h1>
-      <p class="text-lg text-gray-600 mb-6">Count words, characters, paragraphs, and reading time for your text content.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Most Frequent Words -->
+    <div x-show="frequentWords.length > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h4 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-4 w-4"></i>
+            Most Frequent Words
+        </h4>
+        <div class="flex flex-wrap gap-2">
+            <template x-for="word in frequentWords.slice(0, 20)" :key="word.text">
+                <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                    <span class="font-medium" x-text="word.text"></span>
+                    <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full" x-text="word.count"></span>
+                </div>
+            </template>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('word-counter')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Text Analysis -->
+    <div x-show="text.length > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h4 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-4 w-4"></i>
+            Text Analysis
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div>
+                <h5 class="font-medium mb-2">Readability</h5>
+                <div class="space-y-1 text-gray-600">
+                    <p>• Average sentence length: <span x-text="averages.wordsPerSentence"></span> words</p>
+                    <p>• Average word length: <span x-text="averages.charactersPerWord"></span> characters</p>
+                    <p>• Text density: <span x-text="textDensity + '%'"></span></p>
+                </div>
+            </div>
+            <div>
+                <h5 class="font-medium mb-2">Content Type Suggestions</h5>
+                <div class="space-y-1 text-gray-600">
+                    <p x-show="counts.words < 100">• Good for social media posts</p>
+                    <p x-show="counts.words >= 100 && counts.words < 300">• Suitable for blog excerpts</p>
+                    <p x-show="counts.words >= 300 && counts.words < 1000">• Perfect for blog articles</p>
+                    <p x-show="counts.words >= 1000 && counts.words < 2500">• Long-form content</p>
+                    <p x-show="counts.words >= 2500">• Academic or extensive content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function wordCounter() {
+    return {
+        text: '',
+        counts: {
+            words: 0,
+            characters: 0,
+            charactersNoSpaces: 0,
+            paragraphs: 0,
+            sentences: 0,
+            lines: 0,
+            spaces: 0
+        },
+        frequentWords: [],
+        
+        get readingTime() {
+            const words = this.counts.words;
+            return {
+                slow: this.formatTime(words / 150),
+                average: this.formatTime(words / 200),
+                fast: this.formatTime(words / 300)
+            };
+        },
+        
+        get speakingTime() {
+            const words = this.counts.words;
+            return {
+                slow: this.formatTime(words / 100),
+                average: this.formatTime(words / 130),
+                fast: this.formatTime(words / 160)
+            };
+        },
+        
+        get averages() {
+            const words = this.counts.words;
+            const sentences = this.counts.sentences || 1;
+            const paragraphs = this.counts.paragraphs || 1;
+            const characters = this.counts.charactersNoSpaces;
+            
+            return {
+                wordsPerSentence: words > 0 ? Math.round(words / sentences) : 0,
+                wordsPerParagraph: words > 0 ? Math.round(words / paragraphs) : 0,
+                charactersPerWord: words > 0 ? Math.round(characters / words * 10) / 10 : 0
+            };
+        },
+        
+        get textDensity() {
+            const total = this.counts.characters;
+            const noSpaces = this.counts.charactersNoSpaces;
+            return total > 0 ? Math.round((noSpaces / total) * 100) : 0;
+        },
+        
+        init() {
+            this.updateCounts();
+        },
+        
+        updateCounts() {
+            const text = this.text;
+            
+            // Basic counts
+            this.counts.characters = text.length;
+            this.counts.charactersNoSpaces = text.replace(/\s/g, '').length;
+            this.counts.spaces = (text.match(/\s/g) || []).length;
+            this.counts.lines = text ? text.split('\n').length : 0;
+            
+            // Words count (split by whitespace and filter empty strings)
+            const words = text.trim() ? text.trim().split(/\s+/).filter(word => word.length > 0) : [];
+            this.counts.words = words.length;
+            
+            // Sentences count (split by sentence endings)
+            this.counts.sentences = text.trim() ? (text.match(/[.!?]+/g) || []).length : 0;
+            if (this.counts.sentences === 0 && text.trim()) this.counts.sentences = 1;
+            
+            // Paragraphs count (split by double line breaks or single line breaks)
+            const paragraphs = text.trim() ? text.split(/\n\s*\n|\n/).filter(p => p.trim().length > 0) : [];
+            this.counts.paragraphs = paragraphs.length;
+            
+            // Update frequent words
+            this.updateFrequentWords(words);
+        },
+        
+        updateFrequentWords(words) {
+            if (words.length === 0) {
+                this.frequentWords = [];
+                return;
+            }
+            
+            // Count word frequency (case insensitive, exclude common words)
+            const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them']);
+            
+            const wordFreq = {};
+            words.forEach(word => {
+                const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+                if (cleanWord.length > 2 && !stopWords.has(cleanWord)) {
+                    wordFreq[cleanWord] = (wordFreq[cleanWord] || 0) + 1;
+                }
+            });
+            
+            // Sort by frequency and get top words
+            this.frequentWords = Object.entries(wordFreq)
+                .map(([text, count]) => ({ text, count }))
+                .sort((a, b) => b.count - a.count);
+        },
+        
+        formatTime(minutes) {
+            if (minutes < 1) {
+                const seconds = Math.round(minutes * 60);
+                return seconds + 's';
+            } else if (minutes < 60) {
+                const mins = Math.floor(minutes);
+                const secs = Math.round((minutes - mins) * 60);
+                return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                const mins = Math.round(minutes % 60);
+                return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+            }
+        },
+        
+        async pasteText() {
+            try {
+                const clipboardText = await navigator.clipboard.readText();
+                this.text = clipboardText;
+                this.updateCounts();
+            } catch (err) {
+                console.error('Failed to read clipboard:', err);
+                // Fallback: focus on textarea for manual paste
+                document.querySelector('textarea').focus();
+            }
+        },
+        
+        clearText() {
+            this.text = '';
+            this.updateCounts();
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Word Counter is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Word Counter  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Word Counter is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'word-counter', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'word-counter', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +462,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +470,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +479,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Word Counter is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +575,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +593,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Word Counter',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Word Counter.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

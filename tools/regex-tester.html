@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regex Tester - Coming Soon</title>
+    <title>
+    Regex Tester - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,516 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="search" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Regex Tester</h1>
+            <p class="text-gray-600">Test and debug regular expressions with real-time matching and explanation.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="regexTester()" class="space-y-8">
+    <!-- Regex Input -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="search" class="h-4 w-4"></i>
+            Regular Expression
+        </h3>
+        <div class="space-y-4">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-600">/</span>
+                <input
+                    x-model="pattern"
+                    @input="testRegex()"
+                    type="text"
+                    placeholder="Enter your regex pattern here..."
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                >
+                <span class="text-gray-600">/</span>
+                <input
+                    x-model="flags"
+                    @input="testRegex()"
+                    type="text"
+                    placeholder="flags"
+                    class="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-center"
+                >
+            </div>
+            
+            <!-- Common Flags -->
+            <div class="flex flex-wrap gap-2">
+                <template x-for="flag in commonFlags" :key="flag.value">
+                    <button
+                        @click="toggleFlag(flag.value)"
+                        :class="flags.includes(flag.value) ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                        class="px-3 py-1 text-sm border rounded-lg transition-all"
+                        :title="flag.description"
+                    >
+                        <span x-text="flag.value"></span> - <span x-text="flag.name"></span>
+                    </button>
+                </template>
+            </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+            <!-- Quick Patterns -->
+            <div class="border-t pt-4">
+                <p class="text-sm text-gray-600 mb-2">Quick patterns:</p>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="quick in quickPatterns" :key="quick.name">
+                        <button
+                            @click="setPattern(quick.pattern, quick.flags)"
+                            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            :title="quick.description"
+                            x-text="quick.name"
+                        ></button>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="search" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Regex Tester</h1>
-      <p class="text-lg text-gray-600 mb-6">Test and debug regular expressions with real-time matching and explanation.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Error Display -->
+    <div x-show="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex items-start gap-2">
+            <i data-lucide="alert-circle" class="h-5 w-5 text-red-500 mt-0.5"></i>
+            <div>
+                <h4 class="font-semibold text-red-800">Invalid Regular Expression</h4>
+                <p class="text-red-700 mt-1" x-text="error"></p>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('regex-tester')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Test String -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="type" class="h-4 w-4"></i>
+                Test String
+            </h3>
+            <div class="flex gap-2">
+                <button
+                    @click="loadSampleText()"
+                    class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                    Load Sample
+                </button>
+                <button
+                    @click="clearTestString()"
+                    class="px-3 py-1 text-sm text-gray-500 hover:text-gray-700"
+                >
+                    Clear
+                </button>
+            </div>
+        </div>
+        <textarea
+            x-model="testString"
+            @input="testRegex()"
+            placeholder="Enter text to test against your regular expression..."
+            class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+        ></textarea>
+        
+        <!-- Highlighted Results -->
+        <div x-show="testString && !error" class="mt-4">
+            <h4 class="font-medium text-gray-800 mb-2">Highlighted Matches:</h4>
+            <div 
+                class="p-3 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm whitespace-pre-wrap min-h-[2rem]"
+                x-html="highlightedText"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="!error && (matches.length > 0 || testString)" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Matches -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="font-semibold mb-4 flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                    <i data-lucide="list" class="h-4 w-4"></i>
+                    Matches
+                </span>
+                <span class="text-sm text-gray-500" x-text="matches.length + ' found'"></span>
+            </h3>
+            
+            <div x-show="matches.length === 0" class="text-gray-500 text-center py-4">
+                No matches found
+            </div>
+            
+            <div x-show="matches.length > 0" class="space-y-3 max-h-64 overflow-y-auto">
+                <template x-for="(match, index) in matches" :key="index">
+                    <div class="border border-gray-200 rounded-lg p-3">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-800">Match <span x-text="index + 1"></span></span>
+                            <span class="text-xs text-gray-500">
+                                Position <span x-text="match.index"></span>-<span x-text="match.index + match[0].length"></span>
+                            </span>
+                        </div>
+                        <div class="font-mono text-sm bg-yellow-100 p-2 rounded border-l-4 border-yellow-400">
+                            <span x-text="match[0]"></span>
+                        </div>
+                        <div x-show="match.length > 1" class="mt-2">
+                            <p class="text-xs text-gray-600 mb-1">Capturing Groups:</p>
+                            <template x-for="(group, groupIndex) in match.slice(1)" :key="groupIndex">
+                                <div class="text-xs font-mono bg-blue-50 p-1 rounded mb-1">
+                                    Group <span x-text="groupIndex + 1"></span>: <span x-text="group || '(empty)'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                Statistics
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Total Matches</p>
+                        <p class="text-2xl font-bold text-blue-600" x-text="matches.length"></p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Text Length</p>
+                        <p class="text-2xl font-bold text-green-600" x-text="testString.length"></p>
+                    </div>
+                </div>
+                
+                <div x-show="matches.length > 0" class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Coverage:</span>
+                        <span x-text="Math.round((totalMatchedChars / testString.length) * 100) + '%'"></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                            class="bg-blue-600 h-2 rounded-full transition-all"
+                            :style="`width: ${Math.round((totalMatchedChars / testString.length) * 100)}%`"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Methods -->
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <h4 class="font-medium text-gray-800 mb-3">Test Methods:</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <code class="bg-gray-100 px-2 py-1 rounded">test()</code>
+                        <span :class="regexTest ? 'text-green-600' : 'text-red-600'" x-text="regexTest ? 'true' : 'false'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <code class="bg-gray-100 px-2 py-1 rounded">match()</code>
+                        <span x-text="matches.length + ' matches'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <code class="bg-gray-100 px-2 py-1 rounded">search()</code>
+                        <span x-text="searchIndex >= 0 ? 'Index: ' + searchIndex : 'Not found'"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regex Explanation -->
+    <div x-show="pattern && !error" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="help-circle" class="h-4 w-4"></i>
+            Pattern Explanation
+        </h3>
+        <div class="font-mono text-sm bg-gray-50 p-4 rounded-lg border">
+            <span x-text="'/' + pattern + '/' + flags"></span>
+        </div>
+        <div class="mt-4 space-y-2 text-sm">
+            <template x-for="explanation in getPatternExplanation()" :key="explanation">
+                <div class="flex items-start gap-2">
+                    <i data-lucide="arrow-right" class="h-3 w-3 mt-1 text-gray-400"></i>
+                    <span x-text="explanation"></span>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Cheat Sheet -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            Regular Expression Cheat Sheet
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="category in cheatSheet" :key="category.title">
+                <div>
+                    <h4 class="font-medium text-gray-800 mb-2" x-text="category.title"></h4>
+                    <div class="space-y-1">
+                        <template x-for="item in category.items" :key="item.pattern">
+                            <div class="flex justify-between text-sm">
+                                <code class="bg-gray-100 px-1 rounded text-xs" x-text="item.pattern"></code>
+                                <span class="text-gray-600 text-xs" x-text="item.description"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function regexTester() {
+    return {
+        pattern: '',
+        flags: 'g',
+        testString: '',
+        matches: [],
+        error: '',
+        highlightedText: '',
+        regexTest: false,
+        searchIndex: -1,
+        
+        commonFlags: [
+            { value: 'g', name: 'Global', description: 'Find all matches rather than stopping after the first match' },
+            { value: 'i', name: 'Ignore Case', description: 'Case-insensitive matching' },
+            { value: 'm', name: 'Multiline', description: '^$ match line breaks' },
+            { value: 's', name: 'Dot All', description: '. matches newlines' },
+            { value: 'u', name: 'Unicode', description: 'Unicode mode' },
+            { value: 'y', name: 'Sticky', description: 'Sticky matching' }
+        ],
+        
+        quickPatterns: [
+            { name: 'Email', pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', flags: 'g', description: 'Match email addresses' },
+            { name: 'Phone', pattern: '\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}', flags: 'g', description: 'Match US phone numbers' },
+            { name: 'URL', pattern: 'https?:\\/\\/[^\\s]+', flags: 'g', description: 'Match URLs' },
+            { name: 'IP Address', pattern: '\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b', flags: 'g', description: 'Match IP addresses' },
+            { name: 'HTML Tag', pattern: '<[^>]+>', flags: 'g', description: 'Match HTML tags' },
+            { name: 'Date', pattern: '\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}', flags: 'g', description: 'Match dates' }
+        ],
+        
+        cheatSheet: [
+            {
+                title: 'Character Classes',
+                items: [
+                    { pattern: '.', description: 'Any character' },
+                    { pattern: '\\d', description: 'Digit' },
+                    { pattern: '\\w', description: 'Word character' },
+                    { pattern: '\\s', description: 'Whitespace' },
+                    { pattern: '[abc]', description: 'Any of a, b, c' },
+                    { pattern: '[^abc]', description: 'Not a, b, or c' },
+                    { pattern: '[a-z]', description: 'Character range' }
+                ]
+            },
+            {
+                title: 'Quantifiers',
+                items: [
+                    { pattern: '*', description: '0 or more' },
+                    { pattern: '+', description: '1 or more' },
+                    { pattern: '?', description: '0 or 1' },
+                    { pattern: '{3}', description: 'Exactly 3' },
+                    { pattern: '{3,}', description: '3 or more' },
+                    { pattern: '{3,5}', description: 'Between 3 and 5' }
+                ]
+            },
+            {
+                title: 'Anchors',
+                items: [
+                    { pattern: '^', description: 'Start of string' },
+                    { pattern: '$', description: 'End of string' },
+                    { pattern: '\\b', description: 'Word boundary' },
+                    { pattern: '\\B', description: 'Not word boundary' }
+                ]
+            },
+            {
+                title: 'Groups',
+                items: [
+                    { pattern: '(abc)', description: 'Capturing group' },
+                    { pattern: '(?:abc)', description: 'Non-capturing group' },
+                    { pattern: '(a|b)', description: 'Alternative' },
+                    { pattern: '\\1', description: 'Backreference' }
+                ]
+            },
+            {
+                title: 'Special',
+                items: [
+                    { pattern: '\\', description: 'Escape character' },
+                    { pattern: '|', description: 'OR operator' },
+                    { pattern: '(?=)', description: 'Positive lookahead' },
+                    { pattern: '(?!)', description: 'Negative lookahead' }
+                ]
+            }
+        ],
+        
+        get totalMatchedChars() {
+            return this.matches.reduce((total, match) => total + match[0].length, 0);
+        },
+        
+        testRegex() {
+            if (!this.pattern) {
+                this.matches = [];
+                this.error = '';
+                this.highlightedText = this.testString;
+                this.regexTest = false;
+                this.searchIndex = -1;
+                return;
+            }
+            
+            try {
+                const regex = new RegExp(this.pattern, this.flags);
+                this.error = '';
+                
+                if (this.testString) {
+                    // Get all matches
+                    this.matches = [...this.testString.matchAll(new RegExp(this.pattern, this.flags.includes('g') ? this.flags : this.flags + 'g'))];
+                    
+                    // Test method
+                    this.regexTest = regex.test(this.testString);
+                    
+                    // Search method
+                    this.searchIndex = this.testString.search(regex);
+                    
+                    // Highlight matches
+                    this.highlightMatches();
+                } else {
+                    this.matches = [];
+                    this.highlightedText = '';
+                    this.regexTest = false;
+                    this.searchIndex = -1;
+                }
+            } catch (e) {
+                this.error = e.message;
+                this.matches = [];
+                this.highlightedText = this.testString;
+                this.regexTest = false;
+                this.searchIndex = -1;
+            }
+        },
+        
+        highlightMatches() {
+            if (!this.testString || this.matches.length === 0) {
+                this.highlightedText = this.testString;
+                return;
+            }
+            
+            let highlighted = '';
+            let lastIndex = 0;
+            
+            this.matches.forEach(match => {
+                // Add text before match
+                highlighted += this.escapeHtml(this.testString.slice(lastIndex, match.index));
+                
+                // Add highlighted match
+                highlighted += `<mark class="bg-yellow-200 px-1 rounded">${this.escapeHtml(match[0])}</mark>`;
+                
+                lastIndex = match.index + match[0].length;
+            });
+            
+            // Add remaining text
+            highlighted += this.escapeHtml(this.testString.slice(lastIndex));
+            
+            this.highlightedText = highlighted;
+        },
+        
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        },
+        
+        toggleFlag(flag) {
+            if (this.flags.includes(flag)) {
+                this.flags = this.flags.replace(flag, '');
+            } else {
+                this.flags += flag;
+            }
+            this.testRegex();
+        },
+        
+        setPattern(pattern, flags = 'g') {
+            this.pattern = pattern;
+            this.flags = flags;
+            this.testRegex();
+        },
+        
+        loadSampleText() {
+            this.testString = `John Doe - john.doe@example.com - (555) 123-4567
+Visit our website: https://www.example.com or call +1-800-555-0199
+Email support@company.org for assistance.
+IP Address: 192.168.1.1
+Date: 12/25/2023 or 2023-12-25
+HTML: <div class="container">Content</div>`;
+            this.testRegex();
+        },
+        
+        clearTestString() {
+            this.testString = '';
+            this.testRegex();
+        },
+        
+        getPatternExplanation() {
+            if (!this.pattern) return [];
+            
+            const explanations = [];
+            
+            if (this.flags.includes('g')) explanations.push('Global flag: Find all matches');
+            if (this.flags.includes('i')) explanations.push('Case-insensitive flag: Ignore case when matching');
+            if (this.flags.includes('m')) explanations.push('Multiline flag: ^ and $ match line breaks');
+            if (this.flags.includes('s')) explanations.push('Dot-all flag: . matches newline characters');
+            
+            // Basic pattern analysis
+            if (this.pattern.includes('^')) explanations.push('^ anchors to start of string/line');
+            if (this.pattern.includes('$')) explanations.push('$ anchors to end of string/line');
+            if (this.pattern.includes('\\d')) explanations.push('\\d matches any digit (0-9)');
+            if (this.pattern.includes('\\w')) explanations.push('\\w matches any word character (a-z, A-Z, 0-9, _)');
+            if (this.pattern.includes('\\s')) explanations.push('\\s matches any whitespace character');
+            if (this.pattern.includes('+')) explanations.push('+ quantifier: one or more occurrences');
+            if (this.pattern.includes('*')) explanations.push('* quantifier: zero or more occurrences');
+            if (this.pattern.includes('?')) explanations.push('? quantifier: zero or one occurrence');
+            if (this.pattern.includes('|')) explanations.push('| alternation: matches either left or right side');
+            if (this.pattern.includes('()')) explanations.push('() creates a capturing group');
+            if (this.pattern.includes('.')) explanations.push('. matches any single character');
+            
+            return explanations.length > 0 ? explanations : ['Pattern contains standard regex characters'];
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Regex Tester is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Regex Tester  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Regex Tester is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'regex-tester', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'regex-tester', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +583,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +591,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +600,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Regex Tester is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +696,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +714,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Regex Tester',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Regex Tester.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

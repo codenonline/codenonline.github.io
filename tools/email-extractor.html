@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Extractor - Coming Soon</title>
+    <title>
+    Email Extractor - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,355 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="mail" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Email Extractor</h1>
+            <p class="text-gray-600">Extract email addresses from text using pattern matching.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="emailExtractor()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <button
+                    @click="extractEmails()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="mail" class="h-4 w-4"></i>
+                    Extract Emails
+                </button>
+                <button
+                    @click="clearAll()"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                    Clear All
+                </button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" x-model="removeDuplicates" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm text-gray-600">Remove duplicates</span>
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" x-model="validateEmails" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm text-gray-600">Validate emails</span>
+                </label>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="mail" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Email Extractor</h1>
-      <p class="text-lg text-gray-600 mb-6">Extract email addresses from text using pattern matching.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Input Area -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="file-text" class="h-4 w-4"></i>
+                Input Text
+            </h3>
+            <button
+                @click="pasteFromClipboard()"
+                class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+            >
+                <i data-lucide="clipboard" class="h-3 w-3"></i>
+                Paste
+            </button>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+        <div class="p-4">
+            <textarea
+                x-model="inputText"
+                placeholder="Paste your text here to extract email addresses..."
+                class="w-full h-48 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            ></textarea>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('email-extractor')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Results -->
+    <div x-show="extractedEmails.length > 0" class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="mail" class="h-4 w-4"></i>
+                Extracted Emails
+                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-2" x-text="extractedEmails.length"></span>
+            </h3>
+            <div class="flex gap-2">
+                <button
+                    @click="copyEmails('list')"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                    <i data-lucide="copy" class="h-3 w-3"></i>
+                    Copy List
+                </button>
+                <button
+                    @click="copyEmails('csv')"
+                    class="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                >
+                    <i data-lucide="download" class="h-3 w-3"></i>
+                    Copy CSV
+                </button>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="space-y-2 max-h-64 overflow-y-auto">
+                <template x-for="(email, index) in extractedEmails" :key="index">
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                        <span class="font-mono text-sm" x-text="email"></span>
+                        <div class="flex items-center gap-2">
+                            <span x-show="isValidEmail(email)" class="text-green-500 text-xs">
+                                <i data-lucide="check-circle" class="h-3 w-3"></i>
+                            </span>
+                            <span x-show="!isValidEmail(email)" class="text-red-500 text-xs">
+                                <i data-lucide="x-circle" class="h-3 w-3"></i>
+                            </span>
+                            <button
+                                @click="copyEmail(email)"
+                                class="text-blue-600 hover:text-blue-700"
+                            >
+                                <i data-lucide="copy" class="h-3 w-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div x-show="stats.total > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Statistics
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Total Found</p>
+                <p class="text-lg font-bold text-blue-600" x-text="stats.total"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Unique Emails</p>
+                <p class="text-lg font-bold text-green-600" x-text="stats.unique"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Valid Emails</p>
+                <p class="text-lg font-bold text-green-600" x-text="stats.valid"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Invalid Emails</p>
+                <p class="text-lg font-bold text-red-600" x-text="stats.invalid"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Domain Analysis -->
+    <div x-show="domainStats.length > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="globe" class="h-4 w-4"></i>
+            Domain Analysis
+        </h3>
+        <div class="space-y-2">
+            <template x-for="domain in domainStats" :key="domain.name">
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span class="font-medium" x-text="domain.name"></span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600" x-text="domain.count + ' emails'"></span>
+                        <div class="w-16 bg-gray-200 rounded-full h-2">
+                            <div
+                                class="bg-blue-600 h-2 rounded-full"
+                                :style="`width: ${(domain.count / stats.unique) * 100}%`"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="bg-blue-50 rounded-lg p-6">
+        <h3 class="font-semibold mb-3 flex items-center gap-2 text-blue-900">
+            <i data-lucide="info" class="h-4 w-4"></i>
+            How Email Extraction Works
+        </h3>
+        <div class="text-blue-800 space-y-2 text-sm">
+            <p><strong>Pattern Matching:</strong> Uses regex patterns to identify email addresses in text</p>
+            <p><strong>Validation:</strong> Checks email format against RFC standards</p>
+            <p><strong>Deduplication:</strong> Removes duplicate email addresses from results</p>
+            <p><strong>Domain Analysis:</strong> Groups emails by domain for analysis</p>
+        </div>
+        
+        <div class="mt-4 p-3 bg-white rounded border border-blue-200">
+            <h4 class="font-medium text-blue-900 mb-2">Supported Formats:</h4>
+            <div class="text-sm text-blue-700 space-y-1">
+                <p>• Standard format: user@domain.com</p>
+                <p>• With display names: "John Doe" &lt;john@example.com&gt;</p>
+                <p>• Subdomain emails: user@mail.example.com</p>
+                <p>• International domains: user@example.co.uk</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function emailExtractor() {
+    return {
+        inputText: '',
+        extractedEmails: [],
+        removeDuplicates: true,
+        validateEmails: true,
+        
+        get stats() {
+            const total = this.extractedEmails.length;
+            const unique = new Set(this.extractedEmails).size;
+            const valid = this.extractedEmails.filter(email => this.isValidEmail(email)).length;
+            const invalid = total - valid;
+            
+            return { total, unique, valid, invalid };
+        },
+        
+        get domainStats() {
+            const domains = {};
+            const uniqueEmails = [...new Set(this.extractedEmails)];
+            
+            uniqueEmails.forEach(email => {
+                if (this.isValidEmail(email)) {
+                    const domain = email.split('@')[1];
+                    domains[domain] = (domains[domain] || 0) + 1;
+                }
+            });
+            
+            return Object.entries(domains)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+        },
+        
+        extractEmails() {
+            if (!this.inputText.trim()) return;
+            
+            // Enhanced email regex pattern
+            const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+            
+            // Extract emails from display name format: "Name" <email@domain.com>
+            const displayNamePattern = /"[^"]*"\s*<([^>]+)>/g;
+            
+            let emails = [];
+            
+            // Extract standard emails
+            const standardEmails = this.inputText.match(emailPattern) || [];
+            emails = emails.concat(standardEmails);
+            
+            // Extract emails from display name format
+            let match;
+            while ((match = displayNamePattern.exec(this.inputText)) !== null) {
+                emails.push(match[1]);
+            }
+            
+            // Filter invalid emails if validation is enabled
+            if (this.validateEmails) {
+                emails = emails.filter(email => this.isValidEmail(email));
+            }
+            
+            // Remove duplicates if option is enabled
+            if (this.removeDuplicates) {
+                emails = [...new Set(emails.map(email => email.toLowerCase()))];
+            }
+            
+            this.extractedEmails = emails.sort();
+        },
+        
+        isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        },
+        
+        async copyEmails(format) {
+            let text = '';
+            
+            if (format === 'list') {
+                text = this.extractedEmails.join('\n');
+            } else if (format === 'csv') {
+                const header = 'Email,Domain,Valid\n';
+                const rows = this.extractedEmails.map(email => {
+                    const domain = email.includes('@') ? email.split('@')[1] : '';
+                    const valid = this.isValidEmail(email);
+                    return `"${email}","${domain}","${valid}"`;
+                }).join('\n');
+                text = header + rows;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        },
+        
+        async copyEmail(email) {
+            try {
+                await navigator.clipboard.writeText(email);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        },
+        
+        async pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                this.inputText = text;
+                this.extractEmails();
+            } catch (err) {
+                console.error('Failed to paste:', err);
+            }
+        },
+        
+        clearAll() {
+            this.inputText = '';
+            this.extractedEmails = [];
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Email Extractor is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Email Extractor  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Email Extractor is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'email-extractor', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'email-extractor', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +422,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +430,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +439,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Email Extractor is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +535,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +553,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Email Extractor',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Email Extractor.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

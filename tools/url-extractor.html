@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Extractor - Coming Soon</title>
+    <title>
+    URL Extractor - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,592 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="link" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">URL Extractor</h1>
+            <p class="text-gray-600">Extract URLs and links from text using pattern matching.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="urlExtractor()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <template x-for="type in extractionTypes" :key="type.id">
+                    <button
+                        @click="selectedType = type.id"
+                        :class="selectedType === type.id ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                        class="px-4 py-2 border rounded-lg transition-all"
+                        x-text="type.name"
+                    ></button>
+                </template>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    @click="extractUrls()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="search" class="h-4 w-4"></i>
+                    Extract
+                </button>
+                <button
+                    @click="clearAll()"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                    Clear
+                </button>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="link" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">URL Extractor</h1>
-      <p class="text-lg text-gray-600 mb-6">Extract URLs and links from text using pattern matching.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Options -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="settings" class="h-4 w-4"></i>
+            Extraction Options
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.removeDuplicates" class="rounded">
+                <span class="text-sm">Remove duplicates</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.sortResults" class="rounded">
+                <span class="text-sm">Sort alphabetically</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.includeProtocol" class="rounded">
+                <span class="text-sm">Include protocol-less URLs</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.validateUrls" class="rounded">
+                <span class="text-sm">Validate URL format</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.extractFromHtml" class="rounded">
+                <span class="text-sm">Extract from HTML tags</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" x-model="options.includeEmails" class="rounded">
+                <span class="text-sm">Include email addresses</span>
+            </label>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('url-extractor')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Input Text -->
+    <div class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="file-text" class="h-4 w-4"></i>
+                Input Text
+            </h3>
+            <div class="flex gap-2">
+                <button
+                    @click="loadSampleText()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                    <i data-lucide="file-plus" class="h-3 w-3"></i>
+                    Sample Text
+                </button>
+                <button
+                    @click="clearInput()"
+                    class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                >
+                    <i data-lucide="x" class="h-3 w-3"></i>
+                    Clear
+                </button>
+            </div>
+        </div>
+        <div class="p-4">
+            <textarea
+                x-model="inputText"
+                placeholder="Paste your text here. URLs will be extracted automatically..."
+                class="w-full h-48 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+            ></textarea>
+            <div class="mt-2 text-xs text-gray-500">
+                <span x-text="inputText.length"></span> characters
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="extractedUrls.length > 0" class="bg-white rounded-lg border border-gray-200">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="font-semibold flex items-center gap-2">
+                <i data-lucide="link" class="h-4 w-4"></i>
+                Extracted URLs (<span x-text="extractedUrls.length"></span>)
+            </h3>
+            <div class="flex gap-2">
+                <select x-model="exportFormat" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                    <option value="list">List</option>
+                    <option value="csv">CSV</option>
+                    <option value="json">JSON</option>
+                    <option value="html">HTML Links</option>
+                </select>
+                <button
+                    @click="exportUrls()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                    <i data-lucide="download" class="h-3 w-3"></i>
+                    Export
+                </button>
+                <button
+                    @click="copyUrls()"
+                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                    <i data-lucide="copy" class="h-3 w-3"></i>
+                    Copy All
+                </button>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="space-y-2 max-h-96 overflow-y-auto">
+                <template x-for="(url, index) in extractedUrls" :key="index">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="flex-shrink-0">
+                                <i :data-lucide="getUrlIcon(url)" class="h-4 w-4 text-gray-500"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <a 
+                                    :href="url.url" 
+                                    target="_blank"
+                                    class="text-blue-600 hover:text-blue-700 font-medium truncate block"
+                                    x-text="url.url"
+                                ></a>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <span x-text="url.type"></span>
+                                    <span x-show="url.domain"> • <span x-text="url.domain"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button
+                                @click="copyUrl(url.url)"
+                                class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                                title="Copy URL"
+                            >
+                                <i data-lucide="copy" class="h-3 w-3"></i>
+                            </button>
+                            <button
+                                @click="removeUrl(index)"
+                                class="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                title="Remove URL"
+                            >
+                                <i data-lucide="x" class="h-3 w-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div x-show="stats.total > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Extraction Statistics
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Total URLs</p>
+                <p class="text-lg font-bold text-blue-600" x-text="stats.total"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">HTTP/HTTPS</p>
+                <p class="text-lg font-bold text-green-600" x-text="stats.http"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Email Addresses</p>
+                <p class="text-lg font-bold text-purple-600" x-text="stats.emails"></p>
+            </div>
+            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600">Unique Domains</p>
+                <p class="text-lg font-bold text-orange-600" x-text="stats.domains"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help -->
+    <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
+        <h3 class="font-semibold mb-3 text-blue-900 flex items-center gap-2">
+            <i data-lucide="help-circle" class="h-4 w-4"></i>
+            Supported URL Formats
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+                <h4 class="font-medium text-blue-800 mb-2">Web URLs:</h4>
+                <ul class="space-y-1 text-blue-700">
+                    <li>• https://example.com</li>
+                    <li>• http://subdomain.site.co.uk/path</li>
+                    <li>• www.example.org (if protocol-less enabled)</li>
+                    <li>• ftp://files.example.com</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-medium text-blue-800 mb-2">Other Formats:</h4>
+                <ul class="space-y-1 text-blue-700">
+                    <li>• user@example.com (emails)</li>
+                    <li>• &lt;a href="..."&gt; (HTML links)</li>
+                    <li>• mailto:contact@site.com</li>
+                    <li>• tel:+1234567890</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function urlExtractor() {
+    return {
+        inputText: '',
+        extractedUrls: [],
+        selectedType: 'all',
+        exportFormat: 'list',
+        
+        extractionTypes: [
+            { id: 'all', name: 'All URLs' },
+            { id: 'http', name: 'HTTP/HTTPS' },
+            { id: 'email', name: 'Emails' },
+            { id: 'domain', name: 'Domains Only' }
+        ],
+        
+        options: {
+            removeDuplicates: true,
+            sortResults: false,
+            includeProtocol: false,
+            validateUrls: true,
+            extractFromHtml: true,
+            includeEmails: true
+        },
+        
+        get stats() {
+            const total = this.extractedUrls.length;
+            const http = this.extractedUrls.filter(url => url.type === 'HTTP/HTTPS').length;
+            const emails = this.extractedUrls.filter(url => url.type === 'Email').length;
+            const domains = new Set(this.extractedUrls.map(url => url.domain).filter(d => d)).size;
+            
+            return { total, http, emails, domains };
+        },
+        
+        extractUrls() {
+            if (!this.inputText.trim()) return;
+            
+            let urls = [];
+            let text = this.inputText;
+            
+            // Extract HTTP/HTTPS URLs
+            const httpRegex = /https?:\/\/[^\s<>"'`|\\^[\]{}]+/gi;
+            const httpMatches = text.match(httpRegex) || [];
+            httpMatches.forEach(url => {
+                urls.push({
+                    url: url,
+                    type: 'HTTP/HTTPS',
+                    domain: this.extractDomain(url)
+                });
+            });
+            
+            // Extract FTP URLs
+            const ftpRegex = /ftp:\/\/[^\s<>"'`|\\^[\]{}]+/gi;
+            const ftpMatches = text.match(ftpRegex) || [];
+            ftpMatches.forEach(url => {
+                urls.push({
+                    url: url,
+                    type: 'FTP',
+                    domain: this.extractDomain(url)
+                });
+            });
+            
+            // Extract protocol-less URLs
+            if (this.options.includeProtocol) {
+                const protocolLessRegex = /(?:www\.)?[a-zA-Z0-9][-a-zA-Z0-9]*[a-zA-Z0-9]\.[a-zA-Z]{2,}(?:\/[^\s<>"'`|\\^[\]{}]*)?/gi;
+                const protocolLessMatches = text.match(protocolLessRegex) || [];
+                protocolLessMatches.forEach(url => {
+                    if (!httpMatches.some(httpUrl => httpUrl.includes(url))) {
+                        urls.push({
+                            url: url.startsWith('www.') ? url : `www.${url}`,
+                            type: 'Domain',
+                            domain: this.extractDomain(url)
+                        });
+                    }
+                });
+            }
+            
+            // Extract emails
+            if (this.options.includeEmails) {
+                const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
+                const emailMatches = text.match(emailRegex) || [];
+                emailMatches.forEach(email => {
+                    urls.push({
+                        url: email,
+                        type: 'Email',
+                        domain: email.split('@')[1]
+                    });
+                });
+            }
+            
+            // Extract mailto links
+            const mailtoRegex = /mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
+            const mailtoMatches = text.match(mailtoRegex) || [];
+            mailtoMatches.forEach(mailto => {
+                urls.push({
+                    url: mailto,
+                    type: 'Mailto',
+                    domain: mailto.split('@')[1]
+                });
+            });
+            
+            // Extract tel links
+            const telRegex = /tel:[+]?[0-9\-\(\)\s]+/gi;
+            const telMatches = text.match(telRegex) || [];
+            telMatches.forEach(tel => {
+                urls.push({
+                    url: tel,
+                    type: 'Phone',
+                    domain: null
+                });
+            });
+            
+            // Extract from HTML tags
+            if (this.options.extractFromHtml) {
+                const hrefRegex = /href\s*=\s*["']([^"']+)["']/gi;
+                let hrefMatch;
+                while ((hrefMatch = hrefRegex.exec(text)) !== null) {
+                    const url = hrefMatch[1];
+                    if (url.startsWith('http') || url.startsWith('//')) {
+                        urls.push({
+                            url: url.startsWith('//') ? `https:${url}` : url,
+                            type: 'HTML Link',
+                            domain: this.extractDomain(url)
+                        });
+                    }
+                }
+                
+                const srcRegex = /src\s*=\s*["']([^"']+)["']/gi;
+                let srcMatch;
+                while ((srcMatch = srcRegex.exec(text)) !== null) {
+                    const url = srcMatch[1];
+                    if (url.startsWith('http') || url.startsWith('//')) {
+                        urls.push({
+                            url: url.startsWith('//') ? `https:${url}` : url,
+                            type: 'HTML Resource',
+                            domain: this.extractDomain(url)
+                        });
+                    }
+                }
+            }
+            
+            // Filter by selected type
+            if (this.selectedType !== 'all') {
+                const typeMap = {
+                    'http': ['HTTP/HTTPS', 'FTP'],
+                    'email': ['Email', 'Mailto'],
+                    'domain': ['Domain']
+                };
+                urls = urls.filter(url => typeMap[this.selectedType]?.includes(url.type));
+            }
+            
+            // Validate URLs if option is enabled
+            if (this.options.validateUrls) {
+                urls = urls.filter(url => this.isValidUrl(url.url, url.type));
+            }
+            
+            // Remove duplicates
+            if (this.options.removeDuplicates) {
+                const seen = new Set();
+                urls = urls.filter(url => {
+                    if (seen.has(url.url)) return false;
+                    seen.add(url.url);
+                    return true;
+                });
+            }
+            
+            // Sort results
+            if (this.options.sortResults) {
+                urls.sort((a, b) => a.url.localeCompare(b.url));
+            }
+            
+            this.extractedUrls = urls;
+        },
+        
+        extractDomain(url) {
+            try {
+                if (url.includes('@')) {
+                    return url.split('@')[1];
+                }
+                const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+                return urlObj.hostname;
+            } catch {
+                const match = url.match(/(?:https?:\/\/)?(?:www\.)?([^\/\s?#]+)/);
+                return match ? match[1] : null;
+            }
+        },
+        
+        isValidUrl(url, type) {
+            if (type === 'Email' || type === 'Mailto') {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(url.replace('mailto:', ''));
+            }
+            if (type === 'Phone') {
+                return /^tel:[+]?[0-9\-\(\)\s]+$/.test(url);
+            }
+            try {
+                new URL(url.startsWith('http') ? url : `https://${url}`);
+                return true;
+            } catch {
+                return false;
+            }
+        },
+        
+        getUrlIcon(url) {
+            const iconMap = {
+                'HTTP/HTTPS': 'globe',
+                'FTP': 'folder',
+                'Email': 'mail',
+                'Mailto': 'mail',
+                'Phone': 'phone',
+                'HTML Link': 'link',
+                'HTML Resource': 'image',
+                'Domain': 'globe'
+            };
+            return iconMap[url.type] || 'link';
+        },
+        
+        removeUrl(index) {
+            this.extractedUrls.splice(index, 1);
+        },
+        
+        async copyUrl(url) {
+            try {
+                await navigator.clipboard.writeText(url);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        },
+        
+        async copyUrls() {
+            const urls = this.extractedUrls.map(url => url.url).join('\n');
+            try {
+                await navigator.clipboard.writeText(urls);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        },
+        
+        exportUrls() {
+            let content = '';
+            let filename = 'extracted-urls';
+            let mimeType = 'text/plain';
+            
+            switch (this.exportFormat) {
+                case 'list':
+                    content = this.extractedUrls.map(url => url.url).join('\n');
+                    filename += '.txt';
+                    break;
+                case 'csv':
+                    content = 'URL,Type,Domain\n' + 
+                              this.extractedUrls.map(url => 
+                                  `"${url.url}","${url.type}","${url.domain || ''}"`
+                              ).join('\n');
+                    filename += '.csv';
+                    mimeType = 'text/csv';
+                    break;
+                case 'json':
+                    content = JSON.stringify(this.extractedUrls, null, 2);
+                    filename += '.json';
+                    mimeType = 'application/json';
+                    break;
+                case 'html':
+                    content = this.extractedUrls
+                        .filter(url => !url.type.includes('Email') && !url.type.includes('Phone'))
+                        .map(url => `<a href="${url.url}" target="_blank">${url.url}</a>`)
+                        .join('\n');
+                    filename += '.html';
+                    mimeType = 'text/html';
+                    break;
+            }
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        },
+        
+        loadSampleText() {
+            this.inputText = `Check out these websites:
+https://www.google.com for search
+Visit http://example.org/page?id=123 for more info
+Contact us at support@company.com or sales@business.co.uk
+You can also call us at tel:+1-555-123-4567
+
+Some HTML content:
+<a href="https://github.com/user/repo">GitHub Repository</a>
+<img src="https://cdn.example.com/image.jpg" alt="Sample">
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto">
+
+FTP resources: ftp://files.example.com/downloads/
+Domain without protocol: www.stackoverflow.com
+Email with different format: user.name+tag@domain-name.co.uk
+
+Check our blog at blog.company.com and our docs at docs.api-service.io`;
+        },
+        
+        clearInput() {
+            this.inputText = '';
+        },
+        
+        clearAll() {
+            this.inputText = '';
+            this.extractedUrls = [];
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when URL Extractor is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of URL Extractor  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when URL Extractor is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'url-extractor', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'url-extractor', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +659,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +667,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +676,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when URL Extractor is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +772,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +790,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'URL Extractor',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of URL Extractor.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     

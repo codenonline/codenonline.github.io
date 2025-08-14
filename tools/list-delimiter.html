@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Delimiter - Coming Soon</title>
+    <title>
+    List Delimiter - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,473 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="list" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">List Delimiter</h1>
+            <p class="text-gray-600">Change delimiters in lists (comma, semicolon, newline, etc.).</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="listDelimiter()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- From Delimiter -->
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">From Delimiter</label>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="delimiter in delimiters" :key="delimiter.id">
+                        <button
+                            @click="fromDelimiter = delimiter.id"
+                            :class="fromDelimiter === delimiter.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                            class="px-3 py-2 border rounded-lg transition-all text-sm"
+                            x-text="delimiter.name"
+                        ></button>
+                    </template>
+                </div>
+                <div x-show="fromDelimiter === 'custom'" class="mt-2">
+                    <input
+                        x-model="customFromDelimiter"
+                        type="text"
+                        placeholder="Enter custom delimiter..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    >
+                </div>
+            </div>
+            
+            <!-- Arrow -->
+            <div class="flex items-center justify-center">
+                <i data-lucide="arrow-right" class="h-6 w-6 text-gray-400"></i>
+            </div>
+            
+            <!-- To Delimiter -->
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">To Delimiter</label>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="delimiter in delimiters" :key="delimiter.id">
+                        <button
+                            @click="toDelimiter = delimiter.id"
+                            :class="toDelimiter === delimiter.id ? 'bg-green-600 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                            class="px-3 py-2 border rounded-lg transition-all text-sm"
+                            x-text="delimiter.name"
+                        ></button>
+                    </template>
+                </div>
+                <div x-show="toDelimiter === 'custom'" class="mt-2">
+                    <input
+                        x-model="customToDelimiter"
+                        type="text"
+                        placeholder="Enter custom delimiter..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                    >
+                </div>
+            </div>
+        </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+        <!-- Options -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="flex flex-wrap gap-4">
+                <label class="flex items-center">
+                    <input x-model="trimWhitespace" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-2 text-sm text-gray-600">Trim whitespace from items</span>
+                </label>
+                <label class="flex items-center">
+                    <input x-model="removeEmpty" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-2 text-sm text-gray-600">Remove empty items</span>
+                </label>
+                <label class="flex items-center">
+                    <input x-model="removeDuplicates" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-2 text-sm text-gray-600">Remove duplicates</span>
+                </label>
+                <label class="flex items-center">
+                    <input x-model="sortItems" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-2 text-sm text-gray-600">Sort alphabetically</span>
+                </label>
+            </div>
+        </div>
 
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-2 mt-6">
+            <button
+                @click="convertDelimiters()"
+                :disabled="!inputText.trim()"
+                :class="inputText.trim() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'"
+                class="px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="shuffle" class="h-4 w-4"></i>
+                Convert
+            </button>
+            <button
+                @click="swapDelimiters()"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="repeat" class="h-4 w-4"></i>
+                Swap
+            </button>
+            <button
+                @click="clearAll()"
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Input/Output Areas -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i data-lucide="list" class="h-4 w-4"></i>
+                    Input List
+                </h3>
+                <div class="flex items-center gap-2">
+                    <span x-show="itemCount.input > 0" class="text-sm text-gray-500" x-text="`${itemCount.input} items`"></span>
+                    <button
+                        @click="loadSample()"
+                        class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    >
+                        <i data-lucide="file-text" class="h-3 w-3"></i>
+                        Sample
+                    </button>
+                </div>
+            </div>
+            <div class="p-4">
+                <textarea
+                    x-model="inputText"
+                    @input="updateInputCount()"
+                    placeholder="Enter your list here...&#10;Example: apple, banana, cherry"
+                    class="w-full h-64 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono"
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- Output -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i data-lucide="file-output" class="h-4 w-4"></i>
+                    Output List
+                </h3>
+                <div class="flex items-center gap-2">
+                    <span x-show="itemCount.output > 0" class="text-sm text-gray-500" x-text="`${itemCount.output} items`"></span>
+                    <button
+                        @click="copyOutput()"
+                        x-show="outputText"
+                        class="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                        <i data-lucide="copy" class="h-3 w-3"></i>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            <div class="p-4">
+                <textarea
+                    x-model="outputText"
+                    readonly
+                    placeholder="Converted list will appear here..."
+                    class="w-full h-64 p-3 border border-gray-300 rounded-lg text-sm bg-gray-50 resize-none font-mono"
+                ></textarea>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="list" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">List Delimiter</h1>
-      <p class="text-lg text-gray-600 mb-6">Change delimiters in lists (comma, semicolon, newline, etc.).</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Preview -->
+    <div x-show="previewItems.length > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+            Preview (First 20 items)
+        </h3>
+        <div class="flex flex-wrap gap-2">
+            <template x-for="(item, index) in previewItems.slice(0, 20)" :key="index">
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200" x-text="item"></span>
+            </template>
+            <span x-show="previewItems.length > 20" class="px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-sm border border-gray-200">
+                ... and <span x-text="previewItems.length - 20"></span> more
+            </span>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('list-delimiter')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Quick Examples -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="zap" class="h-4 w-4"></i>
+            Quick Examples
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <template x-for="example in examples" :key="example.name">
+                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer"
+                     @click="loadExample(example)">
+                    <h4 class="font-medium text-sm mb-1" x-text="example.name"></h4>
+                    <p class="text-xs text-gray-600 mb-2" x-text="example.description"></p>
+                    <div class="text-xs text-gray-500">
+                        <span x-text="example.from"></span> → <span x-text="example.to"></span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function listDelimiter() {
+    return {
+        fromDelimiter: 'comma',
+        toDelimiter: 'newline',
+        customFromDelimiter: '',
+        customToDelimiter: '',
+        inputText: '',
+        outputText: '',
+        trimWhitespace: true,
+        removeEmpty: true,
+        removeDuplicates: false,
+        sortItems: false,
+        
+        delimiters: [
+            { id: 'comma', name: 'Comma (,)', value: ',' },
+            { id: 'semicolon', name: 'Semicolon (;)', value: ';' },
+            { id: 'newline', name: 'Newline', value: '\n' },
+            { id: 'space', name: 'Space', value: ' ' },
+            { id: 'tab', name: 'Tab', value: '\t' },
+            { id: 'pipe', name: 'Pipe (|)', value: '|' },
+            { id: 'colon', name: 'Colon (:)', value: ':' },
+            { id: 'dash', name: 'Dash (-)', value: '-' },
+            { id: 'custom', name: 'Custom', value: '' }
+        ],
+        
+        examples: [
+            {
+                name: 'CSV to List',
+                description: 'Convert comma-separated to line-separated',
+                from: 'Comma',
+                to: 'Newline',
+                fromDelim: 'comma',
+                toDelim: 'newline',
+                sample: 'apple, banana, cherry, date, elderberry'
+            },
+            {
+                name: 'List to CSV',
+                description: 'Convert line-separated to comma-separated',
+                from: 'Newline',
+                to: 'Comma',
+                fromDelim: 'newline',
+                toDelim: 'comma',
+                sample: 'apple\nbanana\ncherry\ndate\nelderberry'
+            },
+            {
+                name: 'Pipe Separated',
+                description: 'Convert to pipe-separated values',
+                from: 'Comma',
+                to: 'Pipe',
+                fromDelim: 'comma',
+                toDelim: 'pipe',
+                sample: 'red, green, blue, yellow, purple'
+            },
+            {
+                name: 'Space to Semicolon',
+                description: 'Convert space-separated to semicolon',
+                from: 'Space',
+                to: 'Semicolon',
+                fromDelim: 'space',
+                toDelim: 'semicolon',
+                sample: 'item1 item2 item3 item4 item5'
+            },
+            {
+                name: 'Tab Delimited',
+                description: 'Convert to tab-separated values',
+                from: 'Comma',
+                to: 'Tab',
+                fromDelim: 'comma',
+                toDelim: 'tab',
+                sample: 'name, email, phone, address, city'
+            },
+            {
+                name: 'Colon Separated',
+                description: 'Convert to colon-separated format',
+                from: 'Newline',
+                to: 'Colon',
+                fromDelim: 'newline',
+                toDelim: 'colon',
+                sample: 'Monday\nTuesday\nWednesday\nThursday\nFriday'
+            }
+        ],
+        
+        get itemCount() {
+            return {
+                input: this.inputText ? this.getItems(this.inputText, this.getDelimiterValue(this.fromDelimiter)).length : 0,
+                output: this.outputText ? this.getItems(this.outputText, this.getDelimiterValue(this.toDelimiter)).length : 0
+            };
+        },
+        
+        get previewItems() {
+            if (!this.outputText) return [];
+            return this.getItems(this.outputText, this.getDelimiterValue(this.toDelimiter));
+        },
+        
+        getDelimiterValue(delimiterType) {
+            if (delimiterType === 'custom') {
+                return delimiterType === this.fromDelimiter ? this.customFromDelimiter : this.customToDelimiter;
+            }
+            const delimiter = this.delimiters.find(d => d.id === delimiterType);
+            return delimiter ? delimiter.value : ',';
+        },
+        
+        getItems(text, delimiter) {
+            if (!text || !delimiter) return [];
+            return text.split(delimiter);
+        },
+        
+        processItems(items) {
+            let processed = [...items];
+            
+            if (this.trimWhitespace) {
+                processed = processed.map(item => item.trim());
+            }
+            
+            if (this.removeEmpty) {
+                processed = processed.filter(item => item !== '');
+            }
+            
+            if (this.removeDuplicates) {
+                processed = [...new Set(processed)];
+            }
+            
+            if (this.sortItems) {
+                processed = processed.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+            }
+            
+            return processed;
+        },
+        
+        convertDelimiters() {
+            if (!this.inputText.trim()) return;
+            
+            const fromDelim = this.getDelimiterValue(this.fromDelimiter);
+            const toDelim = this.getDelimiterValue(this.toDelimiter);
+            
+            if (!fromDelim) {
+                alert('Please specify the source delimiter');
+                return;
+            }
+            
+            if (!toDelim) {
+                alert('Please specify the target delimiter');
+                return;
+            }
+            
+            let items = this.getItems(this.inputText, fromDelim);
+            items = this.processItems(items);
+            
+            this.outputText = items.join(toDelim);
+        },
+        
+        swapDelimiters() {
+            const tempFrom = this.fromDelimiter;
+            const tempCustomFrom = this.customFromDelimiter;
+            
+            this.fromDelimiter = this.toDelimiter;
+            this.customFromDelimiter = this.customToDelimiter;
+            
+            this.toDelimiter = tempFrom;
+            this.customToDelimiter = tempCustomFrom;
+            
+            if (this.outputText) {
+                this.inputText = this.outputText;
+                this.convertDelimiters();
+            }
+        },
+        
+        clearAll() {
+            this.inputText = '';
+            this.outputText = '';
+        },
+        
+        loadSample() {
+            this.inputText = 'apple, banana, cherry, date, elderberry, fig, grape, honeydew, kiwi, lemon';
+            this.fromDelimiter = 'comma';
+            this.toDelimiter = 'newline';
+        },
+        
+        loadExample(example) {
+            this.inputText = example.sample;
+            this.fromDelimiter = example.fromDelim;
+            this.toDelimiter = example.toDelim;
+            this.convertDelimiters();
+        },
+        
+        updateInputCount() {
+            // Trigger reactivity for item count
+            this.$nextTick(() => {
+                // Force reactive update
+            });
+        },
+        
+        async copyOutput() {
+            try {
+                await navigator.clipboard.writeText(this.outputText);
+                // Show success feedback
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="h-3 w-3"></i> Copied!';
+                button.classList.remove('text-green-600', 'hover:text-green-700');
+                button.classList.add('text-green-700');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('text-green-700');
+                    button.classList.add('text-green-600', 'hover:text-green-700');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when List Delimiter is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of List Delimiter  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when List Delimiter is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'list-delimiter', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'list-delimiter', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +540,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +548,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +557,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when List Delimiter is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,630 +653,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Text Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/shuffle-letters.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Shuffle Letters</h3>
-          <p class="text-gray-600 text-sm">Randomly shuffle letters within words or entire text.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.153569 • Aug 14, 2025, 02:39 AM EDT</p>
+                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -915,40 +671,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'List Delimiter',
-                tool_category: 'text',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of List Delimiter.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.153569
+            v1.0.0.154154
         </div>
     </div>
     
