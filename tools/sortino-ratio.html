@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sortino Ratio Calculator - Coming Soon</title>
+    <title>
+    Sortino Ratio Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,478 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Sortino Ratio Calculator</h1>
+            <p class="text-gray-600">Calculate downside risk-adjusted returns.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortino Ratio Calculator - Investment Risk Analysis Tool</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+<div x-data="sortinoCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            <i data-lucide="calculator" class="h-6 w-6 text-purple-600"></i>
+            Calculate Sortino Ratio
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Portfolio Return (%)
+                </label>
+                <input
+                    type="number"
+                    x-model="portfolioReturn"
+                    step="0.01"
+                    placeholder="e.g., 12.5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Risk-Free Rate (%)
+                </label>
+                <input
+                    type="number"
+                    x-model="riskFreeRate"
+                    step="0.01"
+                    placeholder="e.g., 3.0"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Downside Deviation (%)
+                </label>
+                <input
+                    type="number"
+                    x-model="downsideDeviation"
+                    step="0.01"
+                    placeholder="e.g., 8.5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Return (%)
+                </label>
+                <input
+                    type="number"
+                    x-model="targetReturn"
+                    step="0.01"
+                    placeholder="e.g., 5.0"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-3">Or Calculate Downside Deviation from Returns</h3>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Historical Returns (comma-separated %)
+                </label>
+                <textarea
+                    x-model="historicalReturns"
+                    rows="3"
+                    placeholder="e.g., 10.5, -2.3, 15.2, -5.1, 8.7, 12.1, -1.8, 9.4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                ></textarea>
+            </div>
+            <button
+                @click="calculateDownsideDeviation()"
+                class="mt-3 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+                Calculate Downside Deviation
+            </button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="sortinoRatio !== null" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="target" class="h-5 w-5 text-purple-600"></i>
+            Sortino Ratio Results
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+                <p class="text-sm text-purple-600 font-medium">Sortino Ratio</p>
+                <p class="text-2xl font-bold text-purple-900" x-text="sortinoRatio.toFixed(4)"></p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
+                <p class="text-sm text-blue-600 font-medium">Excess Return</p>
+                <p class="text-2xl font-bold text-blue-900" x-text="excessReturn.toFixed(2) + '%'"></p>
+            </div>
+            <div class="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg">
+                <p class="text-sm text-red-600 font-medium">Downside Deviation</p>
+                <p class="text-2xl font-bold text-red-900" x-text="downsideDeviation + '%'"></p>
+            </div>
+            <div class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg">
+                <p class="text-sm text-green-600 font-medium">Performance Rating</p>
+                <p class="text-lg font-bold text-green-900" x-text="getPerformanceRating()"></p>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4">
+            <h4 class="font-semibold mb-2">Interpretation</h4>
+            <p class="text-gray-700" x-text="getInterpretation()"></p>
+        </div>
+    </div>
+
+    <!-- Comparison Tool -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="git-compare" class="h-5 w-5 text-blue-600"></i>
+            Compare Investments
+        </h3>
+
+        <div class="space-y-4">
+            <template x-for="(investment, index) in investments" :key="index">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border border-gray-200 rounded-lg">
+                    <input
+                        type="text"
+                        x-model="investment.name"
+                        placeholder="Investment Name"
+                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <input
+                        type="number"
+                        x-model="investment.return"
+                        step="0.01"
+                        placeholder="Return %"
+                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <input
+                        type="number"
+                        x-model="investment.riskFree"
+                        step="0.01"
+                        placeholder="Risk-Free %"
+                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <input
+                        type="number"
+                        x-model="investment.downside"
+                        step="0.01"
+                        placeholder="Downside Dev %"
+                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-lg" x-text="getSortinoForInvestment(investment).toFixed(4)"></span>
+                        <button
+                            @click="investments.splice(index, 1)"
+                            class="text-red-600 hover:text-red-700"
+                            x-show="investments.length > 2"
+                        >
+                            <i data-lucide="x" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="flex gap-2 mt-4">
+            <button
+                @click="addInvestment()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+                Add Investment
+            </button>
+            <button
+                @click="sortInvestments()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+                Sort by Sortino Ratio
+            </button>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5 text-indigo-600"></i>
+            Understanding Sortino Ratio
+        </h3>
+
+        <div class="prose max-w-none">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Formula</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+                        Sortino Ratio = (Portfolio Return - Risk-Free Rate) / Downside Deviation
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Downside Deviation</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+                        √(Σ(min(Return - Target, 0))² / n)
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-lg font-semibold mb-3">Key Features</h4>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                            Focuses only on downside risk
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                            More relevant than Sharpe ratio for asymmetric returns
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                            Better for evaluating hedge funds and alternative investments
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                            Customizable target return threshold
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-3">Interpretation</h4>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>&gt; 2.0:</strong> Excellent risk-adjusted performance</li>
+                        <li><strong>1.0 - 2.0:</strong> Good performance</li>
+                        <li><strong>0.5 - 1.0:</strong> Acceptable performance</li>
+                        <li><strong>&lt; 0.5:</strong> Poor risk-adjusted returns</li>
+                        <li><strong>Negative:</strong> Underperforming risk-free rate</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h4 class="font-semibold text-blue-900 mb-2">Advantages over Sharpe Ratio</h4>
+                <p class="text-blue-800">
+                    The Sortino ratio only penalizes downside volatility, making it more appropriate for investments 
+                    with asymmetric return distributions. Unlike the Sharpe ratio, it doesn't penalize upside volatility, 
+                    which investors generally view as favorable.
+                </p>
             </div>
         </div>
     </div>
+</div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Sortino Ratio Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate downside risk-adjusted returns.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
+<script>
+function sortinoCalculator() {
+    return {
+        portfolioReturn: 12,
+        riskFreeRate: 3,
+        downsideDeviation: 8,
+        targetReturn: 5,
+        historicalReturns: '',
+        sortinoRatio: null,
+        investments: [
+            { name: 'Investment A', return: 12, riskFree: 3, downside: 8 },
+            { name: 'Investment B', return: 10, riskFree: 3, downside: 6 }
+        ],
+
+        init() {
+            this.$watch('portfolioReturn', () => this.calculate());
+            this.$watch('riskFreeRate', () => this.calculate());
+            this.$watch('downsideDeviation', () => this.calculate());
+            this.calculate();
+        },
+
+        get excessReturn() {
+            return this.portfolioReturn - this.riskFreeRate;
+        },
+
+        calculate() {
+            if (this.portfolioReturn !== '' && this.riskFreeRate !== '' && this.downsideDeviation !== '' && this.downsideDeviation > 0) {
+                this.sortinoRatio = this.excessReturn / this.downsideDeviation;
+            } else {
+                this.sortinoRatio = null;
+            }
+        },
+
+        calculateDownsideDeviation() {
+            if (!this.historicalReturns.trim()) return;
+            
+            const returns = this.historicalReturns.split(',').map(r => parseFloat(r.trim())).filter(r => !isNaN(r));
+            if (returns.length === 0) return;
+            
+            const target = this.targetReturn || 0;
+            const negativeDeviations = returns.map(r => Math.min(r - target, 0));
+            const sumSquaredDeviations = negativeDeviations.reduce((sum, dev) => sum + dev * dev, 0);
+            const variance = sumSquaredDeviations / returns.length;
+            const deviation = Math.sqrt(variance);
+            
+            this.downsideDeviation = deviation.toFixed(2);
+            this.calculate();
+        },
+
+        getPerformanceRating() {
+            if (this.sortinoRatio === null) return '';
+            
+            if (this.sortinoRatio > 2) return 'Excellent';
+            if (this.sortinoRatio > 1) return 'Good';
+            if (this.sortinoRatio > 0.5) return 'Acceptable';
+            if (this.sortinoRatio > 0) return 'Poor';
+            return 'Very Poor';
+        },
+
+        getInterpretation() {
+            if (this.sortinoRatio === null) return '';
+            
+            const ratio = this.sortinoRatio;
+            
+            if (ratio > 2) {
+                return `Excellent risk-adjusted performance. This investment provides strong returns relative to downside risk, making it very attractive for risk-conscious investors.`;
+            } else if (ratio > 1) {
+                return `Good risk-adjusted performance. The investment offers solid returns considering the downside risk, representing a reasonable investment choice.`;
+            } else if (ratio > 0.5) {
+                return `Acceptable risk-adjusted performance. While the returns compensate for the downside risk, there may be better alternatives available.`;
+            } else if (ratio > 0) {
+                return `Poor risk-adjusted performance. The returns barely justify the downside risk taken, suggesting this may not be an optimal investment.`;
+            } else {
+                return `Very poor performance. The investment is underperforming the risk-free rate, indicating significant downside risk without adequate compensation.`;
+            }
+        },
+
+        getSortinoForInvestment(investment) {
+            if (!investment.return || !investment.riskFree || !investment.downside || investment.downside <= 0) {
+                return 0;
+            }
+            return (investment.return - investment.riskFree) / investment.downside;
+        },
+
+        addInvestment() {
+            this.investments.push({
+                name: `Investment ${String.fromCharCode(65 + this.investments.length)}`,
+                return: '',
+                riskFree: 3,
+                downside: ''
+            });
+        },
+
+        sortInvestments() {
+            this.investments.sort((a, b) => this.getSortinoForInvestment(b) - this.getSortinoForInvestment(a));
+        }
+    }
+}
+</script>
+
+    
+    
+    <!-- Build Info Footer -->
+    <div class="fixed bottom-2 right-2 z-50">
+        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
+            v1.0.0.305714
+        </div>
     </div>
     
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
     
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
         
-        <button onclick="upvoteTool('sortino-ratio')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Sortino Ratio Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Sortino Ratio Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Sortino Ratio Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'sortino-ratio', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'sortino-ratio', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +545,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +553,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +562,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Sortino Ratio Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,771 +658,30 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/capital-asset-pricing-model.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Capital Asset Pricing Model</h3>
-          <p class="text-gray-600 text-sm">Calculate expected returns using CAPM.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/coupon-payment.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Coupon Payment Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond coupon payments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.295788 • Sep 19, 2025, 11:29 AM EDT</p>
+                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
                 
-                <p class="mt-1">main@64c1e45</p>
+                <p class="mt-1">main@2ae2d86</p>
                 
             </div>
             
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Sortino Ratio Calculator',
-                tool_category: 'investment',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Sortino Ratio Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.295788
+            v1.0.0.305714
         </div>
     </div>
     

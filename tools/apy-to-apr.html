@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APY to APR Converter - Coming Soon</title>
+    <title>
+    APY to APR Converter - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,321 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="arrow-left" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">APY to APR Converter</h1>
+            <p class="text-gray-600">Convert Annual Percentage Yield to Annual Percentage Rate.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="apyToAprConverter()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="percent" class="h-5 w-5"></i>
+            APY to APR Converter
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Input -->
+            <div class="space-y-4">
+                <div>
+                    <label for="apy" class="block text-sm font-medium text-gray-700 mb-1">
+                        Annual Percentage Yield (APY) *
+                    </label>
+                    <div class="relative">
+                        <input
+                            type="number"
+                            id="apy"
+                            x-model.number="apy"
+                            @input="calculate()"
+                            step="0.01"
+                            min="0"
+                            max="100"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8"
+                            placeholder="5.25"
+                        >
+                        <span class="absolute right-3 top-2 text-gray-500">%</span>
+                    </div>
+                </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+                <div>
+                    <label for="compoundingFrequency" class="block text-sm font-medium text-gray-700 mb-1">
+                        Compounding Frequency *
+                    </label>
+                    <select
+                        id="compoundingFrequency"
+                        x-model.number="compoundingFrequency"
+                        @change="calculate()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="365">Daily (365)</option>
+                        <option value="52">Weekly (52)</option>
+                        <option value="12">Monthly (12)</option>
+                        <option value="4">Quarterly (4)</option>
+                        <option value="2">Semi-annually (2)</option>
+                        <option value="1">Annually (1)</option>
+                    </select>
+                </div>
 
+                <button
+                    @click="calculate()"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="calculator" class="h-4 w-4"></i>
+                    Convert APY to APR
+                </button>
+            </div>
+
+            <!-- Results -->
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700 mb-3">Conversion Results</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600">APY (Input):</span>
+                            <span class="font-semibold" x-text="apy ? apy.toFixed(4) + '%' : '0.0000%'"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600">APR (Calculated):</span>
+                            <span class="font-semibold text-blue-600" x-text="apr ? apr.toFixed(4) + '%' : '0.0000%'"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600">Compounding:</span>
+                            <span class="font-semibold" x-text="getCompoundingText()"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">Difference:</span>
+                            <span class="font-semibold" :class="difference >= 0 ? 'text-green-600' : 'text-red-600'"
+                                  x-text="difference ? (difference > 0 ? '+' : '') + difference.toFixed(4) + '%' : '0.0000%'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Examples -->
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-blue-800 mb-2">Quick Examples</h4>
+                    <div class="space-y-2 text-sm">
+                        <template x-for="example in examples" :key="example.apy">
+                            <button
+                                @click="loadExample(example)"
+                                class="w-full text-left px-3 py-2 bg-white rounded border hover:bg-blue-100 transition-colors"
+                            >
+                                <div class="flex justify-between">
+                                    <span x-text="example.apy + '% APY'"></span>
+                                    <span class="text-blue-600" x-text="'(' + example.frequency + ')'"></span>
+                                </div>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="arrow-left" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">APY to APR Converter</h1>
-      <p class="text-lg text-gray-600 mb-6">Convert Annual Percentage Yield to Annual Percentage Rate.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <!-- Formula Explanation -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            Formula & Explanation
+        </h3>
         
-        <button onclick="upvoteTool('apy-to-apr')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium text-gray-800 mb-2">APR to APY Formula</h4>
+                <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm mb-4">
+                    APY = (1 + APR/n)^n - 1
+                </div>
+                
+                <h4 class="font-medium text-gray-800 mb-2">APY to APR Formula (Inverse)</h4>
+                <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                    APR = n × ((1 + APY)^(1/n) - 1)
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-medium text-gray-800 mb-2">Where:</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><strong>APY:</strong> Annual Percentage Yield (as decimal)</li>
+                    <li><strong>APR:</strong> Annual Percentage Rate (as decimal)</li>
+                    <li><strong>n:</strong> Number of compounding periods per year</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Key Differences -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-4 w-4"></i>
+            Key Differences: APY vs APR
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium text-green-600 mb-3">Annual Percentage Yield (APY)</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Includes the effect of compounding</li>
+                    <li>• Shows actual annual return</li>
+                    <li>• Always higher than or equal to APR</li>
+                    <li>• Used for savings accounts and investments</li>
+                    <li>• Standardized calculation method</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-medium text-blue-600 mb-3">Annual Percentage Rate (APR)</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Does not include compounding effects</li>
+                    <li>• Simple annual interest rate</li>
+                    <li>• Lower than or equal to APY</li>
+                    <li>• Used for loans and credit cards</li>
+                    <li>• May include fees and costs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Tips -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-4 w-4"></i>
+            Usage Tips
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium text-gray-800 mb-2">When to Convert APY to APR</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Comparing savings rates with loan rates</li>
+                    <li>• Financial modeling and calculations</li>
+                    <li>• Understanding the base interest rate</li>
+                    <li>• Academic or theoretical analysis</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-medium text-gray-800 mb-2">Important Considerations</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Higher compounding frequency = bigger difference</li>
+                    <li>• APY is always ≥ APR for positive rates</li>
+                    <li>• Both rates are annualized</li>
+                    <li>• Consider fees and terms in real scenarios</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function apyToAprConverter() {
+    return {
+        apy: 5.25,
+        compoundingFrequency: 12,
+        apr: 0,
+        
+        examples: [
+            { apy: 5.00, frequency: 'Monthly' },
+            { apy: 3.50, frequency: 'Daily' },
+            { apy: 2.25, frequency: 'Quarterly' },
+            { apy: 6.75, frequency: 'Weekly' }
+        ],
+        
+        get difference() {
+            return this.apy - this.apr;
+        },
+        
+        init() {
+            this.calculate();
+        },
+        
+        calculate() {
+            if (!this.apy || this.apy <= 0) {
+                this.apr = 0;
+                return;
+            }
+            
+            const apyDecimal = this.apy / 100;
+            const n = this.compoundingFrequency;
+            
+            // APR = n × ((1 + APY)^(1/n) - 1)
+            this.apr = n * (Math.pow(1 + apyDecimal, 1/n) - 1) * 100;
+        },
+        
+        getCompoundingText() {
+            const frequencies = {
+                365: 'Daily',
+                52: 'Weekly', 
+                12: 'Monthly',
+                4: 'Quarterly',
+                2: 'Semi-annually',
+                1: 'Annually'
+            };
+            return frequencies[this.compoundingFrequency] || 'Custom';
+        },
+        
+        loadExample(example) {
+            this.apy = example.apy;
+            
+            const frequencyMap = {
+                'Daily': 365,
+                'Weekly': 52,
+                'Monthly': 12,
+                'Quarterly': 4,
+                'Semi-annually': 2,
+                'Annually': 1
+            };
+            
+            this.compoundingFrequency = frequencyMap[example.frequency] || 12;
+            this.calculate();
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when APY to APR Converter is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of APY to APR Converter  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when APY to APR Converter is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'apy-to-apr', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'apy-to-apr', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +388,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +396,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +405,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when APY to APR Converter is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,903 +501,30 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Financial Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/50-30-20-budget.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">50/30/20 Budget Rule</h3>
-          <p class="text-gray-600 text-sm">Plan your budget using the popular 50/30/20 rule for needs, wants, and savings.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/after-tax-cost-debt.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">After-tax Cost of Debt</h3>
-          <p class="text-gray-600 text-sm">Calculate after-tax cost of debt for financial analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/amortization-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Amortization Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate loan amortization schedule with principal and interest breakdown.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/annual-income.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Annual Income Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate annual income from hourly, weekly, or monthly wages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/apr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Annual Percentage Rate for loans and credit products.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/apr-to-apy.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APR to APY Converter</h3>
-          <p class="text-gray-600 text-sm">Convert Annual Percentage Rate to Annual Percentage Yield.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/apy-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">APY Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Annual Percentage Yield for savings and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/buying-power.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Buying Power Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate purchasing power and inflation effects.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/certificate-of-deposit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Certificate of Deposit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate returns on CD investments with different terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/compound-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Compound Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate compound interest with customizable compounding periods and additional contributions.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/credit-card-payment.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Credit Card Payment Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate minimum payments and payoff time for credit cards.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/credit-card-payoff.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Credit Card Payoff Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate time and interest to pay off credit card debt.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/debt-to-income-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Debt to Income Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate debt to income ratio for personal finance.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/emergency-fund.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Emergency Fund Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how much you need in your emergency fund.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/emi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">EMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Equated Monthly Installments for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/future-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Future Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate the future value of your current investments and savings.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/loan-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Loan Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly payments, total interest, and amortization schedule for loans and mortgages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/mortgage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Mortgage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate monthly mortgage payments, total interest, and amortization schedule.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/rule-of-72.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Rule of 72 Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate how long it takes for money to double at a given interest rate.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/savings-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Savings Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate future value of regular savings with compound interest.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/simple-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate simple interest on principal amount over time.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/tax-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate federal income tax, state tax, and take-home pay based on current tax brackets.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.295788 • Sep 19, 2025, 11:29 AM EDT</p>
+                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
                 
-                <p class="mt-1">main@64c1e45</p>
+                <p class="mt-1">main@2ae2d86</p>
                 
             </div>
             
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'APY to APR Converter',
-                tool_category: 'financial',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of APY to APR Converter.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.295788
+            v1.0.0.305714
         </div>
     </div>
     

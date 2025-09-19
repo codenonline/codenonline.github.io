@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEG Ratio Calculator - Coming Soon</title>
+    <title>
+    PEG Ratio Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,349 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">PEG Ratio Calculator</h1>
+            <p class="text-gray-600">Calculate Price/Earnings to Growth ratio.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="pegRatioCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-5 w-5"></i>
+            PEG Ratio Calculator
+        </h2>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Input Form -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Price-to-Earnings (P/E) Ratio
+                    </label>
+                    <input
+                        type="number"
+                        x-model="peRatio"
+                        step="0.01"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="15.0"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Current P/E ratio of the stock</p>
+                </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Annual Earnings Growth Rate (%)
+                    </label>
+                    <input
+                        type="number"
+                        x-model="growthRate"
+                        step="0.1"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="12.5"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Expected annual earnings growth rate</p>
+                </div>
+
+                <button
+                    @click="calculate()"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                    Calculate PEG Ratio
+                </button>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="calculator" class="h-4 w-4"></i>
+                    Results
+                </h3>
+
+                <div x-show="result !== null" class="space-y-3">
+                    <div class="bg-white rounded-lg p-4 border">
+                        <p class="text-sm text-gray-600">PEG Ratio</p>
+                        <p class="text-2xl font-bold" :class="getValueationColor()" x-text="formatNumber(result)"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border">
+                        <p class="text-sm text-gray-600">Valuation Status</p>
+                        <p class="text-lg font-semibold" :class="getValueationColor()" x-text="getValuationStatus()"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border">
+                        <p class="text-sm text-gray-600">Investment Recommendation</p>
+                        <p class="text-sm" x-text="getRecommendation()"></p>
+                    </div>
+                </div>
+
+                <div x-show="result === null" class="text-center text-gray-500 py-8">
+                    <i data-lucide="bar-chart" class="h-12 w-12 mx-auto mb-2 opacity-50"></i>
+                    <p>Enter values to calculate PEG ratio</p>
+                </div>
+
+                <div x-show="error" class="text-red-600 text-sm mt-2" x-text="error"></div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">PEG Ratio Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate Price/Earnings to Growth ratio.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('peg-ratio')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+    <!-- Formula Explanation -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5"></i>
+            Formula & Understanding
+        </h3>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <div class="space-y-4">
+            <div class="bg-blue-50 rounded-lg p-4">
+                <h4 class="font-semibold text-blue-900 mb-2">PEG Ratio Formula</h4>
+                <p class="text-blue-800 font-mono">PEG Ratio = P/E Ratio ÷ Annual Earnings Growth Rate</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <div class="text-green-600 font-bold text-lg">< 1.0</div>
+                    <div class="text-green-700 font-semibold">Undervalued</div>
+                    <div class="text-sm text-green-600 mt-1">Stock may be trading below fair value</div>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div class="text-yellow-600 font-bold text-lg">= 1.0</div>
+                    <div class="text-yellow-700 font-semibold">Fairly Valued</div>
+                    <div class="text-sm text-yellow-600 mt-1">Stock is trading at fair value</div>
+                </div>
+                <div class="bg-red-50 rounded-lg p-4 text-center">
+                    <div class="text-red-600 font-bold text-lg">> 1.0</div>
+                    <div class="text-red-700 font-semibold">Overvalued</div>
+                    <div class="text-sm text-red-600 mt-1">Stock may be trading above fair value</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Points -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-5 w-5"></i>
+            Key Points
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold mb-3 text-green-600">Advantages</h4>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Considers both valuation and growth
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Helps compare growth stocks
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Simple and widely used metric
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Useful for screening stocks
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-semibold mb-3 text-red-600">Limitations</h4>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="x" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Based on projected growth rates
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="x" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Doesn't work for zero/negative growth
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="x" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Growth estimates may be inaccurate
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="x" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Doesn't consider dividend yield
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Tips -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="target" class="h-5 w-5"></i>
+            Usage Tips
+        </h3>
+
+        <div class="space-y-4 text-sm">
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                    <i data-lucide="info" class="h-3 w-3 text-blue-600"></i>
+                </div>
+                <div>
+                    <strong>Compare Similar Companies:</strong> PEG ratios are most useful when comparing companies in the same industry or sector.
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                    <i data-lucide="info" class="h-3 w-3 text-blue-600"></i>
+                </div>
+                <div>
+                    <strong>Consider Time Horizons:</strong> Use 3-5 year growth estimates rather than short-term projections for better accuracy.
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                    <i data-lucide="info" class="h-3 w-3 text-blue-600"></i>
+                </div>
+                <div>
+                    <strong>Verify Growth Assumptions:</strong> Always validate the growth rate assumptions with company fundamentals and industry trends.
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                    <i data-lucide="info" class="h-3 w-3 text-blue-600"></i>
+                </div>
+                <div>
+                    <strong>Use as Screening Tool:</strong> PEG ratio is best used as an initial screening tool, not as a sole investment decision criterion.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function pegRatioCalculator() {
+    return {
+        peRatio: '',
+        growthRate: '',
+        result: null,
+        error: '',
+        
+        calculate() {
+            this.error = '';
+            this.result = null;
+            
+            const pe = parseFloat(this.peRatio);
+            const growth = parseFloat(this.growthRate);
+            
+            // Validation
+            if (!this.peRatio || !this.growthRate) {
+                this.error = 'Please enter both P/E ratio and growth rate.';
+                return;
+            }
+            
+            if (pe < 0) {
+                this.error = 'P/E ratio cannot be negative.';
+                return;
+            }
+            
+            if (growth <= 0) {
+                this.error = 'Growth rate must be positive.';
+                return;
+            }
+            
+            if (growth > 1000) {
+                this.error = 'Growth rate seems unrealistic. Please check your input.';
+                return;
+            }
+            
+            // Calculate PEG ratio
+            this.result = pe / growth;
+        },
+        
+        formatNumber(value) {
+            if (value === null || value === undefined) return '';
+            return value.toFixed(2);
+        },
+        
+        getValuationStatus() {
+            if (this.result === null) return '';
+            
+            if (this.result < 0.5) return 'Highly Undervalued';
+            if (this.result < 1.0) return 'Undervalued';
+            if (this.result === 1.0) return 'Fairly Valued';
+            if (this.result < 1.5) return 'Slightly Overvalued';
+            if (this.result < 2.0) return 'Overvalued';
+            return 'Highly Overvalued';
+        },
+        
+        getValueationColor() {
+            if (this.result === null) return '';
+            
+            if (this.result < 1.0) return 'text-green-600';
+            if (this.result === 1.0) return 'text-yellow-600';
+            return 'text-red-600';
+        },
+        
+        getRecommendation() {
+            if (this.result === null) return '';
+            
+            if (this.result < 0.5) {
+                return 'Strong buy candidate - appears significantly undervalued relative to growth prospects.';
+            } else if (this.result < 1.0) {
+                return 'Buy candidate - appears undervalued relative to growth prospects.';
+            } else if (this.result < 1.5) {
+                return 'Hold - fairly valued to slightly overvalued. Consider other factors.';
+            } else if (this.result < 2.0) {
+                return 'Caution - appears overvalued relative to growth prospects.';
+            } else {
+                return 'Avoid - appears significantly overvalued relative to growth prospects.';
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when PEG Ratio Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of PEG Ratio Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when PEG Ratio Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'peg-ratio', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'peg-ratio', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +416,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +424,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +433,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when PEG Ratio Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,771 +529,30 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/capital-asset-pricing-model.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Capital Asset Pricing Model</h3>
-          <p class="text-gray-600 text-sm">Calculate expected returns using CAPM.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/coupon-payment.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Coupon Payment Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond coupon payments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.295788 • Sep 19, 2025, 11:29 AM EDT</p>
+                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
                 
-                <p class="mt-1">main@64c1e45</p>
+                <p class="mt-1">main@2ae2d86</p>
                 
             </div>
             
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'PEG Ratio Calculator',
-                tool_category: 'investment',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of PEG Ratio Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.295788
+            v1.0.0.305714
         </div>
     </div>
     

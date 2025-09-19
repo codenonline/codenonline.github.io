@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maximum Drawdown Calculator - Coming Soon</title>
+    <title>
+    Maximum Drawdown Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,685 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Maximum Drawdown Calculator</h1>
+            <p class="text-gray-600">Calculate maximum drawdown for investment portfolios.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="maxDrawdownCalculator()" class="space-y-8">
+    <!-- Input Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="trending-down" class="h-5 w-5"></i>
+            Maximum Drawdown Calculator
+        </h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Portfolio Values Input -->
+            <div class="space-y-4">
+                <h3 class="font-medium text-gray-900 flex items-center gap-2">
+                    <i data-lucide="bar-chart" class="h-4 w-4"></i>
+                    Portfolio Values
+                </h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Input Method</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center">
+                            <input type="radio" x-model="inputMethod" value="manual" class="mr-2">
+                            Manual Entry
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" x-model="inputMethod" value="csv" class="mr-2">
+                            CSV Upload
+                        </label>
+                    </div>
+                </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+                <div x-show="inputMethod === 'manual'">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Portfolio Values (comma-separated)
+                    </label>
+                    <textarea
+                        x-model="portfolioValuesInput"
+                        placeholder="100000, 105000, 103000, 110000, 95000, 98000..."
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32"
+                    ></textarea>
+                    <p class="text-sm text-gray-500 mt-1">Enter portfolio values separated by commas</p>
+                </div>
 
+                <div x-show="inputMethod === 'csv'">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Upload CSV File
+                    </label>
+                    <input
+                        type="file"
+                        @change="handleFileUpload"
+                        accept=".csv"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <p class="text-sm text-gray-500 mt-1">CSV should have a column with portfolio values</p>
+                </div>
+
+                <div class="flex gap-4">
+                    <button
+                        @click="loadSampleData()"
+                        class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                    >
+                        <i data-lucide="database" class="h-4 w-4"></i>
+                        Load Sample Data
+                    </button>
+                    <button
+                        @click="calculateDrawdown()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        :disabled="!canCalculate"
+                        :class="!canCalculate ? 'opacity-50 cursor-not-allowed' : ''"
+                    >
+                        <i data-lucide="calculator" class="h-4 w-4"></i>
+                        Calculate Drawdown
+                    </button>
+                </div>
+
+                <div x-show="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-400"></i>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-800" x-text="error"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="space-y-4" x-show="results.maxDrawdown !== null">
+                <h3 class="font-medium text-gray-900 flex items-center gap-2">
+                    <i data-lucide="activity" class="h-4 w-4"></i>
+                    Quick Statistics
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-red-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Max Drawdown</p>
+                        <p class="text-lg font-bold text-red-600" x-text="formatPercentage(results.maxDrawdown)"></p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Peak Value</p>
+                        <p class="text-lg font-bold text-blue-600" x-text="formatCurrency(results.peakValue)"></p>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Trough Value</p>
+                        <p class="text-lg font-bold text-purple-600" x-text="formatCurrency(results.troughValue)"></p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 uppercase tracking-wide">Recovery Days</p>
+                        <p class="text-lg font-bold text-green-600" x-text="results.recoveryPeriod || 'N/A'"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Maximum Drawdown Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate maximum drawdown for investment portfolios.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('maximum-drawdown')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+    <!-- Results Section -->
+    <div x-show="results.maxDrawdown !== null" class="space-y-6">
+        <!-- Detailed Results -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="pie-chart" class="h-5 w-5"></i>
+                Drawdown Analysis
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Maximum Drawdown Details -->
+                <div class="space-y-4">
+                    <h4 class="font-medium text-gray-900">Maximum Drawdown Details</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Maximum Drawdown:</span>
+                            <span class="font-semibold text-red-600" x-text="formatPercentage(results.maxDrawdown)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Peak Date:</span>
+                            <span class="font-semibold" x-text="results.peakIndex + 1"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Trough Date:</span>
+                            <span class="font-semibold" x-text="results.troughIndex + 1"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Peak Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.peakValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Trough Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.troughValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Recovery Period:</span>
+                            <span class="font-semibold" x-text="results.recoveryPeriod ? results.recoveryPeriod + ' periods' : 'Not recovered'"></span>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+                <!-- Portfolio Statistics -->
+                <div class="space-y-4">
+                    <h4 class="font-medium text-gray-900">Portfolio Statistics</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Initial Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.initialValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Final Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.finalValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Return:</span>
+                            <span class="font-semibold" :class="results.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'" 
+                                  x-text="formatPercentage(results.totalReturn)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Number of Periods:</span>
+                            <span class="font-semibold" x-text="portfolioValues.length"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Average Value:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.averageValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Volatility:</span>
+                            <span class="font-semibold" x-text="formatPercentage(results.volatility)"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drawdown Chart -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="trending-down" class="h-5 w-5"></i>
+                Drawdown Chart
+            </h3>
+            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                <canvas x-ref="drawdownChart" class="max-w-full max-h-full"></canvas>
+            </div>
+        </div>
+
+        <!-- All Drawdowns -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6" x-show="results.allDrawdowns.length > 0">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="list" class="h-5 w-5"></i>
+                All Significant Drawdowns
+            </h3>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4">Rank</th>
+                            <th class="text-left py-3 px-4">Drawdown</th>
+                            <th class="text-left py-3 px-4">Peak Period</th>
+                            <th class="text-left py-3 px-4">Trough Period</th>
+                            <th class="text-left py-3 px-4">Duration</th>
+                            <th class="text-left py-3 px-4">Recovery</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(drawdown, index) in results.allDrawdowns.slice(0, 10)" :key="index">
+                            <tr class="border-b border-gray-100">
+                                <td class="py-3 px-4" x-text="index + 1"></td>
+                                <td class="py-3 px-4">
+                                    <span class="text-red-600 font-semibold" x-text="formatPercentage(drawdown.drawdown)"></span>
+                                </td>
+                                <td class="py-3 px-4" x-text="drawdown.peakIndex + 1"></td>
+                                <td class="py-3 px-4" x-text="drawdown.troughIndex + 1"></td>
+                                <td class="py-3 px-4" x-text="drawdown.troughIndex - drawdown.peakIndex + 1"></td>
+                                <td class="py-3 px-4" x-text="drawdown.recoveryPeriod || 'Not recovered'"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-900">
+            <i data-lucide="book-open" class="h-5 w-5"></i>
+            Understanding Maximum Drawdown
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-blue-800">
+            <div>
+                <h4 class="font-semibold mb-2">What is Maximum Drawdown?</h4>
+                <p class="text-sm mb-4">
+                    Maximum drawdown measures the largest peak-to-trough decline in portfolio value during a specific period. 
+                    It's expressed as a percentage and represents the maximum loss an investor would have experienced.
+                </p>
+                
+                <h4 class="font-semibold mb-2">Formula:</h4>
+                <div class="bg-white p-3 rounded border text-center font-mono text-sm">
+                    MDD = (Trough Value - Peak Value) / Peak Value × 100%
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-2">Key Metrics:</h4>
+                <ul class="text-sm space-y-1">
+                    <li><strong>Peak:</strong> Highest portfolio value before decline</li>
+                    <li><strong>Trough:</strong> Lowest portfolio value during decline</li>
+                    <li><strong>Recovery Period:</strong> Time to reach new peak</li>
+                    <li><strong>Duration:</strong> Time from peak to trough</li>
+                </ul>
+                
+                <h4 class="font-semibold mb-2 mt-4">Usage:</h4>
+                <ul class="text-sm space-y-1">
+                    <li>• Risk assessment and portfolio evaluation</li>
+                    <li>• Comparing different investment strategies</li>
+                    <li>• Setting position sizing and risk limits</li>
+                    <li>• Understanding worst-case scenarios</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function maxDrawdownCalculator() {
+    return {
+        inputMethod: 'manual',
+        portfolioValuesInput: '',
+        portfolioValues: [],
+        error: '',
+        
+        results: {
+            maxDrawdown: null,
+            peakValue: null,
+            troughValue: null,
+            peakIndex: null,
+            troughIndex: null,
+            recoveryPeriod: null,
+            initialValue: null,
+            finalValue: null,
+            totalReturn: null,
+            averageValue: null,
+            volatility: null,
+            allDrawdowns: []
+        },
+        
+        get canCalculate() {
+            return this.portfolioValuesInput.trim() || this.portfolioValues.length > 0;
+        },
+        
+        loadSampleData() {
+            this.portfolioValuesInput = '100000, 105000, 103000, 110000, 115000, 108000, 95000, 98000, 102000, 118000, 112000, 125000, 120000, 135000';
+            this.inputMethod = 'manual';
+        },
+        
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const csv = e.target.result;
+                    const lines = csv.split('\n').filter(line => line.trim());
+                    const values = [];
+                    
+                    // Try to parse CSV (assume first column has values)
+                    for (let i = 1; i < lines.length; i++) { // Skip header
+                        const cols = lines[i].split(',');
+                        const value = parseFloat(cols[0].trim());
+                        if (!isNaN(value)) {
+                            values.push(value);
+                        }
+                    }
+                    
+                    if (values.length === 0) {
+                        // Try without header
+                        for (let i = 0; i < lines.length; i++) {
+                            const cols = lines[i].split(',');
+                            const value = parseFloat(cols[0].trim());
+                            if (!isNaN(value)) {
+                                values.push(value);
+                            }
+                        }
+                    }
+                    
+                    this.portfolioValuesInput = values.join(', ');
+                    this.error = '';
+                } catch (err) {
+                    this.error = 'Error parsing CSV file';
+                }
+            };
+            reader.readAsText(file);
+        },
+        
+        calculateDrawdown() {
+            try {
+                this.error = '';
+                
+                // Parse input values
+                const input = this.portfolioValuesInput.trim();
+                if (!input) {
+                    this.error = 'Please enter portfolio values';
+                    return;
+                }
+                
+                const values = input.split(',').map(v => {
+                    const num = parseFloat(v.trim());
+                    if (isNaN(num) || num <= 0) {
+                        throw new Error('Invalid portfolio value');
+                    }
+                    return num;
+                });
+                
+                if (values.length < 2) {
+                    this.error = 'Need at least 2 portfolio values';
+                    return;
+                }
+                
+                this.portfolioValues = values;
+                
+                // Calculate drawdown
+                const results = this.computeMaxDrawdown(values);
+                this.results = results;
+                
+                // Draw chart
+                this.$nextTick(() => {
+                    this.drawChart();
+                });
+                
+            } catch (err) {
+                this.error = err.message || 'Error calculating drawdown';
+            }
+        },
+        
+        computeMaxDrawdown(values) {
+            let runningMax = values[0];
+            let maxDrawdown = 0;
+            let maxDrawdownPeak = 0;
+            let maxDrawdownTrough = 0;
+            let currentDrawdown = 0;
+            
+            const drawdowns = [];
+            let currentPeak = 0;
+            let inDrawdown = false;
+            
+            for (let i = 0; i < values.length; i++) {
+                const value = values[i];
+                
+                if (value > runningMax) {
+                    // New high
+                    if (inDrawdown && currentDrawdown < 0) {
+                        // End of drawdown period
+                        drawdowns.push({
+                            peakIndex: currentPeak,
+                            troughIndex: i - 1,
+                            drawdown: Math.abs(currentDrawdown),
+                            recoveryPeriod: null
+                        });
+                    }
+                    
+                    runningMax = value;
+                    currentPeak = i;
+                    currentDrawdown = 0;
+                    inDrawdown = false;
+                } else {
+                    // Drawdown
+                    currentDrawdown = (value - runningMax) / runningMax * 100;
+                    inDrawdown = true;
+                    
+                    if (Math.abs(currentDrawdown) > Math.abs(maxDrawdown)) {
+                        maxDrawdown = currentDrawdown;
+                        maxDrawdownPeak = currentPeak;
+                        maxDrawdownTrough = i;
+                    }
+                }
+            }
+            
+            // Handle ongoing drawdown
+            if (inDrawdown && currentDrawdown < 0) {
+                drawdowns.push({
+                    peakIndex: currentPeak,
+                    troughIndex: values.length - 1,
+                    drawdown: Math.abs(currentDrawdown),
+                    recoveryPeriod: null
+                });
+            }
+            
+            // Calculate recovery periods
+            drawdowns.forEach(dd => {
+                if (dd.troughIndex < values.length - 1) {
+                    const peakValue = values[dd.peakIndex];
+                    for (let i = dd.troughIndex + 1; i < values.length; i++) {
+                        if (values[i] >= peakValue) {
+                            dd.recoveryPeriod = i - dd.troughIndex;
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            // Sort drawdowns by magnitude
+            drawdowns.sort((a, b) => b.drawdown - a.drawdown);
+            
+            // Calculate recovery period for max drawdown
+            let recoveryPeriod = null;
+            const peakValue = values[maxDrawdownPeak];
+            for (let i = maxDrawdownTrough + 1; i < values.length; i++) {
+                if (values[i] >= peakValue) {
+                    recoveryPeriod = i - maxDrawdownTrough;
+                    break;
+                }
+            }
+            
+            // Calculate additional statistics
+            const initialValue = values[0];
+            const finalValue = values[values.length - 1];
+            const totalReturn = ((finalValue - initialValue) / initialValue) * 100;
+            const averageValue = values.reduce((sum, v) => sum + v, 0) / values.length;
+            
+            // Calculate volatility (standard deviation of returns)
+            const returns = [];
+            for (let i = 1; i < values.length; i++) {
+                returns.push((values[i] - values[i-1]) / values[i-1] * 100);
+            }
+            const avgReturn = returns.reduce((sum, r) => sum + r, 0) / returns.length;
+            const variance = returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / returns.length;
+            const volatility = Math.sqrt(variance);
+            
+            return {
+                maxDrawdown: Math.abs(maxDrawdown),
+                peakValue: values[maxDrawdownPeak],
+                troughValue: values[maxDrawdownTrough],
+                peakIndex: maxDrawdownPeak,
+                troughIndex: maxDrawdownTrough,
+                recoveryPeriod,
+                initialValue,
+                finalValue,
+                totalReturn,
+                averageValue,
+                volatility,
+                allDrawdowns: drawdowns.filter(dd => dd.drawdown >= 1) // Only significant drawdowns
+            };
+        },
+        
+        drawChart() {
+            const canvas = this.$refs.drawdownChart;
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            // Calculate drawdown series
+            const values = this.portfolioValues;
+            const drawdownSeries = [];
+            let runningMax = values[0];
+            
+            for (let i = 0; i < values.length; i++) {
+                if (values[i] > runningMax) {
+                    runningMax = values[i];
+                }
+                const drawdown = (values[i] - runningMax) / runningMax * 100;
+                drawdownSeries.push(drawdown);
+            }
+            
+            const minDrawdown = Math.min(...drawdownSeries);
+            const maxDrawdown = Math.max(...drawdownSeries, 0);
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#e5e5e5';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Vertical grid lines
+            const numVerticalLines = Math.min(10, values.length - 1);
+            for (let i = 0; i <= numVerticalLines; i++) {
+                const x = padding + (width - 2 * padding) * i / numVerticalLines;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+            }
+            
+            // Draw drawdown line
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let i = 0; i < drawdownSeries.length; i++) {
+                const x = padding + (width - 2 * padding) * i / (drawdownSeries.length - 1);
+                const y = padding + (height - 2 * padding) * (maxDrawdown - drawdownSeries[i]) / (maxDrawdown - minDrawdown);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Fill area under curve
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            
+            for (let i = 0; i < drawdownSeries.length; i++) {
+                const x = padding + (width - 2 * padding) * i / (drawdownSeries.length - 1);
+                const y = padding + (height - 2 * padding) * (maxDrawdown - drawdownSeries[i]) / (maxDrawdown - minDrawdown);
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineTo(width - padding, height - padding);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw zero line
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            const zeroY = padding + (height - 2 * padding) * maxDrawdown / (maxDrawdown - minDrawdown);
+            ctx.beginPath();
+            ctx.moveTo(padding, zeroY);
+            ctx.lineTo(width - padding, zeroY);
+            ctx.stroke();
+            
+            // Add labels
+            ctx.fillStyle = '#666';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'right';
+            
+            // Y-axis labels
+            for (let i = 0; i <= 5; i++) {
+                const value = maxDrawdown - (maxDrawdown - minDrawdown) * i / 5;
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.fillText(value.toFixed(1) + '%', padding - 5, y + 4);
+            }
+            
+            // X-axis labels
+            ctx.textAlign = 'center';
+            const labelInterval = Math.ceil(values.length / 8);
+            for (let i = 0; i < values.length; i += labelInterval) {
+                const x = padding + (width - 2 * padding) * i / (values.length - 1);
+                ctx.fillText((i + 1).toString(), x, height - padding + 15);
+            }
+        },
+        
+        formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        },
+        
+        formatPercentage(value) {
+            return value.toFixed(2) + '%';
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Maximum Drawdown Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Maximum Drawdown Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Maximum Drawdown Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'maximum-drawdown', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'maximum-drawdown', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +752,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +760,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +769,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Maximum Drawdown Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,771 +865,30 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/capital-asset-pricing-model.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Capital Asset Pricing Model</h3>
-          <p class="text-gray-600 text-sm">Calculate expected returns using CAPM.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/coupon-payment.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Coupon Payment Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond coupon payments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.295788 • Sep 19, 2025, 11:29 AM EDT</p>
+                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
                 
-                <p class="mt-1">main@64c1e45</p>
+                <p class="mt-1">main@2ae2d86</p>
                 
             </div>
             
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Maximum Drawdown Calculator',
-                tool_category: 'investment',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Maximum Drawdown Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.295788
+            v1.0.0.305714
         </div>
     </div>
     
