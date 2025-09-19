@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coupon Payment Calculator - Coming Soon</title>
+    <title>
+    Coupon Payment Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,375 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Coupon Payment Calculator</h1>
+            <p class="text-gray-600">Calculate bond coupon payments.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="couponCalculator()" class="space-y-8">
+    <!-- Calculator Form -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="calculator" class="h-5 w-5"></i>
+            Bond Coupon Payment Calculator
+        </h2>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Face Value (Par Value)
+                </label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <input 
+                        type="number" 
+                        x-model="faceValue"
+                        @input="calculateCoupon()"
+                        placeholder="1000"
+                        step="0.01"
+                        min="0"
+                        class="pl-8 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+                <p class="text-xs text-gray-500 mt-1">The nominal value of the bond</p>
+            </div>
 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Annual Coupon Rate
+                </label>
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        x-model="couponRate"
+                        @input="calculateCoupon()"
+                        placeholder="5"
+                        step="0.001"
+                        min="0"
+                        max="100"
+                        class="pr-8 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Annual interest rate paid by the bond</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Payment Frequency
+                </label>
+                <select 
+                    x-model="frequency"
+                    @change="calculateCoupon()"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="1">Annual (1 payment per year)</option>
+                    <option value="2">Semi-Annual (2 payments per year)</option>
+                    <option value="4">Quarterly (4 payments per year)</option>
+                    <option value="12">Monthly (12 payments per year)</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">How often coupons are paid</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Payments
+                </label>
+                <input 
+                    type="number" 
+                    x-model="numberOfPayments"
+                    @input="calculateCoupon()"
+                    placeholder="10"
+                    min="1"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <p class="text-xs text-gray-500 mt-1">Total number of coupon payments to calculate</p>
+            </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <button 
+                @click="calculateCoupon()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="calculator" class="h-4 w-4"></i>
+                Calculate
+            </button>
+            <button 
+                @click="reset()"
+                class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="results.couponPayment > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-5 w-5"></i>
+            Coupon Payment Results
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-blue-50 rounded-lg p-4 text-center">
+                <p class="text-sm text-gray-600">Coupon Payment</p>
+                <p class="text-2xl font-bold text-blue-600" x-text="'$' + results.couponPayment.toFixed(2)"></p>
+                <p class="text-xs text-gray-500" x-text="frequencyText[frequency] + ' payment'"></p>
+            </div>
+            <div class="bg-green-50 rounded-lg p-4 text-center">
+                <p class="text-sm text-gray-600">Annual Interest</p>
+                <p class="text-2xl font-bold text-green-600" x-text="'$' + results.annualInterest.toFixed(2)"></p>
+                <p class="text-xs text-gray-500">Total per year</p>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4 text-center">
+                <p class="text-sm text-gray-600">Total Interest</p>
+                <p class="text-2xl font-bold text-purple-600" x-text="'$' + results.totalInterest.toFixed(2)"></p>
+                <p class="text-xs text-gray-500" x-text="numberOfPayments + ' payments'"></p>
+            </div>
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
+                <p class="text-sm text-gray-600">Effective Rate</p>
+                <p class="text-2xl font-bold text-orange-600" x-text="results.effectiveRate.toFixed(3) + '%'"></p>
+                <p class="text-xs text-gray-500">Per payment period</p>
+            </div>
+        </div>
+
+        <!-- Payment Schedule -->
+        <div x-show="paymentSchedule.length > 0" class="mt-6">
+            <h4 class="font-medium mb-3 flex items-center gap-2">
+                <i data-lucide="calendar" class="h-4 w-4"></i>
+                Payment Schedule
+            </h4>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment #</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Coupon Payment</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cumulative Interest</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Remaining Face Value</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <template x-for="(payment, index) in paymentSchedule.slice(0, showAllPayments ? paymentSchedule.length : 5)" :key="index">
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900" x-text="payment.number"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900" x-text="'$' + payment.couponPayment.toFixed(2)"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900" x-text="'$' + payment.cumulativeInterest.toFixed(2)"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900" x-text="'$' + payment.remainingFaceValue.toFixed(2)"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div x-show="paymentSchedule.length > 5" class="mt-3 text-center">
+                <button 
+                    @click="showAllPayments = !showAllPayments"
+                    class="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1 mx-auto"
+                >
+                    <span x-text="showAllPayments ? 'Show Less' : 'Show All ' + paymentSchedule.length + ' Payments'"></span>
+                    <i :data-lucide="showAllPayments ? 'chevron-up' : 'chevron-down'" class="h-4 w-4"></i>
+                </button>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Coupon Payment Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate bond coupon payments.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('coupon-payment')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+    <!-- Formula and Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5"></i>
+            How Coupon Payments Work
+        </h3>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium mb-3">Formula</h4>
+                <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+                    <div>Coupon Payment = Face Value × (Coupon Rate / Payment Frequency)</div>
+                    <div class="mt-2">Annual Interest = Face Value × Coupon Rate</div>
+                    <div class="mt-2">Total Interest = Coupon Payment × Number of Payments</div>
+                </div>
+
+                <h4 class="font-medium mb-3 mt-6">Key Terms</h4>
+                <div class="space-y-2 text-sm">
+                    <div><span class="font-medium">Face Value:</span> The par value or principal amount of the bond</div>
+                    <div><span class="font-medium">Coupon Rate:</span> The annual interest rate paid by the bond issuer</div>
+                    <div><span class="font-medium">Payment Frequency:</span> How many times per year coupons are paid</div>
+                    <div><span class="font-medium">Coupon Payment:</span> The actual dollar amount received each payment period</div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-medium mb-3">Example</h4>
+                <div class="bg-blue-50 p-4 rounded-lg text-sm">
+                    <div class="mb-2"><strong>Bond Details:</strong></div>
+                    <div>• Face Value: $1,000</div>
+                    <div>• Coupon Rate: 6% annual</div>
+                    <div>• Semi-annual payments (2 per year)</div>
+                    <div class="mt-2"><strong>Calculation:</strong></div>
+                    <div>Coupon Payment = $1,000 × (6% ÷ 2) = $30</div>
+                    <div>Annual Interest = $1,000 × 6% = $60</div>
+                </div>
+
+                <h4 class="font-medium mb-3 mt-6">Tips</h4>
+                <ul class="text-sm space-y-1 text-gray-600">
+                    <li>• Most corporate bonds pay semi-annually</li>
+                    <li>• Government bonds may pay annually or semi-annually</li>
+                    <li>• Higher frequency means smaller individual payments</li>
+                    <li>• Total annual interest remains the same regardless of frequency</li>
+                    <li>• Coupon payments are separate from principal repayment</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function couponCalculator() {
+    return {
+        faceValue: 1000,
+        couponRate: 5,
+        frequency: 2,
+        numberOfPayments: 10,
+        showAllPayments: false,
+        
+        frequencyText: {
+            1: 'Annual',
+            2: 'Semi-annual',
+            4: 'Quarterly',
+            12: 'Monthly'
+        },
+        
+        results: {
+            couponPayment: 0,
+            annualInterest: 0,
+            totalInterest: 0,
+            effectiveRate: 0
+        },
+        
+        paymentSchedule: [],
+        
+        calculateCoupon() {
+            if (!this.faceValue || !this.couponRate || !this.frequency || !this.numberOfPayments) {
+                this.results = {
+                    couponPayment: 0,
+                    annualInterest: 0,
+                    totalInterest: 0,
+                    effectiveRate: 0
+                };
+                this.paymentSchedule = [];
+                return;
+            }
+            
+            const faceValue = parseFloat(this.faceValue);
+            const couponRate = parseFloat(this.couponRate) / 100;
+            const frequency = parseInt(this.frequency);
+            const numPayments = parseInt(this.numberOfPayments);
+            
+            // Calculate coupon payment per period
+            const couponPayment = faceValue * (couponRate / frequency);
+            
+            // Calculate annual interest
+            const annualInterest = faceValue * couponRate;
+            
+            // Calculate total interest over all payments
+            const totalInterest = couponPayment * numPayments;
+            
+            // Calculate effective rate per payment period
+            const effectiveRate = (couponRate / frequency) * 100;
+            
+            this.results = {
+                couponPayment,
+                annualInterest,
+                totalInterest,
+                effectiveRate
+            };
+            
+            // Generate payment schedule
+            this.generatePaymentSchedule();
+        },
+        
+        generatePaymentSchedule() {
+            this.paymentSchedule = [];
+            const couponPayment = this.results.couponPayment;
+            let cumulativeInterest = 0;
+            
+            for (let i = 1; i <= this.numberOfPayments; i++) {
+                cumulativeInterest += couponPayment;
+                
+                this.paymentSchedule.push({
+                    number: i,
+                    couponPayment: couponPayment,
+                    cumulativeInterest: cumulativeInterest,
+                    remainingFaceValue: parseFloat(this.faceValue) // Face value typically remains until maturity
+                });
+            }
+        },
+        
+        reset() {
+            this.faceValue = 1000;
+            this.couponRate = 5;
+            this.frequency = 2;
+            this.numberOfPayments = 10;
+            this.showAllPayments = false;
+            this.results = {
+                couponPayment: 0,
+                annualInterest: 0,
+                totalInterest: 0,
+                effectiveRate: 0
+            };
+            this.paymentSchedule = [];
+        },
+        
+        init() {
+            this.calculateCoupon();
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Coupon Payment Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Coupon Payment Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Coupon Payment Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'coupon-payment', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'coupon-payment', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +442,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +450,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +459,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Coupon Payment Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,718 +555,16 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/capital-asset-pricing-model.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Capital Asset Pricing Model</h3>
-          <p class="text-gray-600 text-sm">Calculate expected returns using CAPM.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
+        <!-- Footer -->
     <div class="bg-white border-t mt-16">
         <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
             <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
             <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
             
             <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.154154 • Aug 14, 2025, 02:49 AM EDT</p>
+                <p>Build v1.0.0.295788 • Sep 19, 2025, 11:29 AM EDT</p>
                 
                 <p class="mt-1">main@64c1e45</p>
                 
@@ -1003,40 +573,12 @@ async function handleEmailCapture(event, toolId, captureType) {
         </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Coupon Payment Calculator',
-                tool_category: 'investment',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Coupon Payment Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.154154
+            v1.0.0.295788
         </div>
     </div>
     
