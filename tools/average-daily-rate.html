@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Average Daily Rate - Coming Soon</title>
+    <title>
+    Average Daily Rate - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,490 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Average Daily Rate</h1>
+            <p class="text-gray-600">Calculate average daily rate for hospitality industry.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="averageDailyRateCalculator()" class="space-y-8">
+    <!-- Calculator Card -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Input Section -->
+            <div class="space-y-4">
+                <h3 class="font-semibold text-lg flex items-center gap-2">
+                    <i data-lucide="calculator" class="h-5 w-5"></i>
+                    ADR Calculator
+                </h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Total Room Revenue ($)
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="totalRevenue"
+                        step="0.01"
+                        min="0"
+                        placeholder="150000"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Rooms Sold (Occupied Rooms)
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="roomsSold"
+                        min="0"
+                        placeholder="1250"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Time Period
+                    </label>
+                    <select x-model="timePeriod" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="day">Daily</option>
+                        <option value="week">Weekly</option>
+                        <option value="month">Monthly</option>
+                        <option value="quarter">Quarterly</option>
+                        <option value="year">Yearly</option>
+                    </select>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="border-t pt-4">
+                    <label class="flex items-center space-x-2 text-sm">
+                        <input type="checkbox" x-model="showAdvanced" class="rounded">
+                        <span>Show advanced metrics</span>
+                    </label>
+                </div>
+
+                <div x-show="showAdvanced" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Total Available Rooms
+                        </label>
+                        <input
+                            type="number"
+                            x-model.number="availableRooms"
+                            min="0"
+                            placeholder="1500"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Number of Days in Period
+                        </label>
+                        <input
+                            type="number"
+                            x-model.number="daysInPeriod"
+                            min="1"
+                            :placeholder="getDefaultDays()"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                </div>
+
+                <button
+                    @click="calculate()"
+                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="calculator" class="h-4 w-4"></i>
+                    Calculate ADR
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="space-y-4">
+                <h3 class="font-semibold text-lg flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    Results
+                </h3>
+
+                <!-- Primary Result -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="text-center">
+                        <p class="text-sm text-blue-600 font-medium">Average Daily Rate (ADR)</p>
+                        <p class="text-3xl font-bold text-blue-900" x-text="formatCurrency(results.adr)"></p>
+                        <p class="text-sm text-blue-600" x-text="'per room ' + timePeriod"></p>
+                    </div>
+                </div>
+
+                <!-- Additional Metrics -->
+                <div x-show="showAdvanced && results.adr > 0" class="grid grid-cols-2 gap-3">
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p class="text-xs text-gray-600">Occupancy Rate</p>
+                        <p class="text-lg font-bold text-gray-900" x-text="results.occupancyRate + '%'"></p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p class="text-xs text-gray-600">RevPAR</p>
+                        <p class="text-lg font-bold text-gray-900" x-text="formatCurrency(results.revpar)"></p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p class="text-xs text-gray-600">Total Rooms Available</p>
+                        <p class="text-lg font-bold text-gray-900" x-text="results.totalAvailableRooms.toLocaleString()"></p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p class="text-xs text-gray-600">Avg Revenue/Day</p>
+                        <p class="text-lg font-bold text-gray-900" x-text="formatCurrency(results.avgRevenuePerDay)"></p>
+                    </div>
+                </div>
+
+                <!-- Performance Indicator -->
+                <div x-show="results.adr > 0" class="bg-white border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2">Performance Analysis</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">ADR Level:</span>
+                            <span class="text-sm font-medium" :class="getADRLevelColor()" x-text="getADRLevel()"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Market Segment:</span>
+                            <span class="text-sm font-medium text-gray-900" x-text="getMarketSegment()"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Average Daily Rate</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate average daily rate for hospitality industry.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <!-- Benchmark Comparison -->
+    <div x-show="results.adr > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+            Industry Benchmarks
+        </h3>
         
-        <button onclick="upvoteTool('average-daily-rate')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <template x-for="benchmark in benchmarks" :key="benchmark.type">
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-2" x-text="benchmark.type"></h4>
+                    <p class="text-2xl font-bold mb-1" :class="getComparisonColor(benchmark.range)" 
+                       x-text="benchmark.range"></p>
+                    <p class="text-xs text-gray-600" x-text="benchmark.description"></p>
+                    <div class="mt-2">
+                        <div class="text-xs" :class="getComparisonColor(benchmark.range)">
+                            <span x-show="isInRange(benchmark)" class="flex items-center gap-1">
+                                <i data-lucide="check-circle" class="h-3 w-3"></i>
+                                Within range
+                            </span>
+                            <span x-show="!isInRange(benchmark)" class="flex items-center gap-1">
+                                <i data-lucide="info" class="h-3 w-3"></i>
+                                <span x-text="results.adr < benchmark.min ? 'Below range' : 'Above range'"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Formula and Tips -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Formula -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                How ADR is Calculated
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p class="text-center font-mono text-lg">
+                        ADR = Total Room Revenue ÷ Rooms Sold
+                    </p>
+                </div>
+                
+                <div class="space-y-3 text-sm text-gray-600">
+                    <h4 class="font-medium text-gray-900">Key Components:</h4>
+                    <ul class="space-y-1 list-disc list-inside">
+                        <li><strong>Total Room Revenue:</strong> All revenue from room sales</li>
+                        <li><strong>Rooms Sold:</strong> Number of occupied rooms</li>
+                        <li><strong>RevPAR:</strong> ADR × Occupancy Rate</li>
+                        <li><strong>Occupancy Rate:</strong> (Rooms Sold ÷ Available Rooms) × 100</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="h-5 w-5"></i>
+                Tips for Improving ADR
+            </h3>
+            
+            <div class="space-y-3 text-sm">
+                <div class="flex gap-3">
+                    <i data-lucide="arrow-up" class="h-4 w-4 text-green-600 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Revenue Management</h4>
+                        <p class="text-gray-600">Use dynamic pricing based on demand patterns</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <i data-lucide="star" class="h-4 w-4 text-yellow-600 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Room Upgrades</h4>
+                        <p class="text-gray-600">Offer premium rooms and upsell services</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <i data-lucide="calendar" class="h-4 w-4 text-blue-600 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Seasonal Pricing</h4>
+                        <p class="text-gray-600">Adjust rates for peak and off-peak periods</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <i data-lucide="users" class="h-4 w-4 text-purple-600 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Market Segmentation</h4>
+                        <p class="text-gray-600">Target high-value customer segments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Example Calculations -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
+            <i data-lucide="file-text" class="h-5 w-5"></i>
+            Example Calculations
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <h4 class="font-medium text-gray-900">Budget Hotel</h4>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span>Room Revenue:</span>
+                        <span class="font-mono">$15,000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Rooms Sold:</span>
+                        <span class="font-mono">300</span>
+                    </div>
+                    <div class="border-t pt-2 flex justify-between font-medium">
+                        <span>ADR:</span>
+                        <span class="font-mono text-blue-600">$50.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <h4 class="font-medium text-gray-900">Luxury Hotel</h4>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span>Room Revenue:</span>
+                        <span class="font-mono">$75,000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Rooms Sold:</span>
+                        <span class="font-mono">250</span>
+                    </div>
+                    <div class="border-t pt-2 flex justify-between font-medium">
+                        <span>ADR:</span>
+                        <span class="font-mono text-blue-600">$300.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function averageDailyRateCalculator() {
+    return {
+        totalRevenue: 0,
+        roomsSold: 0,
+        timePeriod: 'day',
+        showAdvanced: false,
+        availableRooms: 0,
+        daysInPeriod: 1,
+        
+        results: {
+            adr: 0,
+            occupancyRate: 0,
+            revpar: 0,
+            totalAvailableRooms: 0,
+            avgRevenuePerDay: 0
+        },
+        
+        benchmarks: [
+            {
+                type: 'Budget Hotels',
+                range: '$45-$85',
+                min: 45,
+                max: 85,
+                description: 'Economy and limited service properties'
+            },
+            {
+                type: 'Mid-scale Hotels',
+                range: '$85-$150',
+                min: 85,
+                max: 150,
+                description: 'Full service and boutique properties'
+            },
+            {
+                type: 'Luxury Hotels',
+                range: '$200-$500+',
+                min: 200,
+                max: 1000,
+                description: 'Premium and luxury properties'
+            }
+        ],
+        
+        calculate() {
+            if (this.totalRevenue <= 0 || this.roomsSold <= 0) {
+                this.results = {
+                    adr: 0,
+                    occupancyRate: 0,
+                    revpar: 0,
+                    totalAvailableRooms: 0,
+                    avgRevenuePerDay: 0
+                };
+                return;
+            }
+            
+            // Calculate ADR
+            const adr = this.totalRevenue / this.roomsSold;
+            
+            // Calculate occupancy rate if available rooms provided
+            let occupancyRate = 0;
+            let revpar = 0;
+            let totalAvailableRooms = 0;
+            
+            if (this.showAdvanced && this.availableRooms > 0) {
+                const days = this.daysInPeriod || this.getDefaultDays();
+                totalAvailableRooms = this.availableRooms * days;
+                occupancyRate = (this.roomsSold / totalAvailableRooms) * 100;
+                revpar = adr * (occupancyRate / 100);
+            }
+            
+            const avgRevenuePerDay = this.totalRevenue / (this.daysInPeriod || this.getDefaultDays());
+            
+            this.results = {
+                adr: Math.round(adr * 100) / 100,
+                occupancyRate: Math.round(occupancyRate * 10) / 10,
+                revpar: Math.round(revpar * 100) / 100,
+                totalAvailableRooms,
+                avgRevenuePerDay: Math.round(avgRevenuePerDay * 100) / 100
+            };
+        },
+        
+        getDefaultDays() {
+            const defaults = {
+                day: 1,
+                week: 7,
+                month: 30,
+                quarter: 90,
+                year: 365
+            };
+            return defaults[this.timePeriod] || 1;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount || 0);
+        },
+        
+        getADRLevel() {
+            const adr = this.results.adr;
+            if (adr === 0) return 'Not calculated';
+            if (adr < 50) return 'Budget';
+            if (adr < 100) return 'Economy';
+            if (adr < 150) return 'Mid-scale';
+            if (adr < 250) return 'Upscale';
+            return 'Luxury';
+        },
+        
+        getADRLevelColor() {
+            const adr = this.results.adr;
+            if (adr === 0) return 'text-gray-500';
+            if (adr < 50) return 'text-blue-600';
+            if (adr < 100) return 'text-green-600';
+            if (adr < 150) return 'text-yellow-600';
+            if (adr < 250) return 'text-orange-600';
+            return 'text-purple-600';
+        },
+        
+        getMarketSegment() {
+            const adr = this.results.adr;
+            if (adr === 0) return 'Not determined';
+            if (adr < 75) return 'Value/Budget';
+            if (adr < 125) return 'Mainstream';
+            if (adr < 200) return 'Premium';
+            return 'Luxury/Ultra-luxury';
+        },
+        
+        getComparisonColor(range) {
+            return 'text-gray-700';
+        },
+        
+        isInRange(benchmark) {
+            const adr = this.results.adr;
+            return adr >= benchmark.min && adr <= benchmark.max;
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Average Daily Rate is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Average Daily Rate  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Average Daily Rate is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'average-daily-rate', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'average-daily-rate', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +557,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +565,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +574,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Average Daily Rate is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,796 +670,789 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-        <a href="/tools/absence-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Absence Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate employee absence rate for HR analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/altman-z-score.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Altman Z-Score</h3>
-          <p class="text-gray-600 text-sm">Calculate bankruptcy prediction score using Altman Z-Score model.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/churn-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Churn Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate customer churn rate for business analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/commission-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Commission Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales commission based on different structures.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/contribution-margin.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Contribution Margin Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate contribution margin for cost analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/current-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Current Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate current ratio for liquidity analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-acquisition-cost.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Acquisition Cost</h3>
-          <p class="text-gray-600 text-sm">Calculate cost to acquire new customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-lifetime-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Lifetime Value</h3>
-          <p class="text-gray-600 text-sm">Calculate lifetime value of customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/retention-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Retention Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate earnings retention ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
-    <div class="bg-white border-t mt-16">
-        <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
-            <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
-            <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
-            
-            <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
-                
-                <p class="mt-1">main@2ae2d86</p>
-                
-            </div>
-            
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
         </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bond-equivalent-yield.html">
+                        Bond Equivalent Yield
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/compound-interest.html">
+                        Compound Interest Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/net-to-gross.html">
+                        Net to Gross Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apy-calculator.html">
+                        APY Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/butterfly-spread-profit.html">
+                        Butterfly Spread Profit
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/shuffle-letters.html">
+                        Shuffle Letters
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/base64-encoder.html">
+                        Base64 Encoder/Decoder
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sort-numbers.html">
+                        Sort Numbers
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Average Daily Rate',
-                tool_category: 'business',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Average Daily Rate.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+      </p>
+      
+    </div>
+  </div>
+</footer>
 
 
     
@@ -1080,7 +1460,7 @@ async function upvoteTool(toolId) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.305714
+            v1.0.0.694367
         </div>
     </div>
     

@@ -134,388 +134,352 @@
 </head>
 <body class="bg-gray-50">
     
-<div class="min-h-screen bg-gray-50 py-12">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div x-data="buyingPowerCalculator()" class="space-y-8">
-            <!-- Calculator -->
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- From Year Section -->
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                            <i data-lucide="calendar" class="h-5 w-5"></i>
-                            From Year
-                        </h3>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Starting Year
-                            </label>
-                            <input
-                                type="number"
-                                x-model.number="fromYear"
-                                :min="minYear"
-                                :max="maxYear"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 2000"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Amount ($)
-                            </label>
-                            <input
-                                type="number"
-                                x-model.number="fromAmount"
-                                min="0"
-                                step="0.01"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 100"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- To Year Section -->
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                            <i data-lucide="target" class="h-5 w-5"></i>
-                            To Year
-                        </h3>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Target Year
-                            </label>
-                            <input
-                                type="number"
-                                x-model.number="toYear"
-                                :min="minYear"
-                                :max="maxYear"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 2024"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Annual Inflation Rate (%)
-                            </label>
-                            <input
-                                type="number"
-                                x-model.number="inflationRate"
-                                min="0"
-                                max="50"
-                                step="0.1"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 3.2"
-                            >
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 flex gap-4">
-                    <button
-                        @click="calculate()"
-                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                        <i data-lucide="calculator" class="h-5 w-5"></i>
-                        Calculate
-                    </button>
-                    
-                    <button
-                        @click="reset()"
-                        class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
-                    >
-                        <i data-lucide="refresh-cw" class="h-5 w-5"></i>
-                        Reset
-                    </button>
-                </div>
-            </div>
-
-            <!-- Results -->
-            <div x-show="results.equivalent" class="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <i data-lucide="trending-up" class="h-5 w-5"></i>
-                    Buying Power Analysis
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg text-center">
-                        <p class="text-sm text-blue-600 font-medium">Equivalent Amount</p>
-                        <p class="text-2xl font-bold text-blue-700" x-text="'$' + results.equivalent.toLocaleString()"></p>
-                        <p class="text-xs text-blue-600" x-text="'in ' + toYear"></p>
-                    </div>
-                    
-                    <div class="bg-red-50 p-4 rounded-lg text-center">
-                        <p class="text-sm text-red-600 font-medium">Purchasing Power Loss</p>
-                        <p class="text-2xl font-bold text-red-700" x-text="results.powerLossPercent + '%'"></p>
-                        <p class="text-xs text-red-600">of original value</p>
-                    </div>
-                    
-                    <div class="bg-green-50 p-4 rounded-lg text-center">
-                        <p class="text-sm text-green-600 font-medium">Total Inflation</p>
-                        <p class="text-2xl font-bold text-green-700" x-text="results.totalInflation + '%'"></p>
-                        <p class="text-xs text-green-600" x-text="'over ' + (toYear - fromYear) + ' years'"></p>
-                    </div>
-                    
-                    <div class="bg-purple-50 p-4 rounded-lg text-center">
-                        <p class="text-sm text-purple-600 font-medium">Real Value</p>
-                        <p class="text-2xl font-bold text-purple-700" x-text="'$' + results.realValue.toLocaleString()"></p>
-                        <p class="text-xs text-purple-600" x-text="'in ' + fromYear + ' dollars'"></p>
-                    </div>
-                </div>
-
-                <!-- Detailed Breakdown -->
-                <div class="border-t pt-6">
-                    <h4 class="font-semibold text-gray-900 mb-3">Detailed Analysis</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-gray-600">
-                                <strong>Original amount:</strong> $<span x-text="fromAmount.toLocaleString()"></span> in <span x-text="fromYear"></span>
-                            </p>
-                            <p class="text-gray-600">
-                                <strong>Equivalent amount:</strong> $<span x-text="results.equivalent.toLocaleString()"></span> in <span x-text="toYear"></span>
-                            </p>
-                            <p class="text-gray-600">
-                                <strong>Time period:</strong> <span x-text="toYear - fromYear"></span> years
-                            </p>
-                            <p class="text-gray-600">
-                                <strong>Annual inflation rate:</strong> <span x-text="inflationRate"></span>%
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">
-                                <strong>What you could buy in <span x-text="fromYear"></span>:</strong> $<span x-text="fromAmount.toLocaleString()"></span> worth of goods
-                            </p>
-                            <p class="text-gray-600">
-                                <strong>What it costs in <span x-text="toYear"></span>:</strong> $<span x-text="results.equivalent.toLocaleString()"></span>
-                            </p>
-                            <p class="text-gray-600">
-                                <strong>Inflation multiplier:</strong> <span x-text="results.inflationMultiplier.toFixed(2)"></span>x
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Examples -->
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <i data-lucide="zap" class="h-5 w-5"></i>
-                    Quick Examples
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <template x-for="example in quickExamples" :key="example.label">
-                        <button
-                            @click="loadExample(example)"
-                            class="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all text-left"
-                        >
-                            <div class="font-medium text-gray-900" x-text="example.label"></div>
-                            <div class="text-sm text-gray-600 mt-1" x-text="example.description"></div>
-                            <div class="text-xs text-gray-500 mt-2" 
-                                 x-text="'$' + example.amount + ' (' + example.fromYear + ' → ' + example.toYear + ')'">
+            <div class="min-h-screen bg-gray-50 py-12">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div
+                        x-data="buyingPowerCalculator()" class="space-y-8">
+                        <!-- Calculator -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- From Year Section -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                        <i data-lucide="calendar" class="h-5 w-5"></i>
+                                        From Year
+                                    </h3>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                            Starting Year
+                                        </label>
+                                        <input
+                                            type="number"
+                                            x-model.number="fromYear"
+                                            :min="minYear"
+                                            :max="maxYear"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="e.g., 2000"></div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                Amount ($)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                x-model.number="fromAmount"
+                                                min="0"
+                                                step="0.01"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="e.g., 100"></div>
+                                        </div>
+                                        <!-- To Year Section -->
+                                        <div class="space-y-4">
+                                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                <i data-lucide="target" class="h-5 w-5"></i>
+                                                To Year
+                                            </h3>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                    Target Year
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    x-model.number="toYear"
+                                                    :min="minYear"
+                                                    :max="maxYear"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    placeholder="e.g., 2024"></div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Annual Inflation Rate (%)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        x-model.number="inflationRate"
+                                                        min="0"
+                                                        max="50"
+                                                        step="0.1"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        placeholder="e.g., 3.2"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-6 flex gap-4">
+                                                <button
+                                                    @click="calculate()"
+                                                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                                    <i data-lucide="calculator" class="h-5 w-5"></i>
+                                                    Calculate
+                                                </button>
+                                                <button
+                                                    @click="reset()"
+                                                    class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2">
+                                                    <i data-lucide="refresh-cw" class="h-5 w-5"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Results -->
+                                        <div x-show="results.equivalent" class="bg-white rounded-lg border border-gray-200 p-6">
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                                                Buying Power Analysis
+                                            </h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                                    <p class="text-sm text-blue-600 font-medium">Equivalent Amount</p>
+                                                    <p class="text-2xl font-bold text-blue-700" x-text="'$' + results.equivalent.toLocaleString()"></p>
+                                                    <p class="text-xs text-blue-600" x-text="'in ' + toYear"></p>
+                                                </div>
+                                                <div class="bg-red-50 p-4 rounded-lg text-center">
+                                                    <p class="text-sm text-red-600 font-medium">Purchasing Power Loss</p>
+                                                    <p class="text-2xl font-bold text-red-700" x-text="results.powerLossPercent + '%'"></p>
+                                                    <p class="text-xs text-red-600">of original value</p>
+                                                </div>
+                                                <div class="bg-green-50 p-4 rounded-lg text-center">
+                                                    <p class="text-sm text-green-600 font-medium">Total Inflation</p>
+                                                    <p class="text-2xl font-bold text-green-700" x-text="results.totalInflation + '%'"></p>
+                                                    <p class="text-xs text-green-600" x-text="'over ' + (toYear - fromYear) + ' years'"></p>
+                                                </div>
+                                                <div class="bg-purple-50 p-4 rounded-lg text-center">
+                                                    <p class="text-sm text-purple-600 font-medium">Real Value</p>
+                                                    <p class="text-2xl font-bold text-purple-700" x-text="'$' + results.realValue.toLocaleString()"></p>
+                                                    <p class="text-xs text-purple-600" x-text="'in ' + fromYear + ' dollars'"></p>
+                                                </div>
+                                            </div>
+                                            <!-- Detailed Breakdown -->
+                                            <div class="border-t pt-6">
+                                                <h4 class="font-semibold text-gray-900 mb-3">Detailed Analysis</h4>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                                    <div>
+                                                        <p class="text-gray-600">
+                                                            <strong>Original amount:</strong>
+                                                            $<span x-text="fromAmount.toLocaleString()"></span>
+                                                            in
+                                                            <span x-text="fromYear"></span>
+                                                        </p>
+                                                        <p class="text-gray-600">
+                                                            <strong>Equivalent amount:</strong>
+                                                            $<span x-text="results.equivalent.toLocaleString()"></span>
+                                                            in
+                                                            <span x-text="toYear"></span>
+                                                        </p>
+                                                        <p class="text-gray-600">
+                                                            <strong>Time period:</strong>
+                                                            <span x-text="toYear - fromYear"></span>
+                                                            years
+                                                        </p>
+                                                        <p class="text-gray-600">
+                                                            <strong>Annual inflation rate:</strong>
+                                                            <span x-text="inflationRate"></span>%
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-gray-600">
+                                                            <strong>What you could buy in
+                                                                <span x-text="fromYear"></span>:</strong>
+                                                            $<span x-text="fromAmount.toLocaleString()"></span>
+                                                            worth of goods
+                                                        </p>
+                                                        <p class="text-gray-600">
+                                                            <strong>What it costs in
+                                                                <span x-text="toYear"></span>:</strong>
+                                                            $<span x-text="results.equivalent.toLocaleString()"></span>
+                                                        </p>
+                                                        <p class="text-gray-600">
+                                                            <strong>Inflation multiplier:</strong>
+                                                            <span x-text="results.inflationMultiplier.toFixed(2)"></span>x
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Quick Examples -->
+                                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                <i data-lucide="zap" class="h-5 w-5"></i>
+                                                Quick Examples
+                                            </h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                <template x-for="example in quickExamples" :key="example.label">
+                                                    <button
+                                                        @click="loadExample(example)"
+                                                        class="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all text-left">
+                                                        <div class="font-medium text-gray-900" x-text="example.label"></div>
+                                                        <div class="text-sm text-gray-600 mt-1" x-text="example.description"></div>
+                                                        <div
+                                                            class="text-xs text-gray-500 mt-2"
+                                                            x-text="'$' + example.amount + ' (' + example.fromYear + ' → ' + example.toYear + ')'"></div>
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <!-- Formula and Explanation -->
+                                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                <i data-lucide="book-open" class="h-5 w-5"></i>
+                                                How It Works
+                                            </h3>
+                                            <div class="space-y-4">
+                                                <div>
+                                                    <h4 class="font-medium text-gray-900 mb-2">Formula</h4>
+                                                    <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
+                                                        Future Value = Present Value × (1 + inflation rate)^years
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-medium text-gray-900 mb-2">Understanding Buying Power</h4>
+                                                    <p class="text-gray-600 text-sm">
+                                                        Buying power (or purchasing power) measures how much goods and services your money can buy. Inflation reduces buying
+                                                        power over time, meaning the same amount of money will buy fewer goods in the future than it does today.
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-medium text-gray-900 mb-2">Key Concepts</h4>
+                                                    <ul class="text-sm text-gray-600 space-y-1">
+                                                        <li>
+                                                            <strong>Inflation:</strong>
+                                                            The general increase in prices over time</li>
+                                                        <li>
+                                                            <strong>Real Value:</strong>
+                                                            The value adjusted for inflation</li>
+                                                        <li>
+                                                            <strong>Nominal Value:</strong>
+                                                            The face value without inflation adjustment</li>
+                                                        <li>
+                                                            <strong>Purchasing Power Parity:</strong>
+                                                            Comparing costs across different time periods</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </button>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Formula and Explanation -->
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <i data-lucide="book-open" class="h-5 w-5"></i>
-                    How It Works
-                </h3>
-                
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="font-medium text-gray-900 mb-2">Formula</h4>
-                        <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-                            Future Value = Present Value × (1 + inflation rate)^years
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-medium text-gray-900 mb-2">Understanding Buying Power</h4>
-                        <p class="text-gray-600 text-sm">
-                            Buying power (or purchasing power) measures how much goods and services your money can buy. 
-                            Inflation reduces buying power over time, meaning the same amount of money will buy fewer 
-                            goods in the future than it does today.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-medium text-gray-900 mb-2">Key Concepts</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li><strong>Inflation:</strong> The general increase in prices over time</li>
-                            <li><strong>Real Value:</strong> The value adjusted for inflation</li>
-                            <li><strong>Nominal Value:</strong> The face value without inflation adjustment</li>
-                            <li><strong>Purchasing Power Parity:</strong> Comparing costs across different time periods</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function buyingPowerCalculator() {
-    const currentYear = new Date().getFullYear();
-    
-    return {
-        fromYear: 2000,
-        fromAmount: 100,
-        toYear: currentYear,
-        inflationRate: 3.2,
-        minYear: 1900,
-        maxYear: currentYear + 50,
-        
-        results: {
-            equivalent: 0,
-            powerLossPercent: 0,
-            totalInflation: 0,
-            realValue: 0,
-            inflationMultiplier: 0
-        },
-        
-        quickExamples: [
-            {
-                label: "Movie Ticket",
-                description: "1980s to today",
-                fromYear: 1980,
-                toYear: currentYear,
-                amount: 3.50,
-                rate: 3.1
-            },
-            {
-                label: "Gasoline",
-                description: "2000 to today",
-                fromYear: 2000,
-                toYear: currentYear,
-                amount: 1.50,
-                rate: 2.8
-            },
-            {
-                label: "College Tuition",
-                description: "1990 to today",
-                fromYear: 1990,
-                toYear: currentYear,
-                amount: 15000,
-                rate: 5.2
-            },
-            {
-                label: "Minimum Wage",
-                description: "1970 to today",
-                fromYear: 1970,
-                toYear: currentYear,
-                amount: 1.60,
-                rate: 3.7
-            },
-            {
-                label: "New Car",
-                description: "1995 to today",
-                fromYear: 1995,
-                toYear: currentYear,
-                amount: 18000,
-                rate: 2.9
-            },
-            {
-                label: "Housing",
-                description: "2010 to today",
-                fromYear: 2010,
-                toYear: currentYear,
-                amount: 250000,
-                rate: 4.1
-            }
-        ],
-        
-        calculate() {
-            if (!this.isValid()) return;
-            
-            const years = this.toYear - this.fromYear;
-            const rate = this.inflationRate / 100;
-            
-            // Calculate future value (what it would cost in the target year)
-            const equivalent = this.fromAmount * Math.pow(1 + rate, years);
-            
-            // Calculate real value (what the target year amount is worth in base year)
-            const realValue = this.fromAmount / Math.pow(1 + rate, years);
-            
-            // Calculate total inflation
-            const totalInflation = (Math.pow(1 + rate, years) - 1) * 100;
-            
-            // Calculate purchasing power loss
-            const powerLossPercent = (1 - (1 / Math.pow(1 + rate, years))) * 100;
-            
-            // Inflation multiplier
-            const inflationMultiplier = Math.pow(1 + rate, years);
-            
-            this.results = {
-                equivalent: Math.round(equivalent * 100) / 100,
-                powerLossPercent: Math.round(powerLossPercent * 10) / 10,
-                totalInflation: Math.round(totalInflation * 10) / 10,
-                realValue: Math.round(realValue * 100) / 100,
-                inflationMultiplier: inflationMultiplier
-            };
-        },
-        
-        isValid() {
-            return this.fromYear && 
-                   this.toYear && 
-                   this.fromAmount > 0 && 
-                   this.inflationRate >= 0 &&
-                   this.fromYear >= this.minYear &&
-                   this.toYear >= this.minYear &&
-                   this.fromYear <= this.maxYear &&
+                            <script>
+                                function buyingPowerCalculator() {
+                                    const currentYear = new Date().getFullYear();
+                                    return {
+                                        fromYear: 2000,
+                                        fromAmount: 100,
+                                        toYear: currentYear,
+                                        inflationRate: 3.2,
+                                        minYear: 1900,
+                                        maxYear: currentYear + 50,
+                                        results: {
+                                            equivalent: 0,
+                                            powerLossPercent: 0,
+                                            totalInflation: 0,
+                                            realValue: 0,
+                                            inflationMultiplier: 0
+                                        },
+                                        quickExamples: [
+                                            {
+                                                label: "Movie Ticket",
+                                                description: "1980s to today",
+                                                fromYear: 1980,
+                                                toYear: currentYear,
+                                                amount: 3.50,
+                                                rate: 3.1
+                                            },
+                                            {
+                                                label: "Gasoline",
+                                                description: "2000 to today",
+                                                fromYear: 2000,
+                                                toYear: currentYear,
+                                                amount: 1.50,
+                                                rate: 2.8
+                                            },
+                                            {
+                                                label: "College Tuition",
+                                                description: "1990 to today",
+                                                fromYear: 1990,
+                                                toYear: currentYear,
+                                                amount: 15000,
+                                                rate: 5.2
+                                            },
+                                            {
+                                                label: "Minimum Wage",
+                                                description: "1970 to today",
+                                                fromYear: 1970,
+                                                toYear: currentYear,
+                                                amount: 1.60,
+                                                rate: 3.7
+                                            }, {
+                                                label: "New Car",
+                                                description: "1995 to today",
+                                                fromYear: 1995,
+                                                toYear: currentYear,
+                                                amount: 18000,
+                                                rate: 2.9
+                                            }, {
+                                                label: "Housing",
+                                                description: "2010 to today",
+                                                fromYear: 2010,
+                                                toYear: currentYear,
+                                                amount: 250000,
+                                                rate: 4.1
+                                            }
+                                        ],
+                                        calculate() {
+                                            if (!this.isValid()) 
+                                                return;
+                                            
+                                            const years = this.toYear - this.fromYear;
+                                            const rate = this.inflationRate / 100;
+                                            // Calculate future value (what it would cost in the target year)
+                                            const equivalent = this.fromAmount * Math.pow(1 + rate, years);
+                                            // Calculate real value (what the target year amount is worth in base year)
+                                            const realValue = this.fromAmount / Math.pow(1 + rate, years);
+                                            // Calculate total inflation
+                                            const totalInflation = (Math.pow(1 + rate, years) - 1) * 100;
+                                            // Calculate purchasing power loss
+                                            const powerLossPercent = (1 - (1 / Math.pow(1 + rate, years))) * 100;
+                                            // Inflation multiplier
+                                            const inflationMultiplier = Math.pow(1 + rate, years);
+                                            this.results = {
+                                                equivalent: Math.round(equivalent * 100) / 100,
+                                                powerLossPercent: Math.round(powerLossPercent * 10) / 10,
+                                                totalInflation: Math.round(totalInflation * 10) / 10,
+                                                realValue: Math.round(realValue * 100) / 100,
+                                                inflationMultiplier: inflationMultiplier
+                                            };
+                                        },
+                                        isValid() {
+                                                return this.fromYear && this.toYear && this.fromAmount > 0 && this.inflationRate >= 0 && this.fromYear >= this.minYear && this.toYear >= this.minYear && this.fromYear<= this.maxYear &&
                    this.toYear <= this.maxYear;
-        },
-        
-        loadExample(example) {
+        }, loadExample(example) {
             this.fromYear = example.fromYear;
             this.toYear = example.toYear;
             this.fromAmount = example.amount;
             this.inflationRate = example.rate;
             this.calculate();
-        },
-        
-        reset() {
+        }, reset() {
             this.fromYear = 2000;
             this.fromAmount = 100;
             this.toYear = currentYear;
             this.inflationRate = 3.2;
             this.results = {
-                equivalent: 0,
-                powerLossPercent: 0,
-                totalInflation: 0,
-                realValue: 0,
-                inflationMultiplier: 0
+                equivalent: 0, powerLossPercent: 0, totalInflation: 0, realValue: 0, inflationMultiplier: 0
             };
-        },
-        
-        init() {
+        }, init() {
             // Auto-calculate when values change
             this.$watch('fromYear', () => this.calculate());
-            this.$watch('toYear', () => this.calculate());
-            this.$watch('fromAmount', () => this.calculate());
-            this.$watch('inflationRate', () => this.calculate());
-            
-            // Initial calculation
-            this.calculate();
-        }
-    }
-}
-</script>
-
-
+            this.$watch('toYear', () => this.calculate()
+                                            );
+                                            this.$watch('fromAmount', () => this.calculate());
+                                            this.$watch('inflationRate', () => this.calculate());
+                                            // Initial calculation
+                                            this.calculate();
+                                        }
+                                    }
+                                }
+                            </script>
+                        
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.305714
+            v1.0.0.694367
         </div>
     </div>
     
@@ -684,28 +648,795 @@ async function handleEmailCapture(event, toolId, captureType) {
 </script>
     </div>
     <!-- Footer -->
-        <!-- Footer -->
-    <div class="bg-white border-t mt-16">
-        <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
-            <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
-            <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
-            
-            <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
-                
-                <p class="mt-1">main@2ae2d86</p>
-                
-            </div>
-            
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
         </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/emi-calculator.html">
+                        EMI Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/lines-containing.html">
+                        Lines Containing
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/buying-power.html">
+                        Buying Power Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/list-delimiter.html">
+                        List Delimiter
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/certificate-of-deposit.html">
+                        Certificate of Deposit Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/butterfly-spread-profit.html">
+                        Butterfly Spread Profit
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/business-days-calculator.html">
+                        Business Days Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/commission-calculator.html">
+                        Commission Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
 
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.305714
+            v1.0.0.694367
         </div>
     </div>
     

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Turnover Ratio - Coming Soon</title>
+    <title>
+    Asset Turnover Ratio - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,357 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Asset Turnover Ratio</h1>
+            <p class="text-gray-600">Calculate asset turnover efficiency ratio.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="assetTurnoverCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-5 w-5 text-blue-600"></i>
+            Asset Turnover Ratio Calculator
+        </h2>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Input Fields -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Net Sales Revenue ($)
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="netSales"
+                        @input="calculateRatio()"
+                        placeholder="1000000"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Average Total Assets ($)
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="averageAssets"
+                        @input="calculateRatio()"
+                        placeholder="500000"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <p class="text-xs text-gray-500 mt-1">
+                        (Beginning Assets + Ending Assets) ÷ 2
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Beginning Assets ($)
+                        </label>
+                        <input
+                            type="number"
+                            x-model.number="beginningAssets"
+                            @input="calculateAverageAssets()"
+                            placeholder="480000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Ending Assets ($)
+                        </label>
+                        <input
+                            type="number"
+                            x-model.number="endingAssets"
+                            @input="calculateAverageAssets()"
+                            placeholder="520000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6">
+                <h3 class="font-semibold text-gray-900 mb-4">Asset Turnover Results</h3>
+                
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4 border border-blue-100">
+                        <p class="text-sm text-gray-600">Asset Turnover Ratio</p>
+                        <p class="text-2xl font-bold text-blue-600" x-text="ratio + 'x'"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border border-blue-100">
+                        <p class="text-sm text-gray-600">Interpretation</p>
+                        <p class="font-medium" x-text="interpretation" :class="interpretationColor"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border border-blue-100">
+                        <p class="text-sm text-gray-600">Sales per $1 of Assets</p>
+                        <p class="text-lg font-semibold text-gray-900" x-text="'$' + ratio"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="flex flex-wrap gap-2 mt-6">
+            <button
+                @click="setExample()"
+                class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+            >
+                Load Example
+            </button>
+            <button
+                @click="resetCalculator()"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Formula and Explanation -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            Formula & Understanding
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium mb-2">Formula</h4>
+                <div class="bg-gray-50 rounded-lg p-4 font-mono text-sm">
+                    <div class="text-center">
+                        <div class="border-b border-gray-300 pb-2 mb-2">
+                            Net Sales Revenue
+                        </div>
+                        <div>Average Total Assets</div>
+                    </div>
+                </div>
+                
+                <h4 class="font-medium mt-4 mb-2">Where:</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li><strong>Net Sales Revenue:</strong> Total revenue from sales minus returns and allowances</li>
+                    <li><strong>Average Total Assets:</strong> (Beginning Assets + Ending Assets) ÷ 2</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-medium mb-2">Interpretation Guide</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span><strong>&lt; 0.5x:</strong> Very Low - Poor asset utilization</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <span><strong>0.5x - 1.0x:</strong> Low - Below average efficiency</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span><strong>1.0x - 2.0x:</strong> Average - Moderate efficiency</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span><strong>2.0x - 3.0x:</strong> Good - Above average efficiency</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        <span><strong>&gt; 3.0x:</strong> Excellent - Very high efficiency</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Asset Turnover Ratio</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate asset turnover efficiency ratio.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('asset-turnover-ratio')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+    <!-- Industry Benchmarks -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-4 w-4"></i>
+            Industry Benchmarks
+        </h3>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <template x-for="industry in industryBenchmarks" :key="industry.name">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-medium mb-2" x-text="industry.name"></h4>
+                    <p class="text-2xl font-bold text-blue-600 mb-1" x-text="industry.typical + 'x'"></p>
+                    <p class="text-xs text-gray-600" x-text="industry.description"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-4 w-4"></i>
+            Key Insights
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-medium mb-3 text-green-600">What High Asset Turnover Indicates:</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Efficient use of assets to generate sales
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Strong operational management
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Good inventory and receivables management
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        Competitive market position
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-medium mb-3 text-red-600">What Low Asset Turnover May Indicate:</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Excess or idle assets
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Poor sales performance
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                        Inefficient asset utilization
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500 flex-shrink-0"></i>
+                        Need for asset optimization strategies
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function assetTurnoverCalculator() {
+    return {
+        netSales: null,
+        averageAssets: null,
+        beginningAssets: null,
+        endingAssets: null,
+        ratio: '0.00',
+        
+        industryBenchmarks: [
+            { name: 'Retail', typical: '2.5', description: 'High inventory turnover' },
+            { name: 'Manufacturing', typical: '1.2', description: 'Capital intensive industry' },
+            { name: 'Technology', typical: '1.8', description: 'Moderate asset base' },
+            { name: 'Utilities', typical: '0.4', description: 'Very capital intensive' },
+            { name: 'Airlines', typical: '0.8', description: 'High fixed assets' },
+            { name: 'Restaurants', typical: '3.2', description: 'Fast asset turnover' }
+        ],
+
+        get interpretation() {
+            const r = parseFloat(this.ratio);
+            if (r < 0.5) return 'Very Low Efficiency';
+            if (r < 1.0) return 'Low Efficiency';
+            if (r < 2.0) return 'Average Efficiency';
+            if (r < 3.0) return 'Good Efficiency';
+            return 'Excellent Efficiency';
+        },
+
+        get interpretationColor() {
+            const r = parseFloat(this.ratio);
+            if (r < 0.5) return 'text-red-600';
+            if (r < 1.0) return 'text-orange-600';
+            if (r < 2.0) return 'text-yellow-600';
+            if (r < 3.0) return 'text-green-600';
+            return 'text-blue-600';
+        },
+
+        calculateAverageAssets() {
+            if (this.beginningAssets && this.endingAssets) {
+                this.averageAssets = (this.beginningAssets + this.endingAssets) / 2;
+                this.calculateRatio();
+            }
+        },
+
+        calculateRatio() {
+            if (this.netSales && this.averageAssets && this.averageAssets > 0) {
+                const calculatedRatio = this.netSales / this.averageAssets;
+                this.ratio = calculatedRatio.toFixed(2);
+            } else {
+                this.ratio = '0.00';
+            }
+        },
+
+        setExample() {
+            this.netSales = 1000000;
+            this.beginningAssets = 480000;
+            this.endingAssets = 520000;
+            this.calculateAverageAssets();
+        },
+
+        resetCalculator() {
+            this.netSales = null;
+            this.averageAssets = null;
+            this.beginningAssets = null;
+            this.endingAssets = null;
+            this.ratio = '0.00';
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Asset Turnover Ratio is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Asset Turnover Ratio  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Asset Turnover Ratio is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'asset-turnover-ratio', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'asset-turnover-ratio', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +424,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +432,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +441,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Asset Turnover Ratio is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,796 +537,789 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-        <a href="/tools/absence-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Absence Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate employee absence rate for HR analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/altman-z-score.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Altman Z-Score</h3>
-          <p class="text-gray-600 text-sm">Calculate bankruptcy prediction score using Altman Z-Score model.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/churn-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Churn Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate customer churn rate for business analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/commission-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Commission Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales commission based on different structures.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/contribution-margin.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Contribution Margin Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate contribution margin for cost analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/current-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Current Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate current ratio for liquidity analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-acquisition-cost.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Acquisition Cost</h3>
-          <p class="text-gray-600 text-sm">Calculate cost to acquire new customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-lifetime-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Lifetime Value</h3>
-          <p class="text-gray-600 text-sm">Calculate lifetime value of customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/retention-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Retention Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate earnings retention ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
     <!-- Footer -->
-    <div class="bg-white border-t mt-16">
-        <div class="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-500">
-            <p>© 2025 Developer & Financial Tools. Built with Nunjucks and Alpine.js.</p>
-            <p class="text-xs mt-1">All calculations run locally in your browser for privacy and speed.</p>
-            
-            <div class="text-xs mt-3 pt-3 border-t border-gray-200">
-                <p>Build v1.0.0.305714 • Sep 19, 2025, 02:15 PM EDT</p>
-                
-                <p class="mt-1">main@2ae2d86</p>
-                
-            </div>
-            
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
         </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/emergency-fund.html">
+                        Emergency Fund Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/loan-calculator.html">
+                        Loan Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/base64-encoder.html">
+                        Base64 Encoder/Decoder
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/emi-calculator.html">
+                        EMI Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/savings-calculator.html">
+                        Savings Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/punctuation-remover.html">
+                        Punctuation Remover
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apr-calculator.html">
+                        APR Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/simple-interest.html">
+                        Simple Interest Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Asset Turnover Ratio',
-                tool_category: 'business',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Asset Turnover Ratio.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+      </p>
+      
+    </div>
+  </div>
+</footer>
 
 
     
@@ -1080,7 +1327,7 @@ async function upvoteTool(toolId) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.305714
+            v1.0.0.694367
         </div>
     </div>
     
