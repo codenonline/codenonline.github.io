@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Double Discount Calculator - Coming Soon</title>
+    <title>
+    Double Discount Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,452 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Double Discount Calculator</h1>
+            <p class="text-gray-600">Calculate the effect of applying two discounts.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="doubleDiscountCalculator()" class="space-y-8">
+    <!-- Input Form -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <i data-lucide="percent" class="h-5 w-5"></i>
+            Double Discount Calculator
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Original Price -->
+            <div>
+                <label for="originalPrice" class="block text-sm font-medium text-gray-700 mb-2">
+                    Original Price ($)
+                </label>
+                <input
+                    type="number"
+                    id="originalPrice"
+                    x-model.number="originalPrice"
+                    @input="calculate()"
+                    placeholder="Enter original price"
+                    min="0"
+                    step="0.01"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <p x-show="errors.originalPrice" class="text-red-600 text-sm mt-1" x-text="errors.originalPrice"></p>
+            </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+            <!-- First Discount -->
+            <div>
+                <label for="firstDiscount" class="block text-sm font-medium text-gray-700 mb-2">
+                    First Discount (%)
+                </label>
+                <input
+                    type="number"
+                    id="firstDiscount"
+                    x-model.number="firstDiscount"
+                    @input="calculate()"
+                    placeholder="Enter first discount"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <p x-show="errors.firstDiscount" class="text-red-600 text-sm mt-1" x-text="errors.firstDiscount"></p>
+            </div>
 
+            <!-- Second Discount -->
+            <div>
+                <label for="secondDiscount" class="block text-sm font-medium text-gray-700 mb-2">
+                    Second Discount (%)
+                </label>
+                <input
+                    type="number"
+                    id="secondDiscount"
+                    x-model.number="secondDiscount"
+                    @input="calculate()"
+                    placeholder="Enter second discount"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <p x-show="errors.secondDiscount" class="text-red-600 text-sm mt-1" x-text="errors.secondDiscount"></p>
+            </div>
+
+            <!-- Application Order -->
+            <div>
+                <label for="discountOrder" class="block text-sm font-medium text-gray-700 mb-2">
+                    Application Order
+                </label>
+                <select
+                    id="discountOrder"
+                    x-model="discountOrder"
+                    @change="calculate()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="first-then-second">Apply First, then Second</option>
+                    <option value="second-then-first">Apply Second, then First</option>
+                    <option value="both">Compare Both Orders</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-4">
+            <button
+                @click="calculate()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="calculator" class="h-4 w-4"></i>
+                Calculate
+            </button>
+            <button
+                @click="reset()"
+                class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="showResults" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <i data-lucide="target" class="h-5 w-5"></i>
+            Results
+        </h3>
+
+        <div x-show="discountOrder !== 'both'">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-sm text-gray-600 mb-1">Original Price</p>
+                    <p class="text-xl font-bold text-gray-900" x-text="'$' + originalPrice.toFixed(2)"></p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <p class="text-sm text-gray-600 mb-1">After First Discount</p>
+                    <p class="text-xl font-bold text-blue-600" x-text="'$' + results.afterFirstDiscount.toFixed(2)"></p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <p class="text-sm text-gray-600 mb-1">Final Price</p>
+                    <p class="text-xl font-bold text-green-600" x-text="'$' + results.finalPrice.toFixed(2)"></p>
+                </div>
+                <div class="bg-red-50 rounded-lg p-4 text-center">
+                    <p class="text-sm text-gray-600 mb-1">Total Savings</p>
+                    <p class="text-xl font-bold text-red-600" x-text="'$' + results.totalSavings.toFixed(2)"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-2">Discount Breakdown</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>First discount amount:</span>
+                            <span class="font-medium" x-text="'$' + results.firstDiscountAmount.toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Second discount amount:</span>
+                            <span class="font-medium" x-text="'$' + results.secondDiscountAmount.toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2">
+                            <span>Total discount amount:</span>
+                            <span class="font-bold" x-text="'$' + results.totalSavings.toFixed(2)"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-2">Effective Discount Rate</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Combined discount rate:</span>
+                            <span class="font-medium" x-text="results.effectiveDiscountRate.toFixed(2) + '%'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Individual sum:</span>
+                            <span class="font-medium" x-text="(firstDiscount + secondDiscount).toFixed(2) + '%'"></span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2">
+                            <span>Difference:</span>
+                            <span class="font-bold text-blue-600" x-text="((firstDiscount + secondDiscount) - results.effectiveDiscountRate).toFixed(2) + '%'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="discountOrder === 'both'">
+            <div class="space-y-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-blue-900 mb-3">Option 1: First Discount, then Second</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div class="text-center">
+                            <p class="text-gray-600">After First</p>
+                            <p class="font-bold text-blue-600" x-text="'$' + results.option1.afterFirstDiscount.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Final Price</p>
+                            <p class="font-bold text-blue-600" x-text="'$' + results.option1.finalPrice.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Total Savings</p>
+                            <p class="font-bold text-blue-600" x-text="'$' + results.option1.totalSavings.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Effective Rate</p>
+                            <p class="font-bold text-blue-600" x-text="results.option1.effectiveDiscountRate.toFixed(2) + '%'"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-green-900 mb-3">Option 2: Second Discount, then First</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div class="text-center">
+                            <p class="text-gray-600">After First</p>
+                            <p class="font-bold text-green-600" x-text="'$' + results.option2.afterFirstDiscount.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Final Price</p>
+                            <p class="font-bold text-green-600" x-text="'$' + results.option2.finalPrice.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Total Savings</p>
+                            <p class="font-bold text-green-600" x-text="'$' + results.option2.totalSavings.toFixed(2)"></p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600">Effective Rate</p>
+                            <p class="font-bold text-green-600" x-text="results.option2.effectiveDiscountRate.toFixed(2) + '%'"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 rounded-lg p-4" x-show="results.difference !== 0">
+                    <h4 class="font-semibold text-yellow-900 mb-2">Comparison</h4>
+                    <p class="text-sm text-yellow-800">
+                        <span x-text="results.betterOption === 'option1' ? 'Option 1' : 'Option 2'"></span>
+                        is better by 
+                        <span class="font-bold" x-text="'$' + Math.abs(results.difference).toFixed(2)"></span>
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4" x-show="results.difference === 0">
+                    <h4 class="font-semibold text-gray-900 mb-2">Comparison</h4>
+                    <p class="text-sm text-gray-800">Both options result in the same final price.</p>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Double Discount Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate the effect of applying two discounts.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('double-discount')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
+    <!-- Formula and Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-5 w-5"></i>
+            How It Works
+        </h3>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-3">Formula</h4>
+                <div class="bg-gray-50 rounded-lg p-4 font-mono text-sm">
+                    <p class="mb-2"><strong>Sequential Discounts:</strong></p>
+                    <p>Price after 1st = Original × (1 - Discount1/100)</p>
+                    <p>Final Price = Price after 1st × (1 - Discount2/100)</p>
+                    <p class="mt-2"><strong>Effective Discount Rate:</strong></p>
+                    <p>Rate = (1 - (1 - D1/100) × (1 - D2/100)) × 100</p>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-3">Key Points</h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span>Sequential discounts are not additive</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span>Order of application affects the final result</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span>Larger discount first usually saves more money</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span>Effective rate is always less than the sum</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h4 class="font-semibold text-gray-900 mb-3">Example</h4>
+            <div class="bg-blue-50 rounded-lg p-4 text-sm">
+                <p class="mb-2"><strong>Scenario:</strong> $100 item with 20% and 10% discounts</p>
+                <p class="mb-2"><strong>Option 1 (20% first):</strong> $100 → $80 → $72 (28% total discount)</p>
+                <p><strong>Option 2 (10% first):</strong> $100 → $90 → $72 (28% total discount)</p>
+                <p class="mt-2 text-blue-700"><strong>Note:</strong> In this case, both orders give the same result!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function doubleDiscountCalculator() {
+    return {
+        originalPrice: 0,
+        firstDiscount: 0,
+        secondDiscount: 0,
+        discountOrder: 'first-then-second',
+        results: {},
+        showResults: false,
+        errors: {},
+
+        calculate() {
+            this.errors = {};
+            
+            // Validation
+            if (!this.originalPrice || this.originalPrice <= 0) {
+                this.errors.originalPrice = 'Please enter a valid original price';
+                this.showResults = false;
+                return;
+            }
+            
+            if (this.firstDiscount < 0 || this.firstDiscount > 100) {
+                this.errors.firstDiscount = 'Discount must be between 0% and 100%';
+                this.showResults = false;
+                return;
+            }
+            
+            if (this.secondDiscount < 0 || this.secondDiscount > 100) {
+                this.errors.secondDiscount = 'Discount must be between 0% and 100%';
+                this.showResults = false;
+                return;
+            }
+
+            if (this.discountOrder === 'both') {
+                this.calculateBothOptions();
+            } else {
+                this.calculateSingleOption();
+            }
+            
+            this.showResults = true;
+        },
+
+        calculateSingleOption() {
+            let afterFirstDiscount, finalPrice, firstDiscountAmount, secondDiscountAmount;
+            
+            if (this.discountOrder === 'first-then-second') {
+                afterFirstDiscount = this.originalPrice * (1 - this.firstDiscount / 100);
+                finalPrice = afterFirstDiscount * (1 - this.secondDiscount / 100);
+                firstDiscountAmount = this.originalPrice - afterFirstDiscount;
+                secondDiscountAmount = afterFirstDiscount - finalPrice;
+            } else {
+                afterFirstDiscount = this.originalPrice * (1 - this.secondDiscount / 100);
+                finalPrice = afterFirstDiscount * (1 - this.firstDiscount / 100);
+                firstDiscountAmount = this.originalPrice - afterFirstDiscount;
+                secondDiscountAmount = afterFirstDiscount - finalPrice;
+            }
+            
+            const totalSavings = this.originalPrice - finalPrice;
+            const effectiveDiscountRate = (totalSavings / this.originalPrice) * 100;
+            
+            this.results = {
+                afterFirstDiscount,
+                finalPrice,
+                firstDiscountAmount,
+                secondDiscountAmount,
+                totalSavings,
+                effectiveDiscountRate
+            };
+        },
+
+        calculateBothOptions() {
+            // Option 1: First discount, then second
+            const option1AfterFirst = this.originalPrice * (1 - this.firstDiscount / 100);
+            const option1Final = option1AfterFirst * (1 - this.secondDiscount / 100);
+            const option1Savings = this.originalPrice - option1Final;
+            const option1Rate = (option1Savings / this.originalPrice) * 100;
+            
+            // Option 2: Second discount, then first
+            const option2AfterFirst = this.originalPrice * (1 - this.secondDiscount / 100);
+            const option2Final = option2AfterFirst * (1 - this.firstDiscount / 100);
+            const option2Savings = this.originalPrice - option2Final;
+            const option2Rate = (option2Savings / this.originalPrice) * 100;
+            
+            const difference = option2Final - option1Final;
+            const betterOption = difference > 0 ? 'option1' : 'option2';
+            
+            this.results = {
+                option1: {
+                    afterFirstDiscount: option1AfterFirst,
+                    finalPrice: option1Final,
+                    totalSavings: option1Savings,
+                    effectiveDiscountRate: option1Rate
+                },
+                option2: {
+                    afterFirstDiscount: option2AfterFirst,
+                    finalPrice: option2Final,
+                    totalSavings: option2Savings,
+                    effectiveDiscountRate: option2Rate
+                },
+                difference,
+                betterOption
+            };
+        },
+
+        reset() {
+            this.originalPrice = 0;
+            this.firstDiscount = 0;
+            this.secondDiscount = 0;
+            this.discountOrder = 'first-then-second';
+            this.results = {};
+            this.showResults = false;
+            this.errors = {};
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Double Discount Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Double Discount Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Double Discount Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'double-discount', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'double-discount', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +519,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +527,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +536,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Double Discount Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,645 +632,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Utility Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bmi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">BMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Body Mass Index and health category.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/percentage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Percentage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate percentages, percentage change, and percentage of amounts.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/tip-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tip Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate tips and split bills among multiple people with customizable tip percentages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1028,8 +741,28 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/absence-rate-calculator.html">
-                        Absence Rate Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/accounting-profit.html">
+                        Accounting Profit Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/customer-acquisition-cost.html">
+                        Customer Acquisition Cost
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/rent-affordability.html">
+                        Rent Affordability Calculator
                       </a>
                     </li>
                     
@@ -1041,42 +774,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/permutation-generator.html">
-                        Permutation Generator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/net-to-gross.html">
-                        Net to Gross Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apy-to-apr.html">
-                        APY to APR Converter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/peg-ratio.html">
+                        PEG Ratio Calculator
                       </a>
                     </li>
                     
@@ -1084,80 +783,94 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/credit-card-payment.html">
-                        Credit Card Payment Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/duplicate-lines-remover.html">
+                        Duplicate Lines Remover
                       </a>
                     </li>
                     
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
                   
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/base64-encoder.html">
-                        Base64 Encoder/Decoder
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/return-on-ad-spend.html">
+                        Return on Ad Spend
                       </a>
                     </li>
                     
-                  
-                
                   
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/additional-funds-needed.html">
-                        Additional Funds Needed
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/markup-calculator.html">
+                        Markup Calculator
                       </a>
                     </li>
                     
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
                   
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bill-rate.html">
-                        Bill Rate Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/currency-converter.html">
+                        Currency Converter
                       </a>
                     </li>
                     
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   
@@ -1696,7 +1409,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1704,40 +1417,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Double Discount Calculator',
-                tool_category: 'utility',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Double Discount Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     

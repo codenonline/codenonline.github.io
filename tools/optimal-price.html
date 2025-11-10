@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optimal Price Calculator - Coming Soon</title>
+    <title>
+    Optimal Price Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,393 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Optimal Price Calculator</h1>
+            <p class="text-gray-600">Calculate optimal pricing for products.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="optimalPriceCalculator()" class="space-y-8">
+    <!-- Input Form -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+            <i data-lucide="dollar-sign" class="h-5 w-5"></i>
+            Product Information
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Cost per Unit ($)</label>
+                <input
+                    type="number"
+                    x-model.number="cost"
+                    min="0"
+                    step="0.01"
+                    placeholder="10.00"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Desired Markup (%)</label>
+                <input
+                    type="number"
+                    x-model.number="markup"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    placeholder="50"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Fixed Costs per Month ($)</label>
+                <input
+                    type="number"
+                    x-model.number="fixedCosts"
+                    min="0"
+                    step="0.01"
+                    placeholder="5000.00"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Expected Units Sold per Month</label>
+                <input
+                    type="number"
+                    x-model.number="unitsSold"
+                    min="1"
+                    step="1"
+                    placeholder="1000"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Target Profit Margin (%)</label>
+                <input
+                    type="number"
+                    x-model.number="targetMargin"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="30"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Competitor Price ($)</label>
+                <input
+                    type="number"
+                    x-model.number="competitorPrice"
+                    min="0"
+                    step="0.01"
+                    placeholder="20.00"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <button
+                @click="calculatePricing()"
+                class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            >
+                <i data-lucide="calculator" class="h-4 w-4"></i>
+                Calculate Optimal Pricing
+            </button>
+        </div>
+    </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <!-- Results -->
+    <div x-show="results.costPlusPrice" class="space-y-6">
+        <!-- Pricing Strategies -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="target" class="h-5 w-5"></i>
+                Pricing Strategies
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-900 mb-2">Cost-Plus Pricing</h4>
+                    <p class="text-2xl font-bold text-blue-600" x-text="'$' + results.costPlusPrice.toFixed(2)"></p>
+                    <p class="text-sm text-blue-700 mt-1">Based on cost + markup</p>
+                </div>
+                
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-semibold text-green-900 mb-2">Target Margin Pricing</h4>
+                    <p class="text-2xl font-bold text-green-600" x-text="'$' + results.targetMarginPrice.toFixed(2)"></p>
+                    <p class="text-sm text-green-700 mt-1">Based on desired profit margin</p>
+                </div>
+                
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h4 class="font-semibold text-purple-900 mb-2">Breakeven Price</h4>
+                    <p class="text-2xl font-bold text-purple-600" x-text="'$' + results.breakevenPrice.toFixed(2)"></p>
+                    <p class="text-sm text-purple-700 mt-1">Minimum price to cover costs</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommended Price -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="star" class="h-5 w-5 text-yellow-500"></i>
+                Recommended Optimal Price
+            </h3>
+            
+            <div class="text-center p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                <p class="text-4xl font-bold text-orange-600 mb-2" x-text="'$' + results.recommendedPrice.toFixed(2)"></p>
+                <p class="text-gray-600 mb-4" x-text="results.recommendation"></p>
+                <div class="flex flex-wrap justify-center gap-4 text-sm">
+                    <span class="px-3 py-1 bg-white rounded-full">
+                        Profit Margin: <span class="font-semibold" x-text="results.profitMargin.toFixed(1) + '%'"></span>
+                    </span>
+                    <span class="px-3 py-1 bg-white rounded-full">
+                        Monthly Profit: <span class="font-semibold text-green-600" x-text="'$' + results.monthlyProfit.toLocaleString()"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Financial Analysis -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="bar-chart" class="h-5 w-5"></i>
+                Financial Analysis
+            </h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">Revenue per Unit</p>
+                    <p class="text-lg font-bold" x-text="'$' + results.recommendedPrice.toFixed(2)"></p>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">Profit per Unit</p>
+                    <p class="text-lg font-bold text-green-600" x-text="'$' + results.profitPerUnit.toFixed(2)"></p>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">Monthly Revenue</p>
+                    <p class="text-lg font-bold" x-text="'$' + results.monthlyRevenue.toLocaleString()"></p>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600">ROI</p>
+                    <p class="text-lg font-bold text-blue-600" x-text="results.roi.toFixed(1) + '%'"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Competitive Analysis -->
+        <div x-show="competitorPrice > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="users" class="h-5 w-5"></i>
+                Competitive Analysis
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 border rounded-lg">
+                    <h4 class="font-semibold mb-2">Your Price vs Competition</h4>
+                    <p class="text-sm text-gray-600 mb-2">Competitor: <span class="font-semibold" x-text="'$' + competitorPrice.toFixed(2)"></span></p>
+                    <p class="text-sm text-gray-600">Your Price: <span class="font-semibold" x-text="'$' + results.recommendedPrice.toFixed(2)"></span></p>
+                    <p class="text-sm mt-2" :class="results.competitiveAdvantage > 0 ? 'text-green-600' : 'text-red-600'" 
+                       x-text="results.competitiveMessage"></p>
+                </div>
+                
+                <div class="p-4 border rounded-lg">
+                    <h4 class="font-semibold mb-2">Price Difference</h4>
+                    <p class="text-2xl font-bold" :class="results.competitiveAdvantage > 0 ? 'text-green-600' : 'text-red-600'" 
+                       x-text="(results.competitiveAdvantage > 0 ? '-$' : '+$') + Math.abs(results.competitiveAdvantage).toFixed(2)"></p>
+                    <p class="text-sm text-gray-600 mt-1" x-text="Math.abs(results.competitiveAdvantagePercent).toFixed(1) + '% ' + (results.competitiveAdvantage > 0 ? 'lower' : 'higher')"></p>
+                </div>
+                
+                <div class="p-4 border rounded-lg">
+                    <h4 class="font-semibold mb-2">Competitive Strategy</h4>
+                    <p class="text-sm text-gray-700" x-text="results.competitiveStrategy"></p>
+                </div>
             </div>
         </div>
     </div>
-
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Optimal Price Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate optimal pricing for products.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
     
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <!-- Educational Content -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5"></i>
+            Pricing Strategy Guide
+        </h3>
         
-        <button onclick="upvoteTool('optimal-price')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold mb-2">Pricing Methods</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li><strong>Cost-Plus:</strong> Cost + fixed markup percentage</li>
+                    <li><strong>Target Margin:</strong> Price to achieve desired profit margin</li>
+                    <li><strong>Competitive:</strong> Based on competitor pricing</li>
+                    <li><strong>Value-Based:</strong> Based on perceived customer value</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-2">Key Formulas</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li><strong>Cost-Plus Price:</strong> Cost × (1 + Markup%)</li>
+                    <li><strong>Target Price:</strong> Cost ÷ (1 - Target Margin%)</li>
+                    <li><strong>Profit Margin:</strong> (Price - Cost) ÷ Price × 100</li>
+                    <li><strong>Breakeven Price:</strong> (Variable Cost + Fixed Cost) ÷ Units</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+            <h4 class="font-semibold text-blue-900 mb-2">💡 Pricing Tips</h4>
+            <ul class="text-sm text-blue-800 space-y-1">
+                <li>• Consider your target market's price sensitivity</li>
+                <li>• Factor in seasonal demand fluctuations</li>
+                <li>• Review and adjust prices regularly based on costs and competition</li>
+                <li>• Test different price points to find the optimal balance</li>
+                <li>• Consider psychological pricing (e.g., $19.99 vs $20.00)</li>
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+<script>
+function optimalPriceCalculator() {
+    return {
+        cost: 0,
+        markup: 50,
+        fixedCosts: 0,
+        unitsSold: 1000,
+        targetMargin: 30,
+        competitorPrice: 0,
+        results: {},
+        
+        calculatePricing() {
+            if (this.cost <= 0 || this.unitsSold <= 0) return;
+            
+            const costPlusPrice = this.cost * (1 + this.markup / 100);
+            const targetMarginPrice = this.cost / (1 - this.targetMargin / 100);
+            const fixedCostPerUnit = this.fixedCosts / this.unitsSold;
+            const breakevenPrice = this.cost + fixedCostPerUnit;
+            
+            // Determine recommended price (weighted average of strategies)
+            let recommendedPrice = (costPlusPrice * 0.4) + (targetMarginPrice * 0.4) + (breakevenPrice * 0.2);
+            
+            // Adjust for competition if provided
+            if (this.competitorPrice > 0) {
+                if (recommendedPrice > this.competitorPrice * 1.2) {
+                    recommendedPrice = this.competitorPrice * 0.95; // Price slightly below competitor
+                } else if (recommendedPrice < breakevenPrice) {
+                    recommendedPrice = Math.max(recommendedPrice, breakevenPrice * 1.05);
+                }
+            }
+            
+            const profitPerUnit = recommendedPrice - this.cost - fixedCostPerUnit;
+            const profitMargin = ((recommendedPrice - this.cost) / recommendedPrice) * 100;
+            const monthlyRevenue = recommendedPrice * this.unitsSold;
+            const monthlyProfit = profitPerUnit * this.unitsSold;
+            const roi = (monthlyProfit / (this.cost * this.unitsSold + this.fixedCosts)) * 100;
+            
+            let recommendation = "Balanced pricing considering cost, margin, and market factors";
+            if (this.competitorPrice > 0) {
+                const competitiveAdvantage = this.competitorPrice - recommendedPrice;
+                const competitiveAdvantagePercent = (competitiveAdvantage / this.competitorPrice) * 100;
+                
+                if (competitiveAdvantage > 0) {
+                    recommendation = "Competitively priced below market average";
+                } else {
+                    recommendation = "Premium pricing strategy - ensure value justifies higher price";
+                }
+            }
+            
+            this.results = {
+                costPlusPrice,
+                targetMarginPrice,
+                breakevenPrice,
+                recommendedPrice,
+                profitPerUnit,
+                profitMargin,
+                monthlyRevenue,
+                monthlyProfit,
+                roi,
+                recommendation,
+                competitiveAdvantage: this.competitorPrice > 0 ? this.competitorPrice - recommendedPrice : 0,
+                competitiveAdvantagePercent: this.competitorPrice > 0 ? ((this.competitorPrice - recommendedPrice) / this.competitorPrice) * 100 : 0,
+                competitiveMessage: this.getCompetitiveMessage(recommendedPrice),
+                competitiveStrategy: this.getCompetitiveStrategy(recommendedPrice)
+            };
+        },
+        
+        getCompetitiveMessage(price) {
+            if (this.competitorPrice <= 0) return "";
+            
+            const difference = this.competitorPrice - price;
+            if (difference > 0) {
+                return `Your price is $${difference.toFixed(2)} lower than competitors`;
+            } else {
+                return `Your price is $${Math.abs(difference).toFixed(2)} higher than competitors`;
+            }
+        },
+        
+        getCompetitiveStrategy(price) {
+            if (this.competitorPrice <= 0) return "No competitive data available";
+            
+            const ratio = price / this.competitorPrice;
+            
+            if (ratio < 0.9) {
+                return "Penetration pricing - gain market share with lower prices";
+            } else if (ratio > 1.1) {
+                return "Premium pricing - differentiate with higher perceived value";
+            } else {
+                return "Competitive parity - match market pricing";
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Optimal Price Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Optimal Price Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Optimal Price Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'optimal-price', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'optimal-price', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +460,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +468,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +477,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Optimal Price Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,854 +573,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-        <a href="/tools/absence-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Absence Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate employee absence rate for HR analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/accounting-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Accounting Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate accounting profit from revenues and explicit costs.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/additional-funds-needed.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Additional Funds Needed</h3>
-          <p class="text-gray-600 text-sm">Calculate additional funding requirements for business growth.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/altman-z-score.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Altman Z-Score</h3>
-          <p class="text-gray-600 text-sm">Calculate bankruptcy prediction score using Altman Z-Score model.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/asset-turnover-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Asset Turnover Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate asset turnover efficiency ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/average-collection-period.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Collection Period</h3>
-          <p class="text-gray-600 text-sm">Calculate average time to collect receivables.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/average-daily-rate.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Daily Rate</h3>
-          <p class="text-gray-600 text-sm">Calculate average daily rate for hospitality industry.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bill-rate.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bill Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate billing rates for consulting and services.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/billable-hours.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Billable Hours Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate billable hours and rates for professionals.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/book-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Book Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate book profit for accounting purposes.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/churn-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Churn Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate customer churn rate for business analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/commission-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Commission Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales commission based on different structures.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/contribution-margin.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Contribution Margin Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate contribution margin for cost analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/current-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Current Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate current ratio for liquidity analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-acquisition-cost.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Acquisition Cost</h3>
-          <p class="text-gray-600 text-sm">Calculate cost to acquire new customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-lifetime-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Lifetime Value</h3>
-          <p class="text-gray-600 text-sm">Calculate lifetime value of customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/okuns-law.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Okun&#39;s Law Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate relationship between unemployment and GDP.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/retention-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Retention Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate earnings retention ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1236,9 +681,76 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                 
                   
+                
+                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/present-value.html">
-                        Present Value Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/home-sale-profit.html">
+                        Home Sale Profit Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/currency-converter.html">
+                        Currency Converter
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/earnings-per-share-growth.html">
+                        Earnings per Share Growth
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bond-price.html">
+                        Bond Price Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/osha-dart-rate.html">
+                        OSHA DART Rate
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/revenue-calculator.html">
+                        Revenue Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/price-to-sales-ratio.html">
+                        Price to Sales Ratio
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/gst-calculator.html">
+                        GST Calculator
                       </a>
                     </li>
                     
@@ -1249,13 +761,6 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/space-remover.html">
-                        Space Remover
-                      </a>
-                    </li>
-                    
-                  
                 
                   
                 
@@ -1278,67 +783,7 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/npv-calculator.html">
-                        NPV Calculator
-                      </a>
-                    </li>
-                    
-                  
                 
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/rule-of-72.html">
-                        Rule of 72 Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/percentage-calculator.html">
-                        Percentage Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/email-extractor.html">
-                        Email Extractor
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/text-formatter.html">
-                        Text Formatter
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/50-30-20-budget.html">
-                        50/30/20 Budget Rule
-                      </a>
-                    </li>
-                    
                   
                 
                   
@@ -1905,7 +1350,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1913,40 +1358,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Optimal Price Calculator',
-                tool_category: 'business',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Optimal Price Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     

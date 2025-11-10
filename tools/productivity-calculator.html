@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productivity Calculator - Coming Soon</title>
+    <title>
+    Productivity Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,615 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Productivity Calculator</h1>
+            <p class="text-gray-600">Calculate productivity metrics for business analysis.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="productivityCalculator()" class="space-y-8">
+    <!-- Calculator Type Selection -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-4 w-4"></i>
+            Productivity Metric Type
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <template x-for="type in metricTypes" :key="type.id">
+                <button
+                    @click="selectedType = type.id; resetInputs()"
+                    :class="selectedType === type.id ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'"
+                    class="p-3 border rounded-lg transition-all text-center text-sm font-medium"
+                >
+                    <i :data-lucide="type.icon" class="h-4 w-4 mx-auto mb-1"></i>
+                    <span x-text="type.name"></span>
+                </button>
+            </template>
+        </div>
+    </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <!-- Labor Productivity Calculator -->
+    <div x-show="selectedType === 'labor'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="users" class="h-4 w-4"></i>
+            Labor Productivity Calculator
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Output ($)</label>
+                    <input
+                        x-model="labor.output"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="100000"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Labor Hours</label>
+                    <input
+                        x-model="labor.hours"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="2000"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Number of Employees</label>
+                    <input
+                        x-model="labor.employees"
+                        type="number"
+                        min="1"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="10"
+                    >
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium mb-3">Results</h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Output per Hour:</span>
+                        <span class="font-medium" x-text="formatCurrency(laborProductivity.perHour)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Output per Employee:</span>
+                        <span class="font-medium" x-text="formatCurrency(laborProductivity.perEmployee)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Hours per Employee:</span>
+                        <span class="font-medium" x-text="laborProductivity.hoursPerEmployee + ' hours'"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Productivity Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate productivity metrics for business analysis.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+    <!-- Revenue per Employee Calculator -->
+    <div x-show="selectedType === 'revenue'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+            Revenue per Employee Calculator
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Revenue ($)</label>
+                    <input
+                        x-model="revenue.total"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="1000000"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Number of Employees</label>
+                    <input
+                        x-model="revenue.employees"
+                        type="number"
+                        min="1"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="25"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                    <select
+                        x-model="revenue.period"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="annual">Annual</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium mb-3">Results</h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Revenue per Employee:</span>
+                        <span class="font-medium" x-text="formatCurrency(revenuePerEmployee.perEmployee)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Annual Revenue per Employee:</span>
+                        <span class="font-medium" x-text="formatCurrency(revenuePerEmployee.annual)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Monthly Revenue per Employee:</span>
+                        <span class="font-medium" x-text="formatCurrency(revenuePerEmployee.monthly)"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
     </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('productivity-calculator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Task Efficiency Calculator -->
+    <div x-show="selectedType === 'task'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="check-square" class="h-4 w-4"></i>
+            Task Efficiency Calculator
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tasks Completed</label>
+                    <input
+                        x-model="task.completed"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="85"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Tasks Assigned</label>
+                    <input
+                        x-model="task.total"
+                        type="number"
+                        min="1"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="100"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Time Spent (hours)</label>
+                    <input
+                        x-model="task.timeSpent"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="40"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Time (hours)</label>
+                    <input
+                        x-model="task.timeEstimated"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="45"
+                    >
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium mb-3">Results</h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Completion Rate:</span>
+                        <span class="font-medium" x-text="taskEfficiency.completionRate + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Tasks per Hour:</span>
+                        <span class="font-medium" x-text="taskEfficiency.tasksPerHour"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Time Efficiency:</span>
+                        <span class="font-medium" :class="taskEfficiency.timeEfficiency >= 100 ? 'text-green-600' : 'text-red-600'" 
+                              x-text="taskEfficiency.timeEfficiency + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Overall Productivity:</span>
+                        <span class="font-medium" x-text="taskEfficiency.overall + '%'"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manufacturing Efficiency Calculator -->
+    <div x-show="selectedType === 'manufacturing'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="settings" class="h-4 w-4"></i>
+            Manufacturing Efficiency Calculator
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Units Produced</label>
+                    <input
+                        x-model="manufacturing.unitsProduced"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="950"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Possible Units</label>
+                    <input
+                        x-model="manufacturing.maxUnits"
+                        type="number"
+                        min="1"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="1000"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Operating Time (hours)</label>
+                    <input
+                        x-model="manufacturing.operatingTime"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="8"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Defective Units</label>
+                    <input
+                        x-model="manufacturing.defectiveUnits"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="25"
+                    >
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium mb-3">Results</h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Production Efficiency:</span>
+                        <span class="font-medium" x-text="manufacturingEfficiency.production + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Quality Rate:</span>
+                        <span class="font-medium" x-text="manufacturingEfficiency.quality + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Units per Hour:</span>
+                        <span class="font-medium" x-text="manufacturingEfficiency.unitsPerHour"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Overall Equipment Effectiveness:</span>
+                        <span class="font-medium" x-text="manufacturingEfficiency.oee + '%'"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productivity Insights -->
+    <div x-show="hasResults" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-4 w-4"></i>
+            Productivity Insights
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 bg-blue-50 rounded-lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="target" class="h-4 w-4 text-blue-600"></i>
+                    <span class="text-sm font-medium text-blue-900">Performance Level</span>
+                </div>
+                <p class="text-sm text-blue-800" x-text="getPerformanceLevel()"></p>
+            </div>
+            <div class="p-4 bg-green-50 rounded-lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="trending-up" class="h-4 w-4 text-green-600"></i>
+                    <span class="text-sm font-medium text-green-900">Improvement Areas</span>
+                </div>
+                <p class="text-sm text-green-800" x-text="getImprovementAreas()"></p>
+            </div>
+            <div class="p-4 bg-yellow-50 rounded-lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="star" class="h-4 w-4 text-yellow-600"></i>
+                    <span class="text-sm font-medium text-yellow-900">Benchmark</span>
+                </div>
+                <p class="text-sm text-yellow-800" x-text="getBenchmark()"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formula Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            Formulas & Information
+        </h3>
+        <div class="space-y-4">
+            <div x-show="selectedType === 'labor'">
+                <h4 class="font-medium text-gray-900">Labor Productivity</h4>
+                <p class="text-sm text-gray-600 mb-2">Measures the economic output per unit of labor input.</p>
+                <div class="bg-gray-50 p-3 rounded font-mono text-sm">
+                    Labor Productivity = Total Output / Total Labor Hours<br>
+                    Output per Employee = Total Output / Number of Employees
+                </div>
+            </div>
+            <div x-show="selectedType === 'revenue'">
+                <h4 class="font-medium text-gray-900">Revenue per Employee</h4>
+                <p class="text-sm text-gray-600 mb-2">Measures how much revenue each employee generates on average.</p>
+                <div class="bg-gray-50 p-3 rounded font-mono text-sm">
+                    Revenue per Employee = Total Revenue / Number of Employees
+                </div>
+            </div>
+            <div x-show="selectedType === 'task'">
+                <h4 class="font-medium text-gray-900">Task Efficiency</h4>
+                <p class="text-sm text-gray-600 mb-2">Measures completion rate, speed, and time management effectiveness.</p>
+                <div class="bg-gray-50 p-3 rounded font-mono text-sm">
+                    Completion Rate = (Tasks Completed / Total Tasks) × 100<br>
+                    Time Efficiency = (Estimated Time / Actual Time) × 100
+                </div>
+            </div>
+            <div x-show="selectedType === 'manufacturing'">
+                <h4 class="font-medium text-gray-900">Manufacturing Efficiency</h4>
+                <p class="text-sm text-gray-600 mb-2">Measures production efficiency, quality rate, and overall equipment effectiveness.</p>
+                <div class="bg-gray-50 p-3 rounded font-mono text-sm">
+                    Production Efficiency = (Units Produced / Max Possible Units) × 100<br>
+                    Quality Rate = ((Units Produced - Defective Units) / Units Produced) × 100
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function productivityCalculator() {
+    return {
+        selectedType: 'labor',
+        metricTypes: [
+            { id: 'labor', name: 'Labor Productivity', icon: 'users' },
+            { id: 'revenue', name: 'Revenue per Employee', icon: 'dollar-sign' },
+            { id: 'task', name: 'Task Efficiency', icon: 'check-square' },
+            { id: 'manufacturing', name: 'Manufacturing', icon: 'settings' }
+        ],
+        
+        labor: {
+            output: '',
+            hours: '',
+            employees: ''
+        },
+        
+        revenue: {
+            total: '',
+            employees: '',
+            period: 'annual'
+        },
+        
+        task: {
+            completed: '',
+            total: '',
+            timeSpent: '',
+            timeEstimated: ''
+        },
+        
+        manufacturing: {
+            unitsProduced: '',
+            maxUnits: '',
+            operatingTime: '',
+            defectiveUnits: ''
+        },
+        
+        get laborProductivity() {
+            const output = parseFloat(this.labor.output) || 0;
+            const hours = parseFloat(this.labor.hours) || 0;
+            const employees = parseFloat(this.labor.employees) || 0;
+            
+            return {
+                perHour: hours > 0 ? output / hours : 0,
+                perEmployee: employees > 0 ? output / employees : 0,
+                hoursPerEmployee: employees > 0 ? hours / employees : 0
+            };
+        },
+        
+        get revenuePerEmployee() {
+            const total = parseFloat(this.revenue.total) || 0;
+            const employees = parseFloat(this.revenue.employees) || 0;
+            const perEmployee = employees > 0 ? total / employees : 0;
+            
+            let annual = perEmployee;
+            if (this.revenue.period === 'quarterly') annual *= 4;
+            if (this.revenue.period === 'monthly') annual *= 12;
+            
+            return {
+                perEmployee,
+                annual,
+                monthly: annual / 12
+            };
+        },
+        
+        get taskEfficiency() {
+            const completed = parseFloat(this.task.completed) || 0;
+            const total = parseFloat(this.task.total) || 0;
+            const timeSpent = parseFloat(this.task.timeSpent) || 0;
+            const timeEstimated = parseFloat(this.task.timeEstimated) || 0;
+            
+            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const tasksPerHour = timeSpent > 0 ? (completed / timeSpent).toFixed(1) : 0;
+            const timeEfficiency = timeSpent > 0 ? Math.round((timeEstimated / timeSpent) * 100) : 0;
+            const overall = Math.round((completionRate + Math.min(timeEfficiency, 100)) / 2);
+            
+            return {
+                completionRate,
+                tasksPerHour,
+                timeEfficiency,
+                overall
+            };
+        },
+        
+        get manufacturingEfficiency() {
+            const unitsProduced = parseFloat(this.manufacturing.unitsProduced) || 0;
+            const maxUnits = parseFloat(this.manufacturing.maxUnits) || 0;
+            const operatingTime = parseFloat(this.manufacturing.operatingTime) || 0;
+            const defectiveUnits = parseFloat(this.manufacturing.defectiveUnits) || 0;
+            
+            const production = maxUnits > 0 ? Math.round((unitsProduced / maxUnits) * 100) : 0;
+            const quality = unitsProduced > 0 ? Math.round(((unitsProduced - defectiveUnits) / unitsProduced) * 100) : 0;
+            const unitsPerHour = operatingTime > 0 ? (unitsProduced / operatingTime).toFixed(1) : 0;
+            const oee = Math.round((production * quality) / 100);
+            
+            return {
+                production,
+                quality,
+                unitsPerHour,
+                oee
+            };
+        },
+        
+        get hasResults() {
+            switch (this.selectedType) {
+                case 'labor':
+                    return this.labor.output && this.labor.hours;
+                case 'revenue':
+                    return this.revenue.total && this.revenue.employees;
+                case 'task':
+                    return this.task.completed && this.task.total;
+                case 'manufacturing':
+                    return this.manufacturing.unitsProduced && this.manufacturing.maxUnits;
+                default:
+                    return false;
+            }
+        },
+        
+        getPerformanceLevel() {
+            let score = 0;
+            switch (this.selectedType) {
+                case 'labor':
+                    score = this.laborProductivity.perHour > 50 ? 90 : 70;
+                    break;
+                case 'revenue':
+                    score = this.revenuePerEmployee.annual > 100000 ? 90 : 70;
+                    break;
+                case 'task':
+                    score = this.taskEfficiency.overall;
+                    break;
+                case 'manufacturing':
+                    score = this.manufacturingEfficiency.oee;
+                    break;
+            }
+            
+            if (score >= 85) return 'Excellent performance';
+            if (score >= 70) return 'Good performance';
+            if (score >= 50) return 'Average performance';
+            return 'Below average performance';
+        },
+        
+        getImprovementAreas() {
+            switch (this.selectedType) {
+                case 'labor':
+                    return 'Focus on training, process optimization, and technology adoption';
+                case 'revenue':
+                    return 'Increase sales efficiency, improve pricing strategies, or reduce workforce';
+                case 'task':
+                    return this.taskEfficiency.timeEfficiency < 80 ? 'Time management and task planning' : 'Task completion rate';
+                case 'manufacturing':
+                    return this.manufacturingEfficiency.quality < 95 ? 'Quality control processes' : 'Production capacity utilization';
+                default:
+                    return 'Monitor key metrics regularly';
+            }
+        },
+        
+        getBenchmark() {
+            switch (this.selectedType) {
+                case 'labor':
+                    return 'Industry average: $40-60 per hour';
+                case 'revenue':
+                    return 'Target: $100K-200K+ per employee annually';
+                case 'task':
+                    return 'Target: 85%+ completion, 90%+ time efficiency';
+                case 'manufacturing':
+                    return 'World-class OEE: 85%+';
+                default:
+                    return 'Compare with industry standards';
+            }
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount || 0);
+        },
+        
+        resetInputs() {
+            this.labor = { output: '', hours: '', employees: '' };
+            this.revenue = { total: '', employees: '', period: 'annual' };
+            this.task = { completed: '', total: '', timeSpent: '', timeEstimated: '' };
+            this.manufacturing = { unitsProduced: '', maxUnits: '', operatingTime: '', defectiveUnits: '' };
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Productivity Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Productivity Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Productivity Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'productivity-calculator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'productivity-calculator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +682,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +690,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +699,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Productivity Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,854 +795,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Business Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-        <a href="/tools/absence-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Absence Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate employee absence rate for HR analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/accounting-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Accounting Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate accounting profit from revenues and explicit costs.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/additional-funds-needed.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Additional Funds Needed</h3>
-          <p class="text-gray-600 text-sm">Calculate additional funding requirements for business growth.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/altman-z-score.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Altman Z-Score</h3>
-          <p class="text-gray-600 text-sm">Calculate bankruptcy prediction score using Altman Z-Score model.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/asset-turnover-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Asset Turnover Ratio</h3>
-          <p class="text-gray-600 text-sm">Calculate asset turnover efficiency ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/average-collection-period.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Collection Period</h3>
-          <p class="text-gray-600 text-sm">Calculate average time to collect receivables.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/average-daily-rate.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Daily Rate</h3>
-          <p class="text-gray-600 text-sm">Calculate average daily rate for hospitality industry.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bill-rate.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bill Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate billing rates for consulting and services.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/billable-hours.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Billable Hours Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate billable hours and rates for professionals.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/book-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Book Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate book profit for accounting purposes.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/churn-rate-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Churn Rate Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate customer churn rate for business analytics.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/commission-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Commission Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales commission based on different structures.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/contribution-margin.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Contribution Margin Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate contribution margin for cost analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/current-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Current Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate current ratio for liquidity analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-acquisition-cost.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Acquisition Cost</h3>
-          <p class="text-gray-600 text-sm">Calculate cost to acquire new customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/customer-lifetime-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Customer Lifetime Value</h3>
-          <p class="text-gray-600 text-sm">Calculate lifetime value of customers.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/discount-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Discount Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate discounted price and savings amount.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/markup-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Markup Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate markup percentage and selling price.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/okuns-law.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Okun&#39;s Law Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate relationship between unemployment and GDP.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/profit-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate gross and net profit margins for business.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/retention-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Retention Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate earnings retention ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/sales-tax.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sales Tax Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate sales tax amount and total price including tax.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1238,13 +905,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                
-                  
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/compound-interest.html">
-                        Compound Interest Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/markup-calculator.html">
+                        Markup Calculator
                       </a>
                     </li>
                     
@@ -1252,8 +915,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/rule-of-72.html">
-                        Rule of 72 Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/fixed-charge-coverage-ratio.html">
+                        Fixed Charge Coverage Ratio (FCCR)
                       </a>
                     </li>
                     
@@ -1261,36 +924,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/book-profit.html">
-                        Book Profit Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/tax-calculator.html">
-                        Tax Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apy-to-apr.html">
-                        APY to APR Converter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/optimal-price.html">
+                        Optimal Price Calculator
                       </a>
                     </li>
                     
@@ -1300,8 +935,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sales-tax.html">
-                        Sales Tax Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/retained-earnings.html">
+                        Retained Earnings Calculator
                       </a>
                     </li>
                     
@@ -1311,8 +946,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/mortgage-calculator.html">
-                        Mortgage Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/emergency-fund.html">
+                        Emergency Fund Calculator
                       </a>
                     </li>
                     
@@ -1320,11 +955,43 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/debt-to-income-ratio.html">
-                        Debt to Income Ratio
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/reverse-string.html">
+                        Reverse String
                       </a>
                     </li>
                     
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/spending-multiplier.html">
+                        Spending Multiplier Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/earnings-per-share-growth.html">
+                        Earnings per Share Growth
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   
@@ -1905,7 +1572,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1913,40 +1580,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Productivity Calculator',
-                tool_category: 'business',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Productivity Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     

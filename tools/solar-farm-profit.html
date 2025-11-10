@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar Farm Profit Calculator - Coming Soon</title>
+    <title>
+    Solar Farm Profit Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,505 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Solar Farm Profit Calculator</h1>
+            <p class="text-gray-600">Calculate profit from solar farm investments.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="solarFarmCalculator()" class="space-y-8">
+    <!-- Input Form -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <i data-lucide="sun" class="h-6 w-6"></i>
+            Solar Farm Investment Details
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- System Specifications -->
+            <div class="space-y-4">
+                <h3 class="font-semibold text-lg text-gray-700">System Specifications</h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">System Capacity (MW)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.systemCapacity"
+                        step="0.1"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 10"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Installation Cost per MW ($)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.costPerMW"
+                        step="10000"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 1000000"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Annual Solar Irradiance (kWh/m²/year)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.solarIrradiance"
+                        step="50"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 1800"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">System Efficiency (%)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.systemEfficiency"
+                        step="0.5"
+                        min="0"
+                        max="100"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 20"
+                    >
+                </div>
+            </div>
+            
+            <!-- Financial Parameters -->
+            <div class="space-y-4">
+                <h3 class="font-semibold text-lg text-gray-700">Financial Parameters</h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Electricity Price ($/kWh)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.electricityPrice"
+                        step="0.01"
+                        min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 0.12"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Annual O&M Cost (% of initial cost)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.omCostPercent"
+                        step="0.1"
+                        min="0"
+                        max="10"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 2"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Annual Degradation Rate (%)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.degradationRate"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 0.5"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Project Lifetime (years)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.projectLifetime"
+                        step="1"
+                        min="1"
+                        max="50"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 25"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Discount Rate (%)</label>
+                    <input 
+                        type="number" 
+                        x-model.number="inputs.discountRate"
+                        step="0.1"
+                        min="0"
+                        max="20"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., 8"
+                    >
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex gap-4 mt-6">
+            <button 
+                @click="calculate()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="calculator" class="h-4 w-4"></i>
+                Calculate Profit
+            </button>
+            <button 
+                @click="reset()"
+                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+                Reset
+            </button>
+        </div>
+    </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <!-- Results -->
+    <div x-show="results.calculated" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-6 w-6"></i>
+            Investment Analysis Results
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-blue-600 font-medium">Total Investment</p>
+                <p class="text-2xl font-bold text-blue-900" x-text="formatCurrency(results.totalInvestment)"></p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-green-600 font-medium">Total Revenue (25 years)</p>
+                <p class="text-2xl font-bold text-green-900" x-text="formatCurrency(results.totalRevenue)"></p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-purple-600 font-medium">Net Profit</p>
+                <p class="text-2xl font-bold" :class="results.netProfit >= 0 ? 'text-purple-900' : 'text-red-600'" x-text="formatCurrency(results.netProfit)"></p>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-yellow-600 font-medium">ROI</p>
+                <p class="text-2xl font-bold" :class="results.roi >= 0 ? 'text-yellow-900' : 'text-red-600'" x-text="results.roi.toFixed(1) + '%'"></p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-3">Financial Metrics</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">NPV:</span>
+                        <span class="font-medium" :class="results.npv >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(results.npv)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">IRR:</span>
+                        <span class="font-medium" x-text="results.irr.toFixed(2) + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Payback Period:</span>
+                        <span class="font-medium" x-text="results.paybackPeriod.toFixed(1) + ' years'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Annual Revenue (Year 1):</span>
+                        <span class="font-medium text-green-600" x-text="formatCurrency(results.annualRevenue)"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-3">System Performance</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Annual Energy Output:</span>
+                        <span class="font-medium" x-text="formatNumber(results.annualEnergyOutput) + ' MWh'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Capacity Factor:</span>
+                        <span class="font-medium" x-text="results.capacityFactor.toFixed(1) + '%'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">25-Year Total Energy:</span>
+                        <span class="font-medium" x-text="formatNumber(results.totalEnergyOutput) + ' MWh'"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Annual O&M Cost:</span>
+                        <span class="font-medium text-red-600" x-text="formatCurrency(results.annualOMCost)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cash Flow Chart -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-semibold mb-3">25-Year Cash Flow Projection</h3>
+            <div class="overflow-x-auto">
+                <div class="min-w-full">
+                    <div class="flex items-end h-40 gap-1">
+                        <template x-for="(flow, index) in results.cashFlow.slice(0, 25)" :key="index">
+                            <div class="flex-1 flex flex-col items-center">
+                                <div 
+                                    :class="flow >= 0 ? 'bg-green-500' : 'bg-red-500'"
+                                    class="w-full rounded-t"
+                                    :style="`height: ${Math.abs(flow) / Math.max(...results.cashFlow.map(Math.abs)) * 140}px`"
+                                    :title="`Year ${index + 1}: ${formatCurrency(flow)}`"
+                                ></div>
+                                <span class="text-xs text-gray-500 mt-1" x-show="index % 5 === 0" x-text="index + 1"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Solar Farm Profit Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate profit from solar farm investments.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <!-- Educational Content -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-bold mb-4">Understanding Solar Farm Investments</h2>
         
-        <button onclick="upvoteTool('solar-farm-profit')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-semibold mb-2">Key Formulas</h3>
+                <div class="space-y-2 text-sm">
+                    <p><strong>Annual Energy Output (MWh):</strong><br>System Capacity × Solar Irradiance × Efficiency × 365 ÷ 1000</p>
+                    <p><strong>Annual Revenue:</strong><br>Energy Output × Electricity Price</p>
+                    <p><strong>NPV:</strong><br>Σ (Cash Flow₍ₜ₎ ÷ (1 + discount rate)ᵗ)</p>
+                    <p><strong>ROI:</strong><br>(Net Profit ÷ Total Investment) × 100</p>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-semibold mb-2">Important Factors</h3>
+                <ul class="space-y-1 text-sm text-gray-600">
+                    <li>• <strong>Solar Irradiance:</strong> Amount of solar energy received per area per year</li>
+                    <li>• <strong>System Efficiency:</strong> How well panels convert sunlight to electricity</li>
+                    <li>• <strong>Degradation Rate:</strong> Annual decrease in panel efficiency</li>
+                    <li>• <strong>O&M Costs:</strong> Operations and maintenance expenses</li>
+                    <li>• <strong>Power Purchase Agreement:</strong> Contract terms affect revenue</li>
+                    <li>• <strong>Tax Incentives:</strong> Can significantly improve returns</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p class="text-sm text-blue-800">
+                <strong>Note:</strong> This calculator provides estimates based on simplified assumptions. 
+                Actual solar farm investments involve complex factors including grid connection costs, 
+                land lease agreements, regulatory requirements, and variable electricity prices. 
+                Consult with solar energy professionals for detailed feasibility analysis.
+            </p>
+        </div>
     </div>
-  </div>
+</div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+<script>
+function solarFarmCalculator() {
+    return {
+        inputs: {
+            systemCapacity: 10, // MW
+            costPerMW: 1000000, // $1M per MW
+            solarIrradiance: 1800, // kWh/m²/year
+            systemEfficiency: 20, // %
+            electricityPrice: 0.12, // $/kWh
+            omCostPercent: 2, // % of initial cost
+            degradationRate: 0.5, // % per year
+            projectLifetime: 25, // years
+            discountRate: 8 // %
+        },
+        
+        results: {
+            calculated: false,
+            totalInvestment: 0,
+            annualEnergyOutput: 0,
+            capacityFactor: 0,
+            annualRevenue: 0,
+            annualOMCost: 0,
+            totalRevenue: 0,
+            totalCosts: 0,
+            netProfit: 0,
+            roi: 0,
+            npv: 0,
+            irr: 0,
+            paybackPeriod: 0,
+            totalEnergyOutput: 0,
+            cashFlow: []
+        },
+        
+        calculate() {
+            // Basic calculations
+            const totalInvestment = this.inputs.systemCapacity * this.inputs.costPerMW;
+            const annualEnergyOutput = this.inputs.systemCapacity * this.inputs.solarIrradiance * 
+                                    (this.inputs.systemEfficiency / 100) * 365 / 1000; // Convert to MWh
+            const capacityFactor = (annualEnergyOutput / (this.inputs.systemCapacity * 8760)) * 100;
+            const annualRevenue = annualEnergyOutput * this.inputs.electricityPrice * 1000; // Convert MWh to kWh
+            const annualOMCost = totalInvestment * (this.inputs.omCostPercent / 100);
+            
+            // Cash flow calculation
+            let cashFlow = [];
+            let totalRevenue = 0;
+            let totalCosts = totalInvestment;
+            let cumulativeCashFlow = -totalInvestment;
+            let paybackPeriod = 0;
+            let paybackFound = false;
+            
+            // Initial investment (Year 0)
+            cashFlow.push(-totalInvestment);
+            
+            for (let year = 1; year <= this.inputs.projectLifetime; year++) {
+                // Degradation factor
+                const degradationFactor = Math.pow(1 - this.inputs.degradationRate / 100, year - 1);
+                const yearlyEnergyOutput = annualEnergyOutput * degradationFactor;
+                const yearlyRevenue = yearlyEnergyOutput * this.inputs.electricityPrice * 1000;
+                const yearlyNetCashFlow = yearlyRevenue - annualOMCost;
+                
+                cashFlow.push(yearlyNetCashFlow);
+                totalRevenue += yearlyRevenue;
+                totalCosts += annualOMCost;
+                cumulativeCashFlow += yearlyNetCashFlow;
+                
+                // Calculate payback period
+                if (!paybackFound && cumulativeCashFlow >= 0) {
+                    paybackPeriod = year - 1 + (Math.abs(cashFlow[year - 1]) / yearlyNetCashFlow);
+                    paybackFound = true;
+                }
+            }
+            
+            if (!paybackFound) {
+                paybackPeriod = this.inputs.projectLifetime;
+            }
+            
+            // NPV calculation
+            const discountRate = this.inputs.discountRate / 100;
+            let npv = -totalInvestment;
+            for (let year = 1; year <= this.inputs.projectLifetime; year++) {
+                npv += cashFlow[year] / Math.pow(1 + discountRate, year);
+            }
+            
+            // IRR calculation (approximation using bisection method)
+            const irr = this.calculateIRR(cashFlow);
+            
+            const netProfit = totalRevenue - totalCosts;
+            const roi = (netProfit / totalInvestment) * 100;
+            const totalEnergyOutput = this.inputs.projectLifetime * annualEnergyOutput * 
+                                   (1 - Math.pow(1 - this.inputs.degradationRate / 100, this.inputs.projectLifetime)) / 
+                                   (this.inputs.degradationRate / 100);
+            
+            this.results = {
+                calculated: true,
+                totalInvestment,
+                annualEnergyOutput,
+                capacityFactor,
+                annualRevenue,
+                annualOMCost,
+                totalRevenue,
+                totalCosts,
+                netProfit,
+                roi,
+                npv,
+                irr,
+                paybackPeriod,
+                totalEnergyOutput,
+                cashFlow
+            };
+        },
+        
+        calculateIRR(cashFlow) {
+            let low = -0.99;
+            let high = 10.0;
+            let irr = 0.1;
+            
+            for (let i = 0; i < 100; i++) {
+                let npv = 0;
+                for (let j = 0; j < cashFlow.length; j++) {
+                    npv += cashFlow[j] / Math.pow(1 + irr, j);
+                }
+                
+                if (Math.abs(npv) < 1) break;
+                
+                if (npv > 0) {
+                    low = irr;
+                } else {
+                    high = irr;
+                }
+                irr = (low + high) / 2;
+            }
+            
+            return irr * 100;
+        },
+        
+        reset() {
+            this.inputs = {
+                systemCapacity: 10,
+                costPerMW: 1000000,
+                solarIrradiance: 1800,
+                systemEfficiency: 20,
+                electricityPrice: 0.12,
+                omCostPercent: 2,
+                degradationRate: 0.5,
+                projectLifetime: 25,
+                discountRate: 8
+            };
+            this.results.calculated = false;
+        },
+        
+        formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        },
+        
+        formatNumber(value) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Solar Farm Profit Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Solar Farm Profit Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Solar Farm Profit Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'solar-farm-profit', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'solar-farm-profit', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +572,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +580,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +589,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Solar Farm Profit Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,799 +685,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Investment Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bond-current-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Current Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate current yield of bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bond-equivalent-yield.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Equivalent Yield</h3>
-          <p class="text-gray-600 text-sm">Calculate bond equivalent yield for comparison.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bond-price.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Price Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond prices based on yield and terms.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bond-yield-to-call.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Call</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to call for callable bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/bond-yield-to-maturity.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Bond Yield to Maturity</h3>
-          <p class="text-gray-600 text-sm">Calculate yield to maturity for bonds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/butterfly-spread-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Butterfly Spread Profit</h3>
-          <p class="text-gray-600 text-sm">Calculate profit from butterfly spread options strategy.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/cagr-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">CAGR Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Compound Annual Growth Rate for investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/capital-asset-pricing-model.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Capital Asset Pricing Model</h3>
-          <p class="text-gray-600 text-sm">Calculate expected returns using CAPM.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/carried-interest.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Carried Interest Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate carried interest for investment funds.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/coupon-payment.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Coupon Payment Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate bond coupon payments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/crypto-profit.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Crypto Profit Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate profits from cryptocurrency investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/maximum-drawdown.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Maximum Drawdown Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate maximum drawdown for investment portfolios.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/npv-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">NPV Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Net Present Value for investment analysis.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/peg-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">PEG Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Price/Earnings to Growth ratio.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-        <a href="/tools/present-value.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Present Value Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate present value of future cash flows and investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/roi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">ROI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Return on Investment for business and personal investments.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/sortino-ratio.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Sortino Ratio Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate downside risk-adjusted returns.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1181,11 +793,80 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                 
                   
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/earnings-per-share-growth.html">
+                        Earnings per Share Growth
+                      </a>
+                    </li>
+                    
+                  
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/mortgage-calculator.html">
-                        Mortgage Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/marginal-revenue.html">
+                        Marginal Revenue Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/base64-encoder.html">
+                        Base64 Encoder/Decoder
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apy-to-apr.html">
+                        APY to APR Converter
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/marginal-propensity-consume.html">
+                        Marginal Propensity to Consume (MPC)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/capital-asset-pricing-model.html">
+                        Capital Asset Pricing Model
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/private-mortgage-insurance.html">
+                        Private Mortgage Insurance (PMI)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/code-minifier.html">
+                        Code Minifier
                       </a>
                     </li>
                     
@@ -1222,80 +903,11 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/discount-calculator.html">
-                        Discount Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/regex-tester.html">
-                        Regex Tester
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/certificate-of-deposit.html">
-                        Certificate of Deposit Calculator
-                      </a>
-                    </li>
-                    
-                  
                 
                   
                 
                   
                 
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/emergency-fund.html">
-                        Emergency Fund Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bond-yield-to-call.html">
-                        Bond Yield to Call
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/billable-hours.html">
-                        Billable Hours Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/commission-calculator.html">
-                        Commission Calculator
-                      </a>
-                    </li>
-                    
                   
                 
                   
@@ -1850,7 +1462,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1858,40 +1470,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Solar Farm Profit Calculator',
-                tool_category: 'investment',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Solar Farm Profit Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     

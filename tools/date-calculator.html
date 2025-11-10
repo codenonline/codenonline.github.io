@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Calculator - Coming Soon</title>
+    <title>
+    Date Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,491 @@
 </head>
 <body class="bg-gray-50">
     
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calendar" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Date Calculator</h1>
+            <p class="text-gray-600">Calculate differences between dates, add/subtract days, and convert between time zones.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="dateCalculator()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex flex-wrap gap-2 mb-4">
+            <template x-for="mode in calculatorModes" :key="mode.id">
+                <button
+                    @click="selectedMode = mode.id"
+                    :class="selectedMode === mode.id ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                    class="px-4 py-2 border rounded-lg transition-all flex items-center gap-2"
+                >
+                    <i :data-lucide="mode.icon" class="h-4 w-4"></i>
+                    <span x-text="mode.name"></span>
+                </button>
+            </template>
+        </div>
+    </div>
 
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+    <!-- Date Difference Calculator -->
+    <div x-show="selectedMode === 'difference'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="calendar-days" class="h-4 w-4"></i>
+            Date Difference Calculator
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                <input
+                    type="date"
+                    x-model="startDate"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                <input
+                    type="date"
+                    x-model="endDate"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+        </div>
 
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button
+                @click="setToday('start')"
+                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            >
+                Set Start to Today
+            </button>
+            <button
+                @click="setToday('end')"
+                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            >
+                Set End to Today
+            </button>
+            <button
+                @click="swapDates()"
+                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            >
+                Swap Dates
+            </button>
+        </div>
+
+        <div x-show="startDate && endDate" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <p class="text-sm text-gray-600">Days</p>
+                <p class="text-2xl font-bold text-blue-600" x-text="dateDifference.days"></p>
+            </div>
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <p class="text-sm text-gray-600">Weeks</p>
+                <p class="text-2xl font-bold text-green-600" x-text="dateDifference.weeks"></p>
+            </div>
+            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                <p class="text-sm text-gray-600">Months</p>
+                <p class="text-2xl font-bold text-purple-600" x-text="dateDifference.months"></p>
+            </div>
+            <div class="text-center p-4 bg-orange-50 rounded-lg">
+                <p class="text-sm text-gray-600">Years</p>
+                <p class="text-2xl font-bold text-orange-600" x-text="dateDifference.years"></p>
+            </div>
+        </div>
+
+        <div x-show="startDate && endDate" class="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h4 class="font-semibold mb-2">Detailed Breakdown</h4>
+            <p class="text-sm text-gray-700" x-text="detailedDifference"></p>
+        </div>
+    </div>
+
+    <!-- Add/Subtract Days Calculator -->
+    <div x-show="selectedMode === 'addsubtract'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="plus-minus" class="h-4 w-4"></i>
+            Add/Subtract Days Calculator
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Base Date</label>
+                <input
+                    type="date"
+                    x-model="baseDate"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <button
+                    @click="setToday('base')"
+                    class="mt-2 px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                >
+                    Set to Today
+                </button>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Operation</label>
+                <select
+                    x-model="operation"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="add">Add</option>
+                    <option value="subtract">Subtract</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                <input
+                    type="number"
+                    x-model.number="amount"
+                    placeholder="Enter number"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6">
+            <template x-for="unit in timeUnits" :key="unit.id">
+                <button
+                    @click="selectedUnit = unit.id"
+                    :class="selectedUnit === unit.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                    class="px-3 py-2 rounded-lg transition-colors"
+                    x-text="unit.name"
+                ></button>
+            </template>
+        </div>
+
+        <div x-show="baseDate && amount > 0" class="p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-700">Result:</span>
+                <span class="text-xl font-bold" x-text="formatDate(calculatedDate)"></span>
+            </div>
+            <div class="mt-2 text-sm text-gray-600" x-text="calculationDescription"></div>
+        </div>
+    </div>
+
+    <!-- Time Zone Converter -->
+    <div x-show="selectedMode === 'timezone'" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="clock" class="h-4 w-4"></i>
+            Time Zone Converter
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date & Time</label>
+                <input
+                    type="datetime-local"
+                    x-model="sourceDateTime"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <button
+                    @click="setCurrentDateTime()"
+                    class="mt-2 px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                >
+                    Set to Now
+                </button>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Source Time Zone</label>
+                <select
+                    x-model="sourceTimezone"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <template x-for="tz in timezones" :key="tz.value">
+                        <option :value="tz.value" x-text="tz.label"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Target Time Zones</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="tz in selectedTargetTimezones" :key="tz">
+                    <div class="p-4 border border-gray-200 rounded-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium" x-text="getTimezoneLabel(tz)"></span>
+                            <button
+                                @click="removeTargetTimezone(tz)"
+                                class="text-red-500 hover:text-red-700"
+                            >
+                                <i data-lucide="x" class="h-4 w-4"></i>
+                            </button>
+                        </div>
+                        <div class="text-lg font-bold" x-text="convertToTimezone(tz)"></div>
+                    </div>
+                </template>
+            </div>
+            <select
+                @change="addTargetTimezone($event.target.value); $event.target.value = ''"
+                class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+                <option value="">Add a time zone...</option>
+                <template x-for="tz in availableTargetTimezones" :key="tz.value">
+                    <option :value="tz.value" x-text="tz.label"></option>
+                </template>
+            </select>
+        </div>
+    </div>
+
+    <!-- Usage Guide -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="help-circle" class="h-4 w-4"></i>
+            How to Use
+        </h3>
+        <div class="space-y-4 text-sm text-gray-600">
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-1">Date Difference</h4>
+                <p>Calculate the exact difference between two dates in days, weeks, months, and years. Perfect for calculating age, project duration, or time until events.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-1">Add/Subtract Days</h4>
+                <p>Add or subtract time from a base date. Useful for calculating deadlines, due dates, or scheduling events. Supports days, weeks, months, and years.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-1">Time Zone Conversion</h4>
+                <p>Convert dates and times between different time zones. Essential for scheduling international meetings, travel planning, or coordinating global events.</p>
             </div>
         </div>
     </div>
+</div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calendar" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Date Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate differences between dates, add/subtract days, and convert between time zones.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+<script>
+function dateCalculator() {
+    return {
+        selectedMode: 'difference',
+        startDate: '',
+        endDate: '',
+        baseDate: '',
+        operation: 'add',
+        amount: 30,
+        selectedUnit: 'days',
+        sourceDateTime: '',
+        sourceTimezone: 'UTC',
+        selectedTargetTimezones: ['America/New_York', 'Europe/London', 'Asia/Tokyo'],
         
-        <button onclick="upvoteTool('date-calculator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        calculatorModes: [
+            { id: 'difference', name: 'Date Difference', icon: 'calendar-days' },
+            { id: 'addsubtract', name: 'Add/Subtract', icon: 'plus-minus' },
+            { id: 'timezone', name: 'Time Zone', icon: 'clock' }
+        ],
+        
+        timeUnits: [
+            { id: 'days', name: 'Days' },
+            { id: 'weeks', name: 'Weeks' },
+            { id: 'months', name: 'Months' },
+            { id: 'years', name: 'Years' }
+        ],
+        
+        timezones: [
+            { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+            { value: 'America/New_York', label: 'Eastern Time (US)' },
+            { value: 'America/Chicago', label: 'Central Time (US)' },
+            { value: 'America/Denver', label: 'Mountain Time (US)' },
+            { value: 'America/Los_Angeles', label: 'Pacific Time (US)' },
+            { value: 'Europe/London', label: 'London (GMT/BST)' },
+            { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+            { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+            { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+            { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
+            { value: 'Asia/Kolkata', label: 'India (IST)' },
+            { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+            { value: 'Pacific/Auckland', label: 'Auckland (NZST/NZDT)' }
+        ],
+        
+        init() {
+            this.setToday('start');
+            this.setToday('end');
+            this.setToday('base');
+            this.setCurrentDateTime();
+        },
+        
+        get dateDifference() {
+            if (!this.startDate || !this.endDate) return { days: 0, weeks: 0, months: 0, years: 0 };
+            
+            const start = new Date(this.startDate);
+            const end = new Date(this.endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return {
+                days: diffDays,
+                weeks: Math.floor(diffDays / 7),
+                months: Math.floor(diffDays / 30.44), // Average month length
+                years: Math.floor(diffDays / 365.25) // Account for leap years
+            };
+        },
+        
+        get detailedDifference() {
+            if (!this.startDate || !this.endDate) return '';
+            
+            const start = new Date(this.startDate);
+            const end = new Date(this.endDate);
+            const isNegative = end < start;
+            
+            let years = Math.abs(end.getFullYear() - start.getFullYear());
+            let months = Math.abs(end.getMonth() - start.getMonth());
+            let days = Math.abs(end.getDate() - start.getDate());
+            
+            if (days < 0) {
+                months--;
+                days += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            const parts = [];
+            if (years > 0) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
+            if (months > 0) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
+            if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+            
+            const result = parts.length > 0 ? parts.join(', ') : '0 days';
+            return isNegative ? `${result} (negative difference)` : result;
+        },
+        
+        get calculatedDate() {
+            if (!this.baseDate || !this.amount) return null;
+            
+            const base = new Date(this.baseDate);
+            const multiplier = this.operation === 'add' ? 1 : -1;
+            
+            switch (this.selectedUnit) {
+                case 'days':
+                    base.setDate(base.getDate() + (this.amount * multiplier));
+                    break;
+                case 'weeks':
+                    base.setDate(base.getDate() + (this.amount * 7 * multiplier));
+                    break;
+                case 'months':
+                    base.setMonth(base.getMonth() + (this.amount * multiplier));
+                    break;
+                case 'years':
+                    base.setFullYear(base.getFullYear() + (this.amount * multiplier));
+                    break;
+            }
+            
+            return base;
+        },
+        
+        get calculationDescription() {
+            if (!this.baseDate || !this.amount) return '';
+            
+            const operation = this.operation === 'add' ? 'Adding' : 'Subtracting';
+            const unit = this.amount === 1 ? this.selectedUnit.slice(0, -1) : this.selectedUnit;
+            return `${operation} ${this.amount} ${unit} ${this.operation === 'add' ? 'to' : 'from'} ${this.formatDate(new Date(this.baseDate))}`;
+        },
+        
+        get availableTargetTimezones() {
+            return this.timezones.filter(tz => !this.selectedTargetTimezones.includes(tz.value));
+        },
+        
+        setToday(field) {
+            const today = new Date().toISOString().split('T')[0];
+            if (field === 'start') this.startDate = today;
+            else if (field === 'end') this.endDate = today;
+            else if (field === 'base') this.baseDate = today;
+        },
+        
+        setCurrentDateTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            this.sourceDateTime = now.toISOString().slice(0, 16);
+        },
+        
+        swapDates() {
+            const temp = this.startDate;
+            this.startDate = this.endDate;
+            this.endDate = temp;
+        },
+        
+        formatDate(date) {
+            if (!date) return '';
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
+        
+        addTargetTimezone(timezone) {
+            if (timezone && !this.selectedTargetTimezones.includes(timezone)) {
+                this.selectedTargetTimezones.push(timezone);
+            }
+        },
+        
+        removeTargetTimezone(timezone) {
+            this.selectedTargetTimezones = this.selectedTargetTimezones.filter(tz => tz !== timezone);
+        },
+        
+        getTimezoneLabel(timezone) {
+            const tz = this.timezones.find(t => t.value === timezone);
+            return tz ? tz.label : timezone;
+        },
+        
+        convertToTimezone(targetTimezone) {
+            if (!this.sourceDateTime) return '';
+            
+            try {
+                const sourceDate = new Date(this.sourceDateTime);
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: targetTimezone,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                
+                return formatter.format(sourceDate);
+            } catch (error) {
+                return 'Invalid date/time';
+            }
+        }
+    }
+}
+</script>
+        </div>
     </div>
-  </div>
-
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Date Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Date Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Date Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'date-calculator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'date-calculator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +558,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +566,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +575,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Date Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,623 +671,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Datetime Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/business-days-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Business Days Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate business days between dates excluding weekends and holidays.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1007,27 +781,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/peg-ratio.html">
-                        PEG Ratio Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/book-profit.html">
+                        Book Profit Calculator
                       </a>
                     </li>
                     
@@ -1037,30 +793,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apy-to-apr.html">
-                        APY to APR Converter
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/customer-lifetime-value.html">
-                        Customer Lifetime Value
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/customer-acquisition-cost.html">
-                        Customer Acquisition Cost
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/real-rate-of-return.html">
+                        Real Rate of Return
                       </a>
                     </li>
                     
@@ -1070,8 +804,44 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bond-yield-to-maturity.html">
-                        Bond Yield to Maturity
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/extra-space-remover.html">
+                        Extra Space Remover
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/vending-machine-profit.html">
+                        Vending Machine Profit Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/triple-discount.html">
+                        Triple Discount Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/annual-income.html">
+                        Annual Income Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/word-counter.html">
+                        Word Counter
                       </a>
                     </li>
                     
@@ -1082,26 +852,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                
-                  
-                
-                  
-                
-                  
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/duplicate-lines-remover.html">
-                        Duplicate Lines Remover
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/capital-asset-pricing-model.html">
-                        Capital Asset Pricing Model
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/permutation-generator.html">
+                        Permutation Generator
                       </a>
                     </li>
                     
@@ -1116,12 +869,33 @@ async function handleEmailCapture(event, toolId, captureType) {
                   
                 
                   
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/asset-turnover-ratio.html">
-                        Asset Turnover Ratio
-                      </a>
-                    </li>
-                    
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   
@@ -1674,7 +1448,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1682,40 +1456,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Date Calculator',
-                tool_category: 'datetime',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Date Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     

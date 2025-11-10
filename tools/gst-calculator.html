@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GST Calculator - Coming Soon</title>
+    <title>
+    GST Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,314 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">GST Calculator</h1>
+            <p class="text-gray-600">Calculate Goods and Services Tax.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="gstCalculator()" class="space-y-8">
+    <!-- Controls -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">GST Rate (%)</label>
+                <select x-model="gstRate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="5">5% - Essential items</option>
+                    <option value="12">12% - Standard items</option>
+                    <option value="18" selected>18% - Most goods & services</option>
+                    <option value="28">28% - Luxury items</option>
+                    <option value="0">0% - Exempted</option>
+                    <option value="custom">Custom Rate</option>
+                </select>
+                <div x-show="gstRate === 'custom'" class="mt-2">
+                    <input
+                        x-model.number="customRate"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        placeholder="Enter custom rate"
+                        class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Calculation Type</label>
+                <select x-model="calculationType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="exclusive">Add GST (Exclusive)</option>
+                    <option value="inclusive">Extract GST (Inclusive)</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+                    <input
+                        x-model.number="amount"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="Enter amount"
+                        class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
             </div>
         </div>
     </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">GST Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Calculate Goods and Services Tax.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
+    <!-- Results -->
+    <div x-show="amount > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="calculator" class="h-4 w-4"></i>
+            GST Calculation Results
+        </h3>
         
-        <button onclick="upvoteTool('gst-calculator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-sm text-blue-600 mb-1">GST Rate</p>
+                <p class="text-xl font-bold text-blue-800" x-text="effectiveRate + '%'"></p>
+            </div>
+            
+            <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                <p class="text-sm text-green-600 mb-1">Base Amount</p>
+                <p class="text-xl font-bold text-green-800" x-text="'₹' + formatNumber(results.baseAmount)"></p>
+            </div>
+            
+            <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p class="text-sm text-yellow-600 mb-1">GST Amount</p>
+                <p class="text-xl font-bold text-yellow-800" x-text="'₹' + formatNumber(results.gstAmount)"></p>
+            </div>
+            
+            <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p class="text-sm text-purple-600 mb-1">Total Amount</p>
+                <p class="text-xl font-bold text-purple-800" x-text="'₹' + formatNumber(results.totalAmount)"></p>
+            </div>
+        </div>
+        
+        <!-- Detailed Breakdown -->
+        <div class="bg-gray-50 rounded-lg p-4">
+            <h4 class="font-medium mb-3">Calculation Breakdown</h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span x-text="calculationType === 'exclusive' ? 'Original Amount (excluding GST):' : 'Original Amount (including GST):'"></span>
+                    <span x-text="'₹' + formatNumber(amount)"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span>GST Rate:</span>
+                    <span x-text="effectiveRate + '%'"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Base Amount (excluding GST):</span>
+                    <span x-text="'₹' + formatNumber(results.baseAmount)"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span>GST Amount:</span>
+                    <span x-text="'₹' + formatNumber(results.gstAmount)"></span>
+                </div>
+                <hr class="border-gray-300">
+                <div class="flex justify-between font-semibold">
+                    <span>Total Amount (including GST):</span>
+                    <span x-text="'₹' + formatNumber(results.totalAmount)"></span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+    <!-- GST Slabs Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-4 w-4"></i>
+            GST Rate Slabs in India
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <div class="font-semibold text-green-600 mb-2">0% GST</div>
+                <p class="text-sm text-gray-600">Essential items like food grains, fresh fruits, vegetables, milk, etc.</p>
+            </div>
+            
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <div class="font-semibold text-blue-600 mb-2">5% GST</div>
+                <p class="text-sm text-gray-600">Items of daily use like sugar, tea, coffee, spices, coal, etc.</p>
+            </div>
+            
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <div class="font-semibold text-yellow-600 mb-2">12% GST</div>
+                <p class="text-sm text-gray-600">Processed food, mobile phones, medicines, business class tickets, etc.</p>
+            </div>
+            
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <div class="font-semibold text-purple-600 mb-2">18% GST</div>
+                <p class="text-sm text-gray-600">Most goods and services including restaurants, IT services, etc.</p>
+            </div>
+        </div>
+        
+        <div class="mt-4 p-4 border border-red-200 bg-red-50 rounded-lg">
+            <div class="font-semibold text-red-600 mb-2">28% GST</div>
+            <p class="text-sm text-red-700">Luxury and demerit goods like cars, tobacco, aerated drinks, cement, etc.</p>
+        </div>
+    </div>
+
+    <!-- Formula Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+            GST Calculation Formulas
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-4 bg-blue-50 rounded-lg">
+                <h4 class="font-medium text-blue-800 mb-2">Adding GST (Exclusive)</h4>
+                <div class="space-y-2 text-sm">
+                    <div>GST Amount = Base Amount × (GST Rate ÷ 100)</div>
+                    <div>Total Amount = Base Amount + GST Amount</div>
+                </div>
+                <div class="mt-3 p-2 bg-blue-100 rounded text-xs">
+                    <strong>Example:</strong> ₹1000 + 18% GST = ₹1000 + ₹180 = ₹1180
+                </div>
+            </div>
+            
+            <div class="p-4 bg-green-50 rounded-lg">
+                <h4 class="font-medium text-green-800 mb-2">Extracting GST (Inclusive)</h4>
+                <div class="space-y-2 text-sm">
+                    <div>Base Amount = Total Amount ÷ (1 + GST Rate ÷ 100)</div>
+                    <div>GST Amount = Total Amount - Base Amount</div>
+                </div>
+                <div class="mt-3 p-2 bg-green-100 rounded text-xs">
+                    <strong>Example:</strong> ₹1180 with 18% GST = Base: ₹1000, GST: ₹180
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+            <i data-lucide="zap" class="h-4 w-4"></i>
+            Quick GST Calculator
+        </h3>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <template x-for="rate in [5, 12, 18, 28]" :key="rate">
+                <div class="p-4 border border-gray-200 rounded-lg text-center hover:bg-gray-50 transition-colors">
+                    <div class="font-semibold text-lg" x-text="rate + '% GST'"></div>
+                    <div x-show="amount > 0" class="mt-2 space-y-1 text-sm">
+                        <div class="text-gray-600">GST: ₹<span x-text="formatNumber(getQuickGST(rate))"></span></div>
+                        <div class="font-medium">Total: ₹<span x-text="formatNumber(getQuickTotal(rate))"></span></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function gstCalculator() {
+    return {
+        amount: '',
+        gstRate: '18',
+        customRate: '',
+        calculationType: 'exclusive',
+        
+        get effectiveRate() {
+            return this.gstRate === 'custom' ? (this.customRate || 0) : parseFloat(this.gstRate);
+        },
+        
+        get results() {
+            const amt = parseFloat(this.amount) || 0;
+            const rate = this.effectiveRate;
+            
+            if (this.calculationType === 'exclusive') {
+                // Add GST to amount
+                const baseAmount = amt;
+                const gstAmount = baseAmount * (rate / 100);
+                const totalAmount = baseAmount + gstAmount;
+                
+                return { baseAmount, gstAmount, totalAmount };
+            } else {
+                // Extract GST from amount
+                const totalAmount = amt;
+                const baseAmount = totalAmount / (1 + rate / 100);
+                const gstAmount = totalAmount - baseAmount;
+                
+                return { baseAmount, gstAmount, totalAmount };
+            }
+        },
+        
+        formatNumber(num) {
+            return new Intl.NumberFormat('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(num);
+        },
+        
+        getQuickGST(rate) {
+            if (!this.amount) return 0;
+            const amt = parseFloat(this.amount);
+            if (this.calculationType === 'exclusive') {
+                return amt * (rate / 100);
+            } else {
+                const baseAmount = amt / (1 + rate / 100);
+                return amt - baseAmount;
+            }
+        },
+        
+        getQuickTotal(rate) {
+            if (!this.amount) return 0;
+            const amt = parseFloat(this.amount);
+            if (this.calculationType === 'exclusive') {
+                return amt + (amt * (rate / 100));
+            } else {
+                return amt;
+            }
+        }
+    }
+}
+</script>
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when GST Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of GST Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when GST Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'gst-calculator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'gst-calculator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +381,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +389,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +398,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when GST Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,645 +494,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Utility Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/bmi-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">BMI Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate Body Mass Index and health category.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-        <a href="/tools/percentage-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Percentage Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate percentages, percentage change, and percentage of amounts.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-        <a href="/tools/tip-calculator.html" class="block bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 p-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-2">Tip Calculator</h3>
-          <p class="text-gray-600 text-sm">Calculate tips and split bills among multiple people with customizable tip percentages.</p>
-          <div class="mt-4 inline-flex items-center text-blue-600 text-sm font-medium">
-            Use Now
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -1027,20 +602,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                 
                   
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/peg-ratio.html">
-                        PEG Ratio Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/amortization-calculator.html">
-                        Amortization Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/levered-free-cash-flow.html">
+                        Levered Free Cash Flow (LFCF)
                       </a>
                     </li>
                     
@@ -1050,30 +614,17 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/mortgage-calculator.html">
-                        Mortgage Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/occupancy-rate.html">
+                        Occupancy Rate Calculator
                       </a>
                     </li>
                     
                   
                 
                   
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/tip-calculator.html">
-                        Tip Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/credit-card-payment.html">
-                        Credit Card Payment Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/marginal-cost.html">
+                        Marginal Cost Calculator
                       </a>
                     </li>
                     
@@ -1085,17 +636,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/after-tax-cost-debt.html">
-                        After-tax Cost of Debt
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/crypto-profit.html">
-                        Crypto Profit Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/cpc-calculator.html">
+                        CPC Calculator
                       </a>
                     </li>
                     
@@ -1105,11 +647,44 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/compound-interest.html">
-                        Compound Interest Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/permutation-generator.html">
+                        Permutation Generator
                       </a>
                     </li>
                     
+                  
+                
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/margin-of-safety.html">
+                        Margin of Safety Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/bond-price.html">
+                        Bond Price Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/average-daily-rate.html">
+                        Average Daily Rate
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
                   
                 
                   
@@ -1696,7 +1271,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.694367 • Nov 9, 2025, 08:19 AM EST • main@1115228
+        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
       </p>
       
     </div>
@@ -1704,40 +1279,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'GST Calculator',
-                tool_category: 'utility',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of GST Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.694367
+            v1.0.0.758733
         </div>
     </div>
     
