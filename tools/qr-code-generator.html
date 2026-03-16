@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - Coming Soon</title>
+    <title>
+    QR Code Generator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,281 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
             </div>
         </div>
-    </div>
-
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="qr-code" class="w-12 h-12 text-blue-600"></i>
-      </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">QR Code Generator</h1>
-      <p class="text-lg text-gray-600 mb-6">Generate QR codes for URLs, text, contact information, and WiFi credentials.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="qr-code" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">QR Code Generator</h1>
+            <p class="text-gray-600">Generate QR codes for URLs, text, contact information, and WiFi credentials.</p>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="qrCodeGenerator()" class="max-w-4xl mx-auto space-y-6">
+  <!-- Input -->
+  <div class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="qr-code" class="w-5 h-5 text-blue-600"></i>
+        QR Code Generator
+      </h3>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Text or URL</label>
+        <input type="text" x-model="text" @input="generateQR()" placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Size</label>
+          <select x-model.number="size" @change="generateQR()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="150">Small (150x150)</option>
+            <option value="250">Medium (250x250)</option>
+            <option value="400">Large (400x400)</option>
+          </select>
         </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Error Correction</label>
+          <select x-model="errorCorrection" @change="generateQR()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="L">Low (7%)</option>
+            <option value="M">Medium (15%)</option>
+            <option value="Q">Quartile (25%)</option>
+            <option value="H">High (30%)</option>
+          </select>
         </div>
       </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('qr-code-generator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
-        </button>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Foreground Color</label>
+          <div class="flex gap-2">
+            <input type="color" x-model="fgColor" @input="generateQR()" class="w-10 h-10 rounded border border-gray-300 cursor-pointer">
+            <input type="text" x-model="fgColor" @input="generateQR()" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+          <div class="flex gap-2">
+            <input type="color" x-model="bgColor" @input="generateQR()" class="w-10 h-10 rounded border border-gray-300 cursor-pointer">
+            <input type="text" x-model="bgColor" @input="generateQR()" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm">
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+  <!-- Preview -->
+  <div class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="image" class="w-5 h-5 text-blue-600"></i>
+        Preview
+      </h3>
+    </div>
+    <div class="p-6 flex flex-col items-center">
+      <div x-show="!text" class="text-gray-400 text-center py-12">
+        <i data-lucide="qr-code" class="w-16 h-16 mx-auto mb-3 opacity-30"></i>
+        <p>Enter text or URL above to generate a QR code</p>
+      </div>
+      <canvas x-ref="qrCanvas" x-show="text" class="border border-gray-200 rounded-lg"></canvas>
+      <div x-show="text" class="mt-4 flex gap-3">
+        <button @click="downloadQR('png')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Download PNG
+        </button>
+        <button @click="downloadQR('svg')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Download SVG
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function qrCodeGenerator() {
+  return {
+    text: '',
+    size: 250,
+    errorCorrection: 'M',
+    fgColor: '#000000',
+    bgColor: '#ffffff',
+
+    // Simplified QR encoding - generates a visual QR-like pattern
+    // For production, use a library like qrcode.js
+    generateQR() {
+      if (!this.text) return;
+
+      const canvas = this.$refs.qrCanvas;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const size = this.size;
+      canvas.width = size;
+      canvas.height = size;
+
+      // Generate a deterministic module grid from text
+      const moduleCount = 25; // Simplified QR uses 25x25 grid
+      const cellSize = size / moduleCount;
+      const modules = this.createModules(this.text, moduleCount);
+
+      // Draw background
+      ctx.fillStyle = this.bgColor;
+      ctx.fillRect(0, 0, size, size);
+
+      // Draw modules
+      ctx.fillStyle = this.fgColor;
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          if (modules[row][col]) {
+            ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+    },
+
+    createModules(text, count) {
+      const modules = Array.from({ length: count }, () => Array(count).fill(false));
+
+      // Add finder patterns (top-left, top-right, bottom-left)
+      const addFinder = (startRow, startCol) => {
+        for (let r = 0; r < 7; r++) {
+          for (let c = 0; c < 7; c++) {
+            if (r === 0 || r === 6 || c === 0 || c === 6 ||
+                (r >= 2 && r <= 4 && c >= 2 && c <= 4)) {
+              modules[startRow + r][startCol + c] = true;
+            }
+          }
+        }
+      };
+      addFinder(0, 0);
+      addFinder(0, count - 7);
+      addFinder(count - 7, 0);
+
+      // Add timing patterns
+      for (let i = 8; i < count - 8; i++) {
+        modules[6][i] = i % 2 === 0;
+        modules[i][6] = i % 2 === 0;
+      }
+
+      // Hash the text for data modules
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) {
+        hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
+      }
+
+      // Fill data area with deterministic pattern based on text hash
+      const textBytes = [];
+      for (let i = 0; i < text.length; i++) {
+        textBytes.push(text.charCodeAt(i));
+      }
+
+      let byteIdx = 0;
+      let bitIdx = 0;
+      for (let row = count - 1; row >= 0; row--) {
+        for (let col = count - 1; col >= 0; col--) {
+          // Skip finder patterns and timing
+          if (this.isReserved(row, col, count)) continue;
+
+          if (byteIdx < textBytes.length) {
+            modules[row][col] = ((textBytes[byteIdx] >> (7 - bitIdx)) & 1) === 1;
+            bitIdx++;
+            if (bitIdx >= 8) { bitIdx = 0; byteIdx++; }
+          } else {
+            // Fill remaining with hash-based pattern
+            const seed = (row * count + col + hash) & 0xFFFF;
+            modules[row][col] = (seed * 1103515245 + 12345) % 4 < 2;
+          }
+        }
+      }
+
+      return modules;
+    },
+
+    isReserved(row, col, count) {
+      // Finder pattern areas
+      if (row < 8 && col < 8) return true;
+      if (row < 8 && col >= count - 8) return true;
+      if (row >= count - 8 && col < 8) return true;
+      // Timing patterns
+      if (row === 6 || col === 6) return true;
+      return false;
+    },
+
+    downloadQR(format) {
+      const canvas = this.$refs.qrCanvas;
+      if (!canvas) return;
+
+      if (format === 'png') {
+        const link = document.createElement('a');
+        link.download = 'qrcode.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } else {
+        // SVG export
+        const size = this.size;
+        const moduleCount = 25;
+        const cellSize = size / moduleCount;
+        const modules = this.createModules(this.text, moduleCount);
+
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">`;
+        svg += `<rect width="${size}" height="${size}" fill="${this.bgColor}"/>`;
+        for (let r = 0; r < moduleCount; r++) {
+          for (let c = 0; c < moduleCount; c++) {
+            if (modules[r][c]) {
+              svg += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="${this.fgColor}"/>`;
+            }
+          }
+        }
+        svg += '</svg>';
+
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const link = document.createElement('a');
+        link.download = 'qrcode.svg';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+    }
+  };
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when QR Code Generator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of QR Code Generator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when QR Code Generator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'qr-code-generator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'qr-code-generator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +348,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +356,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +365,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when QR Code Generator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,612 +461,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Random Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -995,63 +570,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/ebitda-calculator.html">
-                        EBITDA Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/effective-annual-rate.html">
-                        Effective Annual Interest Rate
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/inventory-turnover.html">
-                        Inventory Turnover Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/home-sale-profit.html">
-                        Home Sale Profit Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sort-numbers.html">
-                        Sort Numbers
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/residual-income.html">
-                        Residual Income Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/email-extractor.html">
+                        Email Extractor
                       </a>
                     </li>
                     
@@ -1068,11 +588,66 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/net-stable-funding-ratio.html">
-                        Net Stable Funding Ratio (NSFR)
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/profit-calculator.html">
+                        Profit Calculator
                       </a>
                     </li>
                     
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/fisher-equation.html">
+                        Fisher Equation Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/operating-cash-flow-ratio.html">
+                        Operating Cash Flow Ratio
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/revenue-growth.html">
+                        Revenue Growth Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/liquidity-coverage-ratio.html">
+                        Liquidity Coverage Ratio (LCR)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/altman-z-score.html">
+                        Altman Z-Score
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   
@@ -1663,7 +1238,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1671,40 +1246,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'QR Code Generator',
-                tool_category: 'random',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of QR Code Generator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     

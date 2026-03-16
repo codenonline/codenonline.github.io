@@ -75,83 +75,313 @@
                 </div>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Economic Order Quantity (EOQ)</h1>
-            <p class="text-gray-600">Calculate optimal order quantity for inventory.</p>
+            <p class="text-gray-600">Find the ideal reorder quantity that minimizes total inventory costs — balancing ordering frequency against storage and holding expenses.</p>
         </div>
         <!-- Tool Content -->
         <div class="container mx-auto px-4 py-8 max-w-7xl">
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Economic Order Quantity (EOQ) Calculator</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
-            api_host: 'https://us.i.posthog.com',
-            defaults: '2025-05-24',
-            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-        })
-    </script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-0BG099QVRK');
-    </script>
-
-    <!-- Event snippet for Website lead conversion page
-    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-    function gtag_report_conversion(url) {
-    var callback = function () {
-        if (typeof(url) != 'undefined') {
-        window.location = url;
-        }
-    };
-    gtag('event', 'conversion', {
-        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
-        'event_callback': callback
-    });
-    return false;
-    }
-    </script>
-
-
-</head>
-<body class="bg-gray-50">
-    
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            <div x-data="eoqCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <i data-lucide="calculator" class="h-5 w-5 text-green-600"></i>
+            EOQ Calculator
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Annual Demand (D)
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input
+                            type="number"
+                            x-model.number="demand"
+                            @input="calculate()"
+                            placeholder="10000"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            min="1"
+                            step="1"
+                        >
+                        <span class="absolute right-3 top-2 text-gray-500 text-sm">units</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Ordering Cost per Order (S)
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model.number="orderingCost"
+                            @input="calculate()"
+                            placeholder="50"
+                            class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            min="0"
+                            step="0.01"
+                        >
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Carrying Cost per Unit per Year (H)
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model.number="carryingCost"
+                            @input="calculate()"
+                            placeholder="5"
+                            class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            min="0"
+                            step="0.01"
+                        >
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Unit Cost (optional)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model.number="unitCost"
+                            @input="calculate()"
+                            placeholder="25"
+                            class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            min="0"
+                            step="0.01"
+                        >
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="bg-green-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-green-900 mb-3 flex items-center gap-2">
+                        <i data-lucide="target" class="h-4 w-4"></i>
+                        Optimal Order Quantity (EOQ)
+                    </h3>
+                    <div class="text-2xl font-bold text-green-600" x-text="formatNumber(results.eoq) + ' units'"></div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                        <i data-lucide="calendar" class="h-4 w-4"></i>
+                        Number of Orders per Year
+                    </h3>
+                    <div class="text-2xl font-bold text-blue-600" x-text="formatNumber(results.ordersPerYear, 1)"></div>
+                </div>
+                
+                <div class="bg-orange-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-orange-900 mb-3 flex items-center gap-2">
+                        <i data-lucide="clock" class="h-4 w-4"></i>
+                        Time Between Orders
+                    </h3>
+                    <div class="text-2xl font-bold text-orange-600" x-text="formatNumber(results.timeBetweenOrders, 1) + ' days'"></div>
+                </div>
+                
+                <div x-show="results.totalCost > 0" class="bg-purple-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                        <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                        Total Annual Cost
+                    </h3>
+                    <div class="text-2xl font-bold text-purple-600" x-text="'$' + formatNumber(results.totalCost, 2)"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6 flex flex-wrap gap-2">
+            <button
+                @click="resetForm()"
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                Reset
+            </button>
         </div>
     </div>
     
+    <!-- Cost Analysis -->
+    <div x-show="results.eoq > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart" class="h-5 w-5 text-green-600"></i>
+            Cost Analysis
+        </h3>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="text-center p-3 bg-blue-50 rounded-lg">
+                <p class="text-sm text-blue-600 font-medium">Ordering Cost</p>
+                <p class="text-lg font-bold text-blue-700" x-text="'$' + formatNumber(results.totalOrderingCost, 2)"></p>
+            </div>
+            <div class="text-center p-3 bg-orange-50 rounded-lg">
+                <p class="text-sm text-orange-600 font-medium">Carrying Cost</p>
+                <p class="text-lg font-bold text-orange-700" x-text="'$' + formatNumber(results.totalCarryingCost, 2)"></p>
+            </div>
+            <div class="text-center p-3 bg-purple-50 rounded-lg">
+                <p class="text-sm text-purple-600 font-medium">Purchase Cost</p>
+                <p class="text-lg font-bold text-purple-700" x-text="'$' + formatNumber(results.purchaseCost, 2)"></p>
+            </div>
+            <div class="text-center p-3 bg-green-50 rounded-lg">
+                <p class="text-sm text-green-600 font-medium">Total Cost</p>
+                <p class="text-lg font-bold text-green-700" x-text="'$' + formatNumber(results.totalCost, 2)"></p>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+            <h4 class="font-medium mb-2">Cost Breakdown:</h4>
+            <ul class="text-sm text-gray-600 space-y-1">
+                <li>• At optimal EOQ, ordering cost equals carrying cost</li>
+                <li>• Ordering Cost = (D/Q) × S = <span x-text="'$' + formatNumber(results.totalOrderingCost, 2)"></span></li>
+                <li>• Carrying Cost = (Q/2) × H = <span x-text="'$' + formatNumber(results.totalCarryingCost, 2)"></span></li>
+                <li x-show="unitCost > 0">• Purchase Cost = D × Unit Cost = <span x-text="'$' + formatNumber(results.purchaseCost, 2)"></span></li>
+            </ul>
+        </div>
+    </div>
     
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
+    <!-- Formula and Information -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="info" class="h-5 w-5 text-green-600"></i>
+            EOQ Formula & Information
+        </h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold mb-3">EOQ Formula</h4>
+                <div class="bg-gray-50 rounded-lg p-4 font-mono text-center">
+                    <div class="text-lg">EOQ = √(2DS/H)</div>
+                    <div class="text-sm text-gray-600 mt-2">
+                        Where:<br>
+                        D = Annual demand<br>
+                        S = Ordering cost per order<br>
+                        H = Carrying cost per unit per year
+                    </div>
+                </div>
+                
+                <h4 class="font-semibold mt-4 mb-2">Related Formulas</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Number of orders per year: N = D/EOQ</li>
+                    <li>• Time between orders: T = EOQ/D × 365 days</li>
+                    <li>• Total cost: TC = (D/Q)S + (Q/2)H + D×C</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">Key Assumptions</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Demand is constant and known</li>
+                    <li>• Lead time is constant and known</li>
+                    <li>• No quantity discounts</li>
+                    <li>• No stockouts allowed</li>
+                    <li>• Ordering and carrying costs are constant</li>
+                </ul>
+                
+                <h4 class="font-semibold mt-4 mb-2">Benefits</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Minimizes total inventory costs</li>
+                    <li>• Balances ordering and carrying costs</li>
+                    <li>• Provides optimal order frequency</li>
+                    <li>• Improves cash flow management</li>
+                    <li>• Reduces storage requirements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function eoqCalculator() {
+    return {
+        demand: null,
+        orderingCost: null,
+        carryingCost: null,
+        unitCost: null,
+        results: {
+            eoq: 0,
+            ordersPerYear: 0,
+            timeBetweenOrders: 0,
+            totalOrderingCost: 0,
+            totalCarryingCost: 0,
+            purchaseCost: 0,
+            totalCost: 0
+        },
+        
+        calculate() {
+            if (!this.demand || !this.orderingCost || !this.carryingCost) {
+                this.resetResults();
+                return;
+            }
+            
+            if (this.demand <= 0 || this.orderingCost < 0 || this.carryingCost <= 0) {
+                this.resetResults();
+                return;
+            }
+            
+            // Calculate EOQ
+            const eoq = Math.sqrt((2 * this.demand * this.orderingCost) / this.carryingCost);
+            
+            // Calculate related metrics
+            const ordersPerYear = this.demand / eoq;
+            const timeBetweenOrders = (eoq / this.demand) * 365;
+            
+            // Calculate costs
+            const totalOrderingCost = (this.demand / eoq) * this.orderingCost;
+            const totalCarryingCost = (eoq / 2) * this.carryingCost;
+            const purchaseCost = this.unitCost ? this.demand * this.unitCost : 0;
+            const totalCost = totalOrderingCost + totalCarryingCost + purchaseCost;
+            
+            this.results = {
+                eoq: eoq,
+                ordersPerYear: ordersPerYear,
+                timeBetweenOrders: timeBetweenOrders,
+                totalOrderingCost: totalOrderingCost,
+                totalCarryingCost: totalCarryingCost,
+                purchaseCost: purchaseCost,
+                totalCost: totalCost
+            };
+        },
+        
+        resetResults() {
+            this.results = {
+                eoq: 0,
+                ordersPerYear: 0,
+                timeBetweenOrders: 0,
+                totalOrderingCost: 0,
+                totalCarryingCost: 0,
+                purchaseCost: 0,
+                totalCost: 0
+            };
+        },
+        
+        resetForm() {
+            this.demand = null;
+            this.orderingCost = null;
+            this.carryingCost = null;
+            this.unitCost = null;
+            this.resetResults();
+        },
+        
+        formatNumber(num, decimals = 0) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }).format(num);
+        }
+    }
+}
+</script>
+
         </div>
     </div>
     <!-- Email Capture for Tools -->
@@ -415,8 +645,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/word-repeater.html">
-                        Word Repeater
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/contribution-margin.html">
+                        Contribution Margin Calculator
                       </a>
                     </li>
                     
@@ -424,8 +654,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/return-on-equity.html">
-                        Return on Equity Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/unemployment-rate.html">
+                        Unemployment Rate Calculator
                       </a>
                     </li>
                     
@@ -433,8 +663,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sort-lines.html">
-                        Sort Lines
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/marginal-propensity-consume.html">
+                        Marginal Propensity to Consume (MPC)
                       </a>
                     </li>
                     
@@ -442,21 +672,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/occupancy-rate.html">
-                        Occupancy Rate Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/storage-unit-profit.html">
-                        Storage Unit Profit Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/customer-acquisition-cost.html">
+                        Customer Acquisition Cost
                       </a>
                     </li>
                     
@@ -464,8 +681,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sortino-ratio.html">
-                        Sortino Ratio Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/dividend-yield-calculator.html">
+                        Dividend Yield Calculator
                       </a>
                     </li>
                     
@@ -473,8 +690,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/spending-multiplier.html">
-                        Spending Multiplier Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/gross-profit-ratio.html">
+                        Gross Profit Ratio
                       </a>
                     </li>
                     
@@ -482,11 +699,24 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/net-to-gross.html">
-                        Net to Gross Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/salary-to-hourly.html">
+                        Salary to Hourly Converter
                       </a>
                     </li>
                     
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/profit-calculator.html">
+                        Profit Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
                   
                 
                   
@@ -1083,7 +1313,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1096,7 +1326,7 @@ async function handleEmailCapture(event, toolId, captureType) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     

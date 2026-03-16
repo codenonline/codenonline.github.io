@@ -75,83 +75,503 @@
                 </div>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Free Float Shares Calculator</h1>
-            <p class="text-gray-600">Calculate free float shares for stock analysis.</p>
+            <p class="text-gray-600">Find the number of shares available for public trading by excluding insider and institutional locked-up holdings.</p>
         </div>
         <!-- Tool Content -->
         <div class="container mx-auto px-4 py-8 max-w-7xl">
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Float Shares Calculator - Calculate Available Trading Shares</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
-            api_host: 'https://us.i.posthog.com',
-            defaults: '2025-05-24',
-            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-        })
-    </script>
+            <div x-data="freeFloatCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <i data-lucide="calculator" class="h-6 w-6"></i>
+            Free Float Calculation
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Input Fields -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Total Outstanding Shares
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="totalShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter total outstanding shares"
+                        min="0"
+                    >
+                </div>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Shares Held by Insiders
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="insiderShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter insider-held shares"
+                        min="0"
+                    >
+                </div>
 
-    gtag('config', 'G-0BG099QVRK');
-    </script>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Institutional Holdings (>5%)
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="institutionalShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter institutional holdings"
+                        min="0"
+                    >
+                </div>
 
-    <!-- Event snippet for Website lead conversion page
-    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-    function gtag_report_conversion(url) {
-    var callback = function () {
-        if (typeof(url) != 'undefined') {
-        window.location = url;
-        }
-    };
-    gtag('event', 'conversion', {
-        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
-        'event_callback': callback
-    });
-    return false;
-    }
-    </script>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Treasury Shares
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="treasuryShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter treasury shares"
+                        min="0"
+                    >
+                </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Strategic Holdings
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="strategicShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter strategic holdings"
+                        min="0"
+                    >
+                </div>
 
-</head>
-<body class="bg-gray-50">
-    
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Restricted Shares
+                    </label>
+                    <input
+                        type="number"
+                        x-model.number="restrictedShares"
+                        @input="calculateFreeFloat()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter restricted shares"
+                        min="0"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Current Stock Price (Optional)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model.number="stockPrice"
+                            @input="calculateFreeFloat()"
+                            class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Enter stock price"
+                            min="0"
+                            step="0.01"
+                        >
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button
+                        @click="calculateFreeFloat()"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    >
+                        <i data-lucide="calculator" class="h-4 w-4"></i>
+                        Calculate
+                    </button>
+                    <button
+                        @click="resetCalculator()"
+                        class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                    >
+                        <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-gray-50 rounded-lg p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+                    Calculation Results
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-blue-500">
+                        <p class="text-sm text-gray-600">Free Float Shares</p>
+                        <p class="text-2xl font-bold text-blue-600" x-text="formatNumber(results.freeFloatShares)"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-green-500">
+                        <p class="text-sm text-gray-600">Free Float Percentage</p>
+                        <p class="text-2xl font-bold text-green-600" x-text="results.freeFloatPercentage.toFixed(2) + '%'"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border-l-4 border-purple-500">
+                        <p class="text-sm text-gray-600">Restricted Shares Total</p>
+                        <p class="text-2xl font-bold text-purple-600" x-text="formatNumber(results.totalRestrictedShares)"></p>
+                    </div>
+
+                    <div x-show="stockPrice > 0" class="bg-white rounded-lg p-4 border-l-4 border-orange-500">
+                        <p class="text-sm text-gray-600">Free Float Market Value</p>
+                        <p class="text-2xl font-bold text-orange-600" x-text="'$' + formatNumber(results.freeFloatValue)"></p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">Liquidity Rating</p>
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                <div 
+                                    class="h-2 rounded-full transition-all duration-500"
+                                    :class="results.liquidityRating.color"
+                                    :style="`width: ${Math.min(results.freeFloatPercentage, 100)}%`"
+                                ></div>
+                            </div>
+                            <span class="text-sm font-medium" x-text="results.liquidityRating.label"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
+
+    <!-- Breakdown Chart -->
+    <div x-show="totalShares > 0" class="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 class="font-bold text-lg mb-6 flex items-center gap-2">
+            <i data-lucide="pie-chart" class="h-5 w-5"></i>
+            Share Distribution Breakdown
+        </h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Visual Breakdown -->
+            <div class="space-y-4">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span class="font-medium">Free Float</span>
+                        </div>
+                        <span x-text="formatNumber(results.freeFloatShares) + ' (' + results.freeFloatPercentage.toFixed(1) + '%)'"></span>
+                    </div>
+                    
+                    <div x-show="insiderShares > 0" class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <span class="font-medium">Insider Holdings</span>
+                        </div>
+                        <span x-text="formatNumber(insiderShares) + ' (' + ((insiderShares / totalShares) * 100).toFixed(1) + '%)'"></span>
+                    </div>
+                    
+                    <div x-show="institutionalShares > 0" class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="font-medium">Institutional (>5%)</span>
+                        </div>
+                        <span x-text="formatNumber(institutionalShares) + ' (' + ((institutionalShares / totalShares) * 100).toFixed(1) + '%)'"></span>
+                    </div>
+                    
+                    <div x-show="treasuryShares > 0" class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <span class="font-medium">Treasury Shares</span>
+                        </div>
+                        <span x-text="formatNumber(treasuryShares) + ' (' + ((treasuryShares / totalShares) * 100).toFixed(1) + '%)'"></span>
+                    </div>
+                    
+                    <div x-show="strategicShares > 0" class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                            <span class="font-medium">Strategic Holdings</span>
+                        </div>
+                        <span x-text="formatNumber(strategicShares) + ' (' + ((strategicShares / totalShares) * 100).toFixed(1) + '%)'"></span>
+                    </div>
+                    
+                    <div x-show="restrictedShares > 0" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+                            <span class="font-medium">Other Restricted</span>
+                        </div>
+                        <span x-text="formatNumber(restrictedShares) + ' (' + ((restrictedShares / totalShares) * 100).toFixed(1) + '%)'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold mb-3">Key Metrics</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Total Outstanding:</span>
+                            <span class="font-medium" x-text="formatNumber(totalShares)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Available for Trading:</span>
+                            <span class="font-medium text-blue-600" x-text="formatNumber(results.freeFloatShares)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Restricted:</span>
+                            <span class="font-medium text-red-600" x-text="formatNumber(results.totalRestrictedShares)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Float Ratio:</span>
+                            <span class="font-medium" x-text="results.freeFloatPercentage.toFixed(2) + '%'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="stockPrice > 0" class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-semibold mb-3">Market Value</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Total Market Cap:</span>
+                            <span class="font-medium" x-text="'$' + formatNumber(totalShares * stockPrice)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Free Float Value:</span>
+                            <span class="font-medium text-blue-600" x-text="'$' + formatNumber(results.freeFloatValue)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Restricted Value:</span>
+                            <span class="font-medium text-red-600" x-text="'$' + formatNumber(results.totalRestrictedShares * stockPrice)"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5"></i>
+            Understanding Free Float Shares
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold mb-3">What is Free Float?</h4>
+                <p class="text-gray-600 mb-4">Free float represents the portion of a company's shares that are available for public trading. These shares are not held by insiders, large institutional investors, or other restricted parties.</p>
+                
+                <h4 class="font-semibold mb-3">Key Components</h4>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Insider Holdings:</strong> Shares held by company executives, directors, and employees</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Institutional Holdings:</strong> Large stakes (>5%) held by institutions</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Treasury Shares:</strong> Shares repurchased by the company</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Strategic Holdings:</strong> Long-term strategic investments</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">Why Free Float Matters</h4>
+                <ul class="space-y-2 text-gray-600 mb-4">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="trending-up" class="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Liquidity:</strong> Higher free float means easier buying and selling</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="activity" class="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Volatility:</strong> Lower free float can lead to higher price volatility</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="users" class="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Index Inclusion:</strong> Many indices use free-float weighting</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="shield" class="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Takeover Risk:</strong> Low free float may indicate takeover protection</span>
+                    </li>
+                </ul>
+                
+                <h4 class="font-semibold mb-3">Formula</h4>
+                <div class="bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                    Free Float = Total Outstanding Shares - Restricted Holdings
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
+        <h3 class="font-bold text-lg mb-4 flex items-center gap-2 text-blue-800">
+            <i data-lucide="lightbulb" class="h-5 w-5"></i>
+            Analysis Tips
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="target" class="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-blue-800">High Free Float (>75%)</p>
+                        <p class="text-sm text-blue-600">Generally indicates good liquidity and institutional interest</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i data-lucide="alert-triangle" class="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-orange-800">Medium Free Float (25-75%)</p>
+                        <p class="text-sm text-orange-600">Moderate liquidity, analyze holder composition carefully</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i data-lucide="alert-circle" class="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-red-800">Low Free Float (<25%)</p>
+                        <p class="text-sm text-red-600">May have liquidity issues and higher volatility</p>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="search" class="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-green-800">Research Sources</p>
+                        <p class="text-sm text-green-600">Check 10-K filings, proxy statements, and financial databases</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i data-lucide="calendar" class="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-purple-800">Regular Updates</p>
+                        <p class="text-sm text-purple-600">Free float changes over time due to buybacks and insider trading</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i data-lucide="bar-chart" class="h-5 w-5 text-indigo-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="font-medium text-indigo-800">Compare Peers</p>
+                        <p class="text-sm text-indigo-600">Benchmark against industry averages and similar companies</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function freeFloatCalculator() {
+    return {
+        totalShares: 0,
+        insiderShares: 0,
+        institutionalShares: 0,
+        treasuryShares: 0,
+        strategicShares: 0,
+        restrictedShares: 0,
+        stockPrice: 0,
+        
+        results: {
+            freeFloatShares: 0,
+            freeFloatPercentage: 0,
+            totalRestrictedShares: 0,
+            freeFloatValue: 0,
+            liquidityRating: { label: 'Unknown', color: 'bg-gray-400' }
+        },
+        
+        calculateFreeFloat() {
+            if (this.totalShares <= 0) {
+                this.resetResults();
+                return;
+            }
+            
+            const totalRestricted = (this.insiderShares || 0) + 
+                                  (this.institutionalShares || 0) + 
+                                  (this.treasuryShares || 0) + 
+                                  (this.strategicShares || 0) + 
+                                  (this.restrictedShares || 0);
+            
+            const freeFloat = Math.max(0, this.totalShares - totalRestricted);
+            const freeFloatPercentage = this.totalShares > 0 ? (freeFloat / this.totalShares) * 100 : 0;
+            
+            this.results = {
+                freeFloatShares: freeFloat,
+                freeFloatPercentage: freeFloatPercentage,
+                totalRestrictedShares: totalRestricted,
+                freeFloatValue: freeFloat * (this.stockPrice || 0),
+                liquidityRating: this.getLiquidityRating(freeFloatPercentage)
+            };
+        },
+        
+        getLiquidityRating(percentage) {
+            if (percentage >= 75) {
+                return { label: 'High Liquidity', color: 'bg-green-500' };
+            } else if (percentage >= 50) {
+                return { label: 'Good Liquidity', color: 'bg-blue-500' };
+            } else if (percentage >= 25) {
+                return { label: 'Moderate Liquidity', color: 'bg-yellow-500' };
+            } else if (percentage > 0) {
+                return { label: 'Low Liquidity', color: 'bg-red-500' };
+            } else {
+                return { label: 'No Free Float', color: 'bg-gray-400' };
+            }
+        },
+        
+        resetResults() {
+            this.results = {
+                freeFloatShares: 0,
+                freeFloatPercentage: 0,
+                totalRestrictedShares: 0,
+                freeFloatValue: 0,
+                liquidityRating: { label: 'Unknown', color: 'bg-gray-400' }
+            };
+        },
+        
+        resetCalculator() {
+            this.totalShares = 0;
+            this.insiderShares = 0;
+            this.institutionalShares = 0;
+            this.treasuryShares = 0;
+            this.strategicShares = 0;
+            this.restrictedShares = 0;
+            this.stockPrice = 0;
+            this.resetResults();
+        },
+        
+        formatNumber(num) {
+            if (num === 0) return '0';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toLocaleString();
+        }
+    }
+}
+</script>
+
         </div>
     </div>
     <!-- Email Capture for Tools -->
@@ -415,19 +835,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sell-through-rate.html">
-                        Sell Through Rate Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/high-low-method.html">
-                        High-Low Method
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/revenue-calculator.html">
+                        Revenue Calculator
                       </a>
                     </li>
                     
@@ -435,8 +844,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/inventory-turnover.html">
-                        Inventory Turnover Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/retention-ratio.html">
+                        Retention Ratio Calculator
                       </a>
                     </li>
                     
@@ -444,8 +853,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/velocity-of-money.html">
-                        Velocity of Money Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/triple-discount.html">
+                        Triple Discount Calculator
                       </a>
                     </li>
                     
@@ -453,8 +862,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/net-debt.html">
-                        Net Debt Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/capitalization-rate.html">
+                        Capitalization Rate
                       </a>
                     </li>
                     
@@ -462,8 +871,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/text-formatter.html">
-                        Text Formatter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/home-sale-profit.html">
+                        Home Sale Profit Calculator
                       </a>
                     </li>
                     
@@ -471,8 +880,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/discount-calculator.html">
-                        Discount Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/credit-card-payment.html">
+                        Credit Card Payment Calculator
                       </a>
                     </li>
                     
@@ -480,11 +889,22 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/sharpe-ratio.html">
-                        Sharpe Ratio Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/coupon-payment.html">
+                        Coupon Payment Calculator
                       </a>
                     </li>
                     
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/uuid-generator.html">
+                        UUID Generator
+                      </a>
+                    </li>
+                    
+                  
+                
                   
                 
                   
@@ -1083,7 +1503,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1096,7 +1516,7 @@ async function handleEmailCapture(event, toolId, captureType) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     

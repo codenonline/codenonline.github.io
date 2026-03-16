@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scientific Calculator - Coming Soon</title>
+    <title>
+    Scientific Calculator - Developer & Financial Tools</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,104 +54,245 @@
 </head>
 <body class="bg-gray-50">
     
-
-    <!-- Header -->
-    <div class="bg-white border-b">
-        <div class="container mx-auto px-4 py-6 max-w-7xl">
-            <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                    Back to Tools
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
-
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                        Back to Tools
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                </div>
             </div>
         </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Scientific Calculator</h1>
+            <p class="text-gray-600">Advanced calculator with trigonometric, logarithmic, and statistical functions.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="scientificCalculator()" class="max-w-2xl mx-auto">
+  <div class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="calculator" class="w-5 h-5 text-blue-600"></i>
+        Scientific Calculator
+      </h3>
     </div>
+    <div class="p-6">
+      <!-- Display -->
+      <div class="bg-gray-900 rounded-lg p-4 mb-4">
+        <div class="text-gray-400 text-sm text-right min-h-[1.25rem] font-mono" x-text="expression || '&nbsp;'"></div>
+        <div class="text-white text-3xl text-right font-mono min-h-[2.5rem] break-all" x-text="display || '0'"></div>
+      </div>
 
-<div class="max-w-4xl my-4 mx-auto px-4">
-  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-    <div class="mb-8">
-      <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="calculator" class="w-12 h-12 text-blue-600"></i>
+      <!-- Mode Toggle -->
+      <div class="flex gap-2 mb-4">
+        <button @click="angleMode = 'deg'" class="px-3 py-1 text-sm rounded-lg transition-colors" :class="angleMode === 'deg' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'">DEG</button>
+        <button @click="angleMode = 'rad'" class="px-3 py-1 text-sm rounded-lg transition-colors" :class="angleMode === 'rad' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'">RAD</button>
       </div>
-      
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Scientific Calculator</h1>
-      <p class="text-lg text-gray-600 mb-6">Advanced calculator with trigonometric, logarithmic, and statistical functions.</p>
-      
-      <div class="inline-flex items-center px-6 py-3 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        Coming Soon
-      </div>
-    </div>
-    
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
-      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Easy-to-use interface
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Accurate calculations
-        </div>
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Detailed explanations
-        </div>
-      </div>
-    </div>
-    
-    <div class="space-y-4">
-      <p class="text-gray-600">This calculator is currently under development and will be available soon.</p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Browse Available Tools
-        </a>
-        
-        <button onclick="upvoteTool('scientific-calculator')" class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mr-2">
-            <path fill-rule="evenodd" d="M9.47 4.72a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.31l-3.72 3.72a.75.75 0 1 1-1.06-1.06l4.25-4.25Zm-4.25 9.25 4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 11.31l-3.72 3.72a.75.75 0 0 1-1.06-1.06Z" clip-rule="evenodd" />
-          </svg>
-          Upvote Tool
+
+      <!-- Buttons -->
+      <div class="grid grid-cols-5 gap-2">
+        <!-- Row 1: Scientific functions -->
+        <button @click="appendFunc('sin(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">sin</button>
+        <button @click="appendFunc('cos(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">cos</button>
+        <button @click="appendFunc('tan(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">tan</button>
+        <button @click="appendFunc('log(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">log</button>
+        <button @click="appendFunc('ln(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">ln</button>
+
+        <!-- Row 2: More functions -->
+        <button @click="appendFunc('sqrt(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">&radic;</button>
+        <button @click="append('^')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">x<sup>y</sup></button>
+        <button @click="append('(')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">(</button>
+        <button @click="append(')')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">)</button>
+        <button @click="append('!')" class="py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-lg font-medium text-sm transition-colors">n!</button>
+
+        <!-- Row 3: Constants + clear -->
+        <button @click="append('pi')" class="py-3 bg-teal-100 hover:bg-teal-200 text-teal-800 rounded-lg font-medium text-sm transition-colors">&pi;</button>
+        <button @click="append('e')" class="py-3 bg-teal-100 hover:bg-teal-200 text-teal-800 rounded-lg font-medium text-sm transition-colors">e</button>
+        <button @click="clearAll()" class="py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium text-sm transition-colors">AC</button>
+        <button @click="backspace()" class="py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium text-sm transition-colors">
+          <i data-lucide="delete" class="w-4 h-4 mx-auto"></i>
         </button>
+        <button @click="append('/')" class="py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium text-lg transition-colors">&divide;</button>
+
+        <!-- Row 4: 7 8 9 * -->
+        <button @click="append('7')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">7</button>
+        <button @click="append('8')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">8</button>
+        <button @click="append('9')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">9</button>
+        <button @click="append('*')" class="py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium text-lg transition-colors col-span-2">&times;</button>
+
+        <!-- Row 5: 4 5 6 - -->
+        <button @click="append('4')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">4</button>
+        <button @click="append('5')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">5</button>
+        <button @click="append('6')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">6</button>
+        <button @click="append('-')" class="py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium text-lg transition-colors col-span-2">&minus;</button>
+
+        <!-- Row 6: 1 2 3 + -->
+        <button @click="append('1')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">1</button>
+        <button @click="append('2')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">2</button>
+        <button @click="append('3')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">3</button>
+        <button @click="append('+')" class="py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium text-lg transition-colors col-span-2">+</button>
+
+        <!-- Row 7: 0 . = -->
+        <button @click="append('0')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors col-span-2">0</button>
+        <button @click="append('.')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium text-lg transition-colors">.</button>
+        <button @click="calculate()" class="py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-lg transition-colors col-span-2">=</button>
+      </div>
+
+      <!-- History -->
+      <div x-show="history.length > 0" class="mt-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-medium text-gray-700">History</h4>
+          <button @click="history = []" class="text-xs text-gray-500 hover:text-gray-700">Clear</button>
+        </div>
+        <div class="max-h-32 overflow-y-auto space-y-1">
+          <template x-for="(item, i) in history.slice().reverse()" :key="i">
+            <div class="flex justify-between text-sm py-1 px-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" @click="display = item.result; expression = item.expr">
+              <span class="text-gray-500 font-mono" x-text="item.expr"></span>
+              <span class="font-mono font-medium" x-text="'= ' + item.result"></span>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Email Capture for Coming Soon Tools -->
-  <div class="mt-8 max-w-md mx-auto">
-    
-    <!-- Email Capture Form -->
+<script>
+function scientificCalculator() {
+  return {
+    display: '0',
+    expression: '',
+    angleMode: 'deg',
+    history: [],
+    newNumber: true,
+
+    append(val) {
+      if (this.newNumber && /\d/.test(val)) {
+        this.display = val;
+        this.newNumber = false;
+      } else {
+        if (this.display === '0' && /\d/.test(val)) {
+          this.display = val;
+        } else {
+          this.display += val;
+        }
+        this.newNumber = false;
+      }
+    },
+
+    appendFunc(func) {
+      if (this.newNumber) {
+        this.display = func;
+      } else {
+        this.display += func;
+      }
+      this.newNumber = false;
+    },
+
+    clearAll() {
+      this.display = '0';
+      this.expression = '';
+      this.newNumber = true;
+    },
+
+    backspace() {
+      if (this.display.length > 1) {
+        this.display = this.display.slice(0, -1);
+      } else {
+        this.display = '0';
+        this.newNumber = true;
+      }
+    },
+
+    factorial(n) {
+      if (n < 0) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= n; i++) result *= i;
+      return result;
+    },
+
+    calculate() {
+      try {
+        let expr = this.display;
+        this.expression = expr;
+
+        // Replace constants
+        expr = expr.replace(/pi/g, Math.PI.toString());
+        expr = expr.replace(/(?<![a-z])e(?![a-z])/g, Math.E.toString());
+
+        // Handle factorial
+        expr = expr.replace(/(\d+)!/g, (_, n) => this.factorial(parseInt(n)).toString());
+
+        // Handle power
+        expr = expr.replace(/\^/g, '**');
+
+        // Handle trig functions with angle mode
+        const self = this;
+        if (this.angleMode === 'deg') {
+          expr = expr.replace(/sin\(([^)]+)\)/g, (_, a) => `Math.sin((${a})*Math.PI/180)`);
+          expr = expr.replace(/cos\(([^)]+)\)/g, (_, a) => `Math.cos((${a})*Math.PI/180)`);
+          expr = expr.replace(/tan\(([^)]+)\)/g, (_, a) => `Math.tan((${a})*Math.PI/180)`);
+        } else {
+          expr = expr.replace(/sin\(/g, 'Math.sin(');
+          expr = expr.replace(/cos\(/g, 'Math.cos(');
+          expr = expr.replace(/tan\(/g, 'Math.tan(');
+        }
+
+        expr = expr.replace(/log\(/g, 'Math.log10(');
+        expr = expr.replace(/ln\(/g, 'Math.log(');
+        expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
+
+        const result = new Function('return ' + expr)();
+        const formatted = Number.isInteger(result) ? result.toString() : parseFloat(result.toPrecision(12)).toString();
+
+        this.history.push({ expr: this.display, result: formatted });
+        if (this.history.length > 20) this.history.shift();
+
+        this.display = formatted;
+        this.newNumber = true;
+      } catch (e) {
+        this.display = 'Error';
+        this.newNumber = true;
+      }
+    }
+  };
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
-                <i data-lucide="bell" class="h-5 w-5 mx-auto"></i>
-                Get Notified when Scientific Calculator is ready
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Scientific Calculator  via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
             
-                Be the first to know when Scientific Calculator is ready
+                Save your calculations and get detailed breakdowns
             
         </p>
     </div>
     <div class="p-6">
-        <form onsubmit="handleEmailCapture(event, 'scientific-calculator', 'notify')">
+        <form onsubmit="handleEmailCapture(event, 'scientific-calculator', 'result')">
             <div class="space-y-4">
                 
                 <div class="space-y-2">
@@ -170,7 +312,7 @@
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
-                        Notify Me When Ready
+                        Get Results via Email
                     
                 </button>
                 <p class="text-xs text-gray-500 text-center">
@@ -178,7 +320,7 @@
                 </p>
             </div>
         </form>
-        <div id="email-capture-message-notify" class="mt-4 hidden">
+        <div id="email-capture-message-result" class="mt-4 hidden">
             <div class="rounded-lg bg-green-50 border border-green-200 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -187,7 +329,7 @@
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll notify you when Scientific Calculator is ready.
+                                Thanks! We'll send your results to your inbox.
                             
                         </p>
                     </div>
@@ -283,612 +425,9 @@ async function handleEmailCapture(event, toolId, captureType) {
     }
 }
 </script>
-  </div>
-  
-  <!-- Related Available Tools -->
-  <div class="mt-12 px-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Available Math Tools</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
     </div>
-  </div>
-</div>
-<!-- Footer -->
-<footer class="bg-white border-t mt-16 dark:bg-gray-900">
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
   <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-6">
@@ -994,13 +533,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                 
                   
-                
-                  
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/text-case-converter.html">
-                        Text Case Converter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/osha-trir-rate.html">
+                        OSHA TRIR Rate
                       </a>
                     </li>
                     
@@ -1008,19 +543,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/return-on-equity.html">
-                        Return on Equity Calculator
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/nopat-calculator.html">
-                        NOPAT Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/average-daily-rate.html">
+                        Average Daily Rate
                       </a>
                     </li>
                     
@@ -1028,8 +552,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/operating-cash-flow-ratio.html">
-                        Operating Cash Flow Ratio
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/gift-of-equity.html">
+                        Gift of Equity Calculator
                       </a>
                     </li>
                     
@@ -1037,19 +561,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/email-extractor.html">
-                        Email Extractor
-                      </a>
-                    </li>
-                    
-                  
-                
-                  
-                
-                  
-                    <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/triple-discount.html">
-                        Triple Discount Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/add-line-numbers.html">
+                        Add Line Numbers
                       </a>
                     </li>
                     
@@ -1057,8 +570,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/storage-unit-profit.html">
-                        Storage Unit Profit Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/mortgage-calculator.html">
+                        Mortgage Calculator
                       </a>
                     </li>
                     
@@ -1066,11 +579,37 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/deadweight-loss.html">
-                        Deadweight Loss Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/retained-earnings.html">
+                        Retained Earnings Calculator
                       </a>
                     </li>
                     
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/real-rate-of-return.html">
+                        Real Rate of Return
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/taylor-rule.html">
+                        Taylor Rule Calculator
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   
@@ -1663,7 +1202,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1671,40 +1210,12 @@ async function handleEmailCapture(event, toolId, captureType) {
 </footer>
 
 
-<script>
-async function upvoteTool(toolId) {
-    try {
-        // Capture upvote with PostHog
-        if (typeof posthog !== 'undefined') {
-            posthog.capture('tool_upvoted', {
-                tool_id: toolId,
-                tool_name: 'Scientific Calculator',
-                tool_category: 'math',
-                timestamp: new Date().toISOString()
-            });
-            
-            console.log('Tool upvoted with PostHog:', { toolId });
-        } else {
-            console.log('PostHog not available, tool upvote:', { toolId });
-        }
-        
-        // Show success message
-        alert('Thanks for your upvote! We\'ll prioritize the development of Scientific Calculator.');
-        
-    } catch (error) {
-        console.error('Error upvoting tool:', error);
-        alert('Something went wrong. Please try again.');
-    }
-}
-</script>
-
-
     
     
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     

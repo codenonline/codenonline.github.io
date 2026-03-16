@@ -75,162 +75,11 @@
                 </div>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Net Stable Funding Ratio (NSFR)</h1>
-            <p class="text-gray-600">Calculate NSFR for banking analysis.</p>
+            <p class="text-gray-600">Assess a bank&#39;s ability to fund its activities with stable sources over a one-year horizon, per Basel III liquidity standards.</p>
         </div>
         <!-- Tool Content -->
         <div class="container mx-auto px-4 py-8 max-w-7xl">
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Net Stable Funding Ratio (NSFR) Calculator</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
-            api_host: 'https://us.i.posthog.com',
-            defaults: '2025-05-24',
-            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-        })
-    </script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-0BG099QVRK');
-    </script>
-
-    <!-- Event snippet for Website lead conversion page
-    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-    function gtag_report_conversion(url) {
-    var callback = function () {
-        if (typeof(url) != 'undefined') {
-        window.location = url;
-        }
-    };
-    gtag('event', 'conversion', {
-        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
-        'event_callback': callback
-    });
-    return false;
-    }
-    </script>
-
-
-</head>
-<body class="bg-gray-50">
-    
-<div x-data="nsfrCalculator()" class="space-y-8">
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-6">
-        <h1 class="text-3xl font-bold mb-2">Net Stable Funding Ratio (NSFR) Calculator</h1>
-        <p class="text-blue-100">Calculate NSFR for banking regulatory compliance and stability analysis</p>
-    </div>
-
-    <!-- Input Form -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-            <i data-lucide="calculator" class="h-5 w-5"></i>
-            NSFR Components
-        </h2>
-
-        <!-- Available Stable Funding (ASF) -->
-        <div class="mb-8">
-            <h3 class="text-lg font-medium mb-4 text-blue-700">Available Stable Funding (ASF)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tier 1 Capital + Additional Tier 1
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.tier1Capital"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tier 2 Capital
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.tier2Capital"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Retail Deposits (< 1 year)
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.retailDeposits"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Stable Deposits (≥ 1 year)
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.stableDeposits"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Wholesale Funding (≥ 1 year)
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.wholesaleFunding"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Other Liabilities (< 1 year)
-                    </label>
-                    <input
-                        type="number"
-                        x-model.number="asf.otherLiabilities"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter amount in millions"
-                        step="0.01"
-                        min="0"
-                    >
-                </div>
-            </div>
+            <div x-data="nsfrCalculator()" class="space-y-8">
         </div>
 
         <!-- Required Stable Funding (RSF) -->
@@ -556,24 +405,6 @@ function nsfrCalculator() {
 }
 </script>
 
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
-        </div>
-    </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
         </div>
     </div>
     <!-- Email Capture for Tools -->
@@ -836,11 +667,9 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                 
                   
-                
-                  
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/base64-encoder.html">
-                        Base64 Encoder/Decoder
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/compound-interest.html">
+                        Compound Interest Calculator
                       </a>
                     </li>
                     
@@ -848,8 +677,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/osha-trir-rate.html">
-                        OSHA TRIR Rate
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/debt-to-capital-ratio.html">
+                        Debt to Capital Ratio
                       </a>
                     </li>
                     
@@ -857,8 +686,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/mortgage-calculator.html">
-                        Mortgage Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/apr-calculator.html">
+                        APR Calculator
                       </a>
                     </li>
                     
@@ -866,8 +695,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/url-extractor.html">
-                        URL Extractor
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/operating-cash-flow-ratio.html">
+                        Operating Cash Flow Ratio
                       </a>
                     </li>
                     
@@ -875,8 +704,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/conversion-rate-calculator.html">
-                        Conversion Rate Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/leverage-ratio.html">
+                        Leverage Ratio Calculator
                       </a>
                     </li>
                     
@@ -884,8 +713,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/empty-lines-remover.html">
-                        Empty Lines Remover
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/return-on-equity.html">
+                        Return on Equity Calculator
                       </a>
                     </li>
                     
@@ -893,8 +722,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/duplicate-lines-remover.html">
-                        Duplicate Lines Remover
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/loan-calculator.html">
+                        Loan Calculator
                       </a>
                     </li>
                     
@@ -902,11 +731,13 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/inventory-turnover.html">
-                        Inventory Turnover Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/altman-z-score.html">
+                        Altman Z-Score
                       </a>
                     </li>
                     
+                  
+                
                   
                 
                   
@@ -1505,7 +1336,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1518,7 +1349,7 @@ async function handleEmailCapture(event, toolId, captureType) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     

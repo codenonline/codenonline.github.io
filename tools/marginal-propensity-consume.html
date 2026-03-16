@@ -75,83 +75,395 @@
                 </div>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Marginal Propensity to Consume (MPC)</h1>
-            <p class="text-gray-600">Calculate MPC for economic analysis.</p>
+            <p class="text-gray-600">Determine what fraction of an additional dollar of income households will spend, a core input for economic multiplier models.</p>
         </div>
         <!-- Tool Content -->
         <div class="container mx-auto px-4 py-8 max-w-7xl">
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marginal Propensity to Consume (MPC) Calculator</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/utils/calculatorUtils.js"></script>
-    <script src="/components/calculatorComponents.js"></script>
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
-            api_host: 'https://us.i.posthog.com',
-            defaults: '2025-05-24',
-            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-        })
-    </script>
+            <div x-data="mpcCalculator()" class="space-y-8">
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="calculator" class="h-4 w-4 text-purple-600"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900">MPC Calculator</h2>
+        </div>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Input Section -->
+            <div class="space-y-4">
+                <div>
+                    <label for="changeInConsumption" class="block text-sm font-medium text-gray-700 mb-2">
+                        Change in Consumption ($)
+                    </label>
+                    <input
+                        type="number"
+                        id="changeInConsumption"
+                        x-model="changeInConsumption"
+                        @input="calculateMPC"
+                        placeholder="Enter change in consumption"
+                        step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                </div>
 
-    gtag('config', 'G-0BG099QVRK');
-    </script>
+                <div>
+                    <label for="changeInIncome" class="block text-sm font-medium text-gray-700 mb-2">
+                        Change in Income ($)
+                    </label>
+                    <input
+                        type="number"
+                        id="changeInIncome"
+                        x-model="changeInIncome"
+                        @input="calculateMPC"
+                        placeholder="Enter change in income"
+                        step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                </div>
 
-    <!-- Event snippet for Website lead conversion page
-    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-    function gtag_report_conversion(url) {
-    var callback = function () {
-        if (typeof(url) != 'undefined') {
-        window.location = url;
-        }
-    };
-    gtag('event', 'conversion', {
-        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
-        'event_callback': callback
-    });
-    return false;
-    }
-    </script>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-900 mb-2">Alternative Method</h4>
+                    <p class="text-sm text-gray-600 mb-3">Calculate using initial and final values:</p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Initial Consumption</label>
+                            <input
+                                type="number"
+                                x-model="initialConsumption"
+                                @input="calculateFromValues"
+                                placeholder="Initial"
+                                step="0.01"
+                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-purple-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Final Consumption</label>
+                            <input
+                                type="number"
+                                x-model="finalConsumption"
+                                @input="calculateFromValues"
+                                placeholder="Final"
+                                step="0.01"
+                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-purple-500"
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Initial Income</label>
+                            <input
+                                type="number"
+                                x-model="initialIncome"
+                                @input="calculateFromValues"
+                                placeholder="Initial"
+                                step="0.01"
+                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-purple-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Final Income</label>
+                            <input
+                                type="number"
+                                x-model="finalIncome"
+                                @input="calculateFromValues"
+                                placeholder="Final"
+                                step="0.01"
+                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-purple-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Results Section -->
+            <div class="space-y-4">
+                <!-- MPC Result -->
+                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="target" class="h-4 w-4 text-purple-600"></i>
+                        <span class="font-semibold text-purple-900">Marginal Propensity to Consume</span>
+                    </div>
+                    <div class="text-2xl font-bold text-purple-600" x-text="results.mpc !== null ? results.mpc.toFixed(4) : '-'"></div>
+                    <div class="text-sm text-purple-700 mt-1" x-text="results.mpc !== null ? (results.mpc * 100).toFixed(2) + '%' : 'Enter values to calculate'"></div>
+                </div>
 
-</head>
-<body class="bg-gray-50">
-    
-    
-    
-    <!-- Build Info Footer -->
-    <div class="fixed bottom-2 right-2 z-50">
-        <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+                <!-- MPS Result -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="piggy-bank" class="h-4 w-4 text-blue-600"></i>
+                        <span class="font-semibold text-blue-900">Marginal Propensity to Save (MPS)</span>
+                    </div>
+                    <div class="text-2xl font-bold text-blue-600" x-text="results.mps !== null ? results.mps.toFixed(4) : '-'"></div>
+                    <div class="text-sm text-blue-700 mt-1" x-text="results.mps !== null ? (results.mps * 100).toFixed(2) + '%' : 'MPS = 1 - MPC'"></div>
+                </div>
+
+                <!-- Multiplier Effect -->
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="zap" class="h-4 w-4 text-green-600"></i>
+                        <span class="font-semibold text-green-900">Spending Multiplier</span>
+                    </div>
+                    <div class="text-2xl font-bold text-green-600" x-text="results.multiplier !== null ? results.multiplier.toFixed(2) : '-'"></div>
+                    <div class="text-sm text-green-700 mt-1" x-text="results.multiplier !== null ? 'k = 1 / MPS = 1 / (1 - MPC)' : 'Multiplier = 1 / MPS'"></div>
+                </div>
+
+                <!-- Interpretation -->
+                <div x-show="results.mpc !== null" class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="info" class="h-4 w-4 text-gray-600"></i>
+                        <span class="font-semibold text-gray-900">Interpretation</span>
+                    </div>
+                    <p class="text-sm text-gray-700" x-text="getInterpretation()"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div x-show="errorMessage" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="h-4 w-4 text-red-600"></i>
+                <span class="text-red-700 font-medium">Error</span>
+            </div>
+            <p class="text-red-600 text-sm mt-1" x-text="errorMessage"></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-200">
+            <button
+                @click="clearAll"
+                class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="refresh-ccw" class="h-4 w-4"></i>
+                Clear All
+            </button>
+            <button
+                @click="loadExample"
+                class="px-4 py-2 text-purple-600 hover:text-purple-800 hover:bg-purple-100 rounded-lg transition-colors flex items-center gap-2"
+            >
+                <i data-lucide="play" class="h-4 w-4"></i>
+                Load Example
+            </button>
         </div>
     </div>
-    
-    
-    <script>
-        // Initialize Lucide icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-    </script>
-</body>
-</html>
+
+    <!-- Formula Explanation -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <i data-lucide="book-open" class="h-5 w-5 text-purple-600"></i>
+            Formula & Explanation
+        </h3>
+        
+        <div class="space-y-6">
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-2">Marginal Propensity to Consume (MPC)</h4>
+                <div class="bg-gray-50 p-4 rounded-lg font-mono text-center text-lg border-l-4 border-purple-500">
+                    MPC = ΔC / ΔY
+                </div>
+                <p class="text-gray-700 mt-2">Where:</p>
+                <ul class="text-sm text-gray-600 ml-4 space-y-1">
+                    <li>• ΔC = Change in consumption</li>
+                    <li>• ΔY = Change in income</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-2">Related Formulas</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="font-mono text-center mb-2">MPS = 1 - MPC</div>
+                        <p class="text-sm text-gray-600">Marginal Propensity to Save</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="font-mono text-center mb-2">k = 1 / MPS = 1 / (1 - MPC)</div>
+                        <p class="text-sm text-gray-600">Spending Multiplier</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-3">Key Insights</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                        <h5 class="font-semibold text-purple-900 mb-2">MPC Range</h5>
+                        <p class="text-sm text-purple-700">Typically between 0 and 1. Higher values indicate greater consumption response to income changes.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                        <h5 class="font-semibold text-blue-900 mb-2">Economic Impact</h5>
+                        <p class="text-sm text-blue-700">Higher MPC leads to greater multiplier effects in economic stimulus policies.</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                        <h5 class="font-semibold text-green-900 mb-2">Policy Relevance</h5>
+                        <p class="text-sm text-green-700">Understanding MPC helps predict the effectiveness of fiscal policy measures.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Examples and Tips -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="h-5 w-5 text-yellow-500"></i>
+            Examples & Applications
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-3">Practical Examples</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <h5 class="font-medium text-gray-900">High MPC (0.8)</h5>
+                        <p class="text-sm text-gray-600">Low-income households typically spend 80¢ of every additional dollar earned.</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <h5 class="font-medium text-gray-900">Moderate MPC (0.6)</h5>
+                        <p class="text-sm text-gray-600">Middle-income households might spend 60¢ of additional income.</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <h5 class="font-medium text-gray-900">Low MPC (0.3)</h5>
+                        <p class="text-sm text-gray-600">High-income households may only spend 30¢ of additional income.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-3">Applications</h4>
+                <ul class="space-y-2 text-sm text-gray-700">
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Fiscal Policy:</strong> Estimating stimulus package effectiveness</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Economic Forecasting:</strong> Predicting consumption patterns</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Income Distribution:</strong> Analyzing spending behavior across income groups</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Tax Policy:</strong> Evaluating tax cut impacts on consumption</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="check" class="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>Business Planning:</strong> Forecasting consumer demand changes</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mpcCalculator() {
+    return {
+        changeInConsumption: '',
+        changeInIncome: '',
+        initialConsumption: '',
+        finalConsumption: '',
+        initialIncome: '',
+        finalIncome: '',
+        errorMessage: '',
+        
+        results: {
+            mpc: null,
+            mps: null,
+            multiplier: null
+        },
+        
+        calculateMPC() {
+            this.errorMessage = '';
+            
+            const deltaC = parseFloat(this.changeInConsumption);
+            const deltaY = parseFloat(this.changeInIncome);
+            
+            if (isNaN(deltaC) || isNaN(deltaY) || deltaC === '' || deltaY === '') {
+                this.results = { mpc: null, mps: null, multiplier: null };
+                return;
+            }
+            
+            if (deltaY === 0) {
+                this.errorMessage = 'Change in income cannot be zero';
+                this.results = { mpc: null, mps: null, multiplier: null };
+                return;
+            }
+            
+            const mpc = deltaC / deltaY;
+            const mps = 1 - mpc;
+            const multiplier = mps !== 0 ? 1 / mps : null;
+            
+            if (mpc < 0) {
+                this.errorMessage = 'Warning: Negative MPC indicates consumption decreases when income increases';
+            }
+            
+            if (mpc > 1) {
+                this.errorMessage = 'Warning: MPC > 1 indicates consumption increases more than income (possibly due to borrowing)';
+            }
+            
+            this.results = { mpc, mps, multiplier };
+        },
+        
+        calculateFromValues() {
+            const initC = parseFloat(this.initialConsumption);
+            const finalC = parseFloat(this.finalConsumption);
+            const initY = parseFloat(this.initialIncome);
+            const finalY = parseFloat(this.finalIncome);
+            
+            if (!isNaN(initC) && !isNaN(finalC) && !isNaN(initY) && !isNaN(finalY)) {
+                this.changeInConsumption = finalC - initC;
+                this.changeInIncome = finalY - initY;
+                this.calculateMPC();
+            }
+        },
+        
+        getInterpretation() {
+            if (this.results.mpc === null) return '';
+            
+            const mpc = this.results.mpc;
+            
+            if (mpc < 0) {
+                return `Negative MPC suggests that consumption decreases when income increases, which is unusual and may indicate data issues or special circumstances.`;
+            } else if (mpc === 0) {
+                return `MPC of 0 means no additional consumption occurs with income increases - all additional income is saved.`;
+            } else if (mpc > 0 && mpc < 0.3) {
+                return `Low MPC indicates conservative spending behavior. Only ${(mpc * 100).toFixed(1)}% of additional income goes to consumption, suggesting high savings propensity.`;
+            } else if (mpc >= 0.3 && mpc < 0.7) {
+                return `Moderate MPC suggests balanced spending and saving behavior. ${(mpc * 100).toFixed(1)}% of additional income goes to consumption.`;
+            } else if (mpc >= 0.7 && mpc <= 1) {
+                return `High MPC indicates strong propensity to consume. ${(mpc * 100).toFixed(1)}% of additional income goes to consumption, typical of lower-income households.`;
+            } else {
+                return `MPC > 1 suggests consumption increases more than income, possibly through borrowing or dissaving. This indicates very high propensity to consume.`;
+            }
+        },
+        
+        clearAll() {
+            this.changeInConsumption = '';
+            this.changeInIncome = '';
+            this.initialConsumption = '';
+            this.finalConsumption = '';
+            this.initialIncome = '';
+            this.finalIncome = '';
+            this.errorMessage = '';
+            this.results = { mpc: null, mps: null, multiplier: null };
+        },
+        
+        loadExample() {
+            this.changeInConsumption = 800;
+            this.changeInIncome = 1000;
+            this.initialConsumption = '';
+            this.finalConsumption = '';
+            this.initialIncome = '';
+            this.finalIncome = '';
+            this.calculateMPC();
+        }
+    }
+}
+</script>
+
         </div>
     </div>
     <!-- Email Capture for Tools -->
@@ -415,8 +727,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/defensive-interval-ratio.html">
-                        Defensive Interval Ratio
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/additional-funds-needed.html">
+                        Additional Funds Needed
                       </a>
                     </li>
                     
@@ -424,8 +736,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/periodic-interest-rate.html">
-                        Periodic Interest Rate
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/wind-turbine-profit.html">
+                        Wind Turbine Profit Calculator
                       </a>
                     </li>
                     
@@ -433,8 +745,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/code-minifier.html">
-                        Code Minifier
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/economic-value-added.html">
+                        Economic Value Added
                       </a>
                     </li>
                     
@@ -442,8 +754,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/butterfly-spread-profit.html">
-                        Butterfly Spread Profit
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/phone-number-extractor.html">
+                        Phone Number Extractor
                       </a>
                     </li>
                     
@@ -451,8 +763,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/email-extractor.html">
-                        Email Extractor
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/salary-to-hourly.html">
+                        Salary to Hourly Converter
                       </a>
                     </li>
                     
@@ -460,8 +772,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/information-ratio.html">
-                        Information Ratio Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/break-even.html">
+                        Break Even Calculator
                       </a>
                     </li>
                     
@@ -469,8 +781,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/shuffle-words.html">
-                        Shuffle Words
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/css-gradient-generator.html">
+                        CSS Gradient Generator
                       </a>
                     </li>
                     
@@ -478,8 +790,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/credit-card-payoff.html">
-                        Credit Card Payoff Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/funds-from-operations.html">
+                        Funds From Operations (FFO)
                       </a>
                     </li>
                     
@@ -1083,7 +1395,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Developer & Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.758733 • Nov 10, 2025, 02:12 AM EST • main@1115228
+        Build v1.0.0.657324 • Mar 16, 2026, 06:35 AM EDT • main@3e9519d
       </p>
       
     </div>
@@ -1096,7 +1408,7 @@ async function handleEmailCapture(event, toolId, captureType) {
     <!-- Build Info Footer -->
     <div class="fixed bottom-2 right-2 z-50">
         <div class="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-50 hover:opacity-100 transition-opacity">
-            v1.0.0.758733
+            v1.0.0.657324
         </div>
     </div>
     
