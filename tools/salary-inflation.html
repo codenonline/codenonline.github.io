@@ -106,7 +106,7 @@
 
 <div class="relative inline-block text-left" x-data="{ open: false }" @keydown.escape="open = false" @click.outside="open = false">
   <button type="button" @click="open = !open"
-          class="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+          class="inline-flex items-center justify-center gap-1 h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors"
           aria-haspopup="listbox" :aria-expanded="open">
     <i data-lucide="globe" class="h-3.5 w-3.5"></i>
     <span class="uppercase">en</span>
@@ -492,13 +492,15 @@ function salaryInflationCalculator() {
     <!-- Email Capture for Tools -->
     <div class="mt-8 max-w-md mx-auto">
         
-        <!-- Email Capture Form -->
+        
+
+<!-- Email Capture Form -->
 <div class="">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
             
                 <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
-                Get Results of Salary Inflation Calculator  via Email
+                Get Results of Salary Inflation Calculator via Email
             
         </h2>
         <p class="text-sm text-gray-600 mt-1 sm:text-center">
@@ -513,18 +515,19 @@ function salaryInflationCalculator() {
                 
                 <div class="space-y-2">
                     <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input 
-                        id="email-capture-input" 
-                        type="email" 
-                        name="email" 
-                        required 
-                        placeholder="Enter your email address" 
-                        autocomplete="email" 
+                    <input
+                        id="email-capture-input"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email address"
+                        autocomplete="email"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
+                    data-submitting-text="Submitting..."
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 >
                     
@@ -545,51 +548,50 @@ function salaryInflationCalculator() {
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-800">
                             
-                                Thanks! We'll send your results to your inbox.
+                                Thanks! We&#39;ll send your results to your inbox.
                             
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+        <template id="email-capture-error-template-result">Something went wrong. Please try again.</template>
     </div>
 </div>
 
 <script>
 async function handleEmailCapture(event, toolId, captureType) {
     event.preventDefault();
-    
+
     const form = event.target;
     const email = form.email.value;
     const toolRequest = form.toolRequest ? form.toolRequest.value : null;
     const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
     const submitButton = form.querySelector('button[type="submit"]');
-    
-    // Tracking 
+
+    // Tracking
     gtag_report_conversion(window.location.href)
-    
+
     // Show loading state
     const originalButtonText = submitButton.textContent;
     submitButton.disabled = true;
-    submitButton.textContent = 'Submitting...';
-    
+    submitButton.textContent = submitButton.dataset.submittingText || 'Submitting...';
+
     try {
         // Capture email with PostHog
         if (typeof posthog !== 'undefined') {
-            // Identify the user with their email
             const identifyData = {
                 email: email,
                 tool_interest: toolId,
                 capture_type: captureType
             };
-            
+
             if (toolRequest) {
                 identifyData.requested_tool = toolRequest;
             }
-            
+
             posthog.identify(email, identifyData);
-            
-            // Capture the email capture event
+
             const eventData = {
                 email: email,
                 tool_id: toolId,
@@ -597,28 +599,27 @@ async function handleEmailCapture(event, toolId, captureType) {
                 capture_type: captureType,
                 timestamp: new Date().toISOString()
             };
-            
+
             if (toolRequest) {
                 eventData.requested_tool = toolRequest;
             }
-            
+
             posthog.capture('email_captured', eventData);
-            
+
             console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
         } else {
             console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
         }
-        
-        // Simulate API delay for better UX
+
         await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Show success message
+
         messageDiv.classList.remove('hidden');
         form.style.display = 'none';
-        
+
     } catch (error) {
         console.error('Error capturing email:', error);
-        // Show error message
+        const errTpl = document.getElementById(`email-capture-error-template-${captureType || 'result'}`);
+        const errText = (errTpl && errTpl.textContent.trim()) || 'Something went wrong. Please try again.';
         messageDiv.innerHTML = `
             <div class="rounded-lg bg-red-50 border border-red-200 p-4">
                 <div class="flex items-center">
@@ -626,21 +627,19 @@ async function handleEmailCapture(event, toolId, captureType) {
                         <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm font-medium text-red-800">
-                            Something went wrong. Please try again.
-                        </p>
+                        <p class="text-sm font-medium text-red-800">${errText}</p>
                     </div>
                 </div>
             </div>
         `;
         messageDiv.classList.remove('hidden');
-        
-        // Reset button
+
         submitButton.disabled = false;
         submitButton.textContent = originalButtonText;
     }
 }
 </script>
+
     </div>
     <!-- Footer -->
     <footer class="bg-white border-t mt-16 dark:bg-gray-900">
@@ -750,8 +749,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/nopat-calculator.html">
-                        NOPAT Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/punctuation-remover.html">
+                        Punctuation Remover
                       </a>
                     </li>
                     
@@ -759,8 +758,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/currency-converter.html">
-                        Currency Converter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/real-estate-commission.html">
+                        Real Estate Commission
                       </a>
                     </li>
                     
@@ -768,8 +767,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/accounting-profit.html">
-                        Accounting Profit Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/price-to-earnings-ratio.html">
+                        Price to Earnings Ratio
                       </a>
                     </li>
                     
@@ -777,8 +776,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/markdown-converter.html">
-                        Markdown Converter
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/goodwill-calculator.html">
+                        Goodwill Calculator
                       </a>
                     </li>
                     
@@ -786,8 +785,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/earnings-per-share.html">
-                        Earnings per Share
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/consumer-surplus.html">
+                        Consumer Surplus Calculator
                       </a>
                     </li>
                     
@@ -795,8 +794,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/50-30-20-budget.html">
-                        50/30/20 Budget Rule
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/tip-calculator.html">
+                        Tip Calculator
                       </a>
                     </li>
                     
@@ -804,8 +803,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/equity-ratio.html">
-                        Equity Ratio Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/statistics-calculator.html">
+                        Statistics Calculator
                       </a>
                     </li>
                     
@@ -813,8 +812,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/break-even.html">
-                        Break Even Calculator
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/tools/debt-to-asset-ratio.html">
+                        Debt to Asset Ratio
                       </a>
                     </li>
                     
@@ -1490,7 +1489,7 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer &amp; Financial Tools. All rights reserved.</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.194886 • May 19, 2026, 08:48 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+        Build v1.0.0.204859 • May 19, 2026, 11:34 AM EDT
       </p>
       
     </div>
