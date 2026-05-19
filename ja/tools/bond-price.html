@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    債券価格計算機 - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "ja";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="landmark" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">債券価格計算機</h1>
+            <p class="text-gray-600">クーポンレート、満期利回り、および満期までの時間に基づいて債券価格を分析し、公正な市場価値を決定します。</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div class="max-w-6xl mx-auto p-6">
+    <div class="mb-8">
+    </div>
+
+    <div x-data="bondPriceCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="landmark" class="h-5 w-5"></i>
+                    債券パラメータ
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">額面 ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="1000.00"
+                        x-model="faceValue"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(faceValue) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">満期時の債券の額面価値</p>
+                    <p x-show="parseFloat(faceValue) <= 0" class="text-sm text-red-600">有効な額面を入力してください</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">クーポンレート (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="5.00"
+                        x-model="couponRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(couponRate) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">額面のパーセンテージとしての年間クーポンレート</p>
+                    <p x-show="parseFloat(couponRate) < 0" class="text-sm text-red-600">有効なクーポンレートを入力してください</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">必要利回り (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="4.50"
+                        x-model="requiredYield"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(requiredYield) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">市場利回りまたは必要利回り</p>
+                    <p x-show="parseFloat(requiredYield) < 0" class="text-sm text-red-600">有効な利回りを入力してください</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">満期までの年数</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        placeholder="10"
+                        x-model="yearsToMaturity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(yearsToMaturity) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">債券が満期になるまでの時間</p>
+                    <p x-show="parseFloat(yearsToMaturity) <= 0" class="text-sm text-red-600">有効な満期期間を入力してください</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">支払い頻度</label>
+                    <select
+                        x-model="paymentFrequency"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="1">年間</option>
+                        <option value="2">半年ごと</option>
+                        <option value="4">四半期ごと</option>
+                        <option value="12">月ごと</option>
+                    </select>
+                    <p class="text-sm text-gray-500">クーポン支払いがどの程度の頻度で行われるか</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">債券価格について</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>債券価格は、すべての将来キャッシュフロー(クーポン+元本)の現在価値です。</p>
+                        <p>利回り&gt;クーポンレートの場合、債券は割引で取引(額面以下)されます。</p>
+                        <p>利回り&lt;クーポンレートの場合、債券はプレミアムで取引(額面以上)されます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    債券評価
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Bond Price -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">債券価格</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatCurrency(results.bondPrice)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="formatPercentage(results.priceAsPercentOfPar)"></span> 額面の
+                        </p>
+                    </div>
+
+                    <!-- Price Components -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">クーポンの現在価値:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvCoupons)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">元本の現在価値:</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvPrincipal)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">債券総価格:</span>
+                            <span class="font-bold text-lg" x-text="formatCurrency(results.bondPrice)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bond Classification -->
+                    <div class="p-4 rounded-lg" :class="results.bondType === 'Premium' ? 'bg-red-50' : results.bondType === 'Discount' ? 'bg-green-50' : 'bg-blue-50'">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">債券タイプ:</span>
+                            <span class="font-semibold" :class="results.bondType === 'Premium' ? 'text-red-600' : results.bondType === 'Discount' ? 'text-green-600' : 'text-blue-600'" x-text="results.bondType"></span>
+                        </div>
+                        <p class="text-sm mt-1" :class="results.bondType === 'Premium' ? 'text-red-700' : results.bondType === 'Discount' ? 'text-green-700' : 'text-blue-700'">
+                            <span x-show="results.bondType === 'Premium'">額面以上で取引 - 利回り &lt; クーポンレート</span>
+                            <span x-show="results.bondType === 'Discount'">額面以下で取引 - 利回り &gt; クーポンレート</span>
+                            <span x-show="results.bondType === 'At Par'">額面で取引 - 利回り = クーポンレート</span>
+                        </p>
+                    </div>
+
+                    <!-- Duration Analysis -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="clock" class="h-4 w-4"></i>
+                            デュレーション分析
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">マコーレー・デュレーション:</span>
+                                <span class="font-semibold" x-text="results.macaulayDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">修正デュレーション:</span>
+                                <span class="font-semibold" x-text="results.modifiedDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                修正デュレーションは利回り変化に対する価格感応度を推定します
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Sensitivity Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+                価格感応度分析
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Yield Change Impact -->
+                <div>
+                    <h4 class="font-medium mb-4">利回り変化の影響</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-2, -1, -0.5, 0, 0.5, 1, 2]" :key="change">
+                            <div class="flex justify-between items-center p-2 rounded" :class="change === 0 ? 'bg-blue-50' : ''">
+                                <span class="text-sm" x-text="`${change > 0 ? '+' : ''}${change}% yield change:`"></span>
+                                <div class="text-right">
+                                    <div class="font-semibold" x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></div>
+                                    <div class="text-xs text-gray-500" x-show="change !== 0" x-text="formatPercentage(((calculatePriceAtYield(parseFloat(requiredYield) + change) - results.bondPrice) / results.bondPrice) * 100, true)"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Duration Estimates vs Actual -->
+                <div>
+                    <h4 class="font-medium mb-4">デュレーション推定精度</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-1, -0.5, 0.5, 1]" :key="change">
+                            <div class="p-2 rounded bg-gray-50">
+                                <div class="flex justify-between text-sm">
+                                    <span x-text="`${change > 0 ? '+' : ''}${change}% yield:`"></span>
+                                    <span>実際 対 デュレーション推定</span>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></span>
+                                    <span x-text="formatCurrency(results.bondPrice * (1 - results.modifiedDuration * change / 100))"></span>
+                                </div>
+                                <div class="text-xs text-gray-500 text-center mt-1">
+                                    誤差: <span x-text="formatPercentage(Math.abs((calculatePriceAtYield(parseFloat(requiredYield) + change) - (results.bondPrice * (1 - results.modifiedDuration * change / 100))) / calculatePriceAtYield(parseFloat(requiredYield) + change)) * 100)"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                債券価格を理解する
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">債券価格公式</h4>
+                    <div class="bg-white p-3 rounded border text-sm font-mono mb-3">
+                        P = Σ(C/(1+r)^t) + F/(1+r)^n
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p><strong>P</strong> = 債券価格</p>
+                        <p><strong>C</strong> = クーポン支払い</p>
+                        <p><strong>r</strong> = 必要利回り(期間あたり)</p>
+                        <p><strong>t</strong> = 時間期間</p>
+                        <p><strong>F</strong> = 額面</p>
+                        <p><strong>n</strong> = 期間数</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">デュレーション概念</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>マコーレー・デュレーション:</strong> キャッシュフローを受け取るまでの加重平均時間</p>
+                        <p><strong>修正デュレーション:</strong> 価格感応度測度</p>
+                        <p><strong>公式:</strong> 修正デュレーション = マコーレー・デュレーション ÷ (1 + 利回り/頻度)</p>
+                        <p><strong>価格変化 ≈</strong> -修正デュレーション × 利回り変化</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">割引債</h4>
+                    <div class="text-sm text-green-800">
+                        <p>利回り &gt; クーポンレート</p>
+                        <p>価格 &lt; 額面</p>
+                        <p>満期での資本増価</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">額面債</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>利回り = クーポンレート</p>
+                        <p>価格 = 額面</p>
+                        <p>キャピタルゲイン/ロスなし</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">プレミアム債</h4>
+                    <div class="text-sm text-red-800">
+                        <p>利回り &lt; クーポンレート</p>
+                        <p>価格 &gt; 額面</p>
+                        <p>満期での資本損失</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">主要な洞察</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• 債券価格は利回り変化と逆に動く</li>
+                    <li>• 満期が長い債券は利回り変化に対してより敏感</li>
+                    <li>• クーポンが低い債券はデュレーションと価格感応度が高い</li>
+                    <li>• デュレーションは価格変化の線形近似を提供</li>
+                    <li>• コンベックスティは大きな利回り変化に重要になる</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function bondPriceCalculator() {
+    return {
+        faceValue: '1000.00',
+        couponRate: '5.00',
+        requiredYield: '4.50',
+        yearsToMaturity: '10',
+        paymentFrequency: '2',
+        
+        get results() {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const yield = parseFloat(this.requiredYield) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            // Calculate periodic values
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = yield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            // Calculate present value of coupon payments
+            let pvCoupons = 0;
+            let weightedCashFlows = 0; // For Macaulay duration calculation
+            
+            if (periodicYield === 0) {
+                // Special case: zero yield
+                pvCoupons = periodicCoupon * totalPeriods;
+                weightedCashFlows = periodicCoupon * totalPeriods * (totalPeriods + 1) / 2;
+            } else {
+                // Standard present value calculation
+                for (let t = 1; t <= totalPeriods; t++) {
+                    const pv = periodicCoupon / Math.pow(1 + periodicYield, t);
+                    pvCoupons += pv;
+                    weightedCashFlows += pv * t;
+                }
+            }
+            
+            // Calculate present value of principal
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            weightedCashFlows += pvPrincipal * totalPeriods;
+            
+            // Total bond price
+            const bondPrice = pvCoupons + pvPrincipal;
+            
+            // Calculate Macaulay Duration
+            const macaulayDuration = (weightedCashFlows / bondPrice) / periodsPerYear;
+            
+            // Calculate Modified Duration
+            const modifiedDuration = macaulayDuration / (1 + periodicYield);
+            
+            // Determine bond type
+            const priceAsPercentOfPar = (bondPrice / face) * 100;
+            let bondType = 'At Par';
+            if (bondPrice > face * 1.001) bondType = 'Premium';
+            else if (bondPrice < face * 0.999) bondType = 'Discount';
+            
+            return {
+                bondPrice,
+                pvCoupons,
+                pvPrincipal,
+                priceAsPercentOfPar,
+                bondType,
+                macaulayDuration,
+                modifiedDuration
+            };
+        },
+        
+        calculatePriceAtYield(newYield) {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = newYield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            let pvCoupons = 0;
+            
+            if (periodicYield === 0) {
+                pvCoupons = periodicCoupon * totalPeriods;
+            } else {
+                for (let t = 1; t <= totalPeriods; t++) {
+                    pvCoupons += periodicCoupon / Math.pow(1 + periodicYield, t);
+                }
+            }
+            
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            
+            return pvCoupons + pvPrincipal;
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of 債券価格計算機  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'bond-price', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: '債券価格計算機',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/ja/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/ja/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/ja/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/economic-order-quantity.html">
+                        経済的発注量 (EOQ)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/bond-yield-to-maturity.html">
+                        債券利回り（満期まで保有時）
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/combination-generator.html">
+                        組み合わせジェネレーター
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/customer-retention-rate.html">
+                        顧客維持率
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/equity-ratio.html">
+                        自己資本比率計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/bond-equivalent-yield.html">
+                        債券等価利回り
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/book-profit.html">
+                        簿記利益計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/carried-interest.html">
+                        キャリードインタレスト計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">日本語</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="zh" href="/zh/index.html">中文</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

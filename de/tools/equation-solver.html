@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    Gleichungslöser - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "de";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="function-square" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Gleichungslöser</h1>
+            <p class="text-gray-600">Lösen Sie lineare und quadratische Gleichungen mit schrittweisen Lösungen.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="equationSolver()" class="max-w-4xl mx-auto space-y-6">
+  <!-- Input Section -->
+  <div class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="sigma" class="w-5 h-5 text-blue-600"></i>
+        Gleichungseingabe
+      </h3>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Gleichungstyp</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 px-4 py-2 border rounded-lg cursor-pointer" :class="type === 'linear' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300'">
+            <input type="radio" x-model="type" value="linear" class="sr-only">
+            <span class="font-medium">Linear: ax + b = 0</span>
+          </label>
+          <label class="flex items-center gap-2 px-4 py-2 border rounded-lg cursor-pointer" :class="type === 'quadratic' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300'">
+            <input type="radio" x-model="type" value="quadratic" class="sr-only">
+            <span class="font-medium">Quadratisch: ax&amp;sup2; + bx + c = 0</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Koeffizient a</label>
+          <input type="number" x-model.number="a" step="any" placeholder="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Koeffizient b</label>
+          <input type="number" x-model.number="b" step="any" placeholder="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div x-show="type === 'quadratic'">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Koeffizient c</label>
+          <input type="number" x-model.number="c" step="any" placeholder="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+      </div>
+
+      <button @click="solve()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <i data-lucide="calculator" class="w-4 h-4"></i>
+        Gleichung Lösen
+      </button>
+    </div>
+  </div>
+
+  <!-- Equation Display -->
+  <div x-show="solved" class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="function-square" class="w-5 h-5 text-blue-600"></i>
+        Gleichung
+      </h3>
+    </div>
+    <div class="p-6">
+      <div class="text-center text-2xl font-mono p-4 bg-gray-50 rounded-lg" x-text="equationDisplay"></div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div x-show="solved" class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+        Lösung
+      </h3>
+    </div>
+    <div class="p-6">
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <template x-for="(sol, i) in solutions" :key="i">
+          <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+            <p class="text-sm text-blue-600 mb-1" x-text="solutions.length === 1 ? 'Solution' : 'x' + (i+1)"></p>
+            <p class="text-xl font-bold text-blue-800" x-text="formatNumber(sol)"></p>
+          </div>
+        </template>
+        <div x-show="type === 'quadratic'" class="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+          <p class="text-sm text-blue-600 mb-1">Diskriminante</p>
+          <p class="text-xl font-bold text-blue-800" x-text="formatNumber(discriminant)"></p>
+        </div>
+        <div x-show="type === 'quadratic'" class="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+          <p class="text-sm text-blue-600 mb-1">Art der Wurzeln</p>
+          <p class="text-sm font-bold text-blue-800" x-text="rootNature"></p>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div x-show="solveError" class="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-700" x-text="solveError"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step by Step -->
+  <div x-show="solved && steps.length > 0" class="bg-white rounded-lg border border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <i data-lucide="list-ordered" class="w-5 h-5 text-blue-600"></i>
+        Schrittweise Lösung
+      </h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-3">
+        <template x-for="(step, i) in steps" :key="i">
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 w-7 h-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-semibold" x-text="i + 1"></div>
+            <div class="flex-1 pt-0.5">
+              <p class="text-gray-700 text-sm" x-text="step.text"></p>
+              <p x-show="step.formula" class="font-mono text-sm mt-1 bg-gray-50 px-3 py-1 rounded inline-block" x-text="step.formula"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function equationSolver() {
+  return {
+    type: 'linear',
+    a: null,
+    b: null,
+    c: null,
+    solved: false,
+    solutions: [],
+    discriminant: null,
+    rootNature: '',
+    solveError: '',
+    equationDisplay: '',
+    steps: [],
+
+    formatNumber(n) {
+      if (n === null || n === undefined) return '';
+      if (Number.isInteger(n)) return n.toString();
+      return parseFloat(n.toFixed(6)).toString();
+    },
+
+    solve() {
+      this.solved = true;
+      this.solutions = [];
+      this.discriminant = null;
+      this.rootNature = '';
+      this.solveError = '';
+      this.steps = [];
+
+      const a = this.a || 0;
+      const b = this.b || 0;
+      const c = this.c || 0;
+
+      if (this.type === 'linear') {
+        this.equationDisplay = `${a}x + ${b} = 0`;
+        this.solveLinear(a, b);
+      } else {
+        this.equationDisplay = `${a}x² + ${b}x + ${c} = 0`;
+        this.solveQuadratic(a, b, c);
+      }
+    },
+
+    solveLinear(a, b) {
+      this.steps.push({ text: 'Start with the equation:', formula: `${a}x + ${b} = 0` });
+      if (a === 0) {
+        if (b === 0) {
+          this.solveError = 'Infinite solutions: 0 = 0 is always true.';
+          this.steps.push({ text: 'Since a = 0 and b = 0, the equation 0 = 0 is always true.', formula: '' });
+        } else {
+          this.solveError = 'No solution: the equation is inconsistent.';
+          this.steps.push({ text: `Since a = 0, we get ${b} = 0, which is false.`, formula: '' });
+        }
+        return;
+      }
+      this.steps.push({ text: 'Subtract b from both sides:', formula: `${a}x = ${-b}` });
+      this.steps.push({ text: 'Divide both sides by a:', formula: `x = ${-b} / ${a}` });
+      const x = -b / a;
+      this.steps.push({ text: 'Solution:', formula: `x = ${this.formatNumber(x)}` });
+      this.solutions = [x];
+    },
+
+    solveQuadratic(a, b, c) {
+      this.steps.push({ text: 'Start with the equation:', formula: `${a}x² + ${b}x + ${c} = 0` });
+      if (a === 0) {
+        this.steps.push({ text: 'Since a = 0, this reduces to a linear equation.', formula: '' });
+        this.solveLinear(b, c);
+        return;
+      }
+      this.steps.push({ text: 'Calculate the discriminant: D = b² - 4ac', formula: `D = (${b})² - 4(${a})(${c})` });
+      const D = b * b - 4 * a * c;
+      this.discriminant = D;
+      this.steps.push({ text: 'Discriminant value:', formula: `D = ${this.formatNumber(D)}` });
+
+      if (D > 0) {
+        this.rootNature = 'Two distinct real roots';
+        this.steps.push({ text: 'D > 0: Two distinct real roots.', formula: '' });
+        const sqrtD = Math.sqrt(D);
+        const x1 = (-b + sqrtD) / (2 * a);
+        const x2 = (-b - sqrtD) / (2 * a);
+        this.steps.push({ text: 'Apply quadratic formula: x = (-b ± √D) / 2a', formula: `x = (${-b} ± ${this.formatNumber(sqrtD)}) / ${2 * a}` });
+        this.steps.push({ text: 'First root:', formula: `x₁ = ${this.formatNumber(x1)}` });
+        this.steps.push({ text: 'Second root:', formula: `x₂ = ${this.formatNumber(x2)}` });
+        this.solutions = [x1, x2];
+      } else if (D === 0) {
+        this.rootNature = 'One repeated real root';
+        this.steps.push({ text: 'D = 0: One repeated real root.', formula: '' });
+        const x = -b / (2 * a);
+        this.steps.push({ text: 'Apply formula: x = -b / 2a', formula: `x = ${-b} / ${2 * a} = ${this.formatNumber(x)}` });
+        this.solutions = [x];
+      } else {
+        this.rootNature = 'Two complex conjugate roots';
+        this.steps.push({ text: 'D < 0: Two complex conjugate roots.', formula: '' });
+        const realPart = -b / (2 * a);
+        const imagPart = Math.sqrt(-D) / (2 * a);
+        this.steps.push({ text: 'Real part: -b / 2a', formula: `Real = ${this.formatNumber(realPart)}` });
+        this.steps.push({ text: 'Imaginary part: √|D| / 2a', formula: `Imaginary = ±${this.formatNumber(imagPart)}i` });
+        this.solveError = `Complex roots: ${this.formatNumber(realPart)} ± ${this.formatNumber(imagPart)}i`;
+      }
+    }
+  };
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Gleichungslöser  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'equation-solver', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: 'Gleichungslöser',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/de/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/de/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/de/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/character-counter.html">
+                        Zeichenzähler
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/earnings-per-share-growth.html">
+                        Gewinn pro Aktie Wachstum
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/actual-cash-value.html">
+                        Wiederbeschaffungswert (Actual Cash Value, ACV)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/cpm-calculator.html">
+                        CPM-Rechner
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/deadweight-loss.html">
+                        Wohlfahrtsverlust-Rechner
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/add-remove-prefix-suffix.html">
+                        Präfix/Suffix Hinzufügen/Entfernen
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/enterprise-value.html">
+                        Unternehmenswert-Rechner
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/de/tools/dividend-payout-ratio.html">
+                        Dividendenausschüttungsquote
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">Deutsch</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ja" href="/ja/index.html">日本語</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="zh" href="/zh/index.html">中文</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

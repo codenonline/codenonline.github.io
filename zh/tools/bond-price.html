@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    债券价格计算器 - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "zh";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="landmark" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">债券价格计算器</h1>
+            <p class="text-gray-600">根据票面利率、到期收益率和到期时间分析债券定价，以确定公允市场价值。</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div class="max-w-6xl mx-auto p-6">
+    <div class="mb-8">
+    </div>
+
+    <div x-data="bondPriceCalculator()" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="landmark" class="h-5 w-5"></i>
+                    债券参数
+                </h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">面值 ($)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="1000.00"
+                        x-model="faceValue"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(faceValue) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">债券到期时的面值</p>
+                    <p x-show="parseFloat(faceValue) <= 0" class="text-sm text-red-600">请输入有效的面值</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">票面利率 (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="5.00"
+                        x-model="couponRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(couponRate) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">年度票面利率，占面值百分比</p>
+                    <p x-show="parseFloat(couponRate) < 0" class="text-sm text-red-600">请输入有效的票面利率</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">必需收益率 (%)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="4.50"
+                        x-model="requiredYield"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(requiredYield) < 0 }"
+                    />
+                    <p class="text-sm text-gray-500">市场收益率或必需收益率</p>
+                    <p x-show="parseFloat(requiredYield) < 0" class="text-sm text-red-600">请输入有效的收益率</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">到期年数</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        placeholder="10"
+                        x-model="yearsToMaturity"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        :class="{ 'border-red-300': parseFloat(yearsToMaturity) <= 0 }"
+                    />
+                    <p class="text-sm text-gray-500">债券到期的时间</p>
+                    <p x-show="parseFloat(yearsToMaturity) <= 0" class="text-sm text-red-600">请输入有效的到期期限</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">支付频率</label>
+                    <select
+                        x-model="paymentFrequency"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="1">每年</option>
+                        <option value="2">半年</option>
+                        <option value="4">季度</option>
+                        <option value="12">每月</option>
+                    </select>
+                    <p class="text-sm text-gray-500">息票支付的频率</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">关于债券定价</h4>
+                    <div class="text-sm text-blue-800 space-y-1">
+                        <p>债券价格是所有未来现金流（息票 + 本金）的现值。</p>
+                        <p>当收益率 &gt; 票面利率时，债券以折价（低于面值）交易。</p>
+                        <p>当收益率 &lt; 票面利率时，债券以溢价（高于面值）交易。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-lg border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    债券估值
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <!-- Bond Price -->
+                    <div class="text-center p-6 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">债券价格</p>
+                        <p class="text-4xl font-bold text-green-600" x-text="formatCurrency(results.bondPrice)"></p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <span x-text="formatPercentage(results.priceAsPercentOfPar)"></span> 占面值百分比
+                        </p>
+                    </div>
+
+                    <!-- Price Components -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">息票现值：</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvCoupons)"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">本金现值：</span>
+                            <span class="font-semibold" x-text="formatCurrency(results.pvPrincipal)"></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="text-gray-600 font-medium">债券总价格：</span>
+                            <span class="font-bold text-lg" x-text="formatCurrency(results.bondPrice)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bond Classification -->
+                    <div class="p-4 rounded-lg" :class="results.bondType === 'Premium' ? 'bg-red-50' : results.bondType === 'Discount' ? 'bg-green-50' : 'bg-blue-50'">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">债券类型：</span>
+                            <span class="font-semibold" :class="results.bondType === 'Premium' ? 'text-red-600' : results.bondType === 'Discount' ? 'text-green-600' : 'text-blue-600'" x-text="results.bondType"></span>
+                        </div>
+                        <p class="text-sm mt-1" :class="results.bondType === 'Premium' ? 'text-red-700' : results.bondType === 'Discount' ? 'text-green-700' : 'text-blue-700'">
+                            <span x-show="results.bondType === 'Premium'">溢价交易 - 收益率 &lt; 票面利率</span>
+                            <span x-show="results.bondType === 'Discount'">折价交易 - 收益率 &gt; 票面利率</span>
+                            <span x-show="results.bondType === 'At Par'">面值交易 - 收益率 = 票面利率</span>
+                        </p>
+                    </div>
+
+                    <!-- Duration Analysis -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="clock" class="h-4 w-4"></i>
+                            久期分析
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">麦考利久期：</span>
+                                <span class="font-semibold" x-text="results.macaulayDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">修正久期：</span>
+                                <span class="font-semibold" x-text="results.modifiedDuration.toFixed(2) + ' years'"></span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                修正久期估计价格对收益率变化的敏感性
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Sensitivity Analysis -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+                价格敏感性分析
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Yield Change Impact -->
+                <div>
+                    <h4 class="font-medium mb-4">收益率变化的影响</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-2, -1, -0.5, 0, 0.5, 1, 2]" :key="change">
+                            <div class="flex justify-between items-center p-2 rounded" :class="change === 0 ? 'bg-blue-50' : ''">
+                                <span class="text-sm" x-text="`${change > 0 ? '+' : ''}${change}% yield change:`"></span>
+                                <div class="text-right">
+                                    <div class="font-semibold" x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></div>
+                                    <div class="text-xs text-gray-500" x-show="change !== 0" x-text="formatPercentage(((calculatePriceAtYield(parseFloat(requiredYield) + change) - results.bondPrice) / results.bondPrice) * 100, true)"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Duration Estimates vs Actual -->
+                <div>
+                    <h4 class="font-medium mb-4">久期估计准确性</h4>
+                    <div class="space-y-3">
+                        <template x-for="change in [-1, -0.5, 0.5, 1]" :key="change">
+                            <div class="p-2 rounded bg-gray-50">
+                                <div class="flex justify-between text-sm">
+                                    <span x-text="`${change > 0 ? '+' : ''}${change}% yield:`"></span>
+                                    <span>实际与久期估计</span>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span x-text="formatCurrency(calculatePriceAtYield(parseFloat(requiredYield) + change))"></span>
+                                    <span x-text="formatCurrency(results.bondPrice * (1 - results.modifiedDuration * change / 100))"></span>
+                                </div>
+                                <div class="text-xs text-gray-500 text-center mt-1">
+                                    误差： <span x-text="formatPercentage(Math.abs((calculatePriceAtYield(parseFloat(requiredYield) + change) - (results.bondPrice * (1 - results.modifiedDuration * change / 100))) / calculatePriceAtYield(parseFloat(requiredYield) + change)) * 100)"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="mt-8 bg-white rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                理解债券定价
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium mb-3">债券定价公式</h4>
+                    <div class="bg-white p-3 rounded border text-sm font-mono mb-3">
+                        P = Σ(C/(1+r)^t) + F/(1+r)^n
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <p><strong>P</strong> = 债券价格</p>
+                        <p><strong>C</strong> = 息票支付</p>
+                        <p><strong>r</strong> = 必需收益率（每期）</p>
+                        <p><strong>t</strong> = 时间期限</p>
+                        <p><strong>F</strong> = 面值</p>
+                        <p><strong>n</strong> = 期数</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-3">久期概念</h4>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>麦考利久期：</strong> 收取现金流的加权平均时间</p>
+                        <p><strong>修正久期：</strong> 价格敏感性测度</p>
+                        <p><strong>公式：</strong> 修正久期 = 麦考利久期 ÷ (1 + 收益率/频率)</p>
+                        <p><strong>价格变化 ≈</strong> -修正久期 × 收益率变化</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-medium text-green-900 mb-2">折扣债券</h4>
+                    <div class="text-sm text-green-800">
+                        <p>收益率 &gt; 票面利率</p>
+                        <p>价格 &lt; 面值</p>
+                        <p>到期时的资本升值</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">面值债券</h4>
+                    <div class="text-sm text-blue-800">
+                        <p>收益率 = 票面利率</p>
+                        <p>价格 = 面值</p>
+                        <p>无资本收益/损失</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h4 class="font-medium text-red-900 mb-2">溢价债券</h4>
+                    <div class="text-sm text-red-800">
+                        <p>收益率 &lt; 票面利率</p>
+                        <p>价格 &gt; 面值</p>
+                        <p>到期时的资本损失</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+                <h4 class="font-medium text-yellow-900 mb-2">关键洞察</h4>
+                <ul class="text-sm text-yellow-800 space-y-1">
+                    <li>• 债券价格与收益率变化呈反向关系</li>
+                    <li>• 期限更长的债券对收益率变化更敏感</li>
+                    <li>• 低票面利率债券具有更高的久期和价格敏感性</li>
+                    <li>• 久期提供价格变化的线性近似</li>
+                    <li>• 凸性对大的收益率变化很重要</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function bondPriceCalculator() {
+    return {
+        faceValue: '1000.00',
+        couponRate: '5.00',
+        requiredYield: '4.50',
+        yearsToMaturity: '10',
+        paymentFrequency: '2',
+        
+        get results() {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const yield = parseFloat(this.requiredYield) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            // Calculate periodic values
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = yield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            // Calculate present value of coupon payments
+            let pvCoupons = 0;
+            let weightedCashFlows = 0; // For Macaulay duration calculation
+            
+            if (periodicYield === 0) {
+                // Special case: zero yield
+                pvCoupons = periodicCoupon * totalPeriods;
+                weightedCashFlows = periodicCoupon * totalPeriods * (totalPeriods + 1) / 2;
+            } else {
+                // Standard present value calculation
+                for (let t = 1; t <= totalPeriods; t++) {
+                    const pv = periodicCoupon / Math.pow(1 + periodicYield, t);
+                    pvCoupons += pv;
+                    weightedCashFlows += pv * t;
+                }
+            }
+            
+            // Calculate present value of principal
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            weightedCashFlows += pvPrincipal * totalPeriods;
+            
+            // Total bond price
+            const bondPrice = pvCoupons + pvPrincipal;
+            
+            // Calculate Macaulay Duration
+            const macaulayDuration = (weightedCashFlows / bondPrice) / periodsPerYear;
+            
+            // Calculate Modified Duration
+            const modifiedDuration = macaulayDuration / (1 + periodicYield);
+            
+            // Determine bond type
+            const priceAsPercentOfPar = (bondPrice / face) * 100;
+            let bondType = 'At Par';
+            if (bondPrice > face * 1.001) bondType = 'Premium';
+            else if (bondPrice < face * 0.999) bondType = 'Discount';
+            
+            return {
+                bondPrice,
+                pvCoupons,
+                pvPrincipal,
+                priceAsPercentOfPar,
+                bondType,
+                macaulayDuration,
+                modifiedDuration
+            };
+        },
+        
+        calculatePriceAtYield(newYield) {
+            const face = parseFloat(this.faceValue) || 1000;
+            const couponRate = parseFloat(this.couponRate) || 0;
+            const years = parseFloat(this.yearsToMaturity) || 1;
+            const frequency = parseInt(this.paymentFrequency) || 1;
+            
+            const periodsPerYear = frequency;
+            const totalPeriods = years * periodsPerYear;
+            const periodicYield = newYield / 100 / periodsPerYear;
+            const periodicCoupon = (face * couponRate / 100) / periodsPerYear;
+            
+            let pvCoupons = 0;
+            
+            if (periodicYield === 0) {
+                pvCoupons = periodicCoupon * totalPeriods;
+            } else {
+                for (let t = 1; t <= totalPeriods; t++) {
+                    pvCoupons += periodicCoupon / Math.pow(1 + periodicYield, t);
+                }
+            }
+            
+            const pvPrincipal = periodicYield === 0 ? face : face / Math.pow(1 + periodicYield, totalPeriods);
+            
+            return pvCoupons + pvPrincipal;
+        },
+        
+        formatPercentage(value, showSign = false) {
+            const formatted = new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format((value || 0) / 100);
+            
+            if (showSign && value > 0) {
+                return '+' + formatted;
+            }
+            return formatted;
+        },
+        
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount || 0);
+        }
+    }
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of 债券价格计算器  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'bond-price', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: '债券价格计算器',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/zh/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/zh/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/zh/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/code-minifier.html">
+                        代码压缩工具
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/customer-acquisition-cost.html">
+                        客户获取成本
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/credit-card-payoff.html">
+                        信用卡还款计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/fixed-charge-coverage-ratio.html">
+                        固定费用覆盖率 (FCCR)
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/economic-value-added.html">
+                        经济增加值
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/fixed-deposit.html">
+                        定期存款计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/customer-retention-rate.html">
+                        客户留存率
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/equity-ratio.html">
+                        股权比率计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ja" href="/ja/index.html">日本語</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">中文</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    Carried Interest 计算器 - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "zh";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="briefcase" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Carried Interest 计算器</h1>
+            <p class="text-gray-600">确定基金经理作为超过优先回报率的利润份额所赚取的业绩费用。</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+                <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Carried Interest 计算器</h1>
+        <p class="text-gray-600 text-lg">计算投资基金的 Carried Interest，包括优先回报率、追补条款和瀑布分配。</p>
+    </div>
+
+    <div x-data="carriedInterestCalculator()" class="space-y-8">
+        <!-- Input Form -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="calculator" class="h-5 w-5"></i>
+                基金参数
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Fund Size -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        基金规模
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model="fundSize"
+                            class="pl-8 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="100000000"
+                            min="0"
+                            step="1000000"
+                        >
+                    </div>
+                </div>
+
+                <!-- Total Distributions -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        总分配额
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                            type="number"
+                            x-model="totalDistributions"
+                            class="pl-8 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="150000000"
+                            min="0"
+                            step="1000000"
+                        >
+                    </div>
+                </div>
+
+                <!-- Hurdle Rate -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        优先回报率 (%)
+                    </label>
+                    <input
+                        type="number"
+                        x-model="hurdleRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="8"
+                        min="0"
+                        max="50"
+                        step="0.5"
+                    >
+                </div>
+
+                <!-- Carried Interest Rate -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Carried Interest 费率 (%)
+                    </label>
+                    <input
+                        type="number"
+                        x-model="carriedInterestRate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="20"
+                        min="0"
+                        max="50"
+                        step="1"
+                    >
+                </div>
+
+                <!-- Management Fee -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        管理费 (%)
+                    </label>
+                    <input
+                        type="number"
+                        x-model="managementFee"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="2"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                    >
+                </div>
+
+                <!-- Fund Life -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        基金期限 (年)
+                    </label>
+                    <input
+                        type="number"
+                        x-model="fundLife"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="10"
+                        min="1"
+                        max="20"
+                        step="1"
+                    >
+                </div>
+            </div>
+
+            <!-- Waterfall Structure -->
+            <div class="mt-6">
+                <h3 class="text-lg font-medium mb-4">分配瀑布结构</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <label class="flex items-center">
+                        <input
+                            type="radio"
+                            x-model="waterfallType"
+                            value="american"
+                            class="mr-2"
+                        >
+                        <span class="text-sm">美式瀑布</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input
+                            type="radio"
+                            x-model="waterfallType"
+                            value="european"
+                            class="mr-2"
+                        >
+                        <span class="text-sm">欧式瀑布</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input
+                            type="checkbox"
+                            x-model="catchUp"
+                            class="mr-2"
+                        >
+                        <span class="text-sm">追补条款</span>
+                    </label>
+                </div>
+            </div>
+
+            <button
+                @click="calculate()"
+                class="mt-6 w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+                计算 Carried Interest
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div x-show="results.calculated" class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                Carried Interest 计算结果
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Total Profit -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm text-blue-600 font-medium">总利润</p>
+                    <p class="text-2xl font-bold text-blue-900" x-text="formatCurrency(results.totalProfit)"></p>
+                </div>
+
+                <!-- Hurdle Amount -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm text-green-600 font-medium">优先回报额</p>
+                    <p class="text-2xl font-bold text-green-900" x-text="formatCurrency(results.hurdleAmount)"></p>
+                </div>
+
+                <!-- Excess Over Hurdle -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm text-purple-600 font-medium">超过优先回报的部分</p>
+                    <p class="text-2xl font-bold text-purple-900" x-text="formatCurrency(results.excessOverHurdle)"></p>
+                </div>
+
+                <!-- Carried Interest -->
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <p class="text-sm text-red-600 font-medium">Carried Interest</p>
+                    <p class="text-2xl font-bold text-red-900" x-text="formatCurrency(results.carriedInterest)"></p>
+                </div>
+
+                <!-- LP Share -->
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <p class="text-sm text-yellow-600 font-medium">LP 份额</p>
+                    <p class="text-2xl font-bold text-yellow-900" x-text="formatCurrency(results.lpShare)"></p>
+                </div>
+
+                <!-- GP Share -->
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <p class="text-sm text-indigo-600 font-medium">GP 份额</p>
+                    <p class="text-2xl font-bold text-indigo-900" x-text="formatCurrency(results.gpShare)"></p>
+                </div>
+            </div>
+
+            <!-- Waterfall Breakdown -->
+            <div class="mb-6">
+                <h4 class="text-lg font-medium mb-4">瀑布分配</h4>
+                <div class="space-y-3">
+                    <template x-for="tier in results.waterfallBreakdown" :key="tier.name">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="font-medium" x-text="tier.name"></span>
+                            <div class="text-right">
+                                <div class="font-bold" x-text="formatCurrency(tier.amount)"></div>
+                                <div class="text-sm text-gray-600" x-text="tier.description"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <h4 class="text-lg font-medium">关键指标</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>总回报倍数:</span>
+                            <span class="font-medium" x-text="results.totalReturnMultiple + 'x'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>IRR (估计):</span>
+                            <span class="font-medium" x-text="results.estimatedIRR + '%'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Carry 占利润比例:</span>
+                            <span class="font-medium" x-text="results.carryPercentageOfProfit + '%'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>实际 Carry 费率:</span>
+                            <span class="font-medium" x-text="results.effectiveCarryRate + '%'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-lg font-medium">费用摘要</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>管理费 (总计):</span>
+                            <span class="font-medium" x-text="formatCurrency(results.totalManagementFees)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Carried Interest:</span>
+                            <span class="font-medium" x-text="formatCurrency(results.carriedInterest)"></span>
+                        </div>
+                        <div class="flex justify-between font-bold border-t pt-2">
+                            <span>GP 总经济效益:</span>
+                            <span x-text="formatCurrency(results.totalGPEconomics)"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                理解 Carried Interest
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div>
+                    <h4 class="font-semibold mb-2 text-gray-900">关键概念</h4>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>Carried Interest:</strong> GP 在基金利润中的份额，通常为 20%</li>
+                        <li><strong>优先回报率:</strong> LP 在获得 Carry 之前必须获得的最低回报</li>
+                        <li><strong>追补:</strong> 允许 GP 在早期分配中获得 Carry</li>
+                        <li><strong>瀑布:</strong> LP 和 GP 之间的分配顺序</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-2 text-gray-900">瀑布类型</h4>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>美式:</strong> 按每笔交易计算的 Carry</li>
+                        <li><strong>欧式:</strong> 按基金总体表现计算的 Carry</li>
+                        <li><strong>管理费:</strong> 年费，通常为承诺资本的 2%</li>
+                        <li><strong>回拨条款:</strong> 如果基金表现不佳，GP 必须退还超额 Carry</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-white rounded-lg">
+                <h4 class="font-semibold mb-2">瀑布结构示例</h4>
+                <div class="text-sm text-gray-700 space-y-1">
+                    <p>1. 返还 LP 资本贡献</p>
+                    <p>2. 向 LP 支付优先回报 (优先回报率)</p>
+                    <p>3. 向 GP 追补，直到获得分配额的 20%</p>
+                    <p>4. 剩余分配额在 LP 和 GP 之间按 80/20 分割</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function carriedInterestCalculator() {
+    return {
+        // Input values
+        fundSize: 100000000,
+        totalDistributions: 150000000,
+        hurdleRate: 8,
+        carriedInterestRate: 20,
+        managementFee: 2,
+        fundLife: 10,
+        waterfallType: 'american',
+        catchUp: true,
+
+        // Results
+        results: {
+            calculated: false,
+            totalProfit: 0,
+            hurdleAmount: 0,
+            excessOverHurdle: 0,
+            carriedInterest: 0,
+            lpShare: 0,
+            gpShare: 0,
+            totalReturnMultiple: 0,
+            estimatedIRR: 0,
+            carryPercentageOfProfit: 0,
+            effectiveCarryRate: 0,
+            totalManagementFees: 0,
+            totalGPEconomics: 0,
+            waterfallBreakdown: []
+        },
+
+        calculate() {
+            if (!this.validateInputs()) return;
+
+            const fundSize = parseFloat(this.fundSize) || 0;
+            const totalDistributions = parseFloat(this.totalDistributions) || 0;
+            const hurdleRate = parseFloat(this.hurdleRate) / 100 || 0;
+            const carriedInterestRate = parseFloat(this.carriedInterestRate) / 100 || 0;
+            const managementFee = parseFloat(this.managementFee) / 100 || 0;
+            const fundLife = parseFloat(this.fundLife) || 10;
+
+            // Calculate basic metrics
+            const totalProfit = Math.max(0, totalDistributions - fundSize);
+            const hurdleAmount = fundSize * hurdleRate;
+            const excessOverHurdle = Math.max(0, totalProfit - hurdleAmount);
+
+            // Calculate management fees
+            const totalManagementFees = fundSize * managementFee * (fundLife * 0.6); // Assuming declining fee structure
+
+            // Calculate carried interest based on waterfall type
+            let carriedInterest = 0;
+            let waterfallBreakdown = [];
+
+            if (totalProfit > hurdleAmount) {
+                if (this.catchUp) {
+                    // With catch-up provision
+                    const catchUpAmount = Math.min(excessOverHurdle, hurdleAmount * (carriedInterestRate / (1 - carriedInterestRate)));
+                    const remainingProfit = Math.max(0, excessOverHurdle - catchUpAmount);
+                    carriedInterest = catchUpAmount + (remainingProfit * carriedInterestRate);
+                } else {
+                    // Without catch-up provision
+                    carriedInterest = excessOverHurdle * carriedInterestRate;
+                }
+            }
+
+            // Build waterfall breakdown
+            let remainingDistributions = totalDistributions;
+
+            // Step 1: Return of capital
+            const capitalReturn = Math.min(remainingDistributions, fundSize);
+            remainingDistributions -= capitalReturn;
+            waterfallBreakdown.push({
+                name: '1. LP 资本返还',
+                amount: capitalReturn,
+                description: 'Return of original investment'
+            });
+
+            if (remainingDistributions > 0) {
+                // Step 2: Hurdle return
+                const hurdleReturn = Math.min(remainingDistributions, hurdleAmount);
+                remainingDistributions -= hurdleReturn;
+                waterfallBreakdown.push({
+                    name: '2. LP 优先回报',
+                    amount: hurdleReturn,
+                    description: `${this.hurdleRate}% hurdle rate`
+                });
+
+                if (remainingDistributions > 0 && this.catchUp) {
+                    // Step 3: Catch-up to GP
+                    const catchUpAmount = Math.min(remainingDistributions, carriedInterest);
+                    remainingDistributions -= catchUpAmount;
+                    waterfallBreakdown.push({
+                        name: '3. 向 GP 追补',
+                        amount: catchUpAmount,
+                        description: 'GP receives carry on prior distributions'
+                    });
+                }
+
+                if (remainingDistributions > 0) {
+                    // Step 4: Remaining distributions
+                    const gpRemaining = remainingDistributions * carriedInterestRate;
+                    const lpRemaining = remainingDistributions - gpRemaining;
+                    waterfallBreakdown.push({
+                        name: '4. LP 剩余份额',
+                        amount: lpRemaining,
+                        description: `${100 - this.carriedInterestRate}% to LPs`
+                    });
+                    waterfallBreakdown.push({
+                        name: '4. GP 剩余份额',
+                        amount: gpRemaining,
+                        description: `${this.carriedInterestRate}% to GP`
+                    });
+                }
+            }
+
+            // Calculate final distributions
+            const lpShare = totalDistributions - carriedInterest;
+            const gpShare = carriedInterest;
+            const totalReturnMultiple = fundSize > 0 ? totalDistributions / fundSize : 0;
+            const estimatedIRR = this.calculateIRR(fundSize, totalDistributions, fundLife);
+            const carryPercentageOfProfit = totalProfit > 0 ? (carriedInterest / totalProfit) * 100 : 0;
+            const effectiveCarryRate = totalDistributions > fundSize ? (carriedInterest / (totalDistributions - fundSize)) * 100 : 0;
+            const totalGPEconomics = totalManagementFees + carriedInterest;
+
+            this.results = {
+                calculated: true,
+                totalProfit,
+                hurdleAmount,
+                excessOverHurdle,
+                carriedInterest,
+                lpShare,
+                gpShare,
+                totalReturnMultiple: Math.round(totalReturnMultiple * 100) / 100,
+                estimatedIRR: Math.round(estimatedIRR * 100) / 100,
+                carryPercentageOfProfit: Math.round(carryPercentageOfProfit * 100) / 100,
+                effectiveCarryRate: Math.round(effectiveCarryRate * 100) / 100,
+                totalManagementFees,
+                totalGPEconomics,
+                waterfallBreakdown
+            };
+        },
+
+        calculateIRR(investment, returns, years) {
+            // Simplified IRR calculation assuming all returns at end of period
+            if (investment <= 0 || returns <= investment) return 0;
+            return (Math.pow(returns / investment, 1 / years) - 1) * 100;
+        },
+
+        validateInputs() {
+            if (this.fundSize <= 0) {
+                alert('Fund size must be greater than 0');
+                return false;
+            }
+            if (this.totalDistributions < 0) {
+                alert('Total distributions cannot be negative');
+                return false;
+            }
+            if (this.hurdleRate < 0 || this.hurdleRate > 50) {
+                alert('Hurdle rate must be between 0% and 50%');
+                return false;
+            }
+            if (this.carriedInterestRate < 0 || this.carriedInterestRate > 50) {
+                alert('Carried interest rate must be between 0% and 50%');
+                return false;
+            }
+            return true;
+        },
+
+        formatCurrency(amount) {
+            if (amount === 0) return '$0';
+            if (amount >= 1000000000) {
+                return '$' + (amount / 1000000000).toFixed(2) + 'B';
+            } else if (amount >= 1000000) {
+                return '$' + (amount / 1000000).toFixed(2) + 'M';
+            } else if (amount >= 1000) {
+                return '$' + (amount / 1000).toFixed(0) + 'K';
+            }
+            return '$' + amount.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+    }
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Carried Interest 计算器  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'carried-interest', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: 'Carried Interest 计算器',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/zh/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/zh/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/zh/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/earnings-per-share-growth.html">
+                        每股收益增长
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/fisher-equation.html">
+                        费雪方程计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/after-tax-cost-debt.html">
+                        税后债务成本
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/additional-funds-needed.html">
+                        所需额外资金
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/apr-calculator.html">
+                        APR 计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/code-minifier.html">
+                        代码压缩工具
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/apy-calculator.html">
+                        APY计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/double-discount.html">
+                        双重折扣计算器
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ja" href="/ja/index.html">日本語</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">中文</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

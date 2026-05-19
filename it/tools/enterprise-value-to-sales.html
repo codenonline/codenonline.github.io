@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    Valore Aziendale su Vendite - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "it";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Valore Aziendale su Vendite</h1>
+            <p class="text-gray-600">Confronta il valore totale di un&#39;azienda rispetto ai suoi ricavi per valutare come il mercato valuta la crescita rispetto ai competitor.</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+                <div x-data="evSalesCalculator()" class="space-y-8">
+        <!-- Calculator -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="calculator" class="h-5 w-5"></i>
+                Calcolatore EV/Vendite
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Input Fields -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Capitalizzazione di Mercato (€)</label>
+                        <input 
+                            type="number" 
+                            x-model="marketCap"
+                            @input="calculate()"
+                            placeholder="1000000000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Debito Totale (€)</label>
+                        <input 
+                            type="number" 
+                            x-model="totalDebt"
+                            @input="calculate()"
+                            placeholder="200000000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cassa e Equivalenti (€)</label>
+                        <input 
+                            type="number" 
+                            x-model="cashEquivalents"
+                            @input="calculate()"
+                            placeholder="50000000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ricavi Annuali (€)</label>
+                        <input 
+                            type="number" 
+                            x-model="revenue"
+                            @input="calculate()"
+                            placeholder="500000000"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button
+                            @click="clearAll()"
+                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                        >
+                            Cancella
+                        </button>
+                        <button
+                            @click="loadExample()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Carica Esempio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold mb-3">Componenti del Valore Aziendale</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Capitalizzazione:</span>
+                                <span x-text="formatCurrency(marketCap)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Debito Totale:</span>
+                                <span x-text="formatCurrency(totalDebt)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Meno: Cassa:</span>
+                                <span x-text="formatCurrency(cashEquivalents)"></span>
+                            </div>
+                            <div class="border-t pt-2 flex justify-between font-semibold">
+                                <span>Valore Aziendale:</span>
+                                <span x-text="formatCurrency(results.enterpriseValue)"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-semibold mb-2 text-blue-800">Rapporto EV/Vendite</h3>
+                        <p class="text-2xl font-bold text-blue-600" x-text="results.evSalesRatio + 'x'"></p>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold mb-3">Metriche di Valutazione</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Ricavi:</span>
+                                <span x-text="formatCurrency(revenue)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>EV per €1 di Ricavi:</span>
+                                <span x-text="'$' + results.evPerDollarRevenue"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Categoria di Valutazione:</span>
+                                <span x-text="results.valuationCategory" :class="getValuationColor()"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Industry Benchmarks -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="bar-chart" class="h-5 w-5"></i>
+                Benchmark del Settore
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="industry in industryBenchmarks" :key="industry.name">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium mb-2" x-text="industry.name"></h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>Intervallo Tipico:</span>
+                                <span x-text="industry.range"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Media:</span>
+                                <span class="font-medium" x-text="industry.average + 'x'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Analysis -->
+        <div x-show="results.evSalesRatio > 0" class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="trending-up" class="h-5 w-5"></i>
+                Analisi dei Rapporti
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-3">Interpretazione</h3>
+                    <div class="space-y-2 text-sm">
+                        <p><strong>Tuo Rapporto EV/Vendite:</strong> <span x-text="results.evSalesRatio + 'x'"></span></p>
+                        <p x-text="getInterpretation()"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Informazioni Chiave</h3>
+                    <ul class="space-y-1 text-sm text-gray-600" x-html="getInsights()"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5"></i>
+                Comprendere il Rapporto EV/Vendite
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-semibold mb-3">Formula</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-center font-mono">
+                            EV/Vendite = Valore Aziendale ÷ Ricavi Annuali
+                        </p>
+                        <p class="text-center font-mono text-sm text-gray-600 mt-2">
+                            EV = Capitalizzazione di Mercato + Debito Totale - Cassa
+                        </p>
+                    </div>
+
+                    <h3 class="font-semibold mb-3">Quando Utilizzare</h3>
+                    <ul class="space-y-1 text-sm text-gray-600">
+                        <li>• Confrontare aziende dello stesso settore</li>
+                        <li>• Valutare aziende non redditizie ma in crescita</li>
+                        <li>• Analizzare valutazioni basate sui ricavi</li>
+                        <li>• Identificare azioni potenzialmente sottovalutate</li>
+                        <li>• Selezionare opportunità di investimento</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Vantaggi</h3>
+                    <ul class="space-y-1 text-sm text-gray-600 mb-4">
+                        <li>• Funziona per aziende in perdita</li>
+                        <li>• Meno volatile dei rapporti basati su utili</li>
+                        <li>• Buono per confrontare strutture di capitale</li>
+                        <li>• Utile per attività cicliche</li>
+                    </ul>
+
+                    <h3 class="font-semibold mb-3">Limitazioni</h3>
+                    <ul class="space-y-1 text-sm text-gray-600">
+                        <li>• Ignora le differenze di redditività</li>
+                        <li>• Non tiene conto delle strutture dei costi</li>
+                        <li>• Potrebbe non riflettere le prospettive di crescita</li>
+                        <li>• Può essere fuorviante per settori ad alta intensità di risorse</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">
+            <h3 class="font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="h-4 w-4"></i>
+                Consigli Professionali
+            </h3>
+            <ul class="space-y-2 text-sm text-amber-700">
+                <li>• Confronta rapporti EV/Vendite all&#39;interno dello stesso settore per un&#39;analisi significativa</li>
+                <li>• Considera i tassi di crescita - rapporti più alti possono essere giustificati per aziende a crescita più rapida</li>
+                <li>• Usa i ricavi degli ultimi dodici mesi (TTM) per valutazioni più attuali</li>
+                <li>• Combina con altre metriche come EV/EBITDA e rapporti P/E per un&#39;analisi completa</li>
+                <li>• Stai attento con rapporti estremamente alti o bassi - indaga le ragioni sottostanti</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+function evSalesCalculator() {
+    return {
+        marketCap: '',
+        totalDebt: '',
+        cashEquivalents: '',
+        revenue: '',
+        
+        results: {
+            enterpriseValue: 0,
+            evSalesRatio: 0,
+            evPerDollarRevenue: 0,
+            valuationCategory: ''
+        },
+        
+        industryBenchmarks: [
+            { name: 'Tecnologia', range: '2-15x', average: 6.5 },
+            { name: 'Sanità', range: '1-8x', average: 4.2 },
+            { name: 'Beni di Consumo Discrezionali', range: '0.5-3x', average: 1.8 },
+            { name: 'Servizi Finanziari', range: '1-4x', average: 2.5 },
+            { name: 'Energia', range: '0.3-2x', average: 1.2 },
+            { name: 'Servizi Pubblici', range: '1-3x', average: 2.1 }
+        ],
+        
+        calculate() {
+            const mc = parseFloat(this.marketCap) || 0;
+            const debt = parseFloat(this.totalDebt) || 0;
+            const cash = parseFloat(this.cashEquivalents) || 0;
+            const rev = parseFloat(this.revenue) || 0;
+            
+            // Calculate Enterprise Value
+            const enterpriseValue = mc + debt - cash;
+            
+            // Calculate EV/Sales ratio
+            const evSalesRatio = rev > 0 ? (enterpriseValue / rev) : 0;
+            
+            // Calculate EV per dollar of revenue
+            const evPerDollarRevenue = evSalesRatio.toFixed(2);
+            
+            // Determine valuation category
+            let valuationCategory = '';
+            if (evSalesRatio <= 1) {
+                valuationCategory = 'Very Low';
+            } else if (evSalesRatio <= 3) {
+                valuationCategory = 'Low';
+            } else if (evSalesRatio <= 6) {
+                valuationCategory = 'Moderate';
+            } else if (evSalesRatio <= 10) {
+                valuationCategory = 'High';
+            } else {
+                valuationCategory = 'Very High';
+            }
+            
+            this.results = {
+                enterpriseValue: Math.round(enterpriseValue),
+                evSalesRatio: evSalesRatio.toFixed(2),
+                evPerDollarRevenue: evPerDollarRevenue,
+                valuationCategory: valuationCategory
+            };
+        },
+        
+        getInterpretation() {
+            const ratio = parseFloat(this.results.evSalesRatio);
+            
+            if (ratio <= 1) {
+                return 'This is a very low EV/Sales ratio, suggesting the company may be undervalued or facing significant challenges. It could indicate a value opportunity or operational issues.';
+            } else if (ratio <= 3) {
+                return 'This is a relatively low EV/Sales ratio, which might indicate good value. The company could be undervalued or in a mature, low-growth industry.';
+            } else if (ratio <= 6) {
+                return 'This is a moderate EV/Sales ratio, suggesting fair valuation. The company appears reasonably priced relative to its revenue generation.';
+            } else if (ratio <= 10) {
+                return 'This is a high EV/Sales ratio, suggesting premium valuation. The market expects strong growth or the company has competitive advantages.';
+            } else {
+                return 'This is a very high EV/Sales ratio, indicating significant premium valuation. The market expects exceptional growth or the stock may be overvalued.';
+            }
+        },
+        
+        getInsights() {
+            const ratio = parseFloat(this.results.evSalesRatio);
+            const ev = this.results.enterpriseValue;
+            
+            let insights = [];
+            
+            if (ratio > 0) {
+                insights.push(`<li>• The company is valued at $${this.results.evPerDollarRevenue} for every $1 of revenue</li>`);
+                
+                if (ratio < 2) {
+                    insights.push('<li>• Low ratio may indicate value opportunity or sector challenges</li>');
+                    insights.push('<li>• Consider profit margins and growth prospects</li>');
+                } else if (ratio > 8) {
+                    insights.push('<li>• High ratio suggests growth expectations or premium valuation</li>');
+                    insights.push('<li>• Verify if growth justifies the premium</li>');
+                }
+                
+                insights.push('<li>• Compare with industry peers for context</li>');
+                insights.push('<li>• Consider revenue quality and sustainability</li>');
+            }
+            
+            return insights.join('');
+        },
+        
+        getValuationColor() {
+            const category = this.results.valuationCategory;
+            
+            if (category === 'Very Low' || category === 'Low') {
+                return 'text-green-600 font-medium';
+            } else if (category === 'Moderate') {
+                return 'text-blue-600 font-medium';
+            } else {
+                return 'text-red-600 font-medium';
+            }
+        },
+        
+        formatCurrency(value) {
+            const num = parseFloat(value) || 0;
+            if (num >= 1e9) {
+                return '$' + (num / 1e9).toFixed(1) + 'B';
+            } else if (num >= 1e6) {
+                return '$' + (num / 1e6).toFixed(1) + 'M';
+            } else if (num >= 1e3) {
+                return '$' + (num / 1e3).toFixed(1) + 'K';
+            }
+            return '$' + num.toLocaleString();
+        },
+        
+        clearAll() {
+            this.marketCap = '';
+            this.totalDebt = '';
+            this.cashEquivalents = '';
+            this.revenue = '';
+            this.results = {
+                enterpriseValue: 0,
+                evSalesRatio: 0,
+                evPerDollarRevenue: 0,
+                valuationCategory: ''
+            };
+        },
+        
+        loadExample() {
+            this.marketCap = '1000000000';
+            this.totalDebt = '200000000';
+            this.cashEquivalents = '50000000';
+            this.revenue = '500000000';
+            this.calculate();
+        }
+    }
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of Valore Aziendale su Vendite  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'enterprise-value-to-sales', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: 'Valore Aziendale su Vendite',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/it/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/it/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/it/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/discount-calculator.html">
+                        Calcolatore di Sconto
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/bond-current-yield.html">
+                        Rendimento Attuale dell&#39;Obbligazione
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/asset-turnover-ratio.html">
+                        Indice di Rotazione degli Asset
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/apy-calculator.html">
+                        Calcolatore di APY
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/amortization-calculator.html">
+                        Calcolatore di Ammortamento
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/fixed-asset-turnover-ratio.html">
+                        Indice di Rotazione del Capitale Fisso
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/bill-rate.html">
+                        Calcolatore Tariffe di Fatturazione
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/it/tools/bond-yield-to-call.html">
+                        Rendimento a Rimborso
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">Italiano</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ja" href="/ja/index.html">日本語</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="zh" href="/zh/index.html">中文</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

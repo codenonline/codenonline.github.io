@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    コンバージョンレート計算機 - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "ja";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+    <div
+        class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white border-b">
+            <div class="container mx-auto px-4 py-6 max-w-7xl">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="../index.html" class="text-xs font-semibold flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                            Back to Tools
+                        </a>
+                        <div class="h-6 w-px bg-gray-300"></div>
+                    </div>
+                    <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-8 px-10">
+            <div class="flex items-center justify-center mb-4">
+                <div class="p-4 bg-blue-100 rounded-full">
+                    <i data-lucide="calculator" class="h-8 w-8 text-blue-600"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">コンバージョンレート計算機</h1>
+            <p class="text-gray-600">訪問者またはリードが目的のアクションを完了する割合を測定し、マーケティングおよびファネルのパフォーマンスを評価するのに役立ちます。</p>
+        </div>
+        <!-- Tool Content -->
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <div x-data="conversionRateCalculator()" class="space-y-8">
+            <!-- Calculator Type Selection -->
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="target" class="h-4 w-4"></i>
+                    計算機のタイプ
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="type in calculatorTypes" :key="type.id">
+                        <button
+                            @click="selectedType = type.id"
+                            :class="selectedType === type.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                            class="px-4 py-2 border rounded-lg transition-all"
+                            x-text="type.name"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Basic Conversion Rate Calculator -->
+            <div x-show="selectedType === 'basic'" class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-6 flex items-center gap-2">
+                    <i data-lucide="calculator" class="h-4 w-4"></i>
+                    基本的なコンバージョンレート計算機
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">総訪問者数</label>
+                            <input
+                                type="number"
+                                x-model.number="basic.visitors"
+                                @input="calculateBasic()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="総訪問者数を入力"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">総コンバージョン数</label>
+                            <input
+                                type="number"
+                                x-model.number="basic.conversions"
+                                @input="calculateBasic()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="総コンバージョン数を入力"
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-4">結果</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">コンバージョンレート：</span>
+                                <span class="font-bold text-blue-600" x-text="basic.results.rate + '%'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">コンバージョン比率：</span>
+                                <span class="font-medium" x-text="basic.results.ratio"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- A/B Test Calculator -->
+            <div x-show="selectedType === 'ab-test'" class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-6 flex items-center gap-2">
+                    <i data-lucide="git-branch" class="h-4 w-4"></i>
+                    A/Bテストコンバージョンレート計算機
+                </h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <!-- Variant A -->
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-medium mb-4 text-blue-600">バリアントA（コントロール）</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">訪問者</label>
+                                    <input
+                                        type="number"
+                                        x-model.number="abTest.variantA.visitors"
+                                        @input="calculateABTest()"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="訪問者を入力"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">コンバージョン</label>
+                                    <input
+                                        type="number"
+                                        x-model.number="abTest.variantA.conversions"
+                                        @input="calculateABTest()"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="コンバージョンを入力"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Variant B -->
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-medium mb-4 text-green-600">バリアントB（テスト）</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">訪問者</label>
+                                    <input
+                                        type="number"
+                                        x-model.number="abTest.variantB.visitors"
+                                        @input="calculateABTest()"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="訪問者を入力"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">コンバージョン</label>
+                                    <input
+                                        type="number"
+                                        x-model.number="abTest.variantB.conversions"
+                                        @input="calculateABTest()"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="コンバージョンを入力"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h4 class="font-semibold mb-4">A/Bテスト結果</h4>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center p-3 bg-blue-100 rounded-lg">
+                                    <p class="text-sm text-blue-600 font-medium">バリアントA</p>
+                                    <p class="text-lg font-bold text-blue-700" x-text="abTest.results.rateA + '%'"></p>
+                                </div>
+                                <div class="text-center p-3 bg-green-100 rounded-lg">
+                                    <p class="text-sm text-green-600 font-medium">バリアントB</p>
+                                    <p class="text-lg font-bold text-green-700" x-text="abTest.results.rateB + '%'"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-4 space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">改善：</span>
+                                    <span class="font-bold" :class="abTest.results.improvement >= 0 ? 'text-green-600' : 'text-red-600'" 
+                                          x-text="(abTest.results.improvement >= 0 ? '+' : '') + abTest.results.improvement + '%'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">信頼度：</span>
+                                    <span class="font-medium" x-text="abTest.results.confidence + '%'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">統計的有意性：</span>
+                                    <span class="font-medium" :class="abTest.results.significant ? 'text-green-600' : 'text-red-600'"
+                                          x-text="abTest.results.significant ? 'Significant' : 'Not Significant'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Step Funnel Calculator -->
+            <div x-show="selectedType === 'funnel'" class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-6 flex items-center gap-2">
+                    <i data-lucide="filter" class="h-4 w-4"></i>
+                    マルチステップファネル計算機
+                </h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-4">
+                        <template x-for="(step, index) in funnel.steps" :key="index">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-medium" x-text="'Step ' + (index + 1) + ': ' + step.name"></h4>
+                                    <button
+                                        @click="removeFunnelStep(index)"
+                                        x-show="funnel.steps.length > 1"
+                                        class="text-red-500 hover:text-red-700"
+                                    >
+                                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ステップ名</label>
+                                        <input
+                                            type="text"
+                                            x-model="step.name"
+                                            @input="calculateFunnel()"
+                                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="例：ランディングページ"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">訪問者</label>
+                                        <input
+                                            type="number"
+                                            x-model.number="step.visitors"
+                                            @input="calculateFunnel()"
+                                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="訪問者を入力"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">コンバージョン</label>
+                                        <input
+                                            type="number"
+                                            x-model.number="step.conversions"
+                                            @input="calculateFunnel()"
+                                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="コンバージョンを入力"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <button
+                            @click="addFunnelStep()"
+                            class="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            <i data-lucide="plus" class="h-4 w-4 inline mr-2"></i>
+                            ステップを追加
+                        </button>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h4 class="font-semibold mb-4">ファネル分析</h4>
+                        <div class="space-y-4">
+                            <template x-for="(result, index) in funnel.results" :key="index">
+                                <div class="border-b border-gray-200 pb-3 last:border-b-0">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-sm font-medium" x-text="result.name"></span>
+                                        <span class="text-sm font-bold text-blue-600" x-text="result.rate + '%'"></span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-gray-500">
+                                        <span x-text="result.conversions + ' / ' + result.visitors"></span>
+                                        <span x-text="'Drop: ' + result.dropoff + '%'" x-show="result.dropoff > 0"></span>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <div class="border-t pt-3 mt-4" x-show="funnel.results.length > 0">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">全体的なコンバージョン：</span>
+                                    <span class="font-bold text-green-600" x-text="funnel.overallRate + '%'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Impact Calculator -->
+            <div x-show="selectedType === 'revenue'" class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-6 flex items-center gap-2">
+                    <i data-lucide="dollar-sign" class="h-4 w-4"></i>
+                    収益影響計算機
+                </h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">月間現在の訪問者数</label>
+                            <input
+                                type="number"
+                                x-model.number="revenue.visitors"
+                                @input="calculateRevenue()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="月間訪問者を入力"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">現在のコンバージョンレート（％）</label>
+                            <input
+                                type="number"
+                                step="0.1"
+                                x-model.number="revenue.currentRate"
+                                @input="calculateRevenue()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="現在のコンバージョンレートを入力"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">目標コンバージョンレート（％）</label>
+                            <input
+                                type="number"
+                                step="0.1"
+                                x-model.number="revenue.targetRate"
+                                @input="calculateRevenue()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="目標コンバージョンレートを入力"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">平均注文額（$）</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                x-model.number="revenue.aov"
+                                @input="calculateRevenue()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="平均注文額を入力"
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h4 class="font-semibold mb-4">収益への影響</h4>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center p-3 bg-blue-100 rounded-lg">
+                                    <p class="text-sm text-blue-600">現在の収益</p>
+                                    <p class="text-lg font-bold text-blue-700" x-text="'$' + revenue.results.currentRevenue.toLocaleString()"></p>
+                                </div>
+                                <div class="text-center p-3 bg-green-100 rounded-lg">
+                                    <p class="text-sm text-green-600">予想収益</p>
+                                    <p class="text-lg font-bold text-green-700" x-text="'$' + revenue.results.projectedRevenue.toLocaleString()"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-4 space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">月間増加：</span>
+                                    <span class="font-bold text-green-600" x-text="'$' + revenue.results.monthlyIncrease.toLocaleString()"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">年間増加：</span>
+                                    <span class="font-bold text-green-600" x-text="'$' + revenue.results.annualIncrease.toLocaleString()"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">パーセンテージ増加：</span>
+                                    <span class="font-bold text-blue-600" x-text="revenue.results.percentageIncrease + '%'"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">追加コンバージョン：</span>
+                                    <span class="font-medium" x-text="revenue.results.additionalConversions + '/month'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formula Reference -->
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 class="font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="h-4 w-4"></i>
+                    公式リファレンス
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-gray-900">基本的なコンバージョンレート</h4>
+                            <p class="text-sm text-gray-600 mt-1">コンバージョンレート = （コンバージョン数 ÷ 訪問者数） × 100</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-900">A/Bテスト統計的有意性</h4>
+                            <p class="text-sm text-gray-600 mt-1">95％信頼度で比率比較にはZ検定を使用</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-900">ファネルドロップオフレート</h4>
+                            <p class="text-sm text-gray-600 mt-1">ドロップオフ = （（前のステップ - 現在のステップ） ÷ 前のステップ） × 100</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-gray-900">収益への影響</h4>
+                            <p class="text-sm text-gray-600 mt-1">収益 = 訪問者数 × コンバージョンレート × 平均注文額</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-900">改善計算</h4>
+                            <p class="text-sm text-gray-600 mt-1">改善 = （（新しいレート - 古いレート） ÷ 古いレート） × 100</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-900">信頼区間</h4>
+                            <p class="text-sm text-gray-600 mt-1">CI = レート ± Z × √（レート × （1 - レート） ÷ サンプルサイズ）</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips and Best Practices -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
+                <h3 class="font-semibold mb-4 flex items-center gap-2 text-blue-800">
+                    <i data-lucide="lightbulb" class="h-4 w-4"></i>
+                    コンバージョンレート最適化のヒント
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-medium text-blue-800 mb-2">テストのベストプラクティス</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• 週単位の変動を考慮するために、少なくとも2週間テストを実施する</li>
+                            <li>• 統計的有意性のために十分なサンプルサイズを確保する</li>
+                            <li>• 明確な結果を得るために、一度に1つの要素をテストする</li>
+                            <li>• 季節的な要因と外部イベントを考慮する</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-blue-800 mb-2">最適化戦略</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• ページロード速度とモバイル体験を最適化する</li>
+                            <li>• コールトゥアクションの明確性と配置を改善する</li>
+                            <li>• フォームフィールドを削減し、チェックアウトプロセスを簡略化する</li>
+                            <li>• ソーシャルプルーフと信頼シグナルを使用する</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+function conversionRateCalculator() {
+    return {
+        selectedType: 'basic',
+        
+        calculatorTypes: [
+            { id: 'basic', name: '基本レート' },
+            { id: 'ab-test', name: 'A/Bテスト' },
+            { id: 'funnel', name: 'マルチステップファネル' },
+            { id: 'revenue', name: '収益への影響' }
+        ],
+        
+        basic: {
+            visitors: 0,
+            conversions: 0,
+            results: {
+                rate: 0,
+                ratio: '0:0'
+            }
+        },
+        
+        abTest: {
+            variantA: {
+                visitors: 0,
+                conversions: 0
+            },
+            variantB: {
+                visitors: 0,
+                conversions: 0
+            },
+            results: {
+                rateA: 0,
+                rateB: 0,
+                improvement: 0,
+                confidence: 0,
+                significant: false
+            }
+        },
+        
+        funnel: {
+            steps: [
+                { name: 'ランディングページ', visitors: 0, conversions: 0 },
+                { name: '製品ページ', visitors: 0, conversions: 0 },
+                { name: 'チェックアウト', visitors: 0, conversions: 0 }
+            ],
+            results: [],
+            overallRate: 0
+        },
+        
+        revenue: {
+            visitors: 0,
+            currentRate: 0,
+            targetRate: 0,
+            aov: 0,
+            results: {
+                currentRevenue: 0,
+                projectedRevenue: 0,
+                monthlyIncrease: 0,
+                annualIncrease: 0,
+                percentageIncrease: 0,
+                additionalConversions: 0
+            }
+        },
+        
+        calculateBasic() {
+            if (this.basic.visitors > 0) {
+                const rate = (this.basic.conversions / this.basic.visitors) * 100;
+                this.basic.results.rate = Math.round(rate * 100) / 100;
+                
+                if (this.basic.conversions > 0) {
+                    const ratio = Math.round(this.basic.visitors / this.basic.conversions);
+                    this.basic.results.ratio = `1:${ratio}`;
+                } else {
+                    this.basic.results.ratio = '0:0';
+                }
+            } else {
+                this.basic.results.rate = 0;
+                this.basic.results.ratio = '0:0';
+            }
+        },
+        
+        calculateABTest() {
+            const rateA = this.abTest.variantA.visitors > 0 
+                ? (this.abTest.variantA.conversions / this.abTest.variantA.visitors) * 100 
+                : 0;
+            const rateB = this.abTest.variantB.visitors > 0 
+                ? (this.abTest.variantB.conversions / this.abTest.variantB.visitors) * 100 
+                : 0;
+                
+            this.abTest.results.rateA = Math.round(rateA * 100) / 100;
+            this.abTest.results.rateB = Math.round(rateB * 100) / 100;
+            
+            if (rateA > 0) {
+                const improvement = ((rateB - rateA) / rateA) * 100;
+                this.abTest.results.improvement = Math.round(improvement * 100) / 100;
+            } else {
+                this.abTest.results.improvement = 0;
+            }
+            
+            // Simplified statistical significance calculation
+            const nA = this.abTest.variantA.visitors;
+            const nB = this.abTest.variantB.visitors;
+            const pA = rateA / 100;
+            const pB = rateB / 100;
+            
+            if (nA > 30 && nB > 30) {
+                const pooled = (this.abTest.variantA.conversions + this.abTest.variantB.conversions) / (nA + nB);
+                const se = Math.sqrt(pooled * (1 - pooled) * (1/nA + 1/nB));
+                const zScore = Math.abs(pB - pA) / se;
+                
+                // Z-score > 1.96 indicates 95% confidence
+                this.abTest.results.significant = zScore > 1.96;
+                this.abTest.results.confidence = Math.min(95, Math.round((1 - 2 * (1 - this.normalCDF(Math.abs(zScore)))) * 100));
+            } else {
+                this.abTest.results.significant = false;
+                this.abTest.results.confidence = 0;
+            }
+        },
+        
+        calculateFunnel() {
+            this.funnel.results = [];
+            let previousVisitors = null;
+            
+            for (let i = 0; i < this.funnel.steps.length; i++) {
+                const step = this.funnel.steps[i];
+                const rate = step.visitors > 0 ? (step.conversions / step.visitors) * 100 : 0;
+                const dropoff = previousVisitors && previousVisitors > 0 
+                    ? ((previousVisitors - step.visitors) / previousVisitors) * 100 
+                    : 0;
+                
+                this.funnel.results.push({
+                    name: step.name,
+                    visitors: step.visitors,
+                    conversions: step.conversions,
+                    rate: Math.round(rate * 100) / 100,
+                    dropoff: Math.round(dropoff * 100) / 100
+                });
+                
+                previousVisitors = step.conversions;
+            }
+            
+            // Calculate overall conversion rate
+            if (this.funnel.steps.length > 0 && this.funnel.steps[0].visitors > 0) {
+                const lastStep = this.funnel.steps[this.funnel.steps.length - 1];
+                this.funnel.overallRate = Math.round(((lastStep.conversions / this.funnel.steps[0].visitors) * 100) * 100) / 100;
+            } else {
+                this.funnel.overallRate = 0;
+            }
+        },
+        
+        calculateRevenue() {
+            const currentConversions = (this.revenue.visitors * this.revenue.currentRate) / 100;
+            const targetConversions = (this.revenue.visitors * this.revenue.targetRate) / 100;
+            
+            this.revenue.results.currentRevenue = Math.round(currentConversions * this.revenue.aov);
+            this.revenue.results.projectedRevenue = Math.round(targetConversions * this.revenue.aov);
+            this.revenue.results.monthlyIncrease = this.revenue.results.projectedRevenue - this.revenue.results.currentRevenue;
+            this.revenue.results.annualIncrease = this.revenue.results.monthlyIncrease * 12;
+            
+            if (this.revenue.results.currentRevenue > 0) {
+                this.revenue.results.percentageIncrease = Math.round(
+                    ((this.revenue.results.projectedRevenue - this.revenue.results.currentRevenue) / this.revenue.results.currentRevenue) * 100 * 100
+                ) / 100;
+            } else {
+                this.revenue.results.percentageIncrease = 0;
+            }
+            
+            this.revenue.results.additionalConversions = Math.round(targetConversions - currentConversions);
+        },
+        
+        addFunnelStep() {
+            this.funnel.steps.push({
+                name: `Step ${this.funnel.steps.length + 1}`,
+                visitors: 0,
+                conversions: 0
+            });
+        },
+        
+        removeFunnelStep(index) {
+            this.funnel.steps.splice(index, 1);
+            this.calculateFunnel();
+        },
+        
+        // Normal cumulative distribution function for statistical calculations
+        normalCDF(x) {
+            const t = 1 / (1 + 0.2316419 * Math.abs(x));
+            const d = 0.3989423 * Math.exp(-x * x / 2);
+            const prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            return x > 0 ? 1 - prob : prob;
+        }
+    }
+}
+</script>
+
+        </div>
+    </div>
+    <!-- Email Capture for Tools -->
+    <div class="mt-8 max-w-md mx-auto">
+        
+        <!-- Email Capture Form -->
+<div class="">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold items-center gap-2 sm:text-center">
+            
+                <i data-lucide="mail" class="h-5 w-5 sm:mx-auto"></i>
+                Get Results of コンバージョンレート計算機  via Email
+            
+        </h2>
+        <p class="text-sm text-gray-600 mt-1 sm:text-center">
+            
+                Save your calculations and get detailed breakdowns
+            
+        </p>
+    </div>
+    <div class="p-6">
+        <form onsubmit="handleEmailCapture(event, 'conversion-rate-calculator', 'result')">
+            <div class="space-y-4">
+                
+                <div class="space-y-2">
+                    <label for="email-capture-input" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input 
+                        id="email-capture-input" 
+                        type="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email address" 
+                        autocomplete="email" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+                >
+                    
+                        Get Results via Email
+                    
+                </button>
+                <p class="text-xs text-gray-500 text-center">
+                    We respect your privacy. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </form>
+        <div id="email-capture-message-result" class="mt-4 hidden">
+            <div class="rounded-lg bg-green-50 border border-green-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="check-circle" class="h-5 w-5 text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">
+                            
+                                Thanks! We'll send your results to your inbox.
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function handleEmailCapture(event, toolId, captureType) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.email.value;
+    const toolRequest = form.toolRequest ? form.toolRequest.value : null;
+    const messageDiv = document.getElementById(`email-capture-message-${captureType || 'result'}`);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Tracking 
+    gtag_report_conversion(window.location.href)
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    try {
+        // Capture email with PostHog
+        if (typeof posthog !== 'undefined') {
+            // Identify the user with their email
+            const identifyData = {
+                email: email,
+                tool_interest: toolId,
+                capture_type: captureType
+            };
+            
+            if (toolRequest) {
+                identifyData.requested_tool = toolRequest;
+            }
+            
+            posthog.identify(email, identifyData);
+            
+            // Capture the email capture event
+            const eventData = {
+                email: email,
+                tool_id: toolId,
+                tool_name: 'コンバージョンレート計算機',
+                capture_type: captureType,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (toolRequest) {
+                eventData.requested_tool = toolRequest;
+            }
+            
+            posthog.capture('email_captured', eventData);
+            
+            console.log('Email captured with PostHog:', { email, toolId, captureType, toolRequest });
+        } else {
+            console.log('PostHog not available, email capture:', { email, toolId, captureType, toolRequest });
+        }
+        
+        // Simulate API delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Show success message
+        messageDiv.classList.remove('hidden');
+        form.style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error capturing email:', error);
+        // Show error message
+        messageDiv.innerHTML = `
+            <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-circle" class="h-5 w-5 text-red-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">
+                            Something went wrong. Please try again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
+}
+</script>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/ja/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/ja/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/ja/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/credit-card-payoff.html">
+                        クレジットカード返済計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/credit-card-payment.html">
+                        クレジットカード支払い計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/days-sales-outstanding.html">
+                        売上債権回転期間（DSO）
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/carried-interest.html">
+                        キャリードインタレスト計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/emi-calculator.html">
+                        EMI計算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/debt-to-capital-ratio.html">
+                        負債対資本比率
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/butterfly-spread-profit.html">
+                        バタフライスプレッド利益
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ja/tools/apr-to-apy.html">
+                        APRからAPYへの換算機
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">日本語</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ko" href="/ko/index.html">한국어</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="zh" href="/zh/index.html">中文</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment - Developer &amp; Financial Tools</title>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/utils/calculatorUtils.js"></script>
+    <script src="/components/calculatorComponents.js"></script>
+    <script>
+  window.__LANG__ = "ko";
+  window.__LOCALES__ = {"en":{"locale":"en-US","currency":"USD","decimal":".","thousands":","},"es":{"locale":"es-ES","currency":"EUR","decimal":",","thousands":"."},"fr":{"locale":"fr-FR","currency":"EUR","decimal":",","thousands":" "},"de":{"locale":"de-DE","currency":"EUR","decimal":",","thousands":"."},"pt":{"locale":"pt-BR","currency":"BRL","decimal":",","thousands":"."},"it":{"locale":"it-IT","currency":"EUR","decimal":",","thousands":"."},"ja":{"locale":"ja-JP","currency":"JPY","decimal":".","thousands":","},"ko":{"locale":"ko-KR","currency":"KRW","decimal":".","thousands":","},"zh":{"locale":"zh-CN","currency":"CNY","decimal":".","thousands":","},"ru":{"locale":"ru-RU","currency":"RUB","decimal":",","thousands":" "}};
+  window.formatCurrency = function (value, langOverride) {
+    var langs = window.__LOCALES__ || {};
+    var cfg = langs[langOverride] || langs[window.__LANG__] || langs.en || { locale: 'en-US', currency: 'USD' };
+    try {
+      return new Intl.NumberFormat(cfg.locale, { style: 'currency', currency: cfg.currency }).format(value);
+    } catch (e) {
+      return String(value);
+    }
+  };
+</script>
+
+    <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+            api_host: 'https://us.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        })
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0BG099QVRK');
+    </script>
+
+    <!-- Event snippet for Website lead conversion page
+    In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+    function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+        'event_callback': callback
+    });
+    return false;
+    }
+    </script>
+
+
+</head>
+<body class="bg-gray-50">
+    
+  
+  
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b">
+      <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <a href="/ko/index.html" class="hover:text-gray-900">All Tools</a>
+              <span>/</span>
+              <span class="text-gray-900 font-medium">Investment</span>
+            </div>
+            <h1 class="mt-4 text-2xl font-bold text-gray-900">Investment</h1>
+            
+          </div>
+          <button type="button" id="theme-toggle"
+  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+  aria-label="Toggle dark mode">
+  <i data-lucide="moon" class="h-4 w-4 inline-block dark:hidden"></i>
+  <i data-lucide="sun" class="h-4 w-4 hidden dark:inline-block"></i>
+</button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+      
+      
+
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user-x" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">결근률 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">예정되지 않은 결근으로 인해 손실된 예정된 근무일 수의 백분율을 측정하여 인력 출석을 추적합니다 — HR 동향을 파악하는 데 유용합니다.</p>
+                <a href="/ko/tools/absence-rate-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user-check" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">수락률 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">신청서, 오퍼 또는 초대장 중 수락된 비율을 측정하여 아웃리치 또는 채용 펀넬의 효과를 평가합니다.</p>
+                <a href="/ko/tools/acceptance-rate-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">회계이익 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">총 수익에서 임금, 임대료, 재료 등의 명시적 비용을 뺀 순이익을 구합니다. 이는 표준 손익계산서의 최종 수치입니다.</p>
+                <a href="/ko/tools/accounting-profit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="plus-circle" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">필요한 추가 자금</h2>
+                <p class="text-sm text-gray-600 mt-1">판매 예측에 따라 예상 자산 성장이 사용 가능한 내부 자금 및 부채를 초과할 때 필요한 외부 자금을 추정합니다.</p>
+                <a href="/ko/tools/additional-funds-needed.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="alert-triangle" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">Altman Z-Score</h2>
+                <p class="text-sm text-gray-600 mt-1">Altman Z-Score 모델을 사용하여 회사의 파산 위험을 평가합니다 — 5가지 재무 비율을 결합하여 재정 곤란을 예측합니다.</p>
+                <a href="/ko/tools/altman-z-score.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">자산회전율</h2>
+                <p class="text-sm text-gray-600 mt-1">기업이 총자산으로부터 수익을 창출하는 효율성을 측정합니다. 높은 비율은 자산 기반이 더 잘 활용되고 있음을 나타냅니다.</p>
+                <a href="/ko/tools/asset-turnover-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">평균 회수 기간</h2>
+                <p class="text-sm text-gray-600 mt-1">판매 후 평균적으로 비즈니스가 결제를 회수하는 데 걸리는 일수를 알아보고 잠재적인 현금 흐름 지연을 파악합니다.</p>
+                <a href="/ko/tools/average-collection-period.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">평균 일일 요금</h2>
+                <p class="text-sm text-gray-600 mt-1">점유 객실당 일일 평균 수익을 결정합니다 — 호텔 및 단기 임대의 핵심 가격 KPI.</p>
+                <a href="/ko/tools/average-daily-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">청구 요금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">기본 비용, 간접비, 이윤, 원하는 활용률을 고려하여 클라이언트 대면 청구 요금을 적절하게 설정하세요.</p>
+                <a href="/ko/tools/bill-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">청구 가능 시간 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">클라이언트 작업에 소비한 시간을 추적하고 평가합니다. 작업 시간과 청구 요금을 입력하여 프로젝트 또는 기간별 총 수익을 확인하세요.</p>
+                <a href="/ko/tools/billable-hours.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="book-open" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">장부 이익 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">수익에서 총 회계 비용을 빼서 비현금 항목을 포함한 재무제표에 기록된 이익을 결정합니다.</p>
+                <a href="/ko/tools/book-profit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="crosshair" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">손익분기점 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">총수익이 총비용과 같아지는 정확한 판매량을 찾아보세요 — 제품이나 사업이 언제부터 수익을 창출하기 시작하는지 정확히 알아봅시다.</p>
+                <a href="/ko/tools/break-even.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="briefcase" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">투입자본 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">자본과 부채를 결합하여 기업이 사용하는 총 장기 자금을 정량화하며, ROCE 및 효율성 분석의 기초를 형성합니다.</p>
+                <a href="/ko/tools/capital-employed.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="arrow-right-left" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">현금흐름 대 부채 비율</h2>
+                <p class="text-sm text-gray-600 mt-1">영업 현금흐름을 사용하여 회사가 총 부채를 상환할 수 있는 속도를 확인하십시오 — 장기 지급능력의 핵심 지표입니다.</p>
+                <a href="/ko/tools/cash-flow-to-debt-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="droplets" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">현금비율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">현금 및 현금성 자산만 사용하여 유동부채를 충당하는 기업의 능력을 측정하는 가장 보수적인 유동성 검사입니다.</p>
+                <a href="/ko/tools/cash-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user-minus" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">이탈율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">일정 기간 동안 손실된 고객의 백분율을 측정하여 구독 상태를 평가하고 고객 유지 개선 기회를 파악합니다.</p>
+                <a href="/ko/tools/churn-rate-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="handshake" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">수수료 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">총 판매액 및 요금 입력값이 주어졌을 때 정액, 단계별 또는 비율 기반 수수료 구조에 따른 영업 담당자 수익을 계산합니다.</p>
+                <a href="/ko/tools/commission-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">소비자 잉여 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">소비자가 기꺼이 지불할 최대 금액보다 적게 지불할 때 받는 이익을 정량화합니다. 가격 책정 및 정책 분석에 유용합니다.</p>
+                <a href="/ko/tools/consumer-surplus.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">공헌이익 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">매출에서 변동비를 뺀 후 남은 수익이 고정비를 충당하고 이익을 창출하는지 판단합니다. 가격 책정 결정에 필수적입니다.</p>
+                <a href="/ko/tools/contribution-margin.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">전환율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">방문자 또는 리드 중에서 원하는 작업을 완료한 비율을 측정하여 마케팅 및 퍼널 성과를 평가하는 데 도움이 됩니다.</p>
+                <a href="/ko/tools/conversion-rate-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">CPC 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">총 광고 지출과 클릭 수에서 클릭당 비용을 구하여 채널 전체에서 캠페인 효율성을 비교할 수 있습니다.</p>
+                <a href="/ko/tools/cpc-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">CPM 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">광고 노출 1,000회당 비용을 결정하여 디스플레이 또는 미디어 캠프의 도달 범위 효율성을 평가하고 비교합니다.</p>
+                <a href="/ko/tools/cpm-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="scale" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">유동비율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">유동자산을 유동부채로 나누어 단기 재무 건강도를 확인하세요 — 1 이상의 비율은 적절한 유동성을 의미합니다.</p>
+                <a href="/ko/tools/current-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user-plus" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">고객 획득 비용</h2>
+                <p class="text-sm text-gray-600 mt-1">총 판매 및 마케팅 지출을 신규 고객으로 나누어 각 신규 고객 유입 비용을 파악합니다.</p>
+                <a href="/ko/tools/customer-acquisition-cost.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="heart" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">고객생애가치</h2>
+                <p class="text-sm text-gray-600 mt-1">단일 고객이 전체 관계 기간에 걸쳐 비즈니스가 기대할 수 있는 총 수익을 추정하여 고객 확보 예산을 안내합니다.</p>
+                <a href="/ko/tools/customer-lifetime-value.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user-check" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">고객 유지율</h2>
+                <p class="text-sm text-gray-600 mt-1">특정 기간 동안 비즈니스가 유지하는 고객의 백분율을 측정합니다. 이탈률의 반대로, SaaS 및 구독 모델에 필수적입니다.</p>
+                <a href="/ko/tools/customer-retention-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">재고일수（DIO）</h2>
+                <p class="text-sm text-gray-600 mt-1">재고가 판매될 때까지의 평균 일수를 파악하여 재고 수준을 최적화하고 보관 비용을 줄일 수 있습니다.</p>
+                <a href="/ko/tools/days-inventory-outstanding.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">지급 외상 일수(DPO)</h2>
+                <p class="text-sm text-gray-600 mt-1">기업이 공급업체에 지급하기까지의 평균 일수를 측정합니다 — DPO가 길수록 현금 흐름이 개선될 수 있지만 공급업체 관계에 영향을 미칠 수 있습니다.</p>
+                <a href="/ko/tools/days-payable-outstanding.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">Days Sales Outstanding (DSO)</h2>
+                <p class="text-sm text-gray-600 mt-1">판매 후 평균적으로 결제를 회수하는 데 걸리는 시간을 결정하여 신용 및 수금 프로세스의 효율성을 파악합니다.</p>
+                <a href="/ko/tools/days-sales-outstanding.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">초과손실 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">상호이익이 되는 거래를 방지하는 세금이나 가격규제 같은 시장왜곡으로 인해 생기는 경제적 비효율성을 정량화합니다.</p>
+                <a href="/ko/tools/deadweight-loss.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">부채비율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">총부채를 총자산의 비율로 표현하여 기업의 레버리지를 측정하고 재무위험 수준을 평가합니다.</p>
+                <a href="/ko/tools/debt-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">부채자산비율</h2>
+                <p class="text-sm text-gray-600 mt-1">총 부채를 총 자산과 비교하여 자산의 어느 부분이 채권자 대 주주에 의해 자금 조달되는지 이해합니다.</p>
+                <a href="/ko/tools/debt-to-asset-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">부채대자본비율</h2>
+                <p class="text-sm text-gray-600 mt-1">기업의 자본 구조에서 부채 대 자본의 비중을 측정하여 전반적인 재무 레버리지를 나타냅니다.</p>
+                <a href="/ko/tools/debt-to-capital-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">채무자 일수 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">고객이 미지급 송장을 결제하는 데 걸리는 일수를 추정합니다 — 채무자 일수가 낮을수록 현금 전환이 빠릅니다.</p>
+                <a href="/ko/tools/debtor-days.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">방어적 구간 비율</h2>
+                <p class="text-sm text-gray-600 mt-1">추가 수익이나 자금 조달 없이 유동 자산만을 사용하여 회사가 운영할 수 있는 일수를 측정합니다.</p>
+                <a href="/ko/tools/defensive-interval-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="percent" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">할인 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">원래 가격과 할인율을 입력하여 절약액과 할인 후 최종 가격을 즉시 확인하세요.</p>
+                <a href="/ko/tools/discount-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">듀폰 분석</h2>
+                <p class="text-sm text-gray-600 mt-1">자기자본이익률(ROE)을 수익성, 효율성, 레버리지 요소로 분해하여 성과를 이끌거나 저해하는 요소를 파악합니다.</p>
+                <a href="/ko/tools/dupont-analysis.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">EBIT 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">수익에서 영업비용을 빼고 이자비용과 세금을 고려하기 전에 영업 수익성을 계산합니다.</p>
+                <a href="/ko/tools/ebit-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">EBITDA 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">순이익에 비현금 비용을 더하여 영업 현금 흐름의 프록시를 계산합니다 — 사업 평가에서 널리 사용됩니다.</p>
+                <a href="/ko/tools/ebitda-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">EBITDA 마진</h2>
+                <p class="text-sm text-gray-600 mt-1">EBITDA를 수익의 백분율로 표현하여 자본 구조와 관계없이 기업 또는 기간 간 운영 효율을 비교합니다.</p>
+                <a href="/ko/tools/ebitda-margin.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">EBITDA 배수</h2>
+                <p class="text-sm text-gray-600 mt-1">EBITDA에 업계 비교 가능 배수를 곱하여 회사의 암묵적 가치를 결정합니다. 이는 표준 M&amp;A 평가 지름길입니다.</p>
+                <a href="/ko/tools/ebitda-multiple.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">경제 발주량 (EOQ)</h2>
+                <p class="text-sm text-gray-600 mt-1">총 재고 비용을 최소화하는 이상적인 재주문 수량을 찾습니다 — 발주 빈도와 보관 및 보유 비용의 균형을 맞춥니다.</p>
+                <a href="/ko/tools/economic-order-quantity.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">경제 이익 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">회계 이익을 초과하여 기회비용을 빼서 비즈니스가 차선책보다 실제로 가치를 창출하는지 여부를 밝혀냅니다.</p>
+                <a href="/ko/tools/economic-profit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">경제적 부가가치</h2>
+                <p class="text-sm text-gray-600 mt-1">기업이 필요한 투자자본수익률을 초과하여 창출하는 가치를 측정합니다. 긍정적인 EVA는 진정한 주주 가치 창출을 나타냅니다.</p>
+                <a href="/ko/tools/economic-value-added.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">직원 이직률</h2>
+                <p class="text-sm text-gray-600 mt-1">일정 기간 동안 조직을 떠나는 직원의 비율을 추적하여 인재 유지 노력을 평가하고 채용 및 교육 비용을 추정합니다.</p>
+                <a href="/ko/tools/employee-turnover-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">기말 재고 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">기초 재고, 매입, 및 매출원가를 사용하여 기간 말 미판매 재고의 가치를 결정합니다.</p>
+                <a href="/ko/tools/ending-inventory.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">기업 가치 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">시가총액과 순부채를 결합하여 기업의 인수합병 총액을 추정합니다. 이는 M&amp;A 및 평가에서 사용되는 표준 척도입니다.</p>
+                <a href="/ko/tools/enterprise-value.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">기업가치 대비 매출</h2>
+                <p class="text-sm text-gray-600 mt-1">회사의 총 가치를 매출과 비교하여 시장이 동료 대비 성장을 어떻게 평가하는지 평가합니다.</p>
+                <a href="/ko/tools/enterprise-value-to-sales.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">자기자본승수</h2>
+                <p class="text-sm text-gray-600 mt-1">기업 자산 중 주주 자본으로 조달되는 비율을 확인하세요 — 높은 승수는 더 큰 금융 레버리지를 나타냅니다.</p>
+                <a href="/ko/tools/equity-multiplier.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">자기자본비율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주주 자본으로 자금 조달된 총자산의 비율을 측정하여 부채 의무로부터의 재무 독립성을 보여줍니다.</p>
+                <a href="/ko/tools/equity-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">고정자산 회전율</h2>
+                <p class="text-sm text-gray-600 mt-1">기업이 부동산, 플랜트 및 장비를 얼마나 효율적으로 활용하여 판매 수익을 창출하는지 평가합니다.</p>
+                <a href="/ko/tools/fixed-asset-turnover-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">고정비 커버리지 비율 (FCCR)</h2>
+                <p class="text-sm text-gray-600 mt-1">회사가 영업 수익으로 채무 상환 및 임차료 등의 고정 의무를 충당할 수 있는 충분한 수익을 올리고 있는지 판단합니다.</p>
+                <a href="/ko/tools/fixed-charge-coverage-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">자유 현금 흐름 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">자본 지출 후 생성된 현금을 측정합니다—부채 상환, 배당금 지급 또는 성장을 위한 재투자에 사용 가능한 금액입니다.</p>
+                <a href="/ko/tools/free-cash-flow.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="lock" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">Base64 인코더/디코더</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트 및 파일을 Base64 형식으로 인코딩/디코딩합니다.</p>
+                <a href="/ko/tools/base64-encoder.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calendar-days" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">나이 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">생년월일로부터 정확한 연도, 개월, 일, 시간, 분을 계산합니다.</p>
+                <a href="/ko/tools/age-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="briefcase" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">업무일 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주말과 공휴일을 제외한 날짜 간의 업무일을 계산합니다.</p>
+                <a href="/ko/tools/business-days-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calendar" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">날짜 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">날짜 간의 차이를 계산하고, 날짜를 더하거나 빼며, 시간대 간에 변환합니다.</p>
+                <a href="/ko/tools/date-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="palette" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">컬러 팔레트 생성기</h2>
+                <p class="text-sm text-gray-600 mt-1">16진수, RGB, HSL 값으로 디자인 프로젝트용 아름다운 컬러 팔레트를 생성합니다.</p>
+                <a href="/ko/tools/color-palette-generator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="paintbrush" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">CSS 그래디언트 생성기</h2>
+                <p class="text-sm text-gray-600 mt-1">라이브 미리보기 및 클립보드 복사 기능이 있는 아름다운 CSS 그래디언트를 만듭니다.</p>
+                <a href="/ko/tools/css-gradient-generator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="star" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">파비콘 생성기</h2>
+                <p class="text-sm text-gray-600 mt-1">로고 또는 이미지에서 여러 크기의 파비콘을 생성합니다.</p>
+                <a href="/ko/tools/favicon-generator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="minimize-2" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">코드 최소화 도구</h2>
+                <p class="text-sm text-gray-600 mt-1">향상된 브라우저 기반 알고리즘을 사용하여 JavaScript, CSS, HTML 및 JSON 코드를 최소화하고 정렬합니다.</p>
+                <a href="/ko/tools/code-minifier.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="pie-chart" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">50/30/20 예산 규칙</h2>
+                <p class="text-sm text-gray-600 mt-1">50/30/20 규칙을 사용하여 수입을 필수비, 욕구, 저축으로 분할합니다 — 각 카테고리에 정확히 얼마를 배분해야 하는지 확인하세요.</p>
+                <a href="/ko/tools/50-30-20-budget.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="shield-dollar" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">실제 현금 가치 (ACV)</h2>
+                <p class="text-sm text-gray-600 mt-1">보험 청구를 위한 자산의 감가상각된 가치를 찾습니다 — 나이, 상태 및 교체 비용을 고려합니다.</p>
+                <a href="/ko/tools/actual-cash-value.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="minus-circle" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">세후 부채 비용</h2>
+                <p class="text-sm text-gray-600 mt-1">이자에 대한 세금 공제를 고려한 차입의 실제 비용을 확인하여 자금 조달 옵션을 정확하게 평가하세요.</p>
+                <a href="/ko/tools/after-tax-cost-debt.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calendar" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">대출 상환 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">전체 대출 상환 일정을 보세요 — 각 지불이 대출 기간 동안 원금과 이자 사이에 어떻게 나뉘는지 확인하세요.</p>
+                <a href="/ko/tools/amortization-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="banknote" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">연간 소득 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">시급, 주급 또는 월급을 총 연간 소득으로 변환합니다. 초과 근무 수당 및 보너스 포함.</p>
+                <a href="/ko/tools/annual-income.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="percent" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">APR 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">수수료와 이자를 포함한 대출의 진정한 연간 비용을 찾으세요 — 대출 제안을 나란히 비교하는 데 필수입니다.</p>
+                <a href="/ko/tools/apr-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="arrow-right" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">APR에서 APY로의 변환기</h2>
+                <p class="text-sm text-gray-600 mt-1">APR을 APY로 변환하여 복리가 고려된 저축의 실제 수익률을 확인하세요.</p>
+                <a href="/ko/tools/apr-to-apy.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="trending-up" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">APY 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">복리가 포함된 후 저축 또는 투자의 실제 연이율을 발견하세요 — 복리 계산 빈도가 높을수록 더 많은 성장을 의미합니다.</p>
+                <a href="/ko/tools/apy-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="arrow-left" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">APY에서 APR로의 변환기</h2>
+                <p class="text-sm text-gray-600 mt-1">복합 수익 뒤의 명목 금리를 이해하기 위해 APY를 APR로 다시 변환합니다.</p>
+                <a href="/ko/tools/apy-to-apr.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="shopping-cart" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">구매력 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">시간이 지남에 따라 인플레이션이 구매력을 어떻게 약화시키는지 확인하세요 — 금액을 입력하고 오늘날 달러로의 가치를 알아보세요.</p>
+                <a href="/ko/tools/buying-power.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="file-text" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">정기예금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">예금 금액, 이자율, 기간을 기반으로 CD 수익을 예측합니다. 다양한 락인 기간을 비교하세요.</p>
+                <a href="/ko/tools/certificate-of-deposit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="trending-up" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">복리 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">복리로 시간이 지남에 따라 자산이 어떻게 증가하는지 확인하세요 — 원금, 이율, 복리 계산 빈도 및 선택적 기여금을 입력합니다.</p>
+                <a href="/ko/tools/compound-interest.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="credit-card" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">신용카드 결제 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">신용카드 청구를 이해하세요 — 최소 결제 금액과 잔액을 상환하는 데 걸리는 시간을 확인합니다.</p>
+                <a href="/ko/tools/credit-card-payment.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="credit-card" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">신용카드 상환 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">신용카드 빚에서 벗어날 계획을 세우세요 — 상환 시간과 다양한 상환액에서의 총 이자를 확인하세요.</p>
+                <a href="/ko/tools/credit-card-payoff.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="scale" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">부채 대 소득 비율</h2>
+                <p class="text-sm text-gray-600 mt-1">월간 부채 부담이 건강한 범위 내에 있는지 확인하세요. 대출기관은 이 비율을 사용하여 신용도를 평가합니다.</p>
+                <a href="/ko/tools/debt-to-income-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">부채 한도 비율</h2>
+                <p class="text-sm text-gray-600 mt-1">총 잔액을 신용 한도와 비교하여 신용 활용률을 추적합니다. 이는 신용 점수의 주요 요소입니다.</p>
+                <a href="/ko/tools/debt-to-limit-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">할인 요소 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주어진 할인율을 사용하여 미래 현금 흐름이 오늘의 달러로 얼마나 가치가 있는지 결정합니다.</p>
+                <a href="/ko/tools/discount-factor.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">가처분 소득 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">급여에서 세금과 필수 공제를 뺀 후 사용하거나 저축할 수 있는 금액을 추정합니다.</p>
+                <a href="/ko/tools/disposable-income.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">계약금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주택 구매 시 필요한 계약금 추정 — 일반적으로 구매 가격의 1–3%입니다.</p>
+                <a href="/ko/tools/earnest-money.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">유효 연이율</h2>
+                <p class="text-sm text-gray-600 mt-1">복리 계산 후 실제 연이율을 공개합니다. 다양한 조건의 대출금이나 저축 계좌를 비교하는 데 유용합니다.</p>
+                <a href="/ko/tools/effective-annual-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">실효세율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">한계세율이 아닌 총 소득의 백분율로 실제 세율을 찾습니다.</p>
+                <a href="/ko/tools/effective-tax-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="shield" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">긴급자금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">월간 지출과 필요한 커버 개월수를 기반으로 권장 긴급자금 목표를 결정합니다.</p>
+                <a href="/ko/tools/emergency-fund.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="credit-card" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">EMI 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">모든 대출 금액, 이자율 및 상환 기간에 대한 고정 월별 대출 상환액(EMI)을 찾습니다.</p>
+                <a href="/ko/tools/emi-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">동등 이자율</h2>
+                <p class="text-sm text-gray-600 mt-1">한 복리 빈도에서 다른 복리 빈도로 이자율을 변환합니다 — 다양한 지불 일정을 가진 상품을 비교할 때 유용합니다.</p>
+                <a href="/ko/tools/equivalent-interest-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">피셔 방정식 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">피셔 방정식을 사용하여 명목 이자율을 실질 이자율과 인플레이션 기대치로 분리합니다.</p>
+                <a href="/ko/tools/fisher-equation.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">정기예금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">원금, 이자율, 기간을 기반으로 정기예금의 만기값을 계산합니다.</p>
+                <a href="/ko/tools/fixed-deposit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="landmark" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">채권 현재 수익률</h2>
+                <p class="text-sm text-gray-600 mt-1">채권이 현재 시장 가격 대비 생성하는 연간 소득을 찾아, 할인 또는 프리미엄으로 거래되는 채권을 비교하는 데 유용합니다.</p>
+                <a href="/ko/tools/bond-current-yield.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="landmark" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">채권등가수익률</h2>
+                <p class="text-sm text-gray-600 mt-1">단기채권 수익률을 연간화 기준으로 변환하여 연간지급 채권과 공정하게 비교할 수 있도록 합니다.</p>
+                <a href="/ko/tools/bond-equivalent-yield.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="landmark" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">채권 가격 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">쿠폰 이율, 만기 수익률 및 만기까지의 시간을 기반으로 채권 가격을 분석하여 공정한 시장 가치를 결정합니다.</p>
+                <a href="/ko/tools/bond-price.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="phone-call" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">콜 수익률</h2>
+                <p class="text-sm text-gray-600 mt-1">발행사가 첫 번째 콜 날짜에 조기 상환하는 경우 콜 가능 채권의 실질 수익률을 결정합니다.</p>
+                <a href="/ko/tools/bond-yield-to-call.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calendar-days" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">채권 만기수익률</h2>
+                <p class="text-sm text-gray-600 mt-1">만기까지 보유한 채권의 총 연간 수익률을 찾으세요. 쿠폰 지급, 매입 가격 및 액면가를 고려합니다.</p>
+                <a href="/ko/tools/bond-yield-to-maturity.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="move-3d" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">나비 스프레드 수익</h2>
+                <p class="text-sm text-gray-600 mt-1">다양한 만기 가격 시나리오에서 나비 스프레드 옵션 전략의 손익을 평가합니다.</p>
+                <a href="/ko/tools/butterfly-spread-profit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="activity" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">CAGR 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">시간 경과에 따른 투자의 연간 복합 성장률을 측정하고 변동성을 부드럽게 하여 실제 장기 성과를 드러냅니다.</p>
+                <a href="/ko/tools/cagr-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="building-2" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">자본자산가격결정모형</h2>
+                <p class="text-sm text-gray-600 mt-1">CAPM 프레임워크를 사용하여 베타, 시장위험프리미엄 및 무위험이율을 기반으로 주식의 기대수익률을 추정합니다.</p>
+                <a href="/ko/tools/capital-asset-pricing-model.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="trending-up" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">시세차익 수익률</h2>
+                <p class="text-sm text-gray-600 mt-1">배당금이나 이자 같은 소득과 별도로 투자 수익의 가격 상승 부분을 추적합니다.</p>
+                <a href="/ko/tools/capital-gains-yield.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="home" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">캡 레이트</h2>
+                <p class="text-sm text-gray-600 mt-1">순영업수익을 현재 시장가치로 나누어 부동산의 수익 잠재력을 평가합니다.</p>
+                <a href="/ko/tools/capitalization-rate.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="briefcase" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">Carried Interest 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">선호 수익률 이상의 이익 지분으로 펀드 관리자가 획득한 성과 수수료를 결정합니다.</p>
+                <a href="/ko/tools/carried-interest.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">쿠폰 지급 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">채권의 액면가, 쿠폰 이율, 지급 빈도에 따라 채권이 지급하는 정기 이자를 계산합니다.</p>
+                <a href="/ko/tools/coupon-payment.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="bitcoin" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">암호화폐 수익 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">진입 가격, 출구 가격, 수수료 및 포지션 규모를 고려하여 암호화폐 거래의 순이익 또는 손실을 계산합니다.</p>
+                <a href="/ko/tools/crypto-profit.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">배당금 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주식 보유에서 연간 배당 수입을 예상하고 주가 변동에 따른 수익률 변화를 확인하세요.</p>
+                <a href="/ko/tools/dividend-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">배당할인모델</h2>
+                <p class="text-sm text-gray-600 mt-1">배당금 예측 및 필요수익률이 포함된 고든 성장모델을 사용하여 주식의 적정 가치를 추정하세요.</p>
+                <a href="/ko/tools/dividend-discount-model.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">배당성향</h2>
+                <p class="text-sm text-gray-600 mt-1">기업의 수익 중 얼마나 주주들에게 배당으로 돌려지는지, 그리고 성장을 위해 유보되는지를 평가합니다.</p>
+                <a href="/ko/tools/dividend-payout-ratio.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">배당 수익률 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">주식의 현재 가격에 상대적인 연간 배당 수익률을 측정하여 수익 창출 투자를 비교합니다.</p>
+                <a href="/ko/tools/dividend-yield-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">주당순이익</h2>
+                <p class="text-sm text-gray-600 mt-1">기업이 발행된 각 주식에 배분하는 이익의 규모를 결정하는 것으로, 주식 가치를 평가하기 위한 핵심 지표입니다.</p>
+                <a href="/ko/tools/earnings-per-share.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">주당순이익 성장률</h2>
+                <p class="text-sm text-gray-600 mt-1">시간에 따라 기업의 주당순이익(EPS)이 얼마나 빠르게 확대되고 있는지 추적하여 모멘텀과 미래 수익성을 평가합니다.</p>
+                <a href="/ko/tools/earnings-per-share-growth.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="function-square" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">방정식 풀이기</h2>
+                <p class="text-sm text-gray-600 mt-1">단계별 해법으로 일차 및 이차 방정식을 해결합니다.</p>
+                <a href="/ko/tools/equation-solver.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="user" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">가짜 데이터 생성기</h2>
+                <p class="text-sm text-gray-600 mt-1">이름, 주소, 이메일, 전화번호 등 테스트용 현실적인 가짜 데이터를 생성합니다.</p>
+                <a href="/ko/tools/fake-data-generator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="activity" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">BMI 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">체질량지수를 계산하고 건강 범주를 확인합니다.</p>
+                <a href="/ko/tools/bmi-calculator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="coins" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">환율 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">실시간 환율로 다양한 통화 간의 환전을 수행합니다.</p>
+                <a href="/ko/tools/currency-converter.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="calculator" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">이중 할인 계산기</h2>
+                <p class="text-sm text-gray-600 mt-1">두 개의 할인을 적용했을 때의 효과를 계산합니다.</p>
+                <a href="/ko/tools/double-discount.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="type" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">악센트 제거 도구</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트에서 악센트와 발음 기호를 제거합니다.</p>
+                <a href="/ko/tools/accents-remover.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="hash" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">줄 번호 추가</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트의 각 줄에 줄 번호를 추가합니다.</p>
+                <a href="/ko/tools/add-line-numbers.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="plus-minus" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">접두사/접미사 추가/제거</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트 줄에서 접두사와 접미사를 추가하거나 제거합니다.</p>
+                <a href="/ko/tools/add-remove-prefix-suffix.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="hash" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">문자 카운터</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트의 문자, 단어, 줄, 단락을 세십시오.</p>
+                <a href="/ko/tools/character-counter.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="shuffle" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">조합 생성기</h2>
+                <p class="text-sm text-gray-600 mt-1">항목 목록에서 모든 가능한 조합을 생성합니다.</p>
+                <a href="/ko/tools/combination-generator.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="copy" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">중복 줄 제거 도구</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트에서 중복 줄을 제거하면서 순서를 보존합니다.</p>
+                <a href="/ko/tools/duplicate-lines-remover.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="mail" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">이메일 추출기</h2>
+                <p class="text-sm text-gray-600 mt-1">패턴 매칭을 사용하여 텍스트에서 이메일 주소를 추출합니다.</p>
+                <a href="/ko/tools/email-extractor.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="minus" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">빈 줄 제거기</h2>
+                <p class="text-sm text-gray-600 mt-1">텍스트에서 빈 줄과 공백을 제거합니다.</p>
+                <a href="/ko/tools/empty-lines-remover.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          
+          <article class="block p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group bg-white rounded-lg border border-gray-200">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-gray-100">
+                <i data-lucide="space" class="h-5 w-5 text-gray-700"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-gray-900 group-hover:text-gray-700">추가 공백 제거 도구</h2>
+                <p class="text-sm text-gray-600 mt-1">추가 공백, 탭을 제거하고 공백을 정규화합니다.</p>
+                <a href="/ko/tools/extra-space-remover.html"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3">
+                  Open Tool →
+                </a>
+              </div>
+            </div>
+          </article>
+        
+      </div>
+      
+    </div>
+
+    <footer class="bg-white border-t mt-16 dark:bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-6">
+        
+        
+        <a href="/ko/index.html" class="inline-flex items-center gap-2">
+          <span class="text-xl font-semibold text-gray-900 dark:text-white">Tools Catalog</span>
+        </a>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Free developer and financial utilities. Fast, simple, and privacy‑friendly.</p>
+        <div class="flex gap-x-6 text-gray-600 dark:text-gray-400">
+          <a href="/ko/index.html" class="hover:text-gray-800 dark:hover:text-gray-300">Home</a>
+          <a href="/ko/index.html#categories" class="hover:text-gray-800 dark:hover:text-gray-300">Categories</a>
+        </div>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Main Categories</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/all/">
+                      All Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/financial/">
+                      Finance
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/business/">
+                      Business
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/investment/">
+                      Investment
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/developer/">
+                      Dev Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/utility/">
+                      Utility
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/cryptography/">
+                      Cryptography
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/design/">
+                      Design Tools
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/datetime/">
+                      Date &amp; Time
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/math/">
+                      Math
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/random/">
+                      Random Data
+                    </a>
+                  </li>
+                
+                  <li>
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/text/">
+                      Text Tools
+                    </a>
+                  </li>
+                
+              
+            </ul>
+          </div>
+          <div class="mt-10 md:mt-0">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Explore Tools</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                
+                
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/current-ratio.html">
+                        유동비율 계산기
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/break-even.html">
+                        손익분기점 계산기
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/equity-multiplier.html">
+                        자기자본승수
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/customer-retention-rate.html">
+                        고객 유지율
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/base64-encoder.html">
+                        Base64 인코더/디코더
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/bond-price.html">
+                        채권 가격 계산기
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/employee-turnover-rate.html">
+                        직원 이직률
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                    <li>
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/ko/tools/fixed-deposit.html">
+                        정기예금 계산기
+                      </a>
+                    </li>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+              
+            </ul>
+          </div>
+        </div>
+        <div class="md:grid md:grid-cols-1 md:gap-8">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">About</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">Built with Nunjucks and Alpine.js</span></li>
+              <li><span class="text-sm text-gray-600 dark:text-gray-400">All calculations run locally</span></li>
+            </ul>
+
+            
+            
+            
+              
+            
+            
+
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mt-10">Language</h3>
+            <ul role="list" class="mt-6 space-y-3">
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="en" href="/index.html">English</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="es" href="/es/index.html">Español</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="fr" href="/fr/index.html">Français</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="de" href="/de/index.html">Deutsch</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="pt" href="/pt/index.html">Português</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="it" href="/it/index.html">Italiano</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ja" href="/ja/index.html">日本語</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white" aria-current="true">한국어</span>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="zh" href="/zh/index.html">中文</a>
+                  
+                </li>
+              
+                <li>
+                  
+                    <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" hreflang="ru" href="/ru/index.html">Русский</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24 dark:border-white/10">
+      <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 Developer & Financial Tools. All rights reserved.</p>
+      
+      <p class="text-xs text-gray-500 mt-2">
+        Build v1.0.0.193871 • May 19, 2026, 08:31 AM EDT • codex/localize-tip-calculator-es-20260317-132043@91b7767
+      </p>
+      
+    </div>
+  </div>
+</footer>
+
+  </div>
+
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Theme toggle
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn) return;
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (err) {}
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
