@@ -332,7 +332,13 @@
             
         </div>
         <!-- Tool Content -->
-        <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div
+            class="container mx-auto px-4 py-8 max-w-7xl"
+            data-tool-content
+            data-tool-id="days-inventory-outstanding"
+            data-tool-name="库存周期（DIO）"
+            data-tool-category="business"
+        >
             <div x-data="dioCalculator()" class="space-y-8">
     <!-- Calculator Form -->
     <div class="bg-white rounded-lg border border-gray-200 p-6">
@@ -834,8 +840,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/cpc-calculator.html">
-                        CPC计算器
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/cash-ratio.html">
+                        现金比率计算器
                       </a>
                     </li>
                     
@@ -843,8 +849,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/color-palette-generator.html">
-                        调色板生成器
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/accounting-profit.html">
+                        会计利润计算器
                       </a>
                     </li>
                     
@@ -852,8 +858,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/equity-multiplier.html">
-                        股权乘数
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/enterprise-value.html">
+                        企业价值计算器
                       </a>
                     </li>
                     
@@ -861,8 +867,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/additional-funds-needed.html">
-                        所需额外资金
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/code-minifier.html">
+                        代码压缩工具
                       </a>
                     </li>
                     
@@ -870,8 +876,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/cpm-calculator.html">
-                        CPM 计算器
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/absence-rate-calculator.html">
+                        缺勤率计算器
                       </a>
                     </li>
                     
@@ -879,8 +885,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/economic-value-added.html">
-                        经济增加值
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/apr-calculator.html">
+                        APR 计算器
                       </a>
                     </li>
                     
@@ -888,8 +894,8 @@ async function handleEmailCapture(event, toolId, captureType) {
                 
                   
                     <li>
-                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/disposable-income.html">
-                        可支配收入计算器
+                      <a class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" href="/zh/tools/bond-equivalent-yield.html">
+                        债券等价收益率
                       </a>
                     </li>
                     
@@ -1220,13 +1226,231 @@ async function handleEmailCapture(event, toolId, captureType) {
       <p class="text-sm text-gray-600 dark:text-gray-400">© 2026 计算器和工具。保留所有权利。</p>
       
       <p class="text-xs text-gray-500 mt-2">
-        Build v1.0.0.204859 • May 19, 2026, 11:34 AM EDT
+        Build v1.0.0.790830 • May 26, 2026, 06:20 AM EDT
       </p>
       
     </div>
   </div>
 </footer>
 
+    <script>
+    (function () {
+        var toolRoot = document.querySelector('[data-tool-content][data-tool-id="days-inventory-outstanding"]');
+        if (!toolRoot) return;
+
+        var toolMeta = {
+            tool_id: toolRoot.getAttribute('data-tool-id') || '',
+            tool_name: toolRoot.getAttribute('data-tool-name') || '',
+            tool_category: toolRoot.getAttribute('data-tool-category') || '',
+            page_path: window.location.pathname,
+            page_url: window.location.href
+        };
+
+        var lastCaptureKey = '';
+        var lastCaptureAt = 0;
+
+        function normalizeKey(value, fallback) {
+            var key = (value || fallback || 'field')
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '');
+            return key || fallback || 'field';
+        }
+
+        function escapeCss(value) {
+            if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(value);
+            return String(value).replace(/["\\]/g, '\\$&');
+        }
+
+        function alpineModel(field) {
+            for (var i = 0; i < field.attributes.length; i++) {
+                var attr = field.attributes[i];
+                if (attr.name === 'x-model' || attr.name.indexOf('x-model.') === 0) return attr.value;
+            }
+            return '';
+        }
+
+        function fieldLabel(field) {
+            if (field.id) {
+                var explicit = toolRoot.querySelector('label[for="' + escapeCss(field.id) + '"]');
+                if (explicit) return explicit.textContent;
+            }
+            var wrappingLabel = field.closest('label');
+            if (wrappingLabel) return wrappingLabel.textContent;
+            var container = field.closest('.space-y-2, .space-y-3, .form-group, div');
+            var label = container && container.querySelector('label');
+            return label ? label.textContent : '';
+        }
+
+        function readFieldValue(field) {
+            var type = (field.type || field.tagName || '').toLowerCase();
+            if (type === 'password' || type === 'email' || type === 'tel') return null;
+            if (type === 'checkbox') return field.checked;
+            if (type === 'radio') return field.checked ? field.value : null;
+            if (field.tagName === 'SELECT') {
+                return {
+                    value: field.value,
+                    label: field.options[field.selectedIndex] ? field.options[field.selectedIndex].text : field.value
+                };
+            }
+            var value = field.value == null ? '' : String(field.value);
+            if (field.tagName === 'TEXTAREA' || type === 'text' || type === 'search' || type === 'url') {
+                return {
+                    value: value.length > 500 ? value.slice(0, 500) : value,
+                    length: value.length,
+                    truncated: value.length > 500
+                };
+            }
+            return value;
+        }
+
+        function collectInputs() {
+            var fields = toolRoot.querySelectorAll('input, select, textarea');
+            var calculationInput = {};
+            var flatData = {};
+
+            fields.forEach(function (field, index) {
+                if (field.disabled || field.readOnly || field.type === 'hidden' || field.closest('[data-analytics-ignore]')) return;
+                var value = readFieldValue(field);
+                if (value === null || value === '') return;
+
+                var model = alpineModel(field);
+                var rawKey = field.name || field.id || model || field.getAttribute('placeholder') || fieldLabel(field);
+                var key = normalizeKey(rawKey, 'field_' + (index + 1));
+                if (calculationInput[key] !== undefined) key = key + '_' + (index + 1);
+
+                calculationInput[key] = value;
+                flatData['input_' + key] = (value && typeof value === 'object' && !Array.isArray(value))
+                    ? (value.value !== undefined ? value.value : JSON.stringify(value))
+                    : value;
+            });
+
+            return {
+                calculation_input: calculationInput,
+                calculation_input_json: JSON.stringify(calculationInput),
+                input_count: Object.keys(calculationInput).length,
+                flat_data: flatData
+            };
+        }
+
+        function outputLabel(element) {
+            var card = element.closest('.text-center, .flex, .space-y-3, .space-y-6, .bg-white, .bg-gray-50, div');
+            if (!card) return '';
+
+            var candidates = Array.prototype.slice.call(card.querySelectorAll('p, span, h3, h4, label'))
+                .filter(function (candidate) {
+                    return candidate !== element && !candidate.hasAttribute('x-text') && !candidate.querySelector('[x-text]');
+                })
+                .map(function (candidate) { return (candidate.textContent || '').trim(); })
+                .filter(Boolean);
+
+            return candidates[0] || '';
+        }
+
+        function collectOutputs() {
+            var calculationOutput = {};
+            var flatData = {};
+            var outputElements = toolRoot.querySelectorAll('[x-text*="results."], [x-text*="stats."], input[readonly], textarea[readonly]');
+
+            outputElements.forEach(function (element, index) {
+                if (element.closest('[data-analytics-ignore]')) return;
+                var value = element.value != null && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')
+                    ? String(element.value)
+                    : (element.textContent || '').trim();
+                if (!value) return;
+
+                var expr = element.getAttribute('x-text') || '';
+                var matches = expr.match(/(?:results|stats)\.([A-Za-z0-9_$]+)/g) || [];
+                var rawKey = matches.length
+                    ? matches.map(function (match) { return match.split('.')[1]; }).join('_')
+                    : (element.name || element.id || element.getAttribute('placeholder') || outputLabel(element));
+                var key = normalizeKey(rawKey, 'output_' + (index + 1));
+                if (calculationOutput[key] !== undefined) key = key + '_' + (index + 1);
+
+                var outputValue = value.length > 500 ? {
+                    value: value.slice(0, 500),
+                    length: value.length,
+                    truncated: true
+                } : value;
+
+                calculationOutput[key] = outputValue;
+                flatData['output_' + key] = outputValue && typeof outputValue === 'object' ? outputValue.value : outputValue;
+            });
+
+            return {
+                calculation_output: calculationOutput,
+                calculation_output_json: JSON.stringify(calculationOutput),
+                output_count: Object.keys(calculationOutput).length,
+                flat_data: flatData
+            };
+        }
+
+        function shouldTrackButton(button) {
+            var clickExpr = button.getAttribute('@click') || button.getAttribute('x-on:click') || '';
+            var text = (button.textContent || '').trim().toLowerCase();
+            return /calculate|convert|compute|minify|beautify|generate|sort|analyze|estimate/.test(clickExpr + ' ' + text);
+        }
+
+        function captureCalculate(trigger, target) {
+            if (typeof posthog === 'undefined' || typeof posthog.capture !== 'function') return;
+
+            setTimeout(function () {
+                var inputData = collectInputs();
+                var outputData = collectOutputs();
+                if (inputData.input_count === 0 && outputData.output_count === 0) return;
+
+                var payload = Object.assign({}, toolMeta, inputData.flat_data, outputData.flat_data, {
+                    trigger: trigger,
+                    action_label: target ? (target.textContent || target.value || '').trim().slice(0, 80) : '',
+                    calculation_input: inputData.calculation_input,
+                    calculation_input_json: inputData.calculation_input_json,
+                    calculation_output: outputData.calculation_output,
+                    calculation_output_json: outputData.calculation_output_json,
+                    submitted_data: inputData.calculation_input,
+                    submitted_data_json: inputData.calculation_input_json,
+                    input_count: inputData.input_count,
+                    output_count: outputData.output_count
+                });
+                var captureKey = payload.calculation_input_json + ':' + payload.calculation_output_json;
+                var now = Date.now();
+                if (captureKey === lastCaptureKey && now - lastCaptureAt < 1500) return;
+                lastCaptureKey = captureKey;
+                lastCaptureAt = now;
+
+                posthog.capture('Calculate', payload);
+            }, 0);
+        }
+
+        function scheduleCalculateCapture(trigger, target) {
+            window.clearTimeout(toolRoot.__calculateCaptureTimer);
+            toolRoot.__calculateCaptureTimer = window.setTimeout(function () {
+                captureCalculate(trigger, target);
+            }, 500);
+        }
+
+        toolRoot.addEventListener('submit', function (event) {
+            scheduleCalculateCapture('submit', event.target);
+        }, true);
+
+        toolRoot.addEventListener('click', function (event) {
+            var button = event.target.closest && event.target.closest('button, input[type="button"], input[type="submit"]');
+            if (!button || !toolRoot.contains(button) || !shouldTrackButton(button)) return;
+            scheduleCalculateCapture(button.type === 'submit' ? 'submit_click' : 'calculate_click', button);
+        });
+
+        toolRoot.addEventListener('input', function (event) {
+            if (!event.target || !event.target.matches('input, textarea')) return;
+            scheduleCalculateCapture('input_change', event.target);
+        }, true);
+
+        toolRoot.addEventListener('change', function (event) {
+            if (!event.target || !event.target.matches('input, select, textarea')) return;
+            scheduleCalculateCapture('field_change', event.target);
+        }, true);
+    })();
+    </script>
 
 
     <script>
