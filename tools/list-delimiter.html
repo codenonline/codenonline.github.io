@@ -6,11 +6,15 @@
   <title>List Delimiter — Tools Catalog</title>
   <meta name="description" content="Change delimiters in lists (comma, semicolon, newline, etc.).">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,305 @@ button:disabled{transform:none;}
         <p class="tp-desc">Change delimiters in lists (comma, semicolon, newline, etc.).</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid" style="--tp-cols:1">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:flex-start">
+      <!-- From Delimiter -->
+      <div style="flex:1;min-width:200px">
+        <span class="tp-field-label mono">From delimiter</span>
+        <div class="tp-toggles tp-toggles--wrap" id="from-btns" style="margin-top:.5rem"></div>
+        <input id="from-custom" class="tp-input" type="text" placeholder="Custom delimiter…"
+               style="display:none;margin-top:.5rem;width:100%">
+      </div>
+      <!-- To Delimiter -->
+      <div style="flex:1;min-width:200px">
+        <span class="tp-field-label mono">To delimiter</span>
+        <div class="tp-toggles tp-toggles--wrap" id="to-btns" style="margin-top:.5rem"></div>
+        <input id="to-custom" class="tp-input" type="text" placeholder="Custom delimiter…"
+               style="display:none;margin-top:.5rem;width:100%">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">list-delimiter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">List Delimiter</span>
+
+    <!-- Options -->
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem">
+      <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem">
+        <input type="checkbox" id="opt-trim" checked> Trim whitespace
+      </label>
+      <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem">
+        <input type="checkbox" id="opt-empty" checked> Remove empty
+      </label>
+      <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem">
+        <input type="checkbox" id="opt-dedup"> Remove duplicates
+      </label>
+      <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem">
+        <input type="checkbox" id="opt-sort"> Sort A–Z
+      </label>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Action buttons -->
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem">
+      <button class="tp-toggle on" id="btn-convert">Convert</button>
+      <button class="tp-toggle" id="btn-swap">⇄ Swap</button>
+      <button class="tp-toggle" id="btn-sample">Sample</button>
+      <button class="tp-toggle" id="btn-clear">Clear</button>
+    </div>
+
+    <!-- Input / Output -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+          <span class="tp-field-label mono">Input</span>
+          <span class="mono" id="in-count" style="font-size:.8rem;opacity:.6"></span>
+        </div>
+        <textarea id="input-text" class="tp-input" rows="10"
+                  style="width:100%;resize:vertical;font-family:monospace;font-size:.85rem"
+                  placeholder="Enter your list here…&#10;Example: apple, banana, cherry"></textarea>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+          <span class="tp-field-label mono">Output</span>
+          <span class="mono" id="out-count" style="font-size:.8rem;opacity:.6"></span>
+        </div>
+        <textarea id="output-text" class="tp-input" rows="10" readonly
+                  style="width:100%;resize:vertical;font-family:monospace;font-size:.85rem;background:var(--bg,#fafafa)"
+                  placeholder="Converted list will appear here…"></textarea>
+      </div>
+    </div>
+
+    <!-- Copy button -->
+    <div style="text-align:right;margin-top:.5rem">
+      <button class="tp-toggle" id="btn-copy" style="display:none">Copy output</button>
+    </div>
+
+    <!-- Preview pills -->
+    <div id="preview-wrap" style="display:none;margin-top:1rem">
+      <span class="tp-field-label mono">Preview</span>
+      <div id="preview-pills" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem"></div>
+    </div>
+
+    <!-- Quick examples -->
+    <div style="margin-top:1.5rem">
+      <span class="tp-field-label mono">Quick examples</span>
+      <div id="example-btns" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem"></div>
+    </div>
+
+    <div class="tp-breakdown" id="bd" style="display:none">
+      <div><span class="mono">Items</span><b id="bd-count">0</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function () {
+  var DELIMITERS = [
+    { id: 'comma',     label: 'Comma (,)',   value: ',' },
+    { id: 'semicolon', label: 'Semicolon (;)', value: ';' },
+    { id: 'newline',   label: 'Newline',      value: '\n' },
+    { id: 'space',     label: 'Space',        value: ' ' },
+    { id: 'tab',       label: 'Tab',          value: '\t' },
+    { id: 'pipe',      label: 'Pipe (|)',     value: '|' },
+    { id: 'colon',     label: 'Colon (:)',    value: ':' },
+    { id: 'dash',      label: 'Dash (-)',     value: '-' },
+    { id: 'custom',    label: 'Custom',       value: '' }
+  ];
+
+  var EXAMPLES = [
+    { name: 'CSV → List',         fromId: 'comma',     toId: 'newline',   sample: 'apple, banana, cherry, date, elderberry' },
+    { name: 'List → CSV',         fromId: 'newline',   toId: 'comma',     sample: 'apple\nbanana\ncherry\ndate\nelderberry' },
+    { name: 'CSV → Pipe',         fromId: 'comma',     toId: 'pipe',      sample: 'red, green, blue, yellow, purple' },
+    { name: 'Space → Semicolon',  fromId: 'space',     toId: 'semicolon', sample: 'item1 item2 item3 item4 item5' },
+    { name: 'CSV → Tab',          fromId: 'comma',     toId: 'tab',       sample: 'name, email, phone, address, city' },
+    { name: 'List → Colon',       fromId: 'newline',   toId: 'colon',     sample: 'Monday\nTuesday\nWednesday\nThursday\nFriday' }
+  ];
+
+  var state = { from: 'comma', to: 'newline', fromCustom: '', toCustom: '' };
+
+  var fromBtns   = document.getElementById('from-btns');
+  var toBtns     = document.getElementById('to-btns');
+  var fromCustom = document.getElementById('from-custom');
+  var toCustom   = document.getElementById('to-custom');
+  var inputText  = document.getElementById('input-text');
+  var outputText = document.getElementById('output-text');
+  var inCount    = document.getElementById('in-count');
+  var outCount   = document.getElementById('out-count');
+  var previewWrap  = document.getElementById('preview-wrap');
+  var previewPills = document.getElementById('preview-pills');
+  var btnCopy    = document.getElementById('btn-copy');
+  var bdWrap     = document.getElementById('bd');
+  var bdCount    = document.getElementById('bd-count');
+  var exampleBtns = document.getElementById('example-btns');
+
+  function buildToggleGroup(container, selectedId, onSelect) {
+    container.innerHTML = '';
+    DELIMITERS.forEach(function (d) {
+      var btn = document.createElement('button');
+      btn.className = 'tp-toggle mono' + (d.id === selectedId ? ' on' : '');
+      btn.textContent = d.id === 'newline' ? 'Newline' : d.id === 'tab' ? 'Tab' : d.label;
+      btn.dataset.id = d.id;
+      btn.addEventListener('click', function () { onSelect(d.id); });
+      container.appendChild(btn);
+    });
+  }
+
+  function refreshToggleGroup(container, selectedId) {
+    Array.prototype.forEach.call(container.children, function (btn) {
+      btn.classList.toggle('on', btn.dataset.id === selectedId);
+    });
+  }
+
+  function getDelimValue(id, customVal) {
+    if (id === 'custom') return customVal;
+    var d = DELIMITERS.find(function (x) { return x.id === id; });
+    return d ? d.value : ',';
+  }
+
+  function getItems(text, delim) {
+    if (!text || !delim) return [];
+    return text.split(delim);
+  }
+
+  function processItems(items) {
+    var trim  = document.getElementById('opt-trim').checked;
+    var empty = document.getElementById('opt-empty').checked;
+    var dedup = document.getElementById('opt-dedup').checked;
+    var sort  = document.getElementById('opt-sort').checked;
+    var out = items.slice();
+    if (trim)  out = out.map(function (s) { return s.trim(); });
+    if (empty) out = out.filter(function (s) { return s !== ''; });
+    if (dedup) out = out.filter(function (v, i, a) { return a.indexOf(v) === i; });
+    if (sort)  out = out.sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
+    return out;
+  }
+
+  function convert() {
+    var raw = inputText.value;
+    if (!raw.trim()) {
+      outputText.value = '';
+      updateCounts([], []);
+      return;
+    }
+    var fromDelim = getDelimValue(state.from, state.fromCustom);
+    var toDelim   = getDelimValue(state.to,   state.toCustom);
+    if (!fromDelim || !toDelim) return;
+    var items = processItems(getItems(raw, fromDelim));
+    outputText.value = items.join(toDelim);
+    updateCounts(getItems(raw, fromDelim), items);
+    renderPreview(items);
+    btnCopy.style.display = items.length ? '' : 'none';
+    bdWrap.style.display = items.length ? '' : 'none';
+    bdCount.textContent = items.length.toLocaleString();
+  }
+
+  function updateCounts(inItems, outItems) {
+    inCount.textContent  = inItems.length  ? inItems.length  + ' items' : '';
+    outCount.textContent = outItems.length ? outItems.length + ' items' : '';
+  }
+
+  function renderPreview(items) {
+    if (!items.length) { previewWrap.style.display = 'none'; return; }
+    previewWrap.style.display = '';
+    previewPills.innerHTML = '';
+    var shown = items.slice(0, 20);
+    shown.forEach(function (item) {
+      var pill = document.createElement('span');
+      pill.textContent = item;
+      pill.style.cssText = 'padding:.2rem .7rem;border-radius:999px;background:var(--accent-pale,#e8f0fe);font-size:.8rem;border:1px solid var(--accent,#4a6cf7);color:var(--accent,#4a6cf7)';
+      previewPills.appendChild(pill);
+    });
+    if (items.length > 20) {
+      var more = document.createElement('span');
+      more.textContent = '… and ' + (items.length - 20) + ' more';
+      more.style.cssText = 'padding:.2rem .7rem;border-radius:999px;background:#f3f4f6;font-size:.8rem;color:#666';
+      previewPills.appendChild(more);
+    }
+  }
+
+  function selectFrom(id) {
+    state.from = id;
+    fromCustom.style.display = id === 'custom' ? '' : 'none';
+    refreshToggleGroup(fromBtns, id);
+    convert();
+  }
+
+  function selectTo(id) {
+    state.to = id;
+    toCustom.style.display = id === 'custom' ? '' : 'none';
+    refreshToggleGroup(toBtns, id);
+    convert();
+  }
+
+  buildToggleGroup(fromBtns, state.from, selectFrom);
+  buildToggleGroup(toBtns,   state.to,   selectTo);
+
+  EXAMPLES.forEach(function (ex) {
+    var btn = document.createElement('button');
+    btn.className = 'tp-toggle mono';
+    btn.textContent = ex.name;
+    btn.addEventListener('click', function () {
+      inputText.value = ex.sample;
+      selectFrom(ex.fromId);
+      selectTo(ex.toId);
+    });
+    exampleBtns.appendChild(btn);
+  });
+
+  document.getElementById('btn-convert').addEventListener('click', convert);
+
+  document.getElementById('btn-swap').addEventListener('click', function () {
+    var tmpId  = state.from, tmpCustom = state.fromCustom;
+    state.from = state.to;     state.fromCustom = state.toCustom;
+    state.to   = tmpId;        state.toCustom   = tmpCustom;
+    fromCustom.value = state.fromCustom;
+    toCustom.value   = state.toCustom;
+    fromCustom.style.display = state.from === 'custom' ? '' : 'none';
+    toCustom.style.display   = state.to   === 'custom' ? '' : 'none';
+    refreshToggleGroup(fromBtns, state.from);
+    refreshToggleGroup(toBtns,   state.to);
+    if (outputText.value) { inputText.value = outputText.value; }
+    convert();
+  });
+
+  document.getElementById('btn-sample').addEventListener('click', function () {
+    inputText.value = 'apple, banana, cherry, date, elderberry, fig, grape, honeydew, kiwi, lemon';
+    selectFrom('comma');
+    selectTo('newline');
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', function () {
+    inputText.value = '';
+    outputText.value = '';
+    previewWrap.style.display = 'none';
+    btnCopy.style.display = 'none';
+    bdWrap.style.display = 'none';
+    inCount.textContent = '';
+    outCount.textContent = '';
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', function () {
+    if (!outputText.value) return;
+    navigator.clipboard.writeText(outputText.value).then(function () {
+      var btn = document.getElementById('btn-copy');
+      var orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = orig; }, 2000);
+    });
+  });
+
+  fromCustom.addEventListener('input', function () { state.fromCustom = fromCustom.value; convert(); });
+  toCustom.addEventListener('input',   function () { state.toCustom   = toCustom.value;   convert(); });
+  inputText.addEventListener('input', function () {
+    var fromDelim = getDelimValue(state.from, state.fromCustom);
+    var items = fromDelim ? getItems(inputText.value, fromDelim) : [];
+    inCount.textContent = items.length ? items.length + ' items' : '';
+    convert();
+  });
+  ['opt-trim','opt-empty','opt-dedup','opt-sort'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', convert);
+  });
+
+  convert();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +855,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

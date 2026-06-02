@@ -6,11 +6,15 @@
   <title>Word Repeater — Tools Catalog</title>
   <meta name="description" content="Repeat words or text a specified number of times.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,172 @@ button:disabled{transform:none;}
         <p class="tp-desc">Repeat words or text a specified number of times.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Text to repeat</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="input-text" type="text" value="hello" placeholder="word or phrase...">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">word-repeater</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Word Repeater</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Repetitions</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="count" type="number" value="10" min="1" max="10000" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Separator</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="sep">
+            <option value="">None</option>
+            <option value=" " selected>Space</option>
+            <option value="\n">New Line</option>
+            <option value=", ">Comma</option>
+            <option value=" | ">Pipe</option>
+            <option value=" - ">Dash</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" id="custom-sep-field" style="display:none">
+      <span class="tp-field-label mono">Custom separator</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="custom-sep" type="text" placeholder="e.g. ***">
+      </div>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono" id="t-num">Numbers</button>
+      <button class="tp-toggle mono" id="t-upper">Uppercase</button>
+      <button class="tp-toggle mono" id="t-lower">Lowercase</button>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Original length</span><b id="s-orig">0</b></div>
+      <div><span class="mono">Word count</span><b id="s-words">0</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Repeated output</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-total">0</span>
+      <span class="tp-result-sub mono">CHARS</span>
+    </div>
+    
+    <textarea class="tp-textarea tp-textarea--tall" id="output-text" readonly placeholder="Output will appear here..." style="margin: 1.5rem 0; flex: 1;"></textarea>
+    
+    <button class="tp-gen mono" id="copy-btn">Copy Text</button>
+    <span class="tp-result-note" id="r-note">Ready</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('input-text');
+  const count = document.getElementById('count');
+  const sep = document.getElementById('sep');
+  const customSep = document.getElementById('custom-sep');
+  const customSepField = document.getElementById('custom-sep-field');
+  const tNum = document.getElementById('t-num');
+  const tUpper = document.getElementById('t-upper');
+  const tLower = document.getElementById('t-lower');
+  
+  const output = document.getElementById('output-text');
+  const rTotal = document.getElementById('r-total');
+  const sOrig = document.getElementById('s-orig');
+  const sWords = document.getElementById('s-words');
+  const copyBtn = document.getElementById('copy-btn');
+  const rNote = document.getElementById('r-note');
+
+  let state = {
+    num: false,
+    upper: false,
+    lower: false
+  };
+
+  function update() {
+    const text = input.value || '';
+    const n = Math.min(10000, Math.max(0, parseInt(count.value) || 0));
+    
+    customSepField.style.display = sep.value === 'custom' ? 'block' : 'none';
+    
+    let baseText = text;
+    if (state.upper) baseText = baseText.toUpperCase();
+    else if (state.lower) baseText = baseText.toLowerCase();
+
+    let separator = sep.value;
+    if (separator === 'custom') separator = customSep.value;
+    else if (separator === '\\n') separator = '\n';
+    
+    let results = [];
+    for (let i = 1; i <= n; i++) {
+      let item = baseText;
+      if (state.num) item = i + '. ' + item;
+      results.push(item);
+    }
+    
+    const finalResult = results.join(separator);
+    output.value = finalResult;
+    
+    const totalLen = finalResult.length;
+    rTotal.textContent = totalLen.toLocaleString();
+    sOrig.textContent = text.length.toLocaleString();
+    
+    const words = finalResult.trim() ? finalResult.trim().split(/\s+/).length : 0;
+    sWords.textContent = words.toLocaleString();
+    
+    rNote.textContent = n.toLocaleString() + ' repetitions';
+  }
+
+  [input, count, sep, customSep].forEach(el => {
+    el.addEventListener('input', update);
+  });
+
+  tNum.onclick = function() {
+    state.num = !state.num;
+    tNum.classList.toggle('on', state.num);
+    update();
+  };
+
+  tUpper.onclick = function() {
+    state.upper = !state.upper;
+    if (state.upper) {
+      state.lower = false;
+      tLower.classList.remove('on');
+    }
+    tUpper.classList.toggle('on', state.upper);
+    update();
+  };
+
+  tLower.onclick = function() {
+    state.lower = !state.lower;
+    if (state.lower) {
+      state.upper = false;
+      tUpper.classList.remove('on');
+    }
+    tLower.classList.toggle('on', state.lower);
+    update();
+  };
+
+  copyBtn.onclick = function() {
+    const txt = output.value;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(function() {
+      const oldNote = rNote.textContent;
+      rNote.textContent = 'Copied to clipboard!';
+      setTimeout(function() { rNote.textContent = oldNote; }, 2000);
+    });
+  };
+
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +722,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

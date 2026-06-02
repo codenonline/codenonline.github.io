@@ -6,11 +6,15 @@
   <title>Occupancy Rate Calculator — Tools Catalog</title>
   <meta name="description" content="Measure the percentage of available rental units that are currently occupied to gauge property performance and revenue potential.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,222 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Method</span>
+      <div class="tp-toggles" id="method-tabs">
+        <button class="tp-toggle mono on" data-method="units">By Units</button>
+        <button class="tp-toggle mono" data-method="time">By Time</button>
+        <button class="tp-toggle mono" data-method="revenue">By Revenue</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">occupancy-rate</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Occupancy Rate Cal</span>
+
+    <div id="inputs-units">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Occupied units</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="occupied-units" type="number" inputmode="numeric" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Total units</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="total-units" type="number" inputmode="numeric" min="1" placeholder="0">
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div id="inputs-time" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Occupied period</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="occupied-days" type="number" inputmode="numeric" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Total period</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="total-days" type="number" inputmode="numeric" min="1" placeholder="0">
+            <select class="tp-suffix" id="time-unit" style="border-left:none;padding:0 6px;cursor:pointer">
+              <option value="days">days</option>
+              <option value="months">mo</option>
+              <option value="years">yr</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="inputs-revenue" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Actual revenue</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="actual-revenue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Potential revenue</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="potential-revenue" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Property type</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="property-type">
+          <option value="residential">Residential Rental</option>
+          <option value="commercial">Commercial Property</option>
+          <option value="hotel">Hotel / Hospitality</option>
+          <option value="student">Student Housing</option>
+          <option value="vacation">Vacation Rental</option>
+          <option value="office">Office Building</option>
+          <option value="retail">Retail Space</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tp-breakdown" id="breakdown" style="display:none">
+      <div><span class="mono">Vacancy rate</span><b id="bd-vacancy">—</b></div>
+      <div><span class="mono">Performance</span><b id="bd-perf">—</b></div>
+      <div id="bd-lost-row" style="display:none"><span class="mono">Lost revenue</span><b id="bd-lost">—</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Occupancy rate</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-rate">—</span>
+      <span class="tp-result-prefix">%</span>
+    </div>
+    <span class="tp-result-note" id="r-note"> </span>
   </div>
 </div>
+
+<script>
+(function () {
+  var method = 'units';
+  var tabs = document.getElementById('method-tabs');
+
+  var inputSets = {
+    units: document.getElementById('inputs-units'),
+    time: document.getElementById('inputs-time'),
+    revenue: document.getElementById('inputs-revenue')
+  };
+
+  var benchmarks = {
+    residential: { excellent: 95, good: 90, average: 85 },
+    commercial:  { excellent: 95, good: 85, average: 75 },
+    hotel:       { excellent: 80, good: 70, average: 60 },
+    student:     { excellent: 98, good: 95, average: 90 },
+    vacation:    { excellent: 75, good: 65, average: 55 },
+    office:      { excellent: 95, good: 85, average: 75 },
+    retail:      { excellent: 95, good: 88, average: 80 }
+  };
+
+  function getInterpretation(rate) {
+    if (rate >= 95) return 'Outstanding occupancy with minimal vacancy';
+    if (rate >= 90) return 'Strong performance with healthy occupancy';
+    if (rate >= 80) return 'Good occupancy rate with room for improvement';
+    if (rate >= 70) return 'Moderate occupancy, consider marketing strategies';
+    if (rate >= 60) return 'Low occupancy, review pricing and property condition';
+    return 'Poor occupancy, immediate action required';
+  }
+
+  function getPerformance(rate, type) {
+    var b = benchmarks[type] || benchmarks.residential;
+    if (rate >= b.excellent) return 'Excellent';
+    if (rate >= b.good) return 'Good';
+    if (rate >= b.average) return 'Average';
+    return 'Below Average';
+  }
+
+  function calc() {
+    var rate = NaN;
+    var lostRevenue = null;
+    var propertyType = document.getElementById('property-type').value;
+
+    if (method === 'units') {
+      var occ = parseFloat(document.getElementById('occupied-units').value);
+      var tot = parseFloat(document.getElementById('total-units').value);
+      if (isFinite(occ) && isFinite(tot) && tot > 0 && occ >= 0) {
+        rate = (occ / tot) * 100;
+      }
+    } else if (method === 'time') {
+      var occD = parseFloat(document.getElementById('occupied-days').value);
+      var totD = parseFloat(document.getElementById('total-days').value);
+      if (isFinite(occD) && isFinite(totD) && totD > 0 && occD >= 0) {
+        rate = (occD / totD) * 100;
+      }
+    } else if (method === 'revenue') {
+      var actual = parseFloat(document.getElementById('actual-revenue').value);
+      var potential = parseFloat(document.getElementById('potential-revenue').value);
+      if (isFinite(actual) && isFinite(potential) && potential > 0 && actual >= 0) {
+        rate = (actual / potential) * 100;
+        lostRevenue = potential - actual;
+      }
+    }
+
+    var rRate = document.getElementById('r-rate');
+    var rNote = document.getElementById('r-note');
+    var breakdown = document.getElementById('breakdown');
+    var bdVacancy = document.getElementById('bd-vacancy');
+    var bdPerf = document.getElementById('bd-perf');
+    var bdLostRow = document.getElementById('bd-lost-row');
+    var bdLost = document.getElementById('bd-lost');
+
+    if (isFinite(rate) && rate >= 0) {
+      var rounded = Math.round(rate * 100) / 100;
+      var vacancyRounded = Math.round((100 - rate) * 100) / 100;
+      rRate.textContent = rounded.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      rNote.textContent = getInterpretation(rate);
+      bdVacancy.textContent = vacancyRounded.toFixed(2) + '%';
+      bdPerf.textContent = getPerformance(rate, propertyType);
+      breakdown.style.display = '';
+      if (lostRevenue !== null) {
+        bdLost.textContent = '$' + lostRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        bdLostRow.style.display = '';
+      } else {
+        bdLostRow.style.display = 'none';
+      }
+    } else {
+      rRate.textContent = '—';
+      rNote.textContent = ' ';
+      breakdown.style.display = 'none';
+    }
+  }
+
+  tabs.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-method]');
+    if (!btn) return;
+    method = btn.getAttribute('data-method');
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    Object.keys(inputSets).forEach(function (k) {
+      inputSets[k].style.display = k === method ? '' : 'none';
+    });
+    calc();
+  });
+
+  document.getElementById('property-type').addEventListener('change', calc);
+  document.getElementById('occupied-units').addEventListener('input', calc);
+  document.getElementById('total-units').addEventListener('input', calc);
+  document.getElementById('occupied-days').addEventListener('input', calc);
+  document.getElementById('total-days').addEventListener('input', calc);
+  document.getElementById('time-unit').addEventListener('change', calc);
+  document.getElementById('actual-revenue').addEventListener('input', calc);
+  document.getElementById('potential-revenue').addEventListener('input', calc);
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +775,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

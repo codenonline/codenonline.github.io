@@ -6,11 +6,15 @@
   <title>Immediate Annuity Calculator — Tools Catalog</title>
   <meta name="description" content="Estimate the regular income payments you&#39;d receive from an immediate annuity based on your lump-sum contribution.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,117 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Purchase amount</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="ia-amount" type="number" inputmode="decimal" value="100000" min="1000" step="1000">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">immediate-annuity</p>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Annual rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ia-rate" type="number" inputmode="decimal" value="5" min="0" max="20" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Period</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ia-years" type="number" inputmode="numeric" value="20" min="1" max="50" step="1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Frequency</span>
+      <div class="tp-field-input" style="border:2px solid var(--ink)">
+        <select class="tp-input" id="ia-freq" style="background:none;border:none;width:100%">
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annually">Annually</option>
+        </select>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Type</span>
+      <div class="tp-field-input" style="border:2px solid var(--ink)">
+        <select class="tp-input" id="ia-type" style="background:none;border:none;width:100%">
+          <option value="ordinary">Ordinary annuity</option>
+          <option value="due">Annuity due</option>
+        </select>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Total payments</span><b id="ia-bd-n">0</b></div>
+      <div><span class="mono">Total return</span><b id="ia-bd-total">$0.00</b></div>
+      <div><span class="mono">Interest earned</span><b id="ia-bd-interest">$0.00</b></div>
+      <div><span class="mono">Break-even</span><b id="ia-bd-breakeven">0 yr</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Financial</span>
+    <span class="tp-result-label" id="ia-r-label">Monthly payment</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Immediate Annuity </span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="ia-r-payment">0.00</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="ia-r-note">20-yr annuity at 5%</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var amount  = document.getElementById('ia-amount');
+  var rate    = document.getElementById('ia-rate');
+  var years   = document.getElementById('ia-years');
+  var freq    = document.getElementById('ia-freq');
+  var type    = document.getElementById('ia-type');
+
+  var freqMap = { monthly: 12, quarterly: 4, annually: 1 };
+  var freqLabel = { monthly: 'Monthly', quarterly: 'Quarterly', annually: 'Annual' };
+
+  function money(n) {
+    if (!isFinite(n)) return '$0.00';
+    return '$' + Math.abs(n < 0.005 ? 0 : n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    var pv = parseFloat(amount.value) || 0;
+    var annualRate = parseFloat(rate.value) || 0;
+    var yrs = Math.max(1, parseInt(years.value, 10) || 1);
+    var ppy = freqMap[freq.value] || 12;
+    var n = yrs * ppy;
+    var r = annualRate / 100 / ppy;
+
+    var payment;
+    if (r === 0) {
+      payment = n > 0 ? pv / n : 0;
+    } else {
+      var pow = Math.pow(1 + r, n);
+      payment = pv * (r * pow) / (pow - 1);
+      if (type.value === 'due') {
+        payment = payment / (1 + r);
+      }
+    }
+
+    var totalReturn = payment * n;
+    var interestEarned = totalReturn - pv;
+    var annualIncome = payment * ppy;
+    var breakeven = annualIncome > 0 ? pv / annualIncome : 0;
+
+    document.getElementById('ia-r-label').textContent = freqLabel[freq.value] + ' payment';
+    document.getElementById('ia-r-payment').textContent = isFinite(payment) ? payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+    document.getElementById('ia-r-note').textContent = yrs + '-yr annuity at ' + annualRate + '%';
+    document.getElementById('ia-bd-n').textContent = n.toLocaleString();
+    document.getElementById('ia-bd-total').textContent = money(totalReturn);
+    document.getElementById('ia-bd-interest').textContent = money(interestEarned);
+    document.getElementById('ia-bd-breakeven').textContent = isFinite(breakeven) ? breakeven.toFixed(1) + ' yr' : '—';
+  }
+
+  [amount, rate, years, freq, type].forEach(function (el) { el.addEventListener('input', calc); el.addEventListener('change', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +670,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

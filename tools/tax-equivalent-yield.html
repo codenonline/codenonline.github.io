@@ -6,11 +6,15 @@
   <title>Tax Equivalent Yield — Tools Catalog</title>
   <meta name="description" content="Calculate tax-equivalent yield for municipal bonds.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,143 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Municipal bond yield</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="muni" type="number" inputmode="decimal" value="3.50" step="0.01">
+        <span class="tp-suffix">%</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">tax-equivalent-yield</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Tax Equivalent Yie</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Federal tax</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="fed" type="number" inputmode="decimal" value="24" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">State tax</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="state" type="number" inputmode="decimal" value="0" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-toggles tp-toggles--wrap" id="presets">
+      <button class="tp-toggle mono" data-val="22">22% bracket</button>
+      <button class="tp-toggle mono on" data-val="24">24% bracket</button>
+      <button class="tp-toggle mono" data-val="32">32% bracket</button>
+      <button class="tp-toggle mono" data-val="37">37% bracket</button>
+    </div>
+
+    <div class="tp-field" style="margin-top:12px">
+      <span class="tp-field-label mono">Taxable bond (comparison)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="taxable" type="number" inputmode="decimal" value="4.80" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Combined tax rate</span><b id="bd-combined">0%</b></div>
+      <div><span class="mono">Annual tax savings</span><b id="bd-savings">0%</b></div>
+      <div id="row-comp" style="display: none"><span class="mono">After-tax taxable</span><b id="bd-after-tax">0%</b></div>
+    </div>
+
+    <p class="tp-hint">The tax-equivalent yield (TEY) is the return a taxable bond would need to match the after-tax yield of a tax-exempt municipal bond.</p>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Tax-equivalent yield</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-out">0</span>
+      <span class="tp-result-prefix" style="margin-left:4px; border-left:none; border-right:none">%</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Yield needed to match muni bond</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const muniEl = document.getElementById('muni');
+  const fedEl = document.getElementById('fed');
+  const stateEl = document.getElementById('state');
+  const taxableEl = document.getElementById('taxable');
+  const resEl = document.getElementById('r-out');
+  const noteEl = document.getElementById('r-note');
+  const bdCombinedEl = document.getElementById('bd-combined');
+  const bdSavingsEl = document.getElementById('bd-savings');
+  const bdAfterTaxEl = document.getElementById('bd-after-tax');
+  const rowCompEl = document.getElementById('row-comp');
+  const presets = document.querySelectorAll('#presets .tp-toggle');
+
+  function fmt(n, d = 2) {
+    if (!isFinite(n) || isNaN(n)) return '0';
+    return n.toLocaleString(undefined, { 
+      minimumFractionDigits: d, 
+      maximumFractionDigits: d 
+    });
+  }
+
+  function calc() {
+    const muni = parseFloat(muniEl.value) || 0;
+    const fed = parseFloat(fedEl.value) || 0;
+    const state = parseFloat(stateEl.value) || 0;
+    const taxableValue = taxableEl.value;
+    const taxable = parseFloat(taxableValue) || 0;
+
+    // Combined marginal rate capped at 99.99% to avoid division by zero
+    const combined = Math.min(Math.max(fed + state, 0), 99.99);
+    const complement = (100 - combined) / 100;
+    const tey = complement > 0 ? muni / complement : 0;
+    const savings = tey - muni;
+
+    resEl.textContent = fmt(tey, 2);
+    bdCombinedEl.textContent = fmt(combined, 2) + '%';
+    bdSavingsEl.textContent = fmt(savings, 2) + '%';
+
+    if (taxableValue !== '') {
+      rowCompEl.style.display = 'flex';
+      const afterTax = taxable * complement;
+      bdAfterTaxEl.textContent = fmt(afterTax, 2) + '%';
+      
+      const muniIsWorth = afterTax.toFixed(4) >= muni.toFixed(4);
+      if (muniIsWorth) {
+        noteEl.textContent = 'Municipal bond is the better choice';
+      } else {
+        noteEl.textContent = 'Taxable bond performs better after tax';
+      }
+    } else {
+      rowCompEl.style.display = 'none';
+      noteEl.textContent = 'Yield needed to match muni bond';
+    }
+
+    // Update preset "on" class
+    presets.forEach(btn => {
+      if (parseFloat(btn.dataset.val) === fed) {
+        btn.classList.add('on');
+      } else {
+        btn.classList.remove('on');
+      }
+    });
+  }
+
+  [muniEl, fedEl, stateEl, taxableEl].forEach(el => {
+    el.addEventListener('input', calc);
+  });
+
+  presets.forEach(btn => {
+    btn.addEventListener('click', () => {
+      fedEl.value = btn.dataset.val;
+      calc();
+    });
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +696,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

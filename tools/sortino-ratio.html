@@ -6,11 +6,15 @@
   <title>Sortino Ratio Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate downside risk-adjusted returns.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,120 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Portfolio return</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="sr-portfolio" type="number" inputmode="decimal" value="12" step="0.01">
+        <span class="tp-suffix">%</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">sortino-ratio</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Risk-free rate</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="sr-riskfree" type="number" inputmode="decimal" value="3" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Downside deviation</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="sr-downside" type="number" inputmode="decimal" value="8" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Target return (for DD calc)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="sr-target" type="number" inputmode="decimal" value="5" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Historical returns (comma-separated %)</span>
+      <textarea class="tp-input" id="sr-history" rows="2" placeholder="e.g. 10.5, -2.3, 15.2, -5.1, 8.7"></textarea>
+    </div>
+    <button class="tp-toggle mono" id="sr-calc-dd" style="margin-top:4px">Calc downside deviation from returns</button>
+    <div class="tp-breakdown">
+      <div><span class="mono">Excess return</span><b id="sr-bd-excess">0.00%</b></div>
+      <div><span class="mono">Downside deviation</span><b id="sr-bd-dd">0.00%</b></div>
+      <div><span class="mono">Performance</span><b id="sr-bd-perf">—</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
+    <span class="tp-result-label">Sortino ratio</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Sortino Ratio Calc</span>
+      <span class="tp-result-num" id="sr-r-ratio">—</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="sr-r-note">enter values to calculate</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var elPortfolio = document.getElementById('sr-portfolio');
+  var elRiskFree  = document.getElementById('sr-riskfree');
+  var elDownside  = document.getElementById('sr-downside');
+  var elTarget    = document.getElementById('sr-target');
+  var elHistory   = document.getElementById('sr-history');
+  var btnDD       = document.getElementById('sr-calc-dd');
+
+  function rating(r) {
+    if (r > 2)   return 'Excellent';
+    if (r > 1)   return 'Good';
+    if (r > 0.5) return 'Acceptable';
+    if (r > 0)   return 'Poor';
+    return 'Very Poor';
+  }
+
+  function calc() {
+    var port    = parseFloat(elPortfolio.value);
+    var rf      = parseFloat(elRiskFree.value);
+    var dd      = parseFloat(elDownside.value);
+
+    var ratioEl  = document.getElementById('sr-r-ratio');
+    var noteEl   = document.getElementById('sr-r-note');
+    var excessEl = document.getElementById('sr-bd-excess');
+    var ddEl     = document.getElementById('sr-bd-dd');
+    var perfEl   = document.getElementById('sr-bd-perf');
+
+    if (isNaN(port) || isNaN(rf) || isNaN(dd) || dd <= 0) {
+      ratioEl.textContent = '—';
+      noteEl.textContent  = dd <= 0 && !isNaN(dd) ? 'Downside deviation must be > 0' : 'enter values to calculate';
+      excessEl.textContent = '—';
+      ddEl.textContent     = isNaN(dd) ? '—' : dd.toFixed(2) + '%';
+      perfEl.textContent   = '—';
+      return;
+    }
+
+    var excess = port - rf;
+    var ratio  = excess / dd;
+
+    ratioEl.textContent  = ratio.toFixed(4);
+    noteEl.textContent   = 'excess ' + excess.toFixed(2) + '% / downside ' + dd.toFixed(2) + '%';
+    excessEl.textContent = excess.toFixed(2) + '%';
+    ddEl.textContent     = dd.toFixed(2) + '%';
+    perfEl.textContent   = rating(ratio);
+  }
+
+  btnDD.addEventListener('click', function () {
+    var raw = elHistory.value.trim();
+    if (!raw) return;
+    var returns = raw.split(',').map(function (s) { return parseFloat(s.trim()); }).filter(function (n) { return !isNaN(n); });
+    if (returns.length === 0) return;
+
+    var target = parseFloat(elTarget.value) || 0;
+    var sumSq = returns.reduce(function (acc, r) {
+      var d = Math.min(r - target, 0);
+      return acc + d * d;
+    }, 0);
+    var dd = Math.sqrt(sumSq / returns.length);
+    elDownside.value = dd.toFixed(2);
+    calc();
+  });
+
+  [elPortfolio, elRiskFree, elDownside].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +673,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

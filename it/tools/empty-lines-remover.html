@@ -6,11 +6,15 @@
   <title>Rimuovi Righe Vuote — Tools Catalog</title>
   <meta name="description" content="Rimuove righe vuote e spazi bianchi dal testo.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,164 @@ button:disabled{transform:none;}
         <p class="tp-desc">Rimuove righe vuote e spazi bianchi dal testo.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="el-input" placeholder="Paste your text here..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">empty-lines-remover</p>
+
+    <div class="tp-field-label mono" style="margin-top:1.5rem">Cleaning Actions</div>
+    <div class="tp-toggles tp-toggles--wrap" id="el-actions">
+      <button class="tp-toggle mono on" data-id="rem-empty">Remove empty lines</button>
+      <button class="tp-toggle mono on" data-id="rem-spaces">Collapse spaces</button>
+    </div>
+
+    <div class="tp-field-label mono" style="margin-top:1.5rem">Options</div>
+    <div class="tp-toggles tp-toggles--wrap" id="el-options">
+      <button class="tp-toggle mono on" data-id="trim">Trim line ends</button>
+      <button class="tp-toggle mono" data-id="indent">Preserve indent</button>
+      <button class="tp-toggle mono" data-id="dupes">Remove duplicates</button>
+      <button class="tp-toggle mono" data-id="sort">Sort lines</button>
+    </div>
+    
+    <button class="tp-toggle mono" id="el-clear" style="width:100%; margin-top:2rem">Clear all</button>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Testo</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Rimuovi Righe Vuot</span>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label mono">Cleaned result</span>
+    <textarea class="tp-textarea tp-textarea--tall" id="el-output" readonly style="flex:1; background:rgba(255,255,255,0.05); color:var(--mag); border-color:var(--mag); margin-bottom:1.5rem" placeholder="Cleaned text will appear here..."></textarea>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Lines removed</span><b id="s-lines">0</b></div>
+      <div><span class="mono">Chars saved</span><b id="s-chars">0</b></div>
+      <div><span class="mono">Reduction</span><b id="s-pct">0%</b></div>
+      <div><span class="mono">Empty lines</span><b id="s-empty">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <button class="tp-gen mono" id="el-copy" style="margin-top:1.5rem; width:100%">Copy to clipboard</button>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('el-input');
+  var output = document.getElementById('el-output');
+  var actions = document.getElementById('el-actions');
+  var options = document.getElementById('el-options');
+  var copyBtn = document.getElementById('el-copy');
+  var clearBtn = document.getElementById('el-clear');
+
+  function getStats(text) {
+    if (!text) return { lines: 0, chars: 0 };
+    return {
+      lines: text.split('\n').length,
+      chars: text.length
+    };
+  }
+
+  function calc() {
+    var text = input.value;
+    var inStats = getStats(text);
+    var lines = text.split('\n');
+
+    var isRemEmpty = actions.querySelector('[data-id="rem-empty"]').classList.contains('on');
+    var isRemSpaces = actions.querySelector('[data-id="rem-spaces"]').classList.contains('on');
+    var isTrim = options.querySelector('[data-id="trim"]').classList.contains('on');
+    var isIndent = options.querySelector('[data-id="indent"]').classList.contains('on');
+    var isDupes = options.querySelector('[data-id="dupes"]').classList.contains('on');
+    var isSort = options.querySelector('[data-id="sort"]').classList.contains('on');
+
+    var emptyCount = 0;
+    lines.forEach(function(l) { if (l.trim() === '') emptyCount++; });
+
+    if (isRemSpaces) {
+      lines = lines.map(function(line) {
+        if (isIndent) {
+          var leading = line.match(/^[ \t]*/)[0];
+          var content = line.replace(/^[ \t]*/, '').replace(/[ \t]+/g, ' ').trim();
+          return content ? leading + content : '';
+        } else {
+          return line.replace(/[ \t]+/g, ' ').trim();
+        }
+      });
+    }
+
+    if (isRemEmpty) {
+      lines = lines.filter(function(line) {
+        return line.trim() !== '';
+      });
+    }
+
+    if (isTrim && !isIndent) {
+      lines = lines.map(function(line) {
+        return line.trim();
+      });
+    }
+
+    if (isDupes) {
+      var seen = {};
+      lines = lines.filter(function(line) {
+        if (seen.hasOwnProperty(line)) return false;
+        seen[line] = true;
+        return true;
+      });
+    }
+
+    if (isSort) {
+      lines.sort(function(a, b) {
+        return a.localeCompare(b);
+      });
+    }
+
+    var resultText = lines.join('\n');
+    output.value = resultText;
+    var outStats = getStats(resultText);
+
+    var linesRemoved = Math.max(0, inStats.lines - outStats.lines);
+    var charsSaved = Math.max(0, inStats.chars - outStats.chars);
+    var pct = inStats.chars > 0 ? Math.round((charsSaved / inStats.chars) * 100) : 0;
+
+    document.getElementById('s-lines').textContent = linesRemoved.toLocaleString();
+    document.getElementById('s-chars').textContent = charsSaved.toLocaleString();
+    document.getElementById('s-pct').textContent = pct + '%';
+    document.getElementById('s-empty').textContent = emptyCount.toLocaleString();
+  }
+
+  function toggle(e) {
+    var btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    btn.classList.toggle('on');
+    calc();
+  }
+
+  actions.addEventListener('click', toggle);
+  options.addEventListener('click', toggle);
+  input.addEventListener('input', calc);
+
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    calc();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!output.value) return;
+    output.select();
+    try {
+      document.execCommand('copy');
+      var oldText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = oldText; }, 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  });
+
+  // Example text prefill
+  input.value = "Enter your text here...\n\n\nLine with spaces    \n\nAnother line\n\n\nMultiple empty lines above\n\n    Indented line\n        More indented";
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +714,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

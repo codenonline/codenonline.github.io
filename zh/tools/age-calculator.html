@@ -6,11 +6,15 @@
   <title>年龄计算器 — Tools Catalog</title>
   <meta name="description" content="根据出生日期计算精确的年、月、日、小时和分钟。">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,176 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Birth date</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="birth-date" type="date" value="1990-01-01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">age-calculator</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Calculate as of</span>
+      <div class="tp-toggles" id="calc-type-toggles">
+        <button class="tp-toggle mono on" data-type="today">Today</button>
+        <button class="tp-toggle mono" data-type="custom">Custom date</button>
+      </div>
+    </div>
+    <div class="tp-field" id="custom-date-field" style="display:none">
+      <span class="tp-field-label mono">Custom date</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="custom-date" type="date">
+      </div>
+    </div>
+    <div class="tp-breakdown" id="age-breakdown">
+      <div><span class="mono">Years</span><b id="bd-years">0</b></div>
+      <div><span class="mono">Months</span><b id="bd-months">0</b></div>
+      <div><span class="mono">Days</span><b id="bd-days">0</b></div>
+      <div><span class="mono">Hours</span><b id="bd-hours">0</b></div>
+      <div><span class="mono">Minutes</span><b id="bd-minutes">0</b></div>
+      <div><span class="mono">Seconds</span><b id="bd-seconds">0</b></div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Total days</span><b id="bd-total-days">0</b></div>
+      <div><span class="mono">Total hours</span><b id="bd-total-hours">0</b></div>
+      <div><span class="mono">Total minutes</span><b id="bd-total-minutes">0</b></div>
+      <div><span class="mono">Total seconds</span><b id="bd-total-seconds">0</b></div>
+    </div>
+    <div class="tp-breakdown" id="quick-facts" style="display:none">
+      <div><span class="mono">Born on</span><b id="bd-weekday">—</b></div>
+      <div><span class="mono">Leap years lived</span><b id="bd-leaps">0</b></div>
+      <div><span class="mono">Days until birthday</span><b id="bd-next-bday">0</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">日期和时间</span>
+    <span class="tp-result-label">Age</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">年龄计算器</span>
+      <span class="tp-result-num" id="r-years">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note">years old</span>
   </div>
 </div>
+<script>
+(function () {
+  var birthInput = document.getElementById('birth-date');
+  var customInput = document.getElementById('custom-date');
+  var customField = document.getElementById('custom-date-field');
+  var typeToggles = document.getElementById('calc-type-toggles');
+  var calcType = 'today';
+  var ticker = null;
+
+  // Set default custom date to today
+  customInput.value = new Date().toISOString().split('T')[0];
+
+  function getTargetDate() {
+    if (calcType === 'today') return new Date();
+    var d = new Date(customInput.value);
+    return isNaN(d) ? new Date() : d;
+  }
+
+  function calcAge() {
+    var birthVal = birthInput.value;
+    if (!birthVal) return setEmpty();
+
+    var birth = new Date(birthVal);
+    if (isNaN(birth)) return setEmpty();
+
+    var target = getTargetDate();
+    if (birth > target) return setEmpty();
+
+    // Decomposed age
+    var years = target.getFullYear() - birth.getFullYear();
+    var months = target.getMonth() - birth.getMonth();
+    var days = target.getDate() - birth.getDate();
+    var hours = target.getHours() - birth.getHours();
+    var minutes = target.getMinutes() - birth.getMinutes();
+    var seconds = target.getSeconds() - birth.getSeconds();
+
+    if (seconds < 0) { seconds += 60; minutes--; }
+    if (minutes < 0) { minutes += 60; hours--; }
+    if (hours < 0) { hours += 24; days--; }
+    if (days < 0) {
+      var prevMonthDays = new Date(target.getFullYear(), target.getMonth(), 0).getDate();
+      days += prevMonthDays;
+      months--;
+    }
+    if (months < 0) { months += 12; years--; }
+
+    // Totals
+    var diffMs = target - birth;
+    var totalDays = Math.floor(diffMs / 86400000);
+    var totalHours = Math.floor(diffMs / 3600000);
+    var totalMinutes = Math.floor(diffMs / 60000);
+    var totalSeconds = Math.floor(diffMs / 1000);
+
+    // Quick facts
+    var weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var weekday = weekdays[birth.getDay()];
+
+    var birthYear = birth.getFullYear();
+    var targetYear = target.getFullYear();
+    var leaps = 0;
+    for (var y = birthYear; y <= targetYear; y++) {
+      if ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) leaps++;
+    }
+
+    var today = new Date();
+    var nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    if (nextBday < today) nextBday = new Date(today.getFullYear() + 1, birth.getMonth(), birth.getDate());
+    var daysUntil = Math.ceil((nextBday - today) / 86400000);
+
+    // Render
+    document.getElementById('bd-years').textContent = years;
+    document.getElementById('bd-months').textContent = months;
+    document.getElementById('bd-days').textContent = days;
+    document.getElementById('bd-hours').textContent = hours;
+    document.getElementById('bd-minutes').textContent = minutes;
+    document.getElementById('bd-seconds').textContent = seconds;
+    document.getElementById('bd-total-days').textContent = totalDays.toLocaleString();
+    document.getElementById('bd-total-hours').textContent = totalHours.toLocaleString();
+    document.getElementById('bd-total-minutes').textContent = totalMinutes.toLocaleString();
+    document.getElementById('bd-total-seconds').textContent = totalSeconds.toLocaleString();
+    document.getElementById('bd-weekday').textContent = weekday;
+    document.getElementById('bd-leaps').textContent = leaps;
+    document.getElementById('bd-next-bday').textContent = daysUntil;
+    document.getElementById('r-years').textContent = years;
+    document.getElementById('r-note').textContent = years === 1 ? 'year old' : 'years old';
+    document.getElementById('quick-facts').style.display = '';
+  }
+
+  function setEmpty() {
+    ['bd-years','bd-months','bd-days','bd-hours','bd-minutes','bd-seconds',
+     'bd-total-days','bd-total-hours','bd-total-minutes','bd-total-seconds',
+     'bd-leaps','bd-next-bday'].forEach(function(id) {
+      document.getElementById(id).textContent = '0';
+    });
+    document.getElementById('bd-weekday').textContent = '—';
+    document.getElementById('r-years').textContent = '0';
+    document.getElementById('r-note').textContent = 'years old';
+    document.getElementById('quick-facts').style.display = 'none';
+  }
+
+  function startTicker() {
+    if (ticker) clearInterval(ticker);
+    if (calcType === 'today') ticker = setInterval(calcAge, 1000);
+  }
+
+  typeToggles.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    calcType = btn.getAttribute('data-type');
+    Array.prototype.forEach.call(typeToggles.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    customField.style.display = calcType === 'custom' ? '' : 'none';
+    startTicker();
+    calcAge();
+  });
+
+  birthInput.addEventListener('input', calcAge);
+  customInput.addEventListener('input', calcAge);
+
+  startTicker();
+  calcAge();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -563,7 +719,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>Character Counter — Tools Catalog</title>
   <meta name="description" content="Count characters, words, lines, and paragraphs in text.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,221 @@ button:disabled{transform:none;}
         <p class="tp-desc">Count characters, words, lines, and paragraphs in text.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Text to analyze</span>
+      <textarea id="text" class="tp-textarea tp-textarea--tall" placeholder="Type or paste your text here to analyze..."></textarea>
+    </div>
+
+    <div class="tp-toggles" style="margin-top:12px">
+      <button id="paste" class="tp-toggle mono">Paste from clipboard</button>
+      <button id="clear" class="tp-toggle mono">Clear</button>
+    </div>
+
+    <div style="margin-top:40px">
+      <span class="tp-field-label mono">Actions</span>
+      <div class="tp-two" style="margin-top:8px;gap:12px">
+        <button id="copy" class="tp-gen mono" style="margin-top:0;width:100%">Copy Stats</button>
+        <button id="download" class="tp-gen mono" style="margin-top:0;width:100%">Download Report</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">character-counter</p>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Character Counter</span>
+
+  <div class="tp-result tp-result--stats">
+    <div class="tp-stat-big">
+      <b id="r-chars">0</b>
+      <span>Characters</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-statgrid">
+      <div><span class="mono">No spaces</span><b id="r-chars-no">0</b></div>
+      <div><span class="mono">Words</span><b id="r-words">0</b></div>
+      <div><span class="mono">Lines</span><b id="r-lines">0</b></div>
+      <div><span class="mono">Paragraphs</span><b id="r-paragraphs">0</b></div>
+      <div><span class="mono">Spaces</span><b id="r-spaces">0</b></div>
+      <div><span class="mono">Sentences</span><b id="r-sentences">0</b></div>
+    </div>
+
+    <div class="tp-result-sub mono" style="margin-top:24px;border-top:2px solid var(--mag);padding-top:12px;opacity:0.6;font-size:12px">Time Estimates</div>
+    <div class="tp-statgrid">
+      <div><span class="mono">Reading (200wpm)</span><b id="r-read">0 min</b></div>
+      <div><span class="mono">Speaking (150wpm)</span><b id="r-speak">0 min</b></div>
+      <div><span class="mono">Slow (125wpm)</span><b id="r-slow">0 min</b></div>
+      <div><span class="mono">Fast (300wpm)</span><b id="r-fast">0 min</b></div>
+    </div>
+
+    <div class="tp-result-sub mono" style="margin-top:24px;border-top:2px solid var(--mag);padding-top:12px;opacity:0.6;font-size:12px">Averages</div>
+    <div class="tp-statgrid">
+      <div><span class="mono">Word length</span><b id="r-avg-word">0.0</b></div>
+      <div><span class="mono">Sentence length</span><b id="r-avg-sent">0.0</b></div>
+      <div><span class="mono">Words / Para</span><b id="r-avg-para">0.0</b></div>
+    </div>
+
+    <div id="freq-section" style="display:none">
+      <div class="tp-result-sub mono" style="margin-top:24px;border-top:2px solid var(--mag);padding-top:12px;opacity:0.6;font-size:12px">Top Characters</div>
+      <div class="tp-statgrid" id="r-freq"></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const textEl = document.getElementById('text');
+  const rChars = document.getElementById('r-chars');
+  const rCharsNo = document.getElementById('r-chars-no');
+  const rWords = document.getElementById('r-words');
+  const rLines = document.getElementById('r-lines');
+  const rParagraphs = document.getElementById('r-paragraphs');
+  const rSpaces = document.getElementById('r-spaces');
+  const rSentences = document.getElementById('r-sentences');
+  
+  const rRead = document.getElementById('r-read');
+  const rSpeak = document.getElementById('r-speak');
+  const rSlow = document.getElementById('r-slow');
+  const rFast = document.getElementById('r-fast');
+  
+  const rAvgWord = document.getElementById('r-avg-word');
+  const rAvgSent = document.getElementById('r-avg-sent');
+  const rAvgPara = document.getElementById('r-avg-para');
+  
+  const freqSection = document.getElementById('freq-section');
+  const rFreq = document.getElementById('r-freq');
+  
+  const btnPaste = document.getElementById('paste');
+  const btnClear = document.getElementById('clear');
+  const btnCopy = document.getElementById('copy');
+  const btnDownload = document.getElementById('download');
+
+  let stats = {};
+
+  function calcReadTime(words, wpm) {
+    if (words === 0) return '0 min';
+    const minutes = Math.ceil(words / wpm);
+    return minutes < 1 ? '< 1 min' : minutes + ' min';
+  }
+
+  function update() {
+    const val = textEl.value;
+    const chars = val.length;
+    const charsNoSpaces = val.replace(/\s/g, '').length;
+    const spaces = (val.match(/ /g) || []).length;
+    const words = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+    const lines = val === '' ? 0 : val.split(/\r\n|\r|\n/).length;
+    const paragraphs = val.trim() === '' ? 0 : val.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
+    const sentences = val === '' ? 0 : val.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+
+    const avgWordLength = words > 0 ? (charsNoSpaces / words).toFixed(1) : '0.0';
+    const avgSentenceLength = sentences > 0 ? (words / sentences).toFixed(1) : '0.0';
+    const avgWordsPerParagraph = paragraphs > 0 ? (words / paragraphs).toFixed(1) : '0.0';
+
+    stats = {
+      chars, charsNoSpaces, words, lines, paragraphs, spaces, sentences,
+      read: calcReadTime(words, 200),
+      speak: calcReadTime(words, 150),
+      slow: calcReadTime(words, 125),
+      fast: calcReadTime(words, 300),
+      avgWordLength, avgSentenceLength, avgWordsPerParagraph
+    };
+
+    rChars.textContent = chars.toLocaleString();
+    rCharsNo.textContent = charsNoSpaces.toLocaleString();
+    rWords.textContent = words.toLocaleString();
+    rLines.textContent = lines.toLocaleString();
+    rParagraphs.textContent = paragraphs.toLocaleString();
+    rSpaces.textContent = spaces.toLocaleString();
+    rSentences.textContent = sentences.toLocaleString();
+
+    rRead.textContent = stats.read;
+    rSpeak.textContent = stats.speak;
+    rSlow.textContent = stats.slow;
+    rFast.textContent = stats.fast;
+
+    rAvgWord.textContent = avgWordLength;
+    rAvgSent.textContent = avgSentenceLength;
+    rAvgPara.textContent = avgWordsPerParagraph;
+
+    if (chars > 0) {
+      freqSection.style.display = 'block';
+      const freq = {};
+      for (let char of val.toLowerCase()) {
+        if (char === '\n' || char === '\r' || char === '\t') continue;
+        freq[char] = (freq[char] || 0) + 1;
+      }
+      const sorted = Object.entries(freq)
+        .map(([char, count]) => ({
+          char,
+          count,
+          pct: Math.round((count / chars) * 100)
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+
+      rFreq.innerHTML = sorted.map(f => `
+        <div>
+          <span class="mono">${f.char === ' ' ? 'Space' : f.char}</span>
+          <b>${f.count} (${f.pct}%)</b>
+        </div>
+      `).join('');
+    } else {
+      freqSection.style.display = 'none';
+    }
+  }
+
+  textEl.addEventListener('input', update);
+
+  btnPaste.addEventListener('click', async () => {
+    try {
+      const t = await navigator.clipboard.readText();
+      if (t) {
+        textEl.value = t;
+        update();
+      }
+    } catch(e) {}
+  });
+
+  btnClear.addEventListener('click', () => {
+    textEl.value = '';
+    update();
+  });
+
+  btnCopy.addEventListener('click', () => {
+    const text = `Text Analysis Results
+------------------------
+Characters: ${stats.chars}
+Words: ${stats.words}
+Lines: ${stats.lines}
+Paragraphs: ${stats.paragraphs}
+Sentences: ${stats.sentences}
+Reading Time: ${stats.read}
+Speaking Time: ${stats.speak}
+Avg Word Length: ${stats.avgWordLength}
+Avg Sentence Length: ${stats.avgSentenceLength}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btnCopy.textContent;
+      btnCopy.textContent = 'Copied!';
+      setTimeout(() => btnCopy.textContent = old, 2000);
+    });
+  });
+
+  btnDownload.addEventListener('click', () => {
+    const data = {
+      timestamp: new Date().toISOString(),
+      statistics: stats
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'character-counter-report.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +771,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

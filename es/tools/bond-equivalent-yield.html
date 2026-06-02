@@ -6,11 +6,15 @@
   <title>Rendimiento Equivalente de Bonos — Tools Catalog</title>
   <meta name="description" content="Convierte rendimientos de bonos a corto plazo a una base anualizada para que puedas compararlos equitativamente con bonos de pago anual.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,182 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Bond type</span>
+      <select class="tp-input" id="bey-type">
+        <option value="discount">Discount Bond (Zero-Coupon)</option>
+        <option value="periodic">Periodic Payment Bond</option>
+      </select>
+    </div>
+
+    <div id="bey-discount-fields">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Face value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bey-face" type="number" inputmode="decimal" value="1000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Purchase price</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bey-price" type="number" inputmode="decimal" value="950" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Days to maturity</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="bey-days" type="number" inputmode="numeric" value="180" min="1" step="1">
+          <span class="tp-suffix">days</span>
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">bond-equivalent-yield</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Inversión</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Rendimiento Equiva</span>
+
+    <div id="bey-periodic-fields" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Annual interest rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="bey-rate" type="number" inputmode="decimal" value="5.5" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Compounding frequency</span>
+        <select class="tp-input" id="bey-freq">
+          <option value="1">Annually</option>
+          <option value="2" selected>Semi-annually</option>
+          <option value="4">Quarterly</option>
+          <option value="12">Monthly</option>
+          <option value="365">Daily</option>
+        </select>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-breakdown" id="bey-breakdown">
+      <div id="bey-bd-hpr-row"><span class="mono">Holding period return</span><b id="bey-bd-hpr">—</b></div>
+      <div id="bey-bd-years-row"><span class="mono">Years to maturity</span><b id="bey-bd-years">—</b></div>
+      <div id="bey-bd-return-row"><span class="mono">Total return</span><b id="bey-bd-return">—</b></div>
+      <div id="bey-bd-ear-row" style="display:none"><span class="mono">Effective annual rate</span><b id="bey-bd-ear">—</b></div>
+      <div id="bey-bd-periodic-row" style="display:none"><span class="mono">Periodic rate</span><b id="bey-bd-periodic">—</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Bond Equivalent Yield</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="bey-r-val">—</span>
+      <span class="tp-result-prefix">%</span>
+    </div>
+    <span class="tp-result-note" id="bey-r-note">annualized, semi-annual basis</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var type  = document.getElementById('bey-type');
+  var face  = document.getElementById('bey-face');
+  var price = document.getElementById('bey-price');
+  var days  = document.getElementById('bey-days');
+  var rate  = document.getElementById('bey-rate');
+  var freq  = document.getElementById('bey-freq');
+
+  var discountFields  = document.getElementById('bey-discount-fields');
+  var periodicFields  = document.getElementById('bey-periodic-fields');
+
+  var rVal  = document.getElementById('bey-r-val');
+  var rNote = document.getElementById('bey-r-note');
+
+  var bdHprRow     = document.getElementById('bey-bd-hpr-row');
+  var bdYearsRow   = document.getElementById('bey-bd-years-row');
+  var bdReturnRow  = document.getElementById('bey-bd-return-row');
+  var bdEarRow     = document.getElementById('bey-bd-ear-row');
+  var bdPeriodicRow= document.getElementById('bey-bd-periodic-row');
+
+  var bdHpr     = document.getElementById('bey-bd-hpr');
+  var bdYears   = document.getElementById('bey-bd-years');
+  var bdReturn  = document.getElementById('bey-bd-return');
+  var bdEar     = document.getElementById('bey-bd-ear');
+  var bdPeriodic= document.getElementById('bey-bd-periodic');
+
+  function pct(n, decimals) {
+    return isFinite(n) ? n.toFixed(decimals === undefined ? 2 : decimals) + '%' : '—';
+  }
+
+  function money(n) {
+    return isFinite(n) ? '$' + n.toFixed(2) : '—';
+  }
+
+  function calc() {
+    var mode = type.value;
+
+    if (mode === 'discount') {
+      var fv = parseFloat(face.value) || 0;
+      var pp = parseFloat(price.value) || 0;
+      var d  = parseFloat(days.value)  || 0;
+
+      if (fv <= 0 || pp <= 0 || d <= 0) {
+        rVal.textContent  = '—';
+        rNote.textContent = 'annualized, semi-annual basis';
+        bdHpr.textContent = bdYears.textContent = bdReturn.textContent = '—';
+        return;
+      }
+
+      var hpr     = (fv - pp) / pp;
+      var bey     = hpr * (365 / d) * 100;
+      var yrs     = d / 365;
+      var totalRet= fv - pp;
+
+      rVal.textContent  = isFinite(bey) ? bey.toFixed(2) : '—';
+      rNote.textContent = d + ' days, $' + pp.toFixed(2) + ' → $' + fv.toFixed(2);
+
+      bdHpr.textContent    = pct(hpr * 100);
+      bdYears.textContent  = isFinite(yrs) ? yrs.toFixed(4) : '—';
+      bdReturn.textContent = money(totalRet);
+
+    } else {
+      var r = (parseFloat(rate.value) || 0) / 100;
+      var n = parseInt(freq.value, 10) || 1;
+
+      if (r <= 0) {
+        rVal.textContent  = '—';
+        rNote.textContent = 'annualized, semi-annual basis';
+        bdEar.textContent = bdPeriodic.textContent = '—';
+        return;
+      }
+
+      var ear       = Math.pow(1 + r / n, n) - 1;
+      var bey       = 2 * (Math.pow(1 + ear, 0.5) - 1) * 100;
+      var periodic  = (r / n) * 100;
+      var freqLabel = {1:'Annual',2:'Semi-annual',4:'Quarterly',12:'Monthly',365:'Daily'}[n] || n + 'x/yr';
+
+      rVal.textContent  = isFinite(bey) ? bey.toFixed(2) : '—';
+      rNote.textContent = rate.value + '% ' + freqLabel + ' compounding';
+
+      bdEar.textContent     = pct(ear * 100);
+      bdPeriodic.textContent= pct(periodic, 4);
+    }
+  }
+
+  function switchMode() {
+    var mode = type.value;
+    discountFields.style.display = mode === 'discount' ? '' : 'none';
+    periodicFields.style.display = mode === 'periodic' ? '' : 'none';
+
+    bdHprRow.style.display     = mode === 'discount' ? '' : 'none';
+    bdYearsRow.style.display   = mode === 'discount' ? '' : 'none';
+    bdReturnRow.style.display  = mode === 'discount' ? '' : 'none';
+    bdEarRow.style.display     = mode === 'periodic' ? '' : 'none';
+    bdPeriodicRow.style.display= mode === 'periodic' ? '' : 'none';
+
+    calc();
+  }
+
+  type.addEventListener('change', switchMode);
+  [face, price, days, rate, freq].forEach(function (el) { el.addEventListener('input', calc); });
+
+  switchMode();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +735,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

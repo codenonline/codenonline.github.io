@@ -6,11 +6,15 @@
   <title>Sort Lines — Tools Catalog</title>
   <meta name="description" content="Sort lines alphabetically or numerically.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,219 @@ button:disabled{transform:none;}
         <p class="tp-desc">Sort lines alphabetically or numerically.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">input lines</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="sl-input" placeholder="pasted lines here..."></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">sort mode</span>
+      <div class="tp-toggles tp-toggles--wrap" id="sl-modes">
+        <button class="tp-toggle mono on" data-v="alpha">a-z</button>
+        <button class="tp-toggle mono" data-v="num">0-9</button>
+        <button class="tp-toggle mono" data-v="len">length</button>
+        <button class="tp-toggle mono" data-v="rev-alpha">z-a</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">sort-lines</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Sort Lines</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">options</span>
+        <div class="tp-toggles tp-toggles--wrap" id="sl-opts">
+          <button class="tp-toggle mono" data-v="case">case</button>
+          <button class="tp-toggle mono" data-v="dupes">no dupes</button>
+          <button class="tp-toggle mono" data-v="empty">no empty</button>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">actions</span>
+        <div class="tp-toggles">
+          <button class="tp-toggle mono" id="sl-rev">reverse</button>
+          <button class="tp-toggle mono" id="sl-clear">clear</button>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">examples</span>
+      <div class="tp-toggles" id="sl-examples">
+        <button class="tp-toggle mono" data-v="text">text list</button>
+        <button class="tp-toggle mono" data-v="num">numbers</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">sorted output</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="sl-r-count">0</span>
+      <span class="tp-result-prefix" style="font-size:1.2rem;margin-left:0.5rem">lines</span>
+    </div>
+    
+    <textarea class="tp-textarea tp-textarea--tall" id="sl-output" readonly style="background:transparent;color:var(--mag);border-color:var(--mag);margin:1.5rem 0;height:24rem;font-size:0.875rem" placeholder="Sorted lines will appear here..."></textarea>
+
+    <div class="tp-statgrid">
+      <div><span class="mono">original</span><b id="sl-s-orig">0</b></div>
+      <div><span class="mono">dupes removed</span><b id="sl-s-dupes">0</b></div>
+      <div><span class="mono">empty removed</span><b id="sl-s-empty">0</b></div>
+    </div>
+    
+    <button class="tp-gen mono" id="sl-copy" style="margin-top:2rem">copy result</button>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('sl-input');
+  var output = document.getElementById('sl-output');
+  var modes = document.getElementById('sl-modes');
+  var opts = document.getElementById('sl-opts');
+  var examples = document.getElementById('sl-examples');
+  var revBtn = document.getElementById('sl-rev');
+  var clearBtn = document.getElementById('sl-clear');
+  var copyBtn = document.getElementById('sl-copy');
+  
+  var sOrig = document.getElementById('sl-s-orig');
+  var sDupes = document.getElementById('sl-s-dupes');
+  var sEmpty = document.getElementById('sl-s-empty');
+  var rCount = document.getElementById('sl-r-count');
+
+  var state = {
+    mode: 'alpha',
+    case: false,
+    dupes: false,
+    empty: false
+  };
+
+  function calc() {
+    var text = input.value;
+    if (!text.trim()) {
+      output.value = '';
+      updateStats(text ? text.split(/\r?\n/).length : 0, 0, 0, 0);
+      return;
+    }
+
+    var lines = text.split(/\r?\n/);
+    var origCount = lines.length;
+    var emptyCount = 0;
+    var dupesCount = 0;
+
+    if (state.empty) {
+      var filtered = lines.filter(function(l) { return l.trim() !== ''; });
+      emptyCount = lines.length - filtered.length;
+      lines = filtered;
+    }
+
+    if (state.dupes) {
+      var seen = new Set();
+      var filtered = [];
+      lines.forEach(function(l) {
+        var key = state.case ? l : l.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          filtered.push(l);
+        } else {
+          dupesCount++;
+        }
+      });
+      lines = filtered;
+    }
+
+    switch (state.mode) {
+      case 'alpha':
+        lines.sort(function(a, b) {
+          var sa = state.case ? a : a.toLowerCase();
+          var sb = state.case ? b : b.toLowerCase();
+          return sa.localeCompare(sb);
+        });
+        break;
+      case 'num':
+        lines.sort(function(a, b) {
+          var na = parseFloat(a);
+          var nb = parseFloat(b);
+          if (isNaN(na) && isNaN(nb)) return 0;
+          if (isNaN(na)) return 1;
+          if (isNaN(nb)) return -1;
+          return na - nb;
+        });
+        break;
+      case 'len':
+        lines.sort(function(a, b) { return a.length - b.length; });
+        break;
+      case 'rev-alpha':
+        lines.sort(function(a, b) {
+          var sa = state.case ? a : a.toLowerCase();
+          var sb = state.case ? b : b.toLowerCase();
+          return sb.localeCompare(sa);
+        });
+        break;
+    }
+
+    output.value = lines.join('\n');
+    updateStats(origCount, lines.length, dupesCount, emptyCount);
+  }
+
+  function updateStats(orig, sorted, dupes, empty) {
+    sOrig.textContent = orig.toLocaleString();
+    sDupes.textContent = dupes.toLocaleString();
+    sEmpty.textContent = empty.toLocaleString();
+    rCount.textContent = sorted.toLocaleString();
+  }
+
+  modes.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    Array.prototype.forEach.call(modes.children, function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    state.mode = btn.getAttribute('data-v');
+    calc();
+  });
+
+  opts.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    btn.classList.toggle('on');
+    state[btn.getAttribute('data-v')] = btn.classList.contains('on');
+    calc();
+  });
+
+  revBtn.addEventListener('click', function() {
+    var lines = output.value.split('\n');
+    if (lines.length > 1 || lines[0] !== '') {
+      output.value = lines.reverse().join('\n');
+    }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    calc();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value);
+    var old = copyBtn.textContent;
+    copyBtn.textContent = 'copied!';
+    setTimeout(function() { copyBtn.textContent = old; }, 1500);
+  });
+
+  examples.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    if (btn.getAttribute('data-v') === 'text') {
+      input.value = 'apple\nzebra\nbanana\ncherry\ndate\nelderberry';
+    } else {
+      input.value = '100\n2\n30\n1000\n5\n250';
+    }
+    calc();
+  });
+
+  input.addEventListener('input', calc);
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +769,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

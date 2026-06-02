@@ -6,11 +6,15 @@
   <title>Calculadora de Lucro em Criptografia — Tools Catalog</title>
   <meta name="description" content="Calcule ganhos ou perdas líquidas em operações de criptografia, considerando preço de entrada, preço de saída, taxas e tamanho da posição.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,146 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Buy Price ($)</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="buy-price" type="number" inputmode="decimal" value="45000" min="0" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">crypto-profit</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Sell Price ($)</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="sell-price" type="number" inputmode="decimal" value="50000" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Quantity</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="quantity" type="number" inputmode="decimal" value="1.5" min="0" step="0.00000001">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Buy Fee</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="buy-fee" type="number" inputmode="decimal" value="0.25" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Sell Fee</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sell-fee" type="number" inputmode="decimal" value="0.25" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Holding Period (days)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="holding-days" type="number" inputmode="numeric" value="365" min="0" step="1">
+        <span class="tp-suffix">d</span>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Initial investment</span><b id="bd-cost">$0.00</b></div>
+      <div><span class="mono">Gross proceeds</span><b id="bd-proceeds">$0.00</b></div>
+      <div><span class="mono">Buy fee</span><b id="bd-buy-fee">$0.00</b></div>
+      <div><span class="mono">Sell fee</span><b id="bd-sell-fee">$0.00</b></div>
+      <div><span class="mono">Total fees</span><b id="bd-fees">$0.00</b></div>
+      <div><span class="mono">Net proceeds</span><b id="bd-net-proc">$0.00</b></div>
+      <div><span class="mono">Return %</span><b id="bd-return">0.00%</b></div>
+      <div><span class="mono">Annualized return</span><b id="bd-ann">0.00%</b></div>
+      <div><span class="mono">Tax classification</span><b id="bd-tax-class">—</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investimento</span>
+    <span class="tp-result-label">Net Profit / Loss</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Calculadora de Luc</span>
+      <span class="tp-result-prefix" id="r-prefix">$</span>
+      <span class="tp-result-num" id="r-profit">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note">—</span>
   </div>
 </div>
+<script>
+(function () {
+  var buyPriceEl = document.getElementById('buy-price');
+  var sellPriceEl = document.getElementById('sell-price');
+  var quantityEl = document.getElementById('quantity');
+  var buyFeeEl = document.getElementById('buy-fee');
+  var sellFeeEl = document.getElementById('sell-fee');
+  var holdingDaysEl = document.getElementById('holding-days');
+
+  function fmt(n) {
+    var v = isFinite(n) ? n : 0;
+    return '$' + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtPct(n) {
+    var v = isFinite(n) ? n : 0;
+    return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+  }
+
+  function calc() {
+    var buyPrice = parseFloat(buyPriceEl.value) || 0;
+    var sellPrice = parseFloat(sellPriceEl.value) || 0;
+    var qty = parseFloat(quantityEl.value) || 0;
+    var buyFeePct = parseFloat(buyFeeEl.value) || 0;
+    var sellFeePct = parseFloat(sellFeeEl.value) || 0;
+    var days = parseFloat(holdingDaysEl.value) || 0;
+
+    var grossCost = buyPrice * qty;
+    var buyFee = grossCost * (buyFeePct / 100);
+    var totalCost = grossCost + buyFee;
+
+    var grossProceeds = sellPrice * qty;
+    var sellFee = grossProceeds * (sellFeePct / 100);
+    var netProceeds = grossProceeds - sellFee;
+
+    var totalFees = buyFee + sellFee;
+    var netProfit = netProceeds - totalCost;
+
+    var returnPct = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+    var annualizedReturn = (days > 0 && isFinite(returnPct))
+      ? (Math.pow(1 + returnPct / 100, 365 / days) - 1) * 100
+      : 0;
+
+    var isLongTerm = days > 365;
+    var taxClass = isLongTerm ? 'Long-term gain' : 'Short-term gain';
+
+    document.getElementById('bd-cost').textContent = fmt(totalCost);
+    document.getElementById('bd-proceeds').textContent = fmt(grossProceeds);
+    document.getElementById('bd-buy-fee').textContent = fmt(buyFee);
+    document.getElementById('bd-sell-fee').textContent = fmt(sellFee);
+    document.getElementById('bd-fees').textContent = fmt(totalFees);
+    document.getElementById('bd-net-proc').textContent = fmt(netProceeds);
+    document.getElementById('bd-return').textContent = fmtPct(returnPct);
+    document.getElementById('bd-ann').textContent = isFinite(annualizedReturn) ? fmtPct(annualizedReturn) : '—';
+    document.getElementById('bd-tax-class').textContent = days > 0 ? taxClass : '—';
+
+    var profitAbs = Math.abs(netProfit);
+    var profitStr = profitAbs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('r-prefix').textContent = netProfit < 0 ? '-$' : '$';
+    document.getElementById('r-profit').textContent = profitStr;
+
+    var holdText = days > 0
+      ? (days >= 365
+          ? Math.floor(days / 365) + 'yr ' + (days % 365) + 'd'
+          : days + ' days')
+      : '';
+    var sign = netProfit >= 0 ? 'profit' : 'loss';
+    document.getElementById('r-note').textContent =
+      returnPct.toFixed(2) + '% return' +
+      (holdText ? ' · ' + holdText : '') +
+      (days > 0 ? ' · ' + (isLongTerm ? 'long-term' : 'short-term') : '');
+  }
+
+  [buyPriceEl, sellPriceEl, quantityEl, buyFeeEl, sellFeeEl, holdingDaysEl]
+    .forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +699,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

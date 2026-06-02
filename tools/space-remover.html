@@ -6,11 +6,15 @@
   <title>Space Remover — Tools Catalog</title>
   <meta name="description" content="Remove all spaces from text or normalize spacing.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,189 @@ button:disabled{transform:none;}
         <p class="tp-desc">Remove all spaces from text or normalize spacing.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="sr-input" placeholder="Type or paste text here..."></textarea>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap" style="margin-top: 0.5rem;">
+      <button class="tp-toggle mono" id="sr-clear">Clear</button>
+      <button class="tp-toggle mono" id="sr-paste">Paste</button>
+      <button class="tp-toggle mono" id="sr-swap">Swap</button>
+    </div>
+
+    <p class="tp-hint">Paste your text and choose a transformation. Changes apply instantly.</p>
+
+    <div class="tp-field" style="margin-top: 2rem;">
+      <span class="tp-field-label mono">Transformation</span>
+      <div class="tp-toggles tp-toggles--wrap" id="sr-options">
+        <button class="tp-toggle mono on" data-opt="remove-all">Remove All</button>
+        <button class="tp-toggle mono" data-opt="normalize">Normalize</button>
+        <button class="tp-toggle mono" data-opt="remove-leading-trailing">Trim</button>
+        <button class="tp-toggle mono" data-opt="remove-extra">Extra</button>
+        <button class="tp-toggle mono" data-opt="replace-with-dash">Dashes</button>
+        <button class="tp-toggle mono" data-opt="replace-with-underscore">Underscores</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">space-remover</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Space Remover</span>
+
+    <div class="tp-field" style="margin-top: 2rem;">
+      <span class="tp-field-label mono">Quick examples</span>
+      <div class="tp-toggles tp-toggles--wrap" id="sr-examples">
+        <button class="tp-toggle mono" data-ex="0">Compact</button>
+        <button class="tp-toggle mono" data-ex="1">Clean</button>
+        <button class="tp-toggle mono" data-ex="2">Slug</button>
+        <button class="tp-toggle mono" data-ex="3">Variable</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Processed output</span>
+    <div class="tp-mono-out" id="sr-output" style="min-height: 120px; max-height: 240px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 1.5rem; font-size: 0.9rem; cursor: text;"></div>
+    
+    <button class="tp-gen mono" id="sr-copy" style="width: 100%; margin-bottom: 2rem;">Copy result</button>
+
+    <div class="tp-stat-big"><b id="sr-stat-rem-big">0</b><span>spaces removed</span></div>
+
+    <div class="tp-statgrid">
+      <div><span class="mono">Original</span><b id="sr-stat-orig">0 chars</b></div>
+      <div><span class="mono">Processed</span><b id="sr-stat-proc">0 chars</b></div>
+      <div><span class="mono">Reduction</span><b id="sr-stat-red">0%</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function () {
+  var input = document.getElementById('sr-input');
+  var output = document.getElementById('sr-output');
+  var options = document.getElementById('sr-options');
+  var examples = document.getElementById('sr-examples');
+  var sOrig = document.getElementById('sr-stat-orig');
+  var sProc = document.getElementById('sr-stat-proc');
+  var sRemBig = document.getElementById('sr-stat-rem-big');
+  var sRed = document.getElementById('sr-stat-red');
+  var btnClear = document.getElementById('sr-clear');
+  var btnPaste = document.getElementById('sr-paste');
+  var btnSwap = document.getElementById('sr-swap');
+  var btnCopy = document.getElementById('sr-copy');
+
+  var selectedOption = 'remove-all';
+
+  function countSpaces(text) {
+    if (!text) return 0;
+    return (text.match(/\s/g) || []).length;
+  }
+
+  function calc() {
+    var text = input.value || '';
+    var res = text;
+    
+    if (text) {
+      switch (selectedOption) {
+        case 'remove-all': 
+          res = text.replace(/\s/g, ''); 
+          break;
+        case 'normalize': 
+          res = text.replace(/\s+/g, ' ').trim(); 
+          break;
+        case 'remove-leading-trailing': 
+          res = text.trim(); 
+          break;
+        case 'remove-extra': 
+          res = text.replace(/\s+/g, ' '); 
+          break;
+        case 'replace-with-dash': 
+          res = text.replace(/\s+/g, '-').toLowerCase(); 
+          break;
+        case 'replace-with-underscore': 
+          res = text.replace(/\s+/g, '_').toLowerCase(); 
+          break;
+      }
+    } else {
+      res = '';
+    }
+
+    output.textContent = res;
+
+    var origLen = text.length;
+    var procLen = res.length;
+    var rem = countSpaces(text) - countSpaces(res);
+    var red = origLen > 0 ? Math.round(((origLen - procLen) / origLen) * 100) : 0;
+
+    sOrig.textContent = origLen.toLocaleString() + ' chars';
+    sProc.textContent = procLen.toLocaleString() + ' chars';
+    sRemBig.textContent = rem.toLocaleString();
+    sRed.textContent = (isFinite(red) ? red : 0) + '%';
+
+    var btns = options.querySelectorAll('.tp-toggle');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('on', btns[i].getAttribute('data-opt') === selectedOption);
+    }
+  }
+
+  options.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    selectedOption = btn.getAttribute('data-opt');
+    calc();
+  });
+
+  var exData = [
+    { text: 'Hello World Example Text', opt: 'remove-all' },
+    { text: 'This   has    multiple   spaces     everywhere', opt: 'normalize' },
+    { text: 'My Blog Post Title Here', opt: 'replace-with-dash' },
+    { text: 'User First Name', opt: 'replace-with-underscore' }
+  ];
+
+  examples.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-ex]');
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute('data-ex'), 10);
+    var ex = exData[idx];
+    if (ex) {
+      input.value = ex.text;
+      selectedOption = ex.opt;
+      calc();
+    }
+  });
+
+  input.addEventListener('input', calc);
+
+  btnClear.addEventListener('click', function () {
+    input.value = '';
+    calc();
+  });
+
+  btnPaste.addEventListener('click', function () {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      navigator.clipboard.readText().then(function (text) {
+        input.value = text;
+        calc();
+      }).catch(function () {});
+    }
+  });
+
+  btnSwap.addEventListener('click', function () {
+    input.value = output.textContent;
+    calc();
+  });
+
+  btnCopy.addEventListener('click', function () {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(output.textContent).then(function() {
+        var old = btnCopy.textContent;
+        btnCopy.textContent = 'Copied!';
+        setTimeout(function () { btnCopy.textContent = old; }, 1500);
+      });
+    }
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +739,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

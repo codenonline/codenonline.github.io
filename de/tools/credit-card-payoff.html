@@ -6,11 +6,15 @@
   <title>Kreditkarten-Abzahlungsrechner — Tools Catalog</title>
   <meta name="description" content="Planen Sie Ihren Weg aus der Kreditkartenschulden — finden Sie heraus, wie lange die Rückzahlung dauert und die Gesamtzinsen bei verschiedenen Zahlungsbeträgen.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,266 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div id="cc-cards-list"></div>
+    <button id="cc-add-card" class="tp-toggle mono" style="margin-top:8px">+ Add Card</button>
+
+    <div style="margin-top:16px">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly budget</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="cc-budget" type="number" inputmode="decimal" value="500" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-breakdown" id="cc-budget-info">
+        <div><span class="mono">Total debt</span><b id="cc-bd-debt">$0</b></div>
+        <div><span class="mono">Min payments</span><b id="cc-bd-min">$0</b></div>
+        <div><span class="mono">Extra/mo</span><b id="cc-bd-extra">$0</b></div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">credit-card-payoff</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Finanzen</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Kreditkarten-Abzah</span>
+
+    <div style="margin-top:16px">
+      <div class="tp-field-label mono" style="margin-bottom:6px">Strategy</div>
+      <div class="tp-toggles" id="cc-strategy-btns">
+        <button class="tp-toggle mono on" data-strategy="avalanche">Avalanche</button>
+        <button class="tp-toggle mono" data-strategy="snowball">Snowball</button>
+        <button class="tp-toggle mono" data-strategy="minimum">Min only</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-breakdown" id="cc-strategy-note" style="margin-top:12px">
+      <div><span class="mono" id="cc-strat-label">Highest APR first</span></div>
+    </div>
+
+    <div class="tp-breakdown" style="margin-top:8px">
+      <div><span class="mono">Total paid</span><b id="cc-bd-totalpaid">$0</b></div>
+      <div><span class="mono">Payoff time</span><b id="cc-bd-time">—</b></div>
+      <div><span class="mono">Interest saved</span><b id="cc-bd-saved">$0</b></div>
+    </div>
+
+    <div id="cc-payoff-order" style="margin-top:12px"></div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Total interest</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="cc-r-interest">0</span>
+    </div>
+    <span class="tp-result-note" id="cc-r-note">Avalanche method</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var cards = [
+    { name: 'Card 1', balance: '5000', apr: '18.99', min: '100' },
+    { name: 'Card 2', balance: '3000', apr: '24.99', min: '75' },
+    { name: 'Card 3', balance: '2000', apr: '15.99', min: '50' }
+  ];
+  var strategy = 'avalanche';
+
+  var budgetEl   = document.getElementById('cc-budget');
+  var cardsList  = document.getElementById('cc-cards-list');
+  var addCardBtn = document.getElementById('cc-add-card');
+  var stratBtns  = document.getElementById('cc-strategy-btns');
+
+  function fmt(n) {
+    if (!isFinite(n) || n < 0) n = 0;
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function renderCards() {
+    cardsList.innerHTML = '';
+    cards.forEach(function (card, i) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'border:2px solid var(--ink);padding:8px;margin-bottom:8px;';
+      wrap.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+          '<input class="tp-input mono" data-i="' + i + '" data-f="name" type="text" value="' + escHtml(card.name) + '" placeholder="Card ' + (i+1) + '" style="flex:1;font-weight:600">' +
+          (cards.length > 1 ? '<button data-remove="' + i + '" class="tp-toggle mono" style="margin-left:6px;padding:2px 6px">×</button>' : '') +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">' +
+          '<div class="tp-field" style="margin:0">' +
+            '<span class="tp-field-label mono" style="font-size:10px">Balance</span>' +
+            '<div class="tp-field-input">' +
+              '<span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink);font-size:11px">$</span>' +
+              '<input class="tp-input" data-i="' + i + '" data-f="balance" type="number" inputmode="decimal" value="' + card.balance + '" min="0">' +
+            '</div>' +
+          '</div>' +
+          '<div class="tp-field" style="margin:0">' +
+            '<span class="tp-field-label mono" style="font-size:10px">APR</span>' +
+            '<div class="tp-field-input">' +
+              '<input class="tp-input" data-i="' + i + '" data-f="apr" type="number" inputmode="decimal" value="' + card.apr + '" min="0" step="0.01">' +
+              '<span class="tp-suffix" style="font-size:11px">%</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="tp-field" style="margin:0">' +
+            '<span class="tp-field-label mono" style="font-size:10px">Min pay</span>' +
+            '<div class="tp-field-input">' +
+              '<span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink);font-size:11px">$</span>' +
+              '<input class="tp-input" data-i="' + i + '" data-f="min" type="number" inputmode="decimal" value="' + card.min + '" min="0">' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      cardsList.appendChild(wrap);
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function calcPayoff(strat) {
+    var validCards = cards.filter(function(c) {
+      return parseFloat(c.balance) > 0 && parseFloat(c.apr) > 0 && parseFloat(c.min) > 0;
+    });
+    if (validCards.length === 0) return { totalInterest: 0, totalPaid: 0, months: 0, payoffOrder: [] };
+
+    var totalMin = validCards.reduce(function(s,c){ return s + parseFloat(c.min); }, 0);
+    var budget = parseFloat(budgetEl.value) || 0;
+    var extra = Math.max(0, budget - totalMin);
+
+    var working = validCards.map(function(c, idx) {
+      return { name: c.name, balance: parseFloat(c.balance), apr: parseFloat(c.apr), min: parseFloat(c.min), idx: idx };
+    });
+
+    if (strat === 'avalanche') working.sort(function(a,b){ return b.apr - a.apr; });
+    else if (strat === 'snowball') working.sort(function(a,b){ return a.balance - b.balance; });
+
+    var payoffOrder = working.map(function(c){ return { name: c.name || ('Card '+(c.idx+1)), balance: c.balance, apr: c.apr }; });
+    var totalInterest = 0;
+    var month = 0;
+    var maxMonths = 600;
+
+    while (working.some(function(c){ return c.balance > 0.01; }) && month < maxMonths) {
+      month++;
+      var rem = strat === 'minimum' ? 0 : extra;
+
+      working.forEach(function(card) {
+        if (card.balance > 0) {
+          var r = card.apr / 100 / 12;
+          var interest = card.balance * r;
+          var payment = Math.min(card.min, card.balance + interest);
+          var principal = Math.max(0, payment - interest);
+          card.balance -= principal;
+          totalInterest += interest;
+        }
+      });
+
+      if (strat !== 'minimum' && rem > 0) {
+        for (var i = 0; i < working.length; i++) {
+          if (working[i].balance > 0.01 && rem > 0) {
+            var pay = Math.min(rem, working[i].balance);
+            working[i].balance -= pay;
+            rem -= pay;
+          }
+        }
+      }
+    }
+
+    var totalDebt = validCards.reduce(function(s,c){ return s + parseFloat(c.balance); }, 0);
+    return {
+      totalInterest: totalInterest,
+      totalPaid: totalDebt + totalInterest,
+      months: month,
+      payoffOrder: payoffOrder
+    };
+  }
+
+  function formatTime(months) {
+    if (months >= 600) return 'Never';
+    var y = Math.floor(months / 12), m = months % 12;
+    if (y === 0) return m + ' mo';
+    if (m === 0) return y + ' yr';
+    return y + ' yr ' + m + ' mo';
+  }
+
+  function calc() {
+    var validCards = cards.filter(function(c){
+      return parseFloat(c.balance) > 0 && parseFloat(c.apr) > 0 && parseFloat(c.min) > 0;
+    });
+    var totalDebt = validCards.reduce(function(s,c){ return s + parseFloat(c.balance); }, 0);
+    var totalMin  = validCards.reduce(function(s,c){ return s + parseFloat(c.min); }, 0);
+    var budget    = parseFloat(budgetEl.value) || 0;
+    var extra     = Math.max(0, budget - totalMin);
+
+    document.getElementById('cc-bd-debt').textContent  = fmt(totalDebt);
+    document.getElementById('cc-bd-min').textContent   = fmt(totalMin);
+    document.getElementById('cc-bd-extra').textContent = fmt(extra);
+
+    var res = calcPayoff(strategy);
+    var minRes = strategy !== 'minimum' ? calcPayoff('minimum') : res;
+    var saved = Math.max(0, minRes.totalInterest - res.totalInterest);
+
+    var interest = Math.round(res.totalInterest);
+    document.getElementById('cc-r-interest').textContent = isFinite(interest) ? interest.toLocaleString() : '0';
+    document.getElementById('cc-bd-totalpaid').textContent = fmt(res.totalPaid);
+    document.getElementById('cc-bd-time').textContent     = formatTime(res.months);
+    document.getElementById('cc-bd-saved').textContent    = fmt(saved);
+
+    var noteMap = { avalanche: 'Avalanche method', snowball: 'Snowball method', minimum: 'Minimum payments only' };
+    var stratLabelMap = { avalanche: 'Highest APR first', snowball: 'Smallest balance first', minimum: 'Minimum payments only' };
+    document.getElementById('cc-r-note').textContent    = noteMap[strategy];
+    document.getElementById('cc-strat-label').textContent = stratLabelMap[strategy];
+
+    var orderEl = document.getElementById('cc-payoff-order');
+    if (strategy !== 'minimum' && res.payoffOrder.length > 0) {
+      var html = '<div class="tp-field-label mono" style="margin-bottom:4px">Payoff order</div>';
+      res.payoffOrder.forEach(function(c, i) {
+        html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0">' +
+          '<span class="mono">' + (i+1) + '. ' + escHtml(c.name) + '</span>' +
+          '<span class="mono" style="color:var(--ink-2)">' + c.apr + '% · ' + fmt(c.balance) + '</span>' +
+          '</div>';
+      });
+      orderEl.innerHTML = html;
+    } else {
+      orderEl.innerHTML = '';
+    }
+  }
+
+  cardsList.addEventListener('input', function(e) {
+    var el = e.target;
+    var i = el.getAttribute('data-i');
+    var f = el.getAttribute('data-f');
+    if (i !== null && f) {
+      cards[parseInt(i, 10)][f] = el.value;
+      calc();
+    }
+  });
+
+  cardsList.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-remove]');
+    if (!btn) return;
+    var i = parseInt(btn.getAttribute('data-remove'), 10);
+    cards.splice(i, 1);
+    renderCards();
+    calc();
+  });
+
+  addCardBtn.addEventListener('click', function() {
+    var n = cards.length + 1;
+    cards.push({ name: 'Card ' + n, balance: '1000', apr: '18.99', min: '25' });
+    renderCards();
+    calc();
+  });
+
+  stratBtns.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-strategy]');
+    if (!btn) return;
+    strategy = btn.getAttribute('data-strategy');
+    Array.prototype.forEach.call(stratBtns.children, function(b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  budgetEl.addEventListener('input', calc);
+
+  renderCards();
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +818,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

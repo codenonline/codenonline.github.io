@@ -6,11 +6,15 @@
   <title>Shuffle Letters — Tools Catalog</title>
   <meta name="description" content="Randomly shuffle letters within words or entire text.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,249 @@ button:disabled{transform:none;}
         <p class="tp-desc">Randomly shuffle letters within words or entire text.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="in" placeholder="Enter text to shuffle letters..."></textarea>
+      <div class="tp-toggles" style="margin-top:10px">
+        <button class="tp-toggle mono" id="clear">Clear</button>
+        <button class="tp-toggle mono" id="reset">Reset</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">shuffle-letters</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Shuffle Letters</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Shuffle mode</span>
+      <div class="tp-toggles tp-toggles--wrap" id="mode">
+        <button class="tp-toggle mono on" data-v="words">Words</button>
+        <button class="tp-toggle mono" data-v="entire">Entire text</button>
+        <button class="tp-toggle mono" data-v="sentences">Sentences</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Options</span>
+      <div class="tp-toggles tp-toggles--wrap">
+        <button class="tp-toggle mono on" id="opt-firstlast">Preserve First/Last</button>
+        <button class="tp-toggle mono on" id="opt-case">Preserve Case</button>
+        <button class="tp-toggle mono on" id="opt-punct">Preserve Punctuation</button>
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Shuffle intensity</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="intensity" type="range" min="1" max="5" value="1" style="flex:1">
+        <span class="tp-suffix" id="intensity-val">1x</span>
+      </div>
+    </div>
+
+    <button class="tp-gen mono" id="shuf">↻ Shuffle letters</button>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Shuffled output</span>
+    <textarea class="tp-textarea tp-textarea--tall" id="out" readonly placeholder="Shuffled text will appear here..."></textarea>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Total words</span><b id="s-words">0</b></div>
+      <div><span class="mono">Words shuffled</span><b id="s-sh-words">0</b></div>
+      <div><span class="mono">Total chars</span><b id="s-chars">0</b></div>
+      <div><span class="mono">Letters shuffled</span><b id="s-sh-chars">0</b></div>
+    </div>
+    <div class="tp-toggles" style="margin-top:20px">
+      <button class="tp-toggle mono" id="copy">Copy result</button>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var inputEl = document.getElementById('in');
+  var outputEl = document.getElementById('out');
+  var modeEl = document.getElementById('mode');
+  var intensityEl = document.getElementById('intensity');
+  var intensityValEl = document.getElementById('intensity-val');
+  var shufBtn = document.getElementById('shuf');
+  var clearBtn = document.getElementById('clear');
+  var resetBtn = document.getElementById('reset');
+  var copyBtn = document.getElementById('copy');
+  
+  var optFirstLast = document.getElementById('opt-firstlast');
+  var optCase = document.getElementById('opt-case');
+  var optPunct = document.getElementById('opt-punct');
+
+  var sWords = document.getElementById('s-words');
+  var sShWords = document.getElementById('s-sh-words');
+  var sChars = document.getElementById('s-chars');
+  var sShChars = document.getElementById('s-sh-chars');
+
+  var selectedMode = 'words';
+  var originalText = '';
+
+  function shuffleArray(array) {
+    var shuffled = array.slice();
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = temp;
+    }
+    return shuffled;
+  }
+
+  function shuffleWord(word) {
+    if (word.length <= 2) return word;
+    var letters = word.split('');
+    var shufflableLetters = [];
+    var positions = [];
+    var preserveFirstLast = optFirstLast.classList.contains('on');
+    var preserveCase = optCase.classList.contains('on');
+
+    letters.forEach(function(char, index) {
+      if (/[a-zA-Z]/.test(char)) {
+        if (preserveFirstLast && (index === 0 || index === letters.length - 1)) return;
+        shufflableLetters.push(char);
+        positions.push(index);
+      }
+    });
+
+    if (shufflableLetters.length <= 1) return word;
+    var shuffled = shuffleArray(shufflableLetters);
+
+    positions.forEach(function(pos, index) {
+      var newChar = shuffled[index];
+      if (preserveCase) {
+        var originalChar = letters[pos];
+        if (originalChar === originalChar.toUpperCase()) {
+          newChar = newChar.toUpperCase();
+        } else {
+          newChar = newChar.toLowerCase();
+        }
+      }
+      letters[pos] = newChar;
+    });
+    return letters.join('');
+  }
+
+  function shuffleWithinWords(text) {
+    return text.replace(/\b\w+\b/g, function(word) {
+      return shuffleWord(word);
+    });
+  }
+
+  function shuffleEntireText(text) {
+    var letters = text.match(/[a-zA-Z]/g) || [];
+    var shuffledLetters = shuffleArray(letters);
+    var letterIndex = 0;
+    return text.replace(/[a-zA-Z]/g, function() {
+      return shuffledLetters[letterIndex++] || '';
+    });
+  }
+
+  function shuffleWithinSentences(text) {
+    return text.replace(/[.!?]+/g, '|||SENTENCE|||').split('|||SENTENCE|||').map(function(sentence) {
+      if (sentence.trim()) {
+        var letters = sentence.match(/[a-zA-Z]/g) || [];
+        var shuffledLetters = shuffleArray(letters);
+        var letterIndex = 0;
+        return sentence.replace(/[a-zA-Z]/g, function() {
+          return shuffledLetters[letterIndex++] || '';
+        });
+      }
+      return sentence;
+    }).join('.');
+  }
+
+  function updateStats() {
+    var text = inputEl.value;
+    var words = text.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
+    sWords.textContent = words.length.toLocaleString();
+    sShWords.textContent = words.filter(function(word) { 
+      return /[a-zA-Z]/.test(word) && word.length > 2; 
+    }).length.toLocaleString();
+    sChars.textContent = text.length.toLocaleString();
+    sShChars.textContent = text.replace(/[^a-zA-Z]/g, '').length.toLocaleString();
+  }
+
+  function shuffle() {
+    var text = inputEl.value;
+    if (!text.trim()) {
+      outputEl.value = '';
+      return;
+    }
+    originalText = text;
+    var result = text;
+    var intensity = parseInt(intensityEl.value, 10) || 1;
+    for (var i = 0; i < intensity; i++) {
+      if (selectedMode === 'words') result = shuffleWithinWords(result);
+      else if (selectedMode === 'entire') result = shuffleEntireText(result);
+      else if (selectedMode === 'sentences') result = shuffleWithinSentences(result);
+    }
+    outputEl.value = result;
+    updateStats();
+  }
+
+  // Events
+  inputEl.addEventListener('input', function() {
+    updateStats();
+    // Auto-shuffle on input for better UX in v2
+    shuffle();
+  });
+
+  modeEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    Array.prototype.forEach.call(modeEl.children, function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    selectedMode = btn.getAttribute('data-v');
+    shuffle();
+  });
+
+  [optFirstLast, optCase, optPunct].forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      btn.classList.toggle('on');
+      shuffle();
+    });
+  });
+
+  intensityEl.addEventListener('input', function() {
+    intensityValEl.textContent = intensityEl.value + 'x';
+    shuffle();
+  });
+
+  shufBtn.addEventListener('click', shuffle);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    originalText = '';
+    updateStats();
+  });
+
+  resetBtn.addEventListener('click', function() {
+    if (originalText) {
+      inputEl.value = originalText;
+      shuffle();
+    }
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    document.execCommand('copy');
+    var old = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.classList.add('on');
+    setTimeout(function() {
+      copyBtn.textContent = old;
+      copyBtn.classList.remove('on');
+    }, 1500);
+  });
+
+  // Initial
+  updateStats();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +799,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

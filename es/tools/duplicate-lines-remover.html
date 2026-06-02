@@ -6,11 +6,15 @@
   <title>Eliminador de Líneas Duplicadas — Tools Catalog</title>
   <meta name="description" content="Elimina líneas duplicadas del texto preservando el orden.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,217 @@ button:disabled{transform:none;}
         <p class="tp-desc">Elimina líneas duplicadas del texto preservando el orden.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
+        <span class="tp-field-label mono">Input text</span>
+        <div style="display:flex; gap:12px">
+          <button id="btn-sample" class="mono" style="background:none; border:none; border-bottom:1px solid var(--ink); cursor:pointer; padding:0; font-size:10px; opacity:0.6">SAMPLE</button>
+          <button id="btn-clear" class="mono" style="background:none; border:none; border-bottom:1px solid var(--ink); cursor:pointer; padding:0; font-size:10px; opacity:0.6">CLEAR</button>
+        </div>
+      </div>
+      <textarea class="tp-textarea tp-textarea--tall" id="input" placeholder="Paste lines here..."></textarea>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Comparison</span>
+        <div class="tp-toggles tp-toggles--wrap">
+          <button class="tp-toggle mono on" id="opt-case">Case Sensitive</button>
+          <button class="tp-toggle mono on" id="opt-trim">Trim</button>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Empty Lines</span>
+        <div class="tp-toggles">
+          <button class="tp-toggle mono on" id="opt-empty">Ignore</button>
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">duplicate-lines-remover</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Texto</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Eliminador de Líne</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Mode</span>
+      <div class="tp-toggles">
+        <button class="tp-toggle mono on" id="mode-remove">Remove Duplicates</button>
+        <button class="tp-toggle mono" id="mode-find">Find Duplicates</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" id="analysis-section" style="display:none; margin-top:24px">
+      <span class="tp-field-label mono">Duplicate Analysis</span>
+      <div class="tp-breakdown" id="analysis-list">
+        <!-- Dynamic items -->
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <div class="tp-stat-big"><b id="s-headline">0</b><span id="result-label">Unique Lines</span></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Total Lines</span><b id="s-total">0</b></div>
+      <div><span class="mono">Duplicates</span><b id="s-dupes">0</b></div>
+      <div><span class="mono">Removed</span><b id="s-removed">0</b></div>
+    </div>
+
+    <div class="tp-field" style="margin-top:24px; flex:1; display:flex; flex-direction:column">
+      <span class="tp-result-label mono" style="color:var(--mag); margin-bottom:8px">Resulting Text</span>
+      <textarea class="tp-textarea" id="output" readonly style="flex:1; background:rgba(255,255,255,0.05); color:var(--mag); border-color:var(--mag); min-height:250px"></textarea>
+    </div>
+    
+    <div class="tp-demo-note mono" style="margin-top:12px; opacity:0.6">
+      Preserves order of first occurrence.
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('input');
+  const output = document.getElementById('output');
+  const optCase = document.getElementById('opt-case');
+  const optTrim = document.getElementById('opt-trim');
+  const optEmpty = document.getElementById('opt-empty');
+  const modeRemove = document.getElementById('mode-remove');
+  const modeFind = document.getElementById('mode-find');
+  const btnSample = document.getElementById('btn-sample');
+  const btnClear = document.getElementById('btn-clear');
+  
+  const sHeadline = document.getElementById('s-headline');
+  const sTotal = document.getElementById('s-total');
+  const sDupes = document.getElementById('s-dupes');
+  const sRemoved = document.getElementById('s-removed');
+  const resultLabel = document.getElementById('result-label');
+  const analysisSection = document.getElementById('analysis-section');
+  const analysisList = document.getElementById('analysis-list');
+
+  let currentMode = 'remove';
+
+  function update() {
+    const text = input.value;
+    const isCase = optCase.classList.contains('on');
+    const isTrim = optTrim.classList.contains('on');
+    const isIgnoreEmpty = optEmpty.classList.contains('on');
+
+    const inputLines = text ? text.split('\n') : [];
+    const totalLines = inputLines.length;
+
+    // Filter empty lines if option is enabled
+    let linesToProcess = inputLines;
+    if (isIgnoreEmpty) {
+      linesToProcess = inputLines.filter(line => line.trim() !== '');
+    }
+
+    const processed = linesToProcess.map((line, index) => {
+      let p = line;
+      if (isTrim) p = p.trim();
+      const comp = isCase ? p : p.toLowerCase();
+      return {
+        original: line,
+        processed: p,
+        comparison: comp,
+        index: index + 1
+      };
+    });
+
+    // Counts for stats and analysis
+    const counts = new Map();
+    processed.forEach(item => {
+      if (!counts.has(item.comparison)) {
+        counts.set(item.comparison, { original: item.original, processed: item.processed, count: 0, positions: [] });
+      }
+      const entry = counts.get(item.comparison);
+      entry.count++;
+      entry.positions.push(item.index);
+    });
+
+    let outText = '';
+    if (currentMode === 'remove') {
+      const seen = new Set();
+      const unique = [];
+      processed.forEach(item => {
+        if (!seen.has(item.comparison)) {
+          seen.add(item.comparison);
+          unique.push(item.original);
+        }
+      });
+      outText = unique.join('\n');
+      resultLabel.textContent = 'Unique Lines';
+    } else {
+      const duplicates = [];
+      processed.forEach(item => {
+        if (counts.get(item.comparison).count > 1) {
+          duplicates.push(item.original);
+        }
+      });
+      outText = duplicates.join('\n');
+      resultLabel.textContent = 'Duplicate Lines';
+    }
+
+    output.value = outText;
+
+    // Stats calculation (following original logic)
+    const uniqueLinesCount = [...new Set(processed.map(item => item.processed))].length;
+    const dupeLinesCount = processed.length - uniqueLinesCount;
+    const outputLinesCount = outText ? outText.split('\n').filter(line => line !== '').length : 0;
+    const removedLinesCount = totalLines - (currentMode === 'remove' ? outputLinesCount : 0);
+
+    sHeadline.textContent = (currentMode === 'remove' ? uniqueLinesCount : dupeLinesCount).toLocaleString();
+    sTotal.textContent = totalLines.toLocaleString();
+    sDupes.textContent = dupeLinesCount.toLocaleString();
+    sRemoved.textContent = removedLinesCount.toLocaleString();
+
+    // Duplicate Analysis
+    const analysis = Array.from(counts.values())
+      .filter(item => item.count > 1)
+      .sort((a, b) => b.count - a.count);
+
+    if (analysis.length > 0) {
+      analysisSection.style.display = 'block';
+      analysisList.innerHTML = '';
+      analysis.slice(0, 20).forEach(item => {
+        const div = document.createElement('div');
+        const lineDisplay = item.original.trim() || '(empty line)';
+        div.innerHTML = `<span class="mono" title="${item.original}">${lineDisplay.substring(0, 30)}${lineDisplay.length > 30 ? '...' : ''}</span><b>${item.count}x</b>`;
+        analysisList.appendChild(div);
+      });
+    } else {
+      analysisSection.style.display = 'none';
+    }
+  }
+
+  // Toggles
+  [optCase, optTrim, optEmpty, modeRemove, modeFind].forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn === modeRemove || btn === modeFind) {
+        modeRemove.classList.remove('on');
+        modeFind.classList.remove('on');
+        btn.classList.add('on');
+        currentMode = btn === modeRemove ? 'remove' : 'find';
+      } else {
+        btn.classList.toggle('on');
+      }
+      update();
+    });
+  });
+
+  input.addEventListener('input', update);
+
+  btnSample.addEventListener('click', () => {
+    input.value = "apple\nbanana\napple\ncherry\nbanana\ndate\napple\nelderberry\ncherry\nfig\nbanana\ngrape";
+    update();
+  });
+
+  btnClear.addEventListener('click', () => {
+    input.value = '';
+    update();
+  });
+
+  // Initial calculation
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +767,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

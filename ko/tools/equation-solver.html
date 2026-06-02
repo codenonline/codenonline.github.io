@@ -6,11 +6,15 @@
   <title>방정식 풀이기 — Tools Catalog</title>
   <meta name="description" content="단계별 해법으로 일차 및 이차 방정식을 해결합니다.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,202 @@ button:disabled{transform:none;}
         <p class="tp-desc">단계별 해법으로 일차 및 이차 방정식을 해결합니다.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Equation type</span>
+      <div class="tp-toggles tp-toggles--wrap" id="eq-type">
+        <button class="tp-toggle mono on" data-type="linear">Linear</button>
+        <button class="tp-toggle mono" data-type="quadratic">Quadratic</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">equation-solver</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">수학</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">방정식 풀이기</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Coefficient a</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="eq-a" type="number" inputmode="decimal" value="1" step="any">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Coefficient b</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="eq-b" type="number" inputmode="decimal" value="2" step="any">
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" id="eq-c-field" style="display:none">
+      <span class="tp-field-label mono">Coefficient c</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="eq-c" type="number" inputmode="decimal" value="0" step="any">
+      </div>
+    </div>
+
+    <div class="tp-hint">
+      Enter coefficients for the equation in the form:
+      <span id="eq-form-hint">ax + b = 0</span>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Solution</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="eq-r-val">x = -2</span>
+    </div>
+    <span class="tp-result-note" id="eq-r-note">Linear equation solved</span>
+
+    <div class="tp-result-sub mono">Equation</div>
+    <div class="tp-mono-out" id="eq-display" style="margin-bottom: 1.5rem">1x + 2 = 0</div>
+
+    <div class="tp-breakdown" id="eq-quadratic-stats" style="display:none">
+      <div><span class="mono">Discriminant (D)</span><b id="eq-bd-disc">0</b></div>
+    </div>
+
+    <div class="tp-result-sub mono">Step-by-step solution</div>
+    <div class="tp-breakdown" id="eq-steps">
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const typeToggles = document.getElementById('eq-type');
+  const inputA = document.getElementById('eq-a');
+  const inputB = document.getElementById('eq-b');
+  const inputC = document.getElementById('eq-c');
+  const fieldC = document.getElementById('eq-c-field');
+  const formHint = document.getElementById('eq-form-hint');
+  const display = document.getElementById('eq-display');
+  const resultVal = document.getElementById('eq-r-val');
+  const resultNote = document.getElementById('eq-r-note');
+  const quadStats = document.getElementById('eq-quadratic-stats');
+  const discVal = document.getElementById('eq-bd-disc');
+  const stepsCont = document.getElementById('eq-steps');
+
+  let currentType = 'linear';
+
+  function format(n) {
+    if (n === null || n === undefined || !isFinite(n)) return '0';
+    if (Number.isInteger(n)) return n.toString();
+    // Use toFixed(6) to avoid floating point artifacts but keep it clean
+    return parseFloat(n.toFixed(6)).toString();
+  }
+
+  function addStep(text, formula) {
+    const div = document.createElement('div');
+    const s = document.createElement('span');
+    s.textContent = text;
+    div.appendChild(s);
+    if (formula) {
+      const b = document.createElement('b');
+      b.className = 'mono';
+      b.textContent = formula;
+      div.appendChild(b);
+    }
+    stepsCont.appendChild(div);
+  }
+
+  function calc() {
+    const a = parseFloat(inputA.value) || 0;
+    const b = parseFloat(inputB.value) || 0;
+    const c = parseFloat(inputC.value) || 0;
+
+    stepsCont.innerHTML = '';
+    quadStats.style.display = 'none';
+
+    if (currentType === 'linear') {
+      fieldC.style.display = 'none';
+      formHint.textContent = 'ax + b = 0';
+      display.textContent = (a === 1 ? '' : a === -1 ? '-' : format(a)) + 'x ' + (b >= 0 ? '+ ' : '- ') + format(Math.abs(b)) + ' = 0';
+      solveLinear(a, b);
+    } else {
+      fieldC.style.display = 'block';
+      formHint.textContent = 'ax² + bx + c = 0';
+      
+      let eqStr = (a === 1 ? '' : a === -1 ? '-' : format(a)) + 'x² ';
+      eqStr += (b >= 0 ? '+ ' : '- ') + (Math.abs(b) === 1 ? '' : format(Math.abs(b))) + 'x ';
+      eqStr += (c >= 0 ? '+ ' : '- ') + format(Math.abs(c)) + ' = 0';
+      display.textContent = eqStr;
+      
+      solveQuadratic(a, b, c);
+    }
+  }
+
+  function solveLinear(a, b) {
+    resultNote.textContent = 'Linear equation';
+    addStep('Equation:', `${format(a)}x + ${format(b)} = 0`);
+    if (a === 0) {
+      if (b === 0) {
+        resultVal.textContent = 'Infinite';
+        resultNote.textContent = '0 = 0 is always true';
+        addStep('Since a=0 and b=0:', '0 = 0');
+      } else {
+        resultVal.textContent = 'No solution';
+        resultNote.textContent = 'Equation is inconsistent';
+        addStep(`Since a=0, we get ${format(b)}=0:`, 'False');
+      }
+      return;
+    }
+    const x = -b / a;
+    addStep('Subtract b from both sides:', `${format(a)}x = ${format(-b)}`);
+    addStep('Divide both sides by a:', `x = ${format(-b)} / ${format(a)}`);
+    resultVal.textContent = 'x = ' + format(x);
+    addStep('Result:', `x = ${format(x)}`);
+  }
+
+  function solveQuadratic(a, b, c) {
+    if (a === 0) {
+      addStep('a = 0, reducing to linear:', '');
+      solveLinear(b, c);
+      return;
+    }
+    quadStats.style.display = 'block';
+    addStep('Equation:', `${format(a)}x² + ${format(b)}x + ${format(c)} = 0`);
+    addStep('Discriminant D = b² - 4ac', `D = (${format(b)})² - 4(${format(a)})(${format(c)})`);
+    const D = b * b - 4 * a * c;
+    discVal.textContent = format(D);
+    addStep('Discriminant value:', `D = ${format(D)}`);
+
+    if (D > 0) {
+      resultNote.textContent = 'Two distinct real roots';
+      const sqrtD = Math.sqrt(D);
+      const x1 = (-b + sqrtD) / (2 * a);
+      const x2 = (-b - sqrtD) / (2 * a);
+      addStep('Quadratic formula:', 'x = (-b ± √D) / 2a');
+      addStep('Root x₁:', `(-${format(b)} + ${format(sqrtD)}) / ${format(2*a)} = ${format(x1)}`);
+      addStep('Root x₂:', `(-${format(b)} - ${format(sqrtD)}) / ${format(2*a)} = ${format(x2)}`);
+      resultVal.textContent = `x₁=${format(x1)}, x₂=${format(x2)}`;
+    } else if (D === 0) {
+      resultNote.textContent = 'One repeated real root';
+      const x = -b / (2 * a);
+      addStep('Apply formula:', 'x = -b / 2a');
+      addStep('Result:', `x = ${format(x)}`);
+      resultVal.textContent = `x = ${format(x)}`;
+    } else {
+      resultNote.textContent = 'Two complex roots';
+      const real = -b / (2 * a);
+      const imag = Math.sqrt(-D) / (2 * a);
+      addStep('Real part:', `-b / 2a = ${format(real)}`);
+      addStep('Imaginary part:', `√|D| / 2a = ±${format(imag)}i`);
+      resultVal.textContent = `${format(real)} ± ${format(imag)}i`;
+    }
+  }
+
+  typeToggles.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    currentType = btn.getAttribute('data-type');
+    Array.prototype.forEach.call(typeToggles.children, b => b.classList.toggle('on', b === btn));
+    calc();
+  });
+
+  [inputA, inputB, inputC].forEach(el => el.addEventListener('input', calc));
+  
+  // Initial calculation
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -546,7 +725,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

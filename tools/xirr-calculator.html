@@ -6,11 +6,15 @@
   <title>XIRR Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate Extended Internal Rate of Return for irregular cash flows.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,218 @@ button:disabled{transform:none;}
         <p class="tp-desc">Calculate Extended Internal Rate of Return for irregular cash flows.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+    <div id="x-list">
+      <!-- rows dynamically added -->
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">xirr-calculator</p>
+
+    <div class="tp-toggles tp-toggles--wrap" style="margin-top: 1rem">
+      <button class="tp-gen mono" id="x-add">+ Add Flow</button>
+      <button class="tp-toggle mono" id="x-clear">Clear All</button>
+    </div>
+
+    <p class="tp-hint">Enter cash flows with dates. Negative values represent investments (outflows), positive represent returns (inflows). At least one of each is required.</p>
+
+    <div class="tp-breakdown" style="margin-top: 2rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;">
+      <div><span class="mono">Total Investment</span><b id="x-bd-invest">$0.00</b></div>
+      <div><span class="mono">Total Returns</span><b id="x-bd-returns">$0.00</b></div>
+      <div><span class="mono">Net Cash Flow</span><b id="x-bd-net">$0.00</b></div>
+      <div><span class="mono">Investment Period</span><b id="x-bd-period">0 years</b></div>
+    </div>
   </div>
+
   <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
+    <span class="tp-result-label">XIRR (Annual Rate)</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">XIRR Calculator</span>
+      <span class="tp-result-num" id="x-r-val">0.00</span>
+      <span class="tp-result-prefix" style="border-left: 2px solid var(--ink); border-right: none">%</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="x-r-note">Enter flows to calculate.</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var list = document.getElementById('x-list');
+  var addBtn = document.getElementById('x-add');
+  var clearBtn = document.getElementById('x-clear');
+
+  function money(n) {
+    return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function createRow(dateVal, amountVal) {
+    var row = document.createElement('div');
+    row.className = 'x-row';
+    row.style.marginBottom = '1.5rem';
+    row.style.paddingBottom = '1.5rem';
+    row.style.borderBottom = '2px solid var(--ink)';
+    row.innerHTML =
+      '<div class="tp-two">' +
+        '<div class="tp-field">' +
+          '<span class="tp-field-label mono">Date</span>' +
+          '<div class="tp-field-input">' +
+            '<input class="tp-input x-date" type="date" value="' + (dateVal || '') + '">' +
+          '</div>' +
+        '</div>' +
+        '<div class="tp-field">' +
+          '<span class="tp-field-label mono">Amount</span>' +
+          '<div class="tp-field-input">' +
+            '<span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>' +
+            '<input class="tp-input x-amount" type="number" step="0.01" value="' + (amountVal || '') + '" inputmode="decimal">' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="tp-toggle mono x-del" style="margin-top: 0.75rem; width: 100%">Remove row</button>';
+    return row;
+  }
+
+  function calc() {
+    var rows = list.querySelectorAll('.x-row');
+    var flows = [];
+    var totalInvest = 0;
+    var totalReturns = 0;
+    var netFlow = 0;
+
+    rows.forEach(function (row) {
+      var d = row.querySelector('.x-date').value;
+      var a = parseFloat(row.querySelector('.x-amount').value);
+      if (d && isFinite(a)) {
+        // Parse date manually to avoid timezone issues with YYYY-MM-DD
+        var parts = d.split('-');
+        var date = new Date(parts[0], parts[1] - 1, parts[2]);
+        flows.push({ date: date, amount: a });
+        if (a < 0) totalInvest += a;
+        else totalReturns += a;
+        netFlow += a;
+      }
+    });
+
+    // Min 2 rows
+    var delBtns = list.querySelectorAll('.x-del');
+    for (var i = 0; i < delBtns.length; i++) {
+      delBtns[i].style.display = rows.length > 2 ? 'block' : 'none';
+    }
+
+    if (flows.length < 2) {
+      updateResults(NaN);
+      return;
+    }
+
+    flows.sort(function (a, b) { return a.date - b.date; });
+
+    var hasPos = flows.some(function (f) { return f.amount > 0; });
+    var hasNeg = flows.some(function (f) { return f.amount < 0; });
+
+    if (!hasPos || !hasNeg) {
+      updateResults(NaN);
+      return;
+    }
+
+    try {
+      var xirr = calculateXIRR(flows);
+      var firstDate = flows[0].date;
+      var lastDate = flows[flows.length - 1].date;
+      var years = (lastDate - firstDate) / (1000 * 60 * 60 * 24 * 365);
+      updateResults(xirr, totalInvest, totalReturns, netFlow, years);
+    } catch (e) {
+      updateResults(NaN);
+    }
+  }
+
+  function updateResults(xirr, invest, returns, net, years) {
+    var rVal = document.getElementById('x-r-val');
+    var rNote = document.getElementById('x-r-note');
+
+    if (isNaN(xirr) || !isFinite(xirr)) {
+      rVal.textContent = '0.00';
+      rNote.textContent = 'Enter at least one positive and one negative flow.';
+      document.getElementById('x-bd-invest').textContent = '$0.00';
+      document.getElementById('x-bd-returns').textContent = '$0.00';
+      document.getElementById('x-bd-net').textContent = '$0.00';
+      document.getElementById('x-bd-period').textContent = '0.00 years';
+    } else {
+      rVal.textContent = (xirr * 100).toFixed(2);
+      rNote.textContent = 'Annualized rate of return based on provided dates.';
+      document.getElementById('x-bd-invest').textContent = money(invest);
+      document.getElementById('x-bd-returns').textContent = money(returns);
+      document.getElementById('x-bd-net').textContent = money(net);
+      document.getElementById('x-bd-period').textContent = years.toFixed(2) + ' years';
+    }
+  }
+
+  function calculateXIRR(flows) {
+    var rate = 0.1;
+    var max = 100;
+    var prec = 1e-10;
+    for (var i = 0; i < max; i++) {
+      var npv = calcNPV(flows, rate);
+      var dnpv = calcDNPV(flows, rate);
+      if (Math.abs(dnpv) < 1e-15) return NaN;
+      var next = rate - npv / dnpv;
+      if (Math.abs(next - rate) < prec) return next;
+      rate = next;
+      if (rate < -0.99) rate = -0.99;
+      if (rate > 10) rate = 10;
+    }
+    return NaN;
+  }
+
+  function calcNPV(flows, rate) {
+    var d0 = flows[0].date;
+    return flows.reduce(function (sum, f) {
+      var t = (f.date - d0) / (1000 * 60 * 60 * 24 * 365);
+      return sum + f.amount / Math.pow(1 + rate, t);
+    }, 0);
+  }
+
+  function calcDNPV(flows, rate) {
+    var d0 = flows[0].date;
+    return flows.reduce(function (sum, f) {
+      var t = (f.date - d0) / (1000 * 60 * 60 * 24 * 365);
+      return sum - (f.amount * t) / Math.pow(1 + rate, t + 1);
+    }, 0);
+  }
+
+  addBtn.addEventListener('click', function () {
+    list.appendChild(createRow());
+    calc();
+  });
+
+  list.addEventListener('click', function (e) {
+    if (e.target.classList.contains('x-del')) {
+      e.target.closest('.x-row').remove();
+      calc();
+    }
+  });
+
+  list.addEventListener('input', calc);
+
+  clearBtn.addEventListener('click', function () {
+    init();
+  });
+
+  function init() {
+    list.innerHTML = '';
+    var today = new Date();
+    var lastYear = new Date();
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    var d1 = lastYear.toISOString().split('T')[0];
+    var d2 = today.toISOString().split('T')[0];
+
+    list.appendChild(createRow(d1, -10000));
+    list.appendChild(createRow(d2, 12000));
+    calc();
+  }
+
+  init();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +768,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

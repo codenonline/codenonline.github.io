@@ -6,11 +6,15 @@
   <title>Return on Equity Calculator — Tools Catalog</title>
   <meta name="description" content="Measure net income as a percentage of shareholders&#39; equity to assess how well management generates returns for investors.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,195 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Method</span>
+      <div class="tp-toggles" id="method-tabs">
+        <button class="tp-toggle mono on" data-method="basic">Basic</button>
+        <button class="tp-toggle mono" data-method="dupont">DuPont</button>
+        <button class="tp-toggle mono" data-method="average">Avg Equity</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">return-on-equity</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Return on Equity C</span>
+
+    <div id="inputs-basic">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Net Income ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="net-income" type="number" inputmode="decimal" placeholder="e.g. 1000000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Shareholders' Equity ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="equity" type="number" inputmode="decimal" placeholder="e.g. 5000000" min="0" step="0.01">
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div id="inputs-dupont" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Profit Margin (%)</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="profit-margin" type="number" inputmode="decimal" placeholder="e.g. 10" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Asset Turnover</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="asset-turnover" type="number" inputmode="decimal" placeholder="e.g. 1.5" step="0.01">
+          <span class="tp-suffix">×</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Equity Multiplier</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="equity-multiplier" type="number" inputmode="decimal" placeholder="e.g. 2" step="0.01">
+          <span class="tp-suffix">×</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="inputs-average" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Net Income ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="net-income-avg" type="number" inputmode="decimal" placeholder="e.g. 1000000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Beginning Equity ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="begin-equity" type="number" inputmode="decimal" placeholder="e.g. 4500000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Ending Equity ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="end-equity" type="number" inputmode="decimal" placeholder="e.g. 5500000" min="0" step="0.01">
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-breakdown" id="breakdown" style="display:none">
+      <div id="bd-dupont" style="display:none">
+        <div><span class="mono">Profit Margin</span><b id="bd-margin">—</b></div>
+        <div><span class="mono">Asset Turnover</span><b id="bd-turnover">—</b></div>
+        <div><span class="mono">Equity Multiplier</span><b id="bd-multiplier">—</b></div>
+      </div>
+      <div id="bd-average" style="display:none">
+        <div><span class="mono">Average Equity</span><b id="bd-avg-equity">—</b></div>
+      </div>
+      <div><span class="mono">Performance</span><b id="bd-rating">—</b></div>
+      <div><span class="mono">Benchmark</span><b>10–15% (Typical)</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Return on Equity</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-roe">—</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Enter values to calculate ROE</span>
   </div>
 </div>
+<script>
+(function () {
+  var method = 'basic';
+  var tabs = document.getElementById('method-tabs');
+
+  function fmt$(n) {
+    if (!isFinite(n)) return '$0';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function getPerformanceRating(roe) {
+    if (roe < 10) return 'Poor';
+    if (roe < 15) return 'Average';
+    if (roe < 20) return 'Good';
+    return 'Excellent';
+  }
+
+  function showInputs(m) {
+    document.getElementById('inputs-basic').style.display = m === 'basic' ? '' : 'none';
+    document.getElementById('inputs-dupont').style.display = m === 'dupont' ? '' : 'none';
+    document.getElementById('inputs-average').style.display = m === 'average' ? '' : 'none';
+    document.getElementById('bd-dupont').style.display = m === 'dupont' ? '' : 'none';
+    document.getElementById('bd-average').style.display = m === 'average' ? '' : 'none';
+  }
+
+  function calc() {
+    var roe = null;
+    var note = '';
+
+    if (method === 'basic') {
+      var income = parseFloat(document.getElementById('net-income').value);
+      var eq = parseFloat(document.getElementById('equity').value);
+      if (income > 0 && eq > 0) {
+        roe = (income / eq) * 100;
+        note = 'Net Income ÷ Shareholders\' Equity';
+      }
+    } else if (method === 'dupont') {
+      var margin = parseFloat(document.getElementById('profit-margin').value);
+      var turnover = parseFloat(document.getElementById('asset-turnover').value);
+      var multiplier = parseFloat(document.getElementById('equity-multiplier').value);
+      if (margin > 0 && turnover > 0 && multiplier > 0) {
+        roe = (margin / 100) * turnover * multiplier * 100;
+        document.getElementById('bd-margin').textContent = margin.toFixed(2) + '%';
+        document.getElementById('bd-turnover').textContent = turnover.toFixed(2) + '×';
+        document.getElementById('bd-multiplier').textContent = multiplier.toFixed(2) + '×';
+        note = margin + '% × ' + turnover + ' × ' + multiplier + ' (DuPont)';
+      }
+    } else if (method === 'average') {
+      var incomeAvg = parseFloat(document.getElementById('net-income-avg').value);
+      var beginEq = parseFloat(document.getElementById('begin-equity').value);
+      var endEq = parseFloat(document.getElementById('end-equity').value);
+      if (incomeAvg > 0 && beginEq > 0 && endEq > 0) {
+        var avgEq = (beginEq + endEq) / 2;
+        roe = (incomeAvg / avgEq) * 100;
+        document.getElementById('bd-avg-equity').textContent = fmt$(avgEq);
+        note = 'Net Income ÷ Average Equity (' + fmt$(avgEq) + ')';
+      }
+    }
+
+    var breakdown = document.getElementById('breakdown');
+    var roeEl = document.getElementById('r-roe');
+    var noteEl = document.getElementById('r-note');
+    var ratingEl = document.getElementById('bd-rating');
+
+    if (roe !== null && isFinite(roe)) {
+      roeEl.textContent = roe.toFixed(2) + '%';
+      noteEl.textContent = note;
+      ratingEl.textContent = getPerformanceRating(roe);
+      breakdown.style.display = '';
+    } else {
+      roeEl.textContent = '—';
+      noteEl.textContent = 'Enter values to calculate ROE';
+      breakdown.style.display = 'none';
+    }
+  }
+
+  tabs.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-method]');
+    if (!btn) return;
+    method = btn.getAttribute('data-method');
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    showInputs(method);
+    calc();
+  });
+
+  document.querySelectorAll('.tp-input').forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +748,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

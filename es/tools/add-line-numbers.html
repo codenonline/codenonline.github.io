@@ -6,11 +6,15 @@
   <title>Agregar números de línea — Tools Catalog</title>
   <meta name="description" content="Agregar números de línea a cada línea de texto.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,149 @@ button:disabled{transform:none;}
         <p class="tp-desc">Agregar números de línea a cada línea de texto.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="tp-field-label mono" style="margin:0">Input text</span>
+        <button class="tp-toggle mono" id="clear-btn">Clear</button>
+      </div>
+      <textarea class="tp-textarea tp-textarea--tall" id="in-text" placeholder="Paste your text here…">The quick brown fox
+jumps over
+the lazy dog</textarea>
+    </div>
+    
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Start at</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="start-at" type="number" value="1" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Increment</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="increment" type="number" value="1" step="1">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">add-line-numbers</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Texto</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Agregar números de</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Separator</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="separator" type="text" value=". ">
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-toggles" id="options">
+      <button class="tp-toggle mono" id="pad-toggle">Zero padding</button>
+    </div>
+
+    <p class="tp-demo-note mono">Numbers are added to each line · processing is local</p>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span class="tp-result-label" style="margin:0">Result</span>
+      <button class="tp-toggle mono" id="copy-btn" style="border-color:var(--mag);color:var(--mag)">Copy</button>
+    </div>
+    <textarea class="tp-textarea tp-textarea--tall" id="out-text" readonly placeholder="Result will appear here…"></textarea>
+    
+    <div class="tp-statgrid" style="margin-top:1.5rem">
+      <div><span class="mono">Total lines</span><b id="s-lines">0</b></div>
+      <div><span class="mono">Characters</span><b id="s-chars">0</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var inText = document.getElementById('in-text');
+  var outText = document.getElementById('out-text');
+  var startAt = document.getElementById('start-at');
+  var increment = document.getElementById('increment');
+  var separator = document.getElementById('separator');
+  var padToggle = document.getElementById('pad-toggle');
+  var copyBtn = document.getElementById('copy-btn');
+  var clearBtn = document.getElementById('clear-btn');
+  var sLines = document.getElementById('s-lines');
+  var sChars = document.getElementById('s-chars');
+
+  var usePadding = false;
+
+  function calc() {
+    var text = inText.value;
+    var start = parseInt(startAt.value, 10);
+    if (isNaN(start)) start = 1;
+    var inc = parseInt(increment.value, 10);
+    if (isNaN(inc)) inc = 1;
+    var sep = separator.value;
+
+    var lines = text.split('\n');
+    if (text === '' && lines.length <= 1) {
+      outText.value = '';
+      sLines.textContent = '0';
+      sChars.textContent = '0';
+      return;
+    }
+
+    var maxNum = start + (lines.length - 1) * inc;
+    var maxLen = Math.max(1, Math.abs(maxNum).toString().length);
+    // If we have negative numbers, we might need an extra space for the sign
+    if (maxNum < 0 || start < 0) maxLen++;
+
+    var processed = lines.map(function(line, i) {
+      var n = start + i * inc;
+      var num = n.toString();
+      if (usePadding) {
+        var isNeg = n < 0;
+        var absNum = Math.abs(n).toString();
+        var targetLen = maxNum < 0 || start < 0 ? maxLen - 1 : maxLen;
+        while (absNum.length < targetLen) absNum = '0' + absNum;
+        num = (isNeg ? '-' : '') + absNum;
+      }
+      return num + sep + line;
+    }).join('\n');
+
+    outText.value = processed;
+    sLines.textContent = lines.length.toLocaleString();
+    sChars.textContent = processed.length.toLocaleString();
+  }
+
+  inText.addEventListener('input', calc);
+  startAt.addEventListener('input', calc);
+  increment.addEventListener('input', calc);
+  separator.addEventListener('input', calc);
+  
+  padToggle.addEventListener('click', function() {
+    usePadding = !usePadding;
+    this.classList.toggle('on', usePadding);
+    calc();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    inText.value = '';
+    calc();
+    inText.focus();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    var val = outText.value;
+    if (!val) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(val);
+      var self = this;
+      var oldText = this.textContent;
+      this.textContent = 'Copied!';
+      setTimeout(function() {
+        self.textContent = oldText;
+      }, 1500);
+    }
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +699,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>Extracteur d&#39;E-mails — Tools Catalog</title>
   <meta name="description" content="Extrait les adresses e-mail du texte à l&#39;aide de la correspondance de motifs.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,197 @@ button:disabled{transform:none;}
         <p class="tp-desc">Extrait les adresses e-mail du texte à l&#39;aide de la correspondance de motifs.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea id="input" class="tp-textarea tp-textarea--tall" placeholder="Paste your text here to extract email addresses..."></textarea>
+    </div>
+    <div class="tp-toggles tp-toggles--wrap" id="opts">
+      <button class="tp-toggle mono on" data-opt="dedupe">Remove duplicates</button>
+      <button class="tp-toggle mono on" data-opt="validate">Validate format</button>
+    </div>
+    <button class="tp-gen mono" id="extract">Extract emails</button>
+    <p class="tp-demo-note mono">Pattern matching · Local extraction</p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <div class="tp-stat-big"><b id="r-total">0</b><span>emails</span></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Unique</span><b id="r-unique">0</b></div>
+      <div><span class="mono">Valid</span><b id="r-valid">0</b></div>
+    </div>
+
+    <div class="tp-breakdown" id="domains" style="margin-top:20px; display:none;">
+      <!-- domain stats -->
+    </div>
+
+    <div style="flex:1; display:flex; flex-direction:column; min-height:0; margin-top:20px">
+      <span class="tp-result-label">Extracted list</span>
+      <div class="tp-uuids" id="list" style="overflow-y:auto; flex:1; max-height:400px; border-top:1px solid var(--mag)">
+        <!-- emails -->
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">email-extractor</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Texte</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Extracteur d&#39;E-mai</span>
+
+    <div class="tp-toggles tp-toggles--wrap" style="margin-top:20px">
+      <button class="tp-toggle mono" id="copy-list" style="border-color:var(--mag);color:var(--mag)">Copy list</button>
+      <button class="tp-toggle mono" id="copy-csv" style="border-color:var(--mag);color:var(--mag)">Copy csv</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('input');
+  var extractBtn = document.getElementById('extract');
+  var opts = document.getElementById('opts');
+  var rTotal = document.getElementById('r-total');
+  var rUnique = document.getElementById('r-unique');
+  var rValid = document.getElementById('r-valid');
+  var domainEl = document.getElementById('domains');
+  var listEl = document.getElementById('list');
+  var copyListBtn = document.getElementById('copy-list');
+  var copyCsvBtn = document.getElementById('copy-csv');
+  
+  var active = { dedupe: true, validate: true };
+  var extracted = [];
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function extract() {
+    var text = input.value || '';
+    if (!text.trim()) {
+      render([]);
+      return;
+    }
+
+    // Preserve original regex patterns from source
+    var emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+    var displayNamePattern = /"[^"]*"\s*<([^>]+)>/g;
+    
+    var emails = text.match(emailPattern) || [];
+    
+    var match;
+    while ((match = displayNamePattern.exec(text)) !== null) {
+      emails.push(match[1]);
+    }
+    
+    if (active.validate) {
+      emails = emails.filter(isValidEmail);
+    }
+    
+    if (active.dedupe) {
+      emails = (function(arr) {
+        var seen = {};
+        return arr.filter(function(item) {
+          var k = item.toLowerCase();
+          return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+        });
+      })(emails);
+    }
+    
+    emails.sort();
+    render(emails);
+  }
+
+  function render(emails) {
+    extracted = emails;
+    rTotal.textContent = emails.length.toLocaleString();
+    
+    var uniqueSet = {};
+    var validCount = 0;
+    emails.forEach(function(e) {
+      uniqueSet[e.toLowerCase()] = true;
+      if (isValidEmail(e)) validCount++;
+    });
+    
+    rUnique.textContent = Object.keys(uniqueSet).length.toLocaleString();
+    rValid.textContent = validCount.toLocaleString();
+
+    // Domain Analysis
+    var domains = {};
+    emails.forEach(function(e) {
+      if (isValidEmail(e)) {
+        var d = e.split('@')[1];
+        if (d) domains[d] = (domains[d] || 0) + 1;
+      }
+    });
+
+    var dStats = Object.keys(domains).map(function(k) {
+      return { name: k, count: domains[k] };
+    }).sort(function(a, b) { return b.count - a.count; }).slice(0, 5);
+
+    if (dStats.length > 0) {
+      domainEl.style.display = 'block';
+      domainEl.innerHTML = '<div class="mono" style="margin-bottom:8px; border-bottom:1px solid var(--mag); font-size:12px; opacity:0.8">Top domains</div>';
+      dStats.forEach(function(s) {
+        var div = document.createElement('div');
+        div.innerHTML = '<span class="mono">' + s.name + '</span><b>' + s.count + '</b>';
+        domainEl.appendChild(div);
+      });
+    } else {
+      domainEl.style.display = 'none';
+    }
+
+    // List Rendering
+    listEl.innerHTML = '';
+    emails.forEach(function(e) {
+      var div = document.createElement('div');
+      div.className = 'tp-uuid'; 
+      div.textContent = e;
+      div.style.fontSize = '13px';
+      listEl.appendChild(div);
+    });
+  }
+
+  opts.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    var k = btn.getAttribute('data-opt');
+    active[k] = !active[k];
+    btn.classList.toggle('on', active[k]);
+    extract();
+  });
+
+  input.addEventListener('input', extract);
+  extractBtn.addEventListener('click', extract);
+
+  copyListBtn.addEventListener('click', function() {
+    var txt = extracted.join('\n');
+    if (!txt) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt);
+      var self = this;
+      var old = self.textContent;
+      self.textContent = 'Copied ✓';
+      setTimeout(function() { self.textContent = old; }, 1200);
+    }
+  });
+
+  copyCsvBtn.addEventListener('click', function() {
+    if (!extracted.length) return;
+    var header = 'Email,Domain,Valid\n';
+    var rows = extracted.map(function(e) {
+      var d = e.includes('@') ? e.split('@')[1] : '';
+      var v = isValidEmail(e);
+      return '"' + e + '","' + d + '","' + v + '"';
+    }).join('\n');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(header + rows);
+      var self = this;
+      var old = self.textContent;
+      self.textContent = 'Copied ✓';
+      setTimeout(function() { self.textContent = old; }, 1200);
+    }
+  });
+
+  // Init
+  extract();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +747,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

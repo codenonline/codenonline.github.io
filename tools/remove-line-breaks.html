@@ -6,11 +6,15 @@
   <title>Remove Line Breaks — Tools Catalog</title>
   <meta name="description" content="Remove line breaks and join text into single line.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,165 @@ button:disabled{transform:none;}
         <p class="tp-desc">Remove line breaks and join text into single line.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-input tp-textarea tp-textarea--tall" id="rlb-in" placeholder="Paste your multi-line text here..."></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Custom separator</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="rlb-sep" type="text" placeholder="Default is space">
       </div>
+      <p class="tp-hint">Use \n for newline, \t for tab.</p>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">remove-line-breaks</p>
+
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono on" id="rlb-opt-join">Join with space</button>
+      <button class="tp-toggle mono on" id="rlb-opt-trim">Trim lines</button>
+      <button class="tp-toggle mono on" id="rlb-opt-empty">Remove empty lines</button>
+      <button class="tp-toggle mono on" id="rlb-opt-norm">Normalize spaces</button>
+    </div>
+
+    <div class="tp-two" style="margin-top: 1.5rem">
+      <button class="tp-gen mono" id="rlb-btn-remove">Remove breaks</button>
+      <button class="tp-gen mono" id="rlb-btn-extra" style="background:transparent; color:var(--ink)">Clean spaces</button>
+    </div>
+    <button class="tp-gen mono" id="rlb-btn-clear" style="margin-top: 0.5rem; background:transparent; border-style:dashed; color:var(--ink)">Clear all</button>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Remove Line Breaks</span>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Processed text</span>
+    <textarea class="tp-input tp-textarea tp-textarea--tall" id="rlb-out" readonly placeholder="Result will appear here..." style="background:transparent; color:inherit; border-color:currentColor; font-family:var(--mono)"></textarea>
+    
+    <div class="tp-statgrid" style="margin-top: 1.5rem">
+      <div><span class="mono">Original lines</span><b id="rlb-s-lines">0</b></div>
+      <div><span class="mono">Characters</span><b id="rlb-s-chars">0</b></div>
+      <div><span class="mono">Result chars</span><b id="rlb-s-res">0</b></div>
+      <div><span class="mono">Breaks removed</span><b id="rlb-s-rem">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <p class="tp-demo-note">Changes are applied instantly as you type or toggle options.</p>
   </div>
 </div>
+
+<script>
+(function () {
+  const inArea = document.getElementById('rlb-in');
+  const outArea = document.getElementById('rlb-out');
+  const sepInput = document.getElementById('rlb-sep');
+  
+  const optJoin = document.getElementById('rlb-opt-join');
+  const optTrim = document.getElementById('rlb-opt-trim');
+  const optEmpty = document.getElementById('rlb-opt-empty');
+  const optNorm = document.getElementById('rlb-opt-norm');
+  
+  const btnRemove = document.getElementById('rlb-btn-remove');
+  const btnExtra = document.getElementById('rlb-btn-extra');
+  const btnClear = document.getElementById('rlb-btn-clear');
+  
+  const sLines = document.getElementById('rlb-s-lines');
+  const sChars = document.getElementById('rlb-s-chars');
+  const sRes = document.getElementById('rlb-s-res');
+  const sRem = document.getElementById('rlb-s-rem');
+
+  function getOptions() {
+    return {
+      joinWithSpace: optJoin.classList.contains('on'),
+      trimLines: optTrim.classList.contains('on'),
+      removeEmptyLines: optEmpty.classList.contains('on'),
+      normalizeSpaces: optNorm.classList.contains('on'),
+      customSeparator: sepInput.value
+    };
+  }
+
+  function updateStats(input, output) {
+    const lines = input ? input.split('\n').length : 0;
+    sLines.textContent = lines.toLocaleString();
+    sChars.textContent = input.length.toLocaleString();
+    sRes.textContent = output.length.toLocaleString();
+    sRem.textContent = Math.max(0, lines - 1).toLocaleString();
+  }
+
+  function removeLineBreaks() {
+    const text = inArea.value;
+    if (!text.trim()) {
+      outArea.value = '';
+      updateStats('', '');
+      return;
+    }
+
+    const opts = getOptions();
+    let lines = text.split('\n');
+
+    if (opts.trimLines) {
+      lines = lines.map(line => line.trim());
+    }
+
+    if (opts.removeEmptyLines) {
+      lines = lines.filter(line => line.length > 0);
+    }
+
+    let separator = '';
+    if (opts.customSeparator !== '') {
+      separator = opts.customSeparator.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+    } else if (opts.joinWithSpace) {
+      separator = ' ';
+    }
+
+    let result = lines.join(separator);
+
+    if (opts.normalizeSpaces) {
+      result = result.replace(/\s+/g, ' ');
+    }
+
+    const final = result.trim();
+    outArea.value = final;
+    updateStats(text, final);
+  }
+
+  function removeExtraSpaces() {
+    const text = inArea.value;
+    if (!text.trim()) return;
+
+    const result = text
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n\s+/g, '\n')
+      .replace(/\s+\n/g, '\n')
+      .replace(/\n+/g, '\n')
+      .trim();
+
+    outArea.value = result;
+    updateStats(text, result);
+  }
+
+  // Events
+  [inArea, sepInput].forEach(el => {
+    el.addEventListener('input', removeLineBreaks);
+  });
+  
+  [optJoin, optTrim, optEmpty, optNorm].forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.classList.toggle('on');
+      removeLineBreaks();
+    });
+  });
+
+  btnRemove.addEventListener('click', removeLineBreaks);
+  btnExtra.addEventListener('click', removeExtraSpaces);
+  
+  btnClear.addEventListener('click', () => {
+    inArea.value = '';
+    outArea.value = '';
+    removeLineBreaks();
+  });
+
+  // Initial run
+  removeLineBreaks();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +715,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>Calculadora de Descuento Doble — Tools Catalog</title>
   <meta name="description" content="Calcula el efecto de aplicar dos descuentos.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,185 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Original price</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="price" type="number" inputmode="decimal" value="100" min="0" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">double-discount</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Utilidades</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Calculadora de Des</span>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">1st discount</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="d1" type="number" inputmode="decimal" value="20" min="0" max="100" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">2nd discount</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="d2" type="number" inputmode="decimal" value="10" min="0" max="100" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <span class="tp-field-label mono">Application order</span>
+    <div class="tp-toggles tp-toggles--wrap" id="order-toggles">
+      <button class="tp-toggle mono on" data-val="1-2">1st then 2nd</button>
+      <button class="tp-toggle mono" data-val="2-1">2nd then 1st</button>
+      <button class="tp-toggle mono" data-val="both">Compare both</button>
+    </div>
+
+    <div class="tp-breakdown" id="breakdown">
+      <!-- Standard breakdown items -->
+      <div id="row-after-1st"><span class="mono">After 1st discount</span><b id="bd-after-1st">$0.00</b></div>
+      <div id="row-d1-amt"><span class="mono">1st discount amt</span><b id="bd-d1-amt">$0.00</b></div>
+      <div id="row-d2-amt"><span class="mono">2nd discount amt</span><b id="bd-d2-amt">$0.00</b></div>
+      
+      <!-- Comparison items (hidden by default) -->
+      <div id="row-opt1" style="display:none"><span class="mono">Option 1 final</span><b id="bd-opt1">$0.00</b></div>
+      <div id="row-opt2" style="display:none"><span class="mono">Option 2 final</span><b id="bd-opt2">$0.00</b></div>
+
+      <div id="row-savings"><span class="mono">Total savings</span><b id="bd-savings">$0.00</b></div>
+      <div id="row-rate"><span class="mono">Effective rate</span><b id="bd-rate">0.00%</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Final price</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-price">0.00</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Applying 20% then 10% discount</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const priceInput = document.getElementById('price');
+  const d1Input = document.getElementById('d1');
+  const d2Input = document.getElementById('d2');
+  const orderToggles = document.getElementById('order-toggles');
+  
+  const rPrice = document.getElementById('r-price');
+  const rNote = document.getElementById('r-note');
+  
+  const bdAfter1st = document.getElementById('bd-after-1st');
+  const bdD1Amt = document.getElementById('bd-d1-amt');
+  const bdD2Amt = document.getElementById('bd-d2-amt');
+  const bdSavings = document.getElementById('bd-savings');
+  const bdRate = document.getElementById('bd-rate');
+  const bdOpt1 = document.getElementById('bd-opt1');
+  const bdOpt2 = document.getElementById('bd-opt2');
+
+  const rowAfter1st = document.getElementById('row-after-1st');
+  const rowD1Amt = document.getElementById('row-d1-amt');
+  const rowD2Amt = document.getElementById('row-d2-amt');
+  const rowOpt1 = document.getElementById('row-opt1');
+  const rowOpt2 = document.getElementById('row-opt2');
+
+  let currentOrder = '1-2';
+
+  const fmt = (n) => (isFinite(n) ? n : 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const money = (n) => '$' + fmt(n);
+
+  function calculate() {
+    const p = parseFloat(priceInput.value) || 0;
+    const d1 = parseFloat(d1Input.value) || 0;
+    const d2 = parseFloat(d2Input.value) || 0;
+
+    // Option 1 calculation (1 then 2)
+    const opt1After1st = p * (1 - d1 / 100);
+    const opt1Final = opt1After1st * (1 - d2 / 100);
+    const opt1Savings = p - opt1Final;
+    const opt1Rate = p > 0 ? (opt1Savings / p) * 100 : 0;
+
+    // Option 2 calculation (2 then 1)
+    const opt2After1st = p * (1 - d2 / 100);
+    const opt2Final = opt2After1st * (1 - d1 / 100);
+    const opt2Savings = p - opt2Final;
+    const opt2Rate = p > 0 ? (opt2Savings / p) * 100 : 0;
+
+    if (currentOrder === 'both') {
+      rowAfter1st.style.display = 'none';
+      rowD1Amt.style.display = 'none';
+      rowD2Amt.style.display = 'none';
+      rowOpt1.style.display = 'flex';
+      rowOpt2.style.display = 'flex';
+
+      bdOpt1.textContent = money(opt1Final);
+      bdOpt2.textContent = money(opt2Final);
+      bdSavings.textContent = money(opt1Savings);
+      bdRate.textContent = fmt(opt1Rate) + '%';
+
+      rPrice.textContent = fmt(opt1Final);
+      
+      const diff = Math.abs(opt1Final - opt2Final);
+      if (diff < 0.001) {
+        rNote.textContent = 'Both orders result in the same final price.';
+      } else {
+        const better = opt1Final < opt2Final ? '1st then 2nd' : '2nd then 1st';
+        rNote.textContent = better + ' is better by ' + money(diff);
+      }
+    } else {
+      rowAfter1st.style.display = 'flex';
+      rowD1Amt.style.display = 'flex';
+      rowD2Amt.style.display = 'flex';
+      rowOpt1.style.display = 'none';
+      rowOpt2.style.display = 'none';
+
+      let after1st, final, d1Amt, d2Amt, savings, rate;
+      let label1, label2;
+
+      if (currentOrder === '1-2') {
+        after1st = opt1After1st;
+        final = opt1Final;
+        d1Amt = p - opt1After1st;
+        d2Amt = opt1After1st - opt1Final;
+        savings = opt1Savings;
+        rate = opt1Rate;
+        label1 = '1st'; label2 = '2nd';
+        rNote.textContent = 'Applying ' + d1 + '% then ' + d2 + '% discount';
+      } else {
+        after1st = opt2After1st;
+        final = opt2Final;
+        d1Amt = p - opt2After1st;
+        d2Amt = opt2After1st - opt2Final;
+        savings = opt2Savings;
+        rate = opt2Rate;
+        label1 = '2nd'; label2 = '1st';
+        rNote.textContent = 'Applying ' + d2 + '% then ' + d1 + '% discount';
+      }
+
+      bdAfter1st.textContent = money(after1st);
+      bdD1Amt.textContent = money(d1Amt);
+      bdD2Amt.textContent = money(d2Amt);
+      bdSavings.textContent = money(savings);
+      bdRate.textContent = fmt(rate) + '%';
+
+      // Update labels to reflect order if needed, but original used static labels
+      // rowD1Amt.querySelector('span').textContent = label1 + ' discount amt';
+      // rowD2Amt.querySelector('span').textContent = label2 + ' discount amt';
+
+      rPrice.textContent = fmt(final);
+    }
+  }
+
+  orderToggles.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    currentOrder = btn.getAttribute('data-val');
+    Array.prototype.forEach.call(orderToggles.children, (b) => b.classList.toggle('on', b === btn));
+    calculate();
+  });
+
+  [priceInput, d1Input, d2Input].forEach(el => el.addEventListener('input', calculate));
+  
+  calculate();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -563,7 +728,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

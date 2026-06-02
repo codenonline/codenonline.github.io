@@ -6,11 +6,15 @@
   <title>Amortization Calculator — Tools Catalog</title>
   <meta name="description" content="View your full loan repayment schedule — see how each payment splits between principal and interest over the life of the loan.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,213 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Loan amount</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="ac-amount" type="number" inputmode="decimal" value="250000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">amortization-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Financial</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Amortization Calcu</span>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Annual rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ac-rate" type="number" inputmode="decimal" value="4.5" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Term</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ac-term" type="number" inputmode="numeric" value="30" min="1" step="1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-toggles tp-toggles--wrap" id="ac-presets">
+      <button class="tp-toggle mono" data-term="10">10 yr</button>
+      <button class="tp-toggle mono" data-term="15">15 yr</button>
+      <button class="tp-toggle mono" data-term="20">20 yr</button>
+      <button class="tp-toggle mono on" data-term="30">30 yr</button>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Payment frequency</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="ac-freq">
+          <option value="12">Monthly</option>
+          <option value="26">Bi-weekly</option>
+          <option value="52">Weekly</option>
+          <option value="4">Quarterly</option>
+          <option value="1">Annually</option>
+        </select>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Principal</span><b id="ac-bd-principal">$0.00</b></div>
+      <div><span class="mono">Total paid</span><b id="ac-bd-total">$0.00</b></div>
+      <div><span class="mono">Total interest</span><b id="ac-bd-interest">$0.00</b></div>
+      <div><span class="mono">Payments</span><b id="ac-bd-payments">0</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="ac-r-label">Monthly payment</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="ac-r-payment">0</span>
+    </div>
+    <span class="tp-result-note" id="ac-r-note">30-yr loan at 4.5%</span>
   </div>
 </div>
+
+<div id="ac-schedule-wrap" style="margin-top:1.5rem;display:none">
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap">
+    <strong class="mono" style="font-size:.85rem">Amortization schedule</strong>
+    <div class="tp-toggles" id="ac-view-btns">
+      <button class="tp-toggle mono on" data-limit="12">1 yr</button>
+      <button class="tp-toggle mono" data-limit="60">5 yr</button>
+      <button class="tp-toggle mono" data-limit="0">All</button>
+    </div>
+    <span class="mono" id="ac-showing" style="font-size:.75rem;color:var(--ink-2)"></span>
+  </div>
+  <div style="overflow-x:auto">
+    <table id="ac-table" style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--ink)">
+          <th class="mono" style="text-align:left;padding:.35rem .5rem">#</th>
+          <th class="mono" style="text-align:right;padding:.35rem .5rem">Payment</th>
+          <th class="mono" style="text-align:right;padding:.35rem .5rem">Principal</th>
+          <th class="mono" style="text-align:right;padding:.35rem .5rem">Interest</th>
+          <th class="mono" style="text-align:right;padding:.35rem .5rem">Balance</th>
+          <th class="mono" style="text-align:right;padding:.35rem .5rem">Cum. interest</th>
+        </tr>
+      </thead>
+      <tbody id="ac-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function () {
+  var amountEl  = document.getElementById('ac-amount');
+  var rateEl    = document.getElementById('ac-rate');
+  var termEl    = document.getElementById('ac-term');
+  var freqEl    = document.getElementById('ac-freq');
+  var presets   = document.getElementById('ac-presets');
+  var viewBtns  = document.getElementById('ac-view-btns');
+  var schedWrap = document.getElementById('ac-schedule-wrap');
+  var tbody     = document.getElementById('ac-tbody');
+  var showingEl = document.getElementById('ac-showing');
+
+  var freqLabels = { '12': 'Monthly', '26': 'Bi-weekly', '52': 'Weekly', '4': 'Quarterly', '1': 'Annual' };
+  var displayLimit = 12;
+  var schedule = [];
+
+  function money(n) {
+    return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
+  }
+
+  function moneyShort(n) {
+    var v = isFinite(n) && n >= 0 ? n : 0;
+    return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    var principal  = Math.max(0, parseFloat(amountEl.value) || 0);
+    var annualRate = parseFloat(rateEl.value) || 0;
+    var years      = Math.max(1, parseInt(termEl.value, 10) || 1);
+    var frequency  = parseInt(freqEl.value, 10) || 12;
+
+    var n = years * frequency;
+    var r = annualRate / 100 / frequency;
+
+    var payment;
+    if (r > 0) {
+      var pow = Math.pow(1 + r, n);
+      payment = principal * (r * pow) / (pow - 1);
+    } else {
+      payment = n > 0 ? principal / n : 0;
+    }
+
+    var totalPaid     = payment * n;
+    var totalInterest = Math.max(0, totalPaid - principal);
+
+    document.getElementById('ac-r-label').textContent    = (freqLabels[String(frequency)] || 'Monthly') + ' payment';
+    document.getElementById('ac-r-payment').textContent  = isFinite(payment) ? payment.toFixed(2) : '0.00';
+    document.getElementById('ac-r-note').textContent     = years + '-yr loan at ' + annualRate + '%';
+    document.getElementById('ac-bd-principal').textContent = moneyShort(principal);
+    document.getElementById('ac-bd-total').textContent    = moneyShort(isFinite(totalPaid) ? totalPaid : 0);
+    document.getElementById('ac-bd-interest').textContent = moneyShort(isFinite(totalInterest) ? totalInterest : 0);
+    document.getElementById('ac-bd-payments').textContent = n.toLocaleString();
+
+    Array.prototype.forEach.call(presets.children, function (btn) {
+      btn.classList.toggle('on', parseInt(btn.getAttribute('data-term'), 10) === years);
+    });
+
+    // Build schedule
+    schedule = [];
+    if (principal > 0 && isFinite(payment) && payment > 0) {
+      var bal = principal;
+      var cumInterest = 0;
+      for (var i = 1; i <= n; i++) {
+        var intPmt  = bal * r;
+        var prinPmt = payment - intPmt;
+        bal = Math.max(0, bal - prinPmt);
+        cumInterest += intPmt;
+        schedule.push([i, payment, prinPmt, intPmt, bal, cumInterest]);
+        if (bal <= 0.005) break;
+      }
+      schedWrap.style.display = '';
+    } else {
+      schedWrap.style.display = 'none';
+    }
+
+    renderTable();
+  }
+
+  function renderTable() {
+    var limit = displayLimit === 0 ? schedule.length : Math.min(displayLimit, schedule.length);
+    var rows  = [];
+    for (var i = 0; i < limit; i++) {
+      var p = schedule[i];
+      rows.push(
+        '<tr style="border-bottom:1px solid var(--border)">' +
+        '<td class="mono" style="padding:.3rem .5rem">' + p[0] + '</td>' +
+        '<td class="mono" style="text-align:right;padding:.3rem .5rem">' + money(p[1]) + '</td>' +
+        '<td class="mono" style="text-align:right;padding:.3rem .5rem;color:var(--accent)">' + money(p[2]) + '</td>' +
+        '<td class="mono" style="text-align:right;padding:.3rem .5rem;color:#c0392b">' + money(p[3]) + '</td>' +
+        '<td class="mono" style="text-align:right;padding:.3rem .5rem;font-weight:600">' + money(p[4]) + '</td>' +
+        '<td class="mono" style="text-align:right;padding:.3rem .5rem;color:var(--ink-2)">' + money(p[5]) + '</td>' +
+        '</tr>'
+      );
+    }
+    tbody.innerHTML = rows.join('');
+    showingEl.textContent = 'Showing ' + limit + ' of ' + schedule.length + ' payments';
+
+    Array.prototype.forEach.call(viewBtns.children, function (btn) {
+      var lim = parseInt(btn.getAttribute('data-limit'), 10);
+      btn.classList.toggle('on', lim === displayLimit);
+    });
+  }
+
+  presets.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-term]');
+    if (!btn) return;
+    termEl.value = btn.getAttribute('data-term');
+    calc();
+  });
+
+  viewBtns.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-limit]');
+    if (!btn) return;
+    displayLimit = parseInt(btn.getAttribute('data-limit'), 10);
+    renderTable();
+  });
+
+  [amountEl, rateEl, termEl].forEach(function (el) { el.addEventListener('input', calc); });
+  freqEl.addEventListener('change', calc);
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +766,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

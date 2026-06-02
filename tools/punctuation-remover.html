@@ -6,11 +6,15 @@
   <title>Punctuation Remover — Tools Catalog</title>
   <meta name="description" content="Remove punctuation marks from text.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,268 @@ button:disabled{transform:none;}
         <p class="tp-desc">Remove punctuation marks from text.</p>
       </div>
 
-      <div class="tp-grid">
+      
+
+
+<div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="input" placeholder="Paste text here..."></textarea>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Removal Mode</span>
+        <div class="tp-toggles" id="mode-toggles">
+          <button class="tp-toggle mono" data-mode="all">All</button>
+          <button class="tp-toggle mono on" data-mode="selected">Selected</button>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Preserve Spaces</span>
+        <div class="tp-toggles" id="space-toggles">
+          <button class="tp-toggle mono on" data-val="1">Yes</button>
+          <button class="tp-toggle mono" data-val="0">No</button>
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">punctuation-remover</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Punctuation Remove</span>
+
+    <div id="selection-controls">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Select presets</span>
+        <div class="tp-toggles tp-toggles--wrap" id="presets">
+          <button class="tp-toggle mono" data-preset="all">All</button>
+          <button class="tp-toggle mono" data-preset="none">None</button>
+          <button class="tp-toggle mono" data-preset="common">Common</button>
+        </div>
+      </div>
+      <div class="tp-toggles tp-toggles--wrap" id="punct-toggles">
+        
+          <button class="tp-toggle mono on" data-char="." title="Period">.</button>
+        
+          <button class="tp-toggle mono on" data-char="," title="Comma">,</button>
+        
+          <button class="tp-toggle mono on" data-char="!" title="Exclamation">!</button>
+        
+          <button class="tp-toggle mono on" data-char="?" title="Question">?</button>
+        
+          <button class="tp-toggle mono on" data-char=";" title="Semicolon">;</button>
+        
+          <button class="tp-toggle mono on" data-char=":" title="Colon">:</button>
+        
+          <button class="tp-toggle mono" data-char="&quot;" title="Quote">&quot;</button>
+        
+          <button class="tp-toggle mono" data-char="&#39;" title="Apostrophe">&#39;</button>
+        
+          <button class="tp-toggle mono" data-char="(" title="Open Paren">(</button>
+        
+          <button class="tp-toggle mono" data-char=")" title="Close Paren">)</button>
+        
+          <button class="tp-toggle mono" data-char="[" title="Open Bracket">[</button>
+        
+          <button class="tp-toggle mono" data-char="]" title="Close Bracket">]</button>
+        
+          <button class="tp-toggle mono" data-char="{" title="Open Brace">{</button>
+        
+          <button class="tp-toggle mono" data-char="}" title="Close Brace">}</button>
+        
+          <button class="tp-toggle mono" data-char="-" title="Hyphen">-</button>
+        
+          <button class="tp-toggle mono" data-char="–" title="En Dash">–</button>
+        
+          <button class="tp-toggle mono" data-char="—" title="Em Dash">—</button>
+        
+          <button class="tp-toggle mono" data-char="_" title="Underscore">_</button>
+        
+          <button class="tp-toggle mono" data-char="/" title="Slash">/</button>
+        
+          <button class="tp-toggle mono" data-char="&#92;" title="Backslash">&#92;</button>
+        
+          <button class="tp-toggle mono" data-char="|" title="Pipe">|</button>
+        
+          <button class="tp-toggle mono" data-char="@" title="At Sign">@</button>
+        
+          <button class="tp-toggle mono" data-char="#" title="Hash">#</button>
+        
+          <button class="tp-toggle mono" data-char="$" title="Dollar">$</button>
+        
+          <button class="tp-toggle mono" data-char="%" title="Percent">%</button>
+        
+          <button class="tp-toggle mono" data-char="^" title="Caret">^</button>
+        
+          <button class="tp-toggle mono" data-char="&amp;" title="Ampersand">&amp;</button>
+        
+          <button class="tp-toggle mono" data-char="*" title="Asterisk">*</button>
+        
+          <button class="tp-toggle mono" data-char="+" title="Plus">+</button>
+        
+          <button class="tp-toggle mono" data-char="=" title="Equals">=</button>
+        
+          <button class="tp-toggle mono" data-char="&lt;" title="Less Than">&lt;</button>
+        
+          <button class="tp-toggle mono" data-char="&gt;" title="Greater Than">&gt;</button>
+        
+          <button class="tp-toggle mono" data-char="~" title="Tilde">~</button>
+        
+          <button class="tp-toggle mono" data-char="`" title="Backtick">`</button>
+        
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" style="margin-top: 10px;">
+      <span class="tp-field-label mono">Examples</span>
+      <div class="tp-toggles tp-toggles--wrap" id="example-toggles">
+        <button class="tp-toggle mono" data-text="Hello, world! How are you doing today?">Simple</button>
+        <button class="tp-toggle mono" data-text="Hi John, Thanks for your message! I'll get back to you soon. Best regards, Sarah.">Email</button>
+        <button class="tp-toggle mono" data-text="// This function calculates the total; it returns a number.">Code</button>
+        <button class="tp-toggle mono" data-text="Amazing sunset today! 🌅 #photography #nature @friends">Social</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Punctuation Removed</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="s-removed">0</span>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono" style="color:var(--mag)">Cleaned text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="output" readonly placeholder="Resulting text..."></textarea>
+    </div>
+
+    <div class="tp-statgrid">
+      <div><span class="mono">Original Chars</span><b id="s-orig">0</b></div>
+      <div><span class="mono">Cleaned Chars</span><b id="s-clean">0</b></div>
+      <div><span class="mono">Words</span><b id="s-words">0</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  var modeToggles = document.getElementById('mode-toggles');
+  var spaceToggles = document.getElementById('space-toggles');
+  var presets = document.getElementById('presets');
+  var punctToggles = document.getElementById('punct-toggles');
+  var selectionControls = document.getElementById('selection-controls');
+  var exampleToggles = document.getElementById('example-toggles');
+
+  var sOrig = document.getElementById('s-orig');
+  var sClean = document.getElementById('s-clean');
+  var sRemoved = document.getElementById('s-removed');
+  var sWords = document.getElementById('s-words');
+
+  var mode = 'selected';
+  var preserveSpaces = true;
+
+  function getSelectedPunct() {
+    var selected = [];
+    var btns = punctToggles.querySelectorAll('.tp-toggle.on');
+    for (var i = 0; i < btns.length; i++) {
+      selected.push(btns[i].getAttribute('data-char'));
+    }
+    return selected;
+  }
+
+  function calc() {
+    var text = input.value;
+    var cleaned = text;
+
+    if (mode === 'all') {
+      cleaned = cleaned.replace(/[^\w\s]/g, '');
+      if (preserveSpaces) {
+        cleaned = cleaned.replace(/\s+/g, ' ').trim();
+      } else {
+        cleaned = cleaned.replace(/\s/g, '');
+      }
+    } else {
+      var selected = getSelectedPunct();
+      selected.forEach(function(punct) {
+        var escaped = punct.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        cleaned = cleaned.replace(new RegExp(escaped, 'g'), '');
+      });
+      if (preserveSpaces) {
+        cleaned = cleaned.replace(/\s+/g, ' ').trim();
+      }
+    }
+
+    output.value = cleaned;
+
+    var origLen = text.length;
+    var cleanLen = cleaned.length;
+    var words = cleaned.trim() ? cleaned.trim().split(/\s+/).length : 0;
+
+    sOrig.textContent = origLen.toLocaleString();
+    sClean.textContent = cleanLen.toLocaleString();
+    sRemoved.textContent = (origLen - cleanLen).toLocaleString();
+    sWords.textContent = words.toLocaleString();
+
+    selectionControls.style.display = (mode === 'selected' ? 'block' : 'none');
+  }
+
+  modeToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    mode = btn.getAttribute('data-mode');
+    Array.prototype.forEach.call(modeToggles.children, function(b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  spaceToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    preserveSpaces = btn.getAttribute('data-val') === '1';
+    Array.prototype.forEach.call(spaceToggles.children, function(b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  presets.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-preset]');
+    if (!btn) return;
+    var preset = btn.getAttribute('data-preset');
+    var common = ['.', ',', '!', '?', ';', ':'];
+    
+    var btns = punctToggles.querySelectorAll('.tp-toggle');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      var c = b.getAttribute('data-char');
+      if (preset === 'all') b.classList.add('on');
+      else if (preset === 'none') b.classList.remove('on');
+      else if (preset === 'common') {
+        if (common.indexOf(c) !== -1) b.classList.add('on');
+        else b.classList.remove('on');
+      }
+    }
+    calc();
+  });
+
+  punctToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-char]');
+    if (!btn) return;
+    btn.classList.toggle('on');
+    calc();
+  });
+
+  exampleToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-text]');
+    if (!btn) return;
+    input.value = btn.getAttribute('data-text');
+    calc();
+  });
+
+  input.addEventListener('input', calc);
+  
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +818,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

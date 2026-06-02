@@ -6,11 +6,15 @@
   <title>Capital Asset Pricing Model — Tools Catalog</title>
   <meta name="description" content="Stima il rendimento atteso di un&#39;azione sulla base del suo beta, del premio per il rischio di mercato e del tasso privo di rischio utilizzando il framework CAPM.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,119 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Risk-Free Rate</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="capm-rfr" type="number" inputmode="decimal" value="2.50" step="0.01">
+        <span class="tp-suffix">%</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">capital-asset-pricing-model</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Market Return</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="capm-mr" type="number" inputmode="decimal" value="8.00" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Beta (β)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="capm-beta" type="number" inputmode="decimal" value="1.20" step="0.01">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Investment ($)</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="capm-amt" type="number" inputmode="decimal" value="10000" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Period</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="capm-period" type="number" inputmode="decimal" value="5" min="0.1" step="0.5">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-breakdown" id="capm-breakdown">
+      <div><span class="mono">Market risk premium</span><b id="capm-bd-mrp">0.00%</b></div>
+      <div><span class="mono">Risk premium (β×MRP)</span><b id="capm-bd-rp">0.00%</b></div>
+      <div><span class="mono">Annual return ($)</span><b id="capm-bd-annual">$0.00</b></div>
+      <div><span class="mono">Future value</span><b id="capm-bd-fv">$0.00</b></div>
+      <div><span class="mono">Total gain</span><b id="capm-bd-gain">$0.00</b></div>
+    </div>
+    <div id="capm-risk-box" class="tp-breakdown" style="margin-top:0">
+      <div><span class="mono">Risk level</span><b id="capm-bd-risk">—</b></div>
+      <div><span class="mono">Beta profile</span><b id="capm-bd-profile">—</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investimento</span>
+    <span class="tp-result-label">Expected Return</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Capital Asset Pric</span>
+      <span class="tp-result-num" id="capm-r-ret">0.00</span>
+      <span class="tp-result-prefix">%</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="capm-r-note">CAPM: Rf + β × (Rm − Rf)</span>
   </div>
 </div>
+<script>
+(function () {
+  var rfr    = document.getElementById('capm-rfr');
+  var mr     = document.getElementById('capm-mr');
+  var beta   = document.getElementById('capm-beta');
+  var amt    = document.getElementById('capm-amt');
+  var period = document.getElementById('capm-period');
+
+  function pct(v) {
+    return (isFinite(v) ? v : 0).toFixed(2) + '%';
+  }
+  function money(v) {
+    return '$' + (isFinite(v) && v >= 0 ? v : 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    var rf  = parseFloat(rfr.value)    || 0;
+    var rm  = parseFloat(mr.value)     || 0;
+    var b   = parseFloat(beta.value)   || 0;
+    var inv = Math.max(0, parseFloat(amt.value)    || 0);
+    var yrs = Math.max(0.1, parseFloat(period.value) || 1);
+
+    var mrp          = rm - rf;
+    var riskPremium  = b * mrp;
+    var expectedRet  = rf + riskPremium;
+    var annualReturn = inv * (expectedRet / 100);
+    var futureValue  = inv * Math.pow(1 + expectedRet / 100, yrs);
+    var totalGain    = futureValue - inv;
+
+    var riskLevel, profile;
+    if (b < 0.7) {
+      riskLevel = 'Low';
+      profile   = 'Conservative (β < 0.7)';
+    } else if (b < 1.3) {
+      riskLevel = 'Moderate';
+      profile   = 'Market-like (0.7 ≤ β < 1.3)';
+    } else {
+      riskLevel = 'High';
+      profile   = 'Aggressive (β ≥ 1.3)';
+    }
+
+    document.getElementById('capm-r-ret').textContent    = isFinite(expectedRet) ? expectedRet.toFixed(2) : '—';
+    document.getElementById('capm-r-note').textContent   =
+      rf.toFixed(2) + '% + ' + b.toFixed(2) + ' × ' + mrp.toFixed(2) + '%';
+    document.getElementById('capm-bd-mrp').textContent   = pct(mrp);
+    document.getElementById('capm-bd-rp').textContent    = pct(riskPremium);
+    document.getElementById('capm-bd-annual').textContent = money(annualReturn);
+    document.getElementById('capm-bd-fv').textContent    = money(futureValue);
+    document.getElementById('capm-bd-gain').textContent  = money(totalGain);
+    document.getElementById('capm-bd-risk').textContent  = riskLevel;
+    document.getElementById('capm-bd-profile').textContent = profile;
+  }
+
+  [rfr, mr, beta, amt, period].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +672,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

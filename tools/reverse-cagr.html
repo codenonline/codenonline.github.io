@@ -6,11 +6,15 @@
   <title>Reverse CAGR Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate required growth rate to reach target value.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,115 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Initial value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="rc-initial" type="number" inputmode="decimal" value="10000" min="0.01" step="any">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Target value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="rc-target" type="number" inputmode="decimal" value="50000" min="0.01" step="any">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">reverse-cagr</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Reverse CAGR Calcu</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Time period</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="rc-years" type="number" inputmode="decimal" value="10" min="0.1" step="any">
+        <span class="tp-suffix">years</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total growth</span><b id="rc-bd-total">0%</b></div>
+      <div><span class="mono">Growth factor</span><b id="rc-bd-factor">1x</b></div>
+    </div>
+
+    <div class="tp-breakdown" style="margin-top: 1.5rem">
+      <div class="mono" style="font-size: 0.7rem; opacity: 0.6; border-bottom: 1px solid var(--ink); margin-bottom: 0.5rem; padding-bottom: 0.2rem">Scenarios</div>
+      <div><span class="mono">Conservative (-2%)</span><b id="rc-scen-cons">0%</b></div>
+      <div><span class="mono">Optimistic (+2%)</span><b id="rc-scen-opt">0%</b></div>
+    </div>
+
+    <p class="tp-hint">Formula: (Target / Initial)^(1 / Years) - 1. CAGR results above 15% are generally considered high-risk / high-reward.</p>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Required CAGR</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="rc-r-cagr">0.00</span>
+      <span class="tp-result-prefix" style="position: static; margin-left: 4px; font-size: 0.4em">%</span>
+    </div>
+    <span class="tp-result-note" id="rc-r-note">Annual growth needed to reach target</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var initial = document.getElementById('rc-initial');
+  var target = document.getElementById('rc-target');
+  var years = document.getElementById('rc-years');
+
+  function pct(n) {
+    if (!isFinite(n)) return '0.00%';
+    return (n * 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+  }
+
+  function factor(n) {
+    if (!isFinite(n)) return '1.00x';
+    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 'x';
+  }
+
+  function calc() {
+    var v0 = parseFloat(initial.value) || 0;
+    var v1 = parseFloat(target.value) || 0;
+    var t = parseFloat(years.value) || 0;
+
+    var cagr = 0;
+    var totalGrowth = 0;
+    var gFactor = 1;
+
+    var valid = v0 > 0 && v1 > 0 && t > 0;
+
+    if (valid) {
+      gFactor = v1 / v0;
+      cagr = Math.pow(gFactor, 1 / t) - 1;
+      totalGrowth = gFactor - 1;
+    }
+
+    document.getElementById('rc-r-cagr').textContent = valid ? (cagr * 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+    document.getElementById('rc-bd-total').textContent = pct(totalGrowth);
+    document.getElementById('rc-bd-factor').textContent = factor(gFactor);
+    document.getElementById('rc-scen-cons').textContent = pct(Math.max(-1, cagr - 0.02));
+    document.getElementById('rc-scen-opt').textContent = pct(cagr + 0.02);
+
+    var note = 'Annual growth needed';
+    if (v0 > 0 && v1 > 0) {
+      if (v1 < v0) {
+        note = 'Target is less than initial (negative growth)';
+      } else {
+        note = 'To turn $' + v0.toLocaleString() + ' into $' + v1.toLocaleString() + ' in ' + t + ' years';
+      }
+    } else if (v0 <= 0 || v1 <= 0) {
+      note = 'Values must be greater than zero';
+    }
+
+    document.getElementById('rc-r-note').textContent = note;
+  }
+
+  [initial, target, years].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +667,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

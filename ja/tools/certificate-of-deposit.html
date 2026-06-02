@@ -6,11 +6,15 @@
   <title>定期預金計算機 — Tools Catalog</title>
   <meta name="description" content="預金額、金利、期間に基づいてCD収益を予測します。ロック期間を比較して最適な選択をしましょう。">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,209 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Initial deposit</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="cd-principal" type="number" inputmode="decimal" value="10000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">certificate-of-deposit</p>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Annual rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="cd-rate" type="number" inputmode="decimal" value="3.5" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Term length</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="cd-term" type="number" inputmode="numeric" value="12" min="1" step="1">
+          <span class="tp-suffix" id="cd-term-suffix">mo</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-toggles" id="cd-unit-toggle">
+      <button class="tp-toggle mono on" data-unit="months">Months</button>
+      <button class="tp-toggle mono" data-unit="years">Years</button>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Compounding</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="cd-compound">
+          <option value="365">Daily</option>
+          <option value="12" selected>Monthly</option>
+          <option value="4">Quarterly</option>
+          <option value="2">Semi-annually</option>
+          <option value="1">Annually</option>
+        </select>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Interest earned</span><b id="cd-bd-interest">$0.00</b></div>
+      <div><span class="mono">Effective APY</span><b id="cd-bd-apy">0.000%</b></div>
+    </div>
+    <details id="cd-early-details" style="margin-top:8px">
+      <summary class="mono" style="cursor:pointer;font-size:13px;padding:4px 0">Early withdrawal</summary>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Withdraw after (months)</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="cd-ew-months" type="number" inputmode="numeric" value="6" min="0" step="1">
+            <span class="tp-suffix">mo</span>
+          </div>
+        </div>
+        <div class="tp-two">
+          <div class="tp-field">
+            <span class="tp-field-label mono">Penalty</span>
+            <div class="tp-field-input">
+              <input class="tp-input" id="cd-ew-penalty" type="number" inputmode="decimal" value="3" min="0" step="0.1">
+            </div>
+          </div>
+          <div class="tp-field">
+            <span class="tp-field-label mono">Penalty type</span>
+            <div class="tp-field-input">
+              <select class="tp-input" id="cd-ew-type">
+                <option value="months">Months interest</option>
+                <option value="percentage">% of principal</option>
+                <option value="flat">Flat fee ($)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tp-breakdown" id="cd-ew-breakdown">
+          <div><span class="mono">Value at withdrawal</span><b id="cd-ew-value">$0.00</b></div>
+          <div><span class="mono">Penalty amount</span><b id="cd-ew-pen-amt" style="color:#c00">$0.00</b></div>
+          <div><span class="mono">Net received</span><b id="cd-ew-net">$0.00</b></div>
+          <div><span class="mono">Opportunity cost</span><b id="cd-ew-opp" style="color:#c00">$0.00</b></div>
+        </div>
+      </div>
+    </details>
+    <div class="tp-breakdown" id="cd-milestones" style="margin-top:8px"></div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">金融</span>
+    <span class="tp-result-label">Maturity value</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">定期預金計算機</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="cd-r-maturity">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="cd-r-note">12 months at 3.5%</span>
   </div>
 </div>
+<script>
+(function () {
+  var elPrincipal = document.getElementById('cd-principal');
+  var elRate      = document.getElementById('cd-rate');
+  var elTerm      = document.getElementById('cd-term');
+  var elTermSuffix= document.getElementById('cd-term-suffix');
+  var elCompound  = document.getElementById('cd-compound');
+  var unitToggle  = document.getElementById('cd-unit-toggle');
+  var elEwMonths  = document.getElementById('cd-ew-months');
+  var elEwPenalty = document.getElementById('cd-ew-penalty');
+  var elEwType    = document.getElementById('cd-ew-type');
+  var elDetails   = document.getElementById('cd-early-details');
+
+  var termUnit = 'months';
+
+  function money(n) {
+    if (!isFinite(n) || n < 0) n = 0;
+    return '$' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function pct(n, dec) {
+    return (isFinite(n) ? n : 0).toFixed(dec || 3) + '%';
+  }
+
+  function getTermInYears() {
+    var t = Math.max(0, parseFloat(elTerm.value) || 0);
+    return termUnit === 'years' ? t : t / 12;
+  }
+
+  function calc() {
+    var principal = Math.max(0, parseFloat(elPrincipal.value) || 0);
+    var rate      = Math.max(0, parseFloat(elRate.value) || 0);
+    var n         = parseFloat(elCompound.value) || 12;
+    var termYears = getTermInYears();
+
+    // Compound interest: A = P(1 + r/n)^(nt)
+    var maturity = principal * Math.pow(1 + (rate / 100) / n, n * termYears);
+    var interest = maturity - principal;
+    // Effective APY: (1 + r/n)^n - 1
+    var apy = (Math.pow(1 + (rate / 100) / n, n) - 1) * 100;
+
+    var termVal = parseFloat(elTerm.value) || 0;
+    var termLabel = termVal + ' ' + termUnit;
+    var compoundLabel = elCompound.options[elCompound.selectedIndex].text;
+
+    document.getElementById('cd-r-maturity').textContent =
+      isFinite(maturity) ? maturity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+    document.getElementById('cd-r-note').textContent =
+      termLabel + ' at ' + rate + '% — ' + compoundLabel;
+    document.getElementById('cd-bd-interest').textContent = money(interest);
+    document.getElementById('cd-bd-apy').textContent = pct(apy, 3);
+
+    // Growth milestones
+    var milestonesEl = document.getElementById('cd-milestones');
+    var intervals = Math.min(5, Math.max(1, Math.ceil(termYears > 0 ? termYears : termVal / 12)));
+    var html = '';
+    for (var i = 1; i <= intervals; i++) {
+      var t = (termYears / intervals) * i;
+      var v = principal * Math.pow(1 + (rate / 100) / n, n * t);
+      var lbl;
+      if (termYears >= 1) {
+        lbl = 'Year ' + (t).toFixed(1);
+      } else {
+        lbl = 'Month ' + Math.round(t * 12);
+      }
+      html += '<div><span class="mono">' + lbl + '</span><b>' + money(v) + '</b></div>';
+    }
+    milestonesEl.innerHTML = html;
+
+    // Early withdrawal
+    if (elDetails.open) {
+      var ewMonths  = Math.max(0, parseFloat(elEwMonths.value) || 0);
+      var ewPenalty = Math.max(0, parseFloat(elEwPenalty.value) || 0);
+      var ewType    = elEwType.value;
+      var tEw       = ewMonths / 12;
+      var valueAtEw = principal * Math.pow(1 + (rate / 100) / n, n * tEw);
+
+      var penalty = 0;
+      if (ewType === 'months') {
+        penalty = principal * (rate / 100 / 12) * ewPenalty;
+      } else if (ewType === 'percentage') {
+        penalty = principal * (ewPenalty / 100);
+      } else {
+        penalty = ewPenalty;
+      }
+
+      var netAmount = Math.max(0, valueAtEw - penalty);
+      var opportunityCost = maturity - netAmount;
+
+      document.getElementById('cd-ew-value').textContent   = money(valueAtEw);
+      document.getElementById('cd-ew-pen-amt').textContent = money(penalty);
+      document.getElementById('cd-ew-net').textContent     = money(netAmount);
+      document.getElementById('cd-ew-opp').textContent     = money(Math.max(0, opportunityCost));
+    }
+  }
+
+  unitToggle.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-unit]');
+    if (!btn) return;
+    termUnit = btn.getAttribute('data-unit');
+    elTermSuffix.textContent = termUnit === 'months' ? 'mo' : 'yr';
+    Array.prototype.forEach.call(unitToggle.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  elDetails.addEventListener('toggle', calc);
+  [elPrincipal, elRate, elTerm, elCompound, elEwMonths, elEwPenalty, elEwType].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +762,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>Agregar/Quitar Prefijo Sufijo — Tools Catalog</title>
   <meta name="description" content="Agregar o quitar prefijos y sufijos de líneas de texto.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,200 @@ button:disabled{transform:none;}
         <p class="tp-desc">Agregar o quitar prefijos y sufijos de líneas de texto.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea id="input" class="tp-textarea tp-textarea--tall" placeholder="Enter your text here (one item per line)..."></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Operation</span>
+      <div class="tp-toggles tp-toggles--wrap" id="ops">
+        <button class="tp-toggle mono on" data-op="add-prefix">Add Prefix</button>
+        <button class="tp-toggle mono" data-op="add-suffix">Add Suffix</button>
+        <button class="tp-toggle mono" data-op="add-both">Add Both</button>
+        <button class="tp-toggle mono" data-op="remove-prefix">Rem Prefix</button>
+        <button class="tp-toggle mono" data-op="remove-suffix">Rem Suffix</button>
+        <button class="tp-toggle mono" data-op="remove-both">Rem Both</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">add-remove-prefix-suffix</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Texto</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Agregar/Quitar Pre</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Prefix Text</span>
+        <input type="text" id="prefix" class="tp-input" placeholder="e.g. • ">
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Suffix Text</span>
+        <input type="text" id="suffix" class="tp-input" placeholder="e.g. .txt">
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Options</span>
+      <div class="tp-toggles tp-toggles--wrap" id="options">
+        <button class="tp-toggle mono on" data-opt="skip">Skip empty</button>
+        <button class="tp-toggle mono on" data-opt="trim">Trim lines</button>
+        <button class="tp-toggle mono" data-opt="case">Case sensitive</button>
+      </div>
+    </div>
+
+    <div class="tp-two">
+       <button class="tp-gen mono" id="sample">Load Sample</button>
+       <button class="tp-gen mono" id="clear">Clear All</button>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <div class="tp-stat-big"><b id="out-lines">0</b><span>lines out</span></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Input lines</span><b id="in-lines">0</b></div>
+    </div>
+
+    <div class="tp-field" style="flex:1; display:flex; flex-direction:column; margin-top:20px; min-height: 200px;">
+      <span class="tp-result-label">Processed Text</span>
+      <textarea id="output" class="tp-textarea" readonly style="flex:1; background:rgba(255,255,255,0.05); color:var(--mag); border:1px solid var(--mag); padding:10px; font-family:monospace; font-size:0.85rem; resize:none;"></textarea>
+    </div>
+
+    <button class="tp-gen mono" id="copy" style="margin-top:20px">Copy Result</button>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  var prefix = document.getElementById('prefix');
+  var suffix = document.getElementById('suffix');
+  var ops = document.getElementById('ops');
+  var options = document.getElementById('options');
+  var inLines = document.getElementById('in-lines');
+  var outLines = document.getElementById('out-lines');
+  var copyBtn = document.getElementById('copy');
+  var sampleBtn = document.getElementById('sample');
+  var clearBtn = document.getElementById('clear');
+
+  var selectedOp = 'add-prefix';
+  var opts = {
+    skip: true,
+    trim: true,
+    case: false
+  };
+
+  function removeFromStart(text, p) {
+    if (!p) return text;
+    if (opts.case) {
+      if (text.startsWith(p)) return text.substring(p.length);
+    } else {
+      if (text.toLowerCase().startsWith(p.toLowerCase())) return text.substring(p.length);
+    }
+    return text;
+  }
+
+  function removeFromEnd(text, s) {
+    if (!s) return text;
+    if (opts.case) {
+      if (text.endsWith(s)) return text.substring(0, text.length - s.length);
+    } else {
+      if (text.toLowerCase().endsWith(s.toLowerCase())) return text.substring(0, text.length - s.length);
+    }
+    return text;
+  }
+
+  function process() {
+    var text = input.value;
+    var p = prefix.value;
+    var s = suffix.value;
+    
+    if (!text) {
+      output.value = '';
+      inLines.textContent = '0';
+      outLines.textContent = '0';
+      return;
+    }
+
+    var lines = text.split('\n');
+    inLines.textContent = lines.length.toLocaleString();
+
+    var resultLines = lines.map(function(line) {
+      if (opts.trim) line = line.trim();
+      if (opts.skip && line === '') return null;
+      
+      switch (selectedOp) {
+        case 'add-prefix': return p + line;
+        case 'add-suffix': return line + s;
+        case 'add-both': return p + line + s;
+        case 'remove-prefix': return removeFromStart(line, p);
+        case 'remove-suffix': return removeFromEnd(line, s);
+        case 'remove-both': 
+          var r = removeFromStart(line, p);
+          return removeFromEnd(r, s);
+        default: return line;
+      }
+    });
+
+    if (opts.skip) {
+      resultLines = resultLines.filter(function(l) { return l !== null; });
+    } else {
+      resultLines = resultLines.map(function(l) { return l === null ? '' : l; });
+    }
+
+    output.value = resultLines.join('\n');
+    outLines.textContent = resultLines.length.toLocaleString();
+  }
+
+  // Event listeners
+  [input, prefix, suffix].forEach(function(el) {
+    el.addEventListener('input', process);
+  });
+
+  ops.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-op]');
+    if (!btn) return;
+    Array.prototype.forEach.call(ops.children, function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    selectedOp = btn.getAttribute('data-op');
+    process();
+  });
+
+  options.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    btn.classList.toggle('on');
+    var opt = btn.getAttribute('data-opt');
+    opts[opt] = btn.classList.contains('on');
+    process();
+  });
+
+  sampleBtn.addEventListener('click', function() {
+    input.value = 'apple\nbanana\ncherry\ndate\nelderberry\nfig\ngrape\nhoneydew\nkiwi\nlemon';
+    prefix.value = '• ';
+    suffix.value = '.txt';
+    process();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    prefix.value = '';
+    suffix.value = '';
+    process();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    var text = output.value;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(function() {
+      var originalText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = originalText; }, 2000);
+    });
+  });
+
+  process();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +750,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>QR Code Generator — Tools Catalog</title>
   <meta name="description" content="Generate QR codes for URLs, text, contact information, and WiFi credentials.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,241 @@ button:disabled{transform:none;}
         <p class="tp-desc">Generate QR codes for URLs, text, contact information, and WiFi credentials.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Text or URL</span>
+      <input class="tp-input" id="qr-text" type="text" placeholder="https://example.com" value="https://example.com">
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Size</span>
+        <select class="tp-input" id="qr-size">
+          <option value="150">150x150</option>
+          <option value="250" selected>250x250</option>
+          <option value="400">400x400</option>
+        </select>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Error Correction</span>
+        <select class="tp-input" id="qr-ec">
+          <option value="L">Low (7%)</option>
+          <option value="M" selected>Medium (15%)</option>
+          <option value="Q">Quartile (25%)</option>
+          <option value="H">High (30%)</option>
+        </select>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">qr-code-generator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Random</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">QR Code Generator</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Foreground</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="qr-fg" type="color" value="#000000" style="padding:0;height:42px;width:42px;flex:none;border-right:2px solid var(--ink)">
+          <input class="tp-input" id="qr-fg-hex" type="text" value="#000000" style="flex:1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Background</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="qr-bg" type="color" value="#ffffff" style="padding:0;height:42px;width:42px;flex:none;border-right:2px solid var(--ink)">
+          <input class="tp-input" id="qr-bg-hex" type="text" value="#ffffff" style="flex:1">
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <button class="tp-gen mono" id="qr-gen">↻ Update Code</button>
+    <p class="tp-demo-note mono">Adjust settings to regenerate the QR code.</p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Preview</span>
+    <div style="background:var(--mag);padding:20px;display:flex;justify-content:center;border:2px solid var(--ink);margin-bottom:16px">
+      <canvas id="qr-canvas" style="max-width:100%;height:auto;display:block"></canvas>
+    </div>
+    <div class="tp-toggles tp-toggles--wrap">
+       <button class="tp-toggle mono" id="dl-png" style="border-color:var(--mag);color:var(--mag)">Download PNG</button>
+       <button class="tp-toggle mono" id="dl-svg" style="border-color:var(--mag);color:var(--mag)">Download SVG</button>
+    </div>
+    <p class="tp-demo-note mono">Generated locally · Works offline</p>
   </div>
 </div>
+
+<script>
+(function() {
+  var textInput = document.getElementById('qr-text');
+  var sizeSelect = document.getElementById('qr-size');
+  var ecSelect = document.getElementById('qr-ec');
+  var fgInput = document.getElementById('qr-fg');
+  var fgHex = document.getElementById('qr-fg-hex');
+  var bgInput = document.getElementById('qr-bg');
+  var bgHex = document.getElementById('qr-bg-hex');
+  var canvas = document.getElementById('qr-canvas');
+  var genBtn = document.getElementById('qr-gen');
+  var dlPng = document.getElementById('dl-png');
+  var dlSvg = document.getElementById('dl-svg');
+
+  function isReserved(row, col, count) {
+    if (row < 8 && col < 8) return true;
+    if (row < 8 && col >= count - 8) return true;
+    if (row >= count - 8 && col < 8) return true;
+    if (row === 6 || col === 6) return true;
+    return false;
+  }
+
+  function createModules(text, count) {
+    var modules = Array.from({ length: count }, function() { 
+      return Array(count).fill(false); 
+    });
+
+    var addFinder = function(startRow, startCol) {
+      for (var r = 0; r < 7; r++) {
+        for (var c = 0; c < 7; c++) {
+          if (r === 0 || r === 6 || c === 0 || c === 6 ||
+              (r >= 2 && r <= 4 && c >= 2 && c <= 4)) {
+            modules[startRow + r][startCol + c] = true;
+          }
+        }
+      }
+    };
+    addFinder(0, 0);
+    addFinder(0, count - 7);
+    addFinder(count - 7, 0);
+
+    for (var i = 8; i < count - 8; i++) {
+      modules[6][i] = i % 2 === 0;
+      modules[i][6] = i % 2 === 0;
+    }
+
+    var hash = 0;
+    for (var j = 0; j < text.length; j++) {
+      hash = ((hash << 5) - hash + text.charCodeAt(j)) | 0;
+    }
+
+    var textBytes = [];
+    for (var k = 0; k < text.length; k++) {
+      textBytes.push(text.charCodeAt(k));
+    }
+
+    var byteIdx = 0;
+    var bitIdx = 0;
+    for (var row = count - 1; row >= 0; row--) {
+      for (var col = count - 1; col >= 0; col--) {
+        if (isReserved(row, col, count)) continue;
+
+        if (byteIdx < textBytes.length) {
+          modules[row][col] = ((textBytes[byteIdx] >> (7 - bitIdx)) & 1) === 1;
+          bitIdx++;
+          if (bitIdx >= 8) { bitIdx = 0; byteIdx++; }
+        } else {
+          var seed = (row * count + col + hash) & 0xFFFF;
+          modules[row][col] = (seed * 1103515245 + 12345) % 4 < 2;
+        }
+      }
+    }
+    return modules;
+  }
+
+  function generate() {
+    var text = textInput.value;
+    if (!text) {
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    var size = parseInt(sizeSelect.value, 10);
+    var fg = fgInput.value;
+    var bg = bgInput.value;
+    
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+
+    var moduleCount = 25;
+    var cellSize = size / moduleCount;
+    var modules = createModules(text, moduleCount);
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, size, size);
+
+    ctx.fillStyle = fg;
+    for (var row = 0; row < moduleCount; row++) {
+      for (var col = 0; col < moduleCount; col++) {
+        if (modules[row][col]) {
+          ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+  }
+
+  function download(format) {
+    var text = textInput.value;
+    if (!text) return;
+    
+    var size = parseInt(sizeSelect.value, 10);
+    var fg = fgInput.value;
+    var bg = bgInput.value;
+
+    if (format === 'png') {
+      var link = document.createElement('a');
+      link.download = 'qrcode.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } else {
+      var moduleCount = 25;
+      var cellSize = size / moduleCount;
+      var modules = createModules(text, moduleCount);
+
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '">';
+      svg += '<rect width="' + size + '" height="' + size + '" fill="' + bg + '"/>';
+      for (var r = 0; r < moduleCount; r++) {
+        for (var c = 0; c < moduleCount; c++) {
+          if (modules[r][c]) {
+            svg += '<rect x="' + (c * cellSize) + '" y="' + (r * cellSize) + '" width="' + cellSize + '" height="' + cellSize + '" fill="' + fg + '"/>';
+          }
+        }
+      }
+      svg += '</svg>';
+
+      var blob = new Blob([svg], { type: 'image/svg+xml' });
+      var link = document.createElement('a');
+      link.download = 'qrcode.svg';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+  }
+
+  textInput.addEventListener('input', generate);
+  sizeSelect.addEventListener('change', generate);
+  ecSelect.addEventListener('change', generate);
+  
+  fgInput.addEventListener('input', function() {
+    fgHex.value = fgInput.value;
+    generate();
+  });
+  fgHex.addEventListener('input', function() {
+    fgInput.value = fgHex.value;
+    generate();
+  });
+  bgInput.addEventListener('input', function() {
+    bgHex.value = bgInput.value;
+    generate();
+  });
+  bgHex.addEventListener('input', function() {
+    bgInput.value = bgHex.value;
+    generate();
+  });
+
+  genBtn.addEventListener('click', generate);
+  dlPng.addEventListener('click', function() { download('png'); });
+  dlSvg.addEventListener('click', function() { download('svg'); });
+
+  generate();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -568,7 +786,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>配当割引モデル — Tools Catalog</title>
   <meta name="description" content="ゴードン成長モデルを使用して、配当予測と要求収益率で株式の公正価値を推定します。">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,246 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Current annual dividend</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="ddm-div" type="number" inputmode="decimal" value="2.50" min="0" step="0.01" placeholder="2.50">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">dividend-discount-model</p>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Growth rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ddm-growth" type="number" inputmode="decimal" value="5" step="0.1" placeholder="5.0">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Required return</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ddm-return" type="number" inputmode="decimal" value="10" min="0" step="0.1" placeholder="10.0">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Model type</span>
+      <select class="tp-input" id="ddm-model" style="cursor:pointer">
+        <option value="gordon">Gordon Growth Model</option>
+        <option value="two-stage">Two-Stage Growth Model</option>
+        <option value="multi-stage">Multi-Stage Growth Model</option>
+      </select>
+    </div>
+    <div id="ddm-two-stage-fields" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">High growth rate</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ddm-hgr" type="number" inputmode="decimal" value="15" step="0.1" placeholder="15.0">
+            <span class="tp-suffix">%</span>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">High growth period</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ddm-hgy" type="number" inputmode="numeric" value="5" min="1" max="20" step="1" placeholder="5">
+            <span class="tp-suffix">yr</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="ddm-multi-stage-fields" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Growth stages (years:rate%)</span>
+        <input class="tp-input" id="ddm-stages" type="text" value="5:15,3:10,2:8" placeholder="5:15,3:10,2:8" style="font-family:monospace">
+        <span class="tp-field-label" style="font-size:0.7rem;opacity:0.6">e.g. 5:15,3:10,2:8 — then uses growth rate above as terminal</span>
+      </div>
+    </div>
+    <div class="tp-breakdown" id="ddm-breakdown">
+      <div><span class="mono">Next dividend</span><b id="ddm-bd-nextdiv">—</b></div>
+      <div><span class="mono">Dividend yield</span><b id="ddm-bd-yield">—</b></div>
+      <div><span class="mono">Formula</span><b id="ddm-bd-formula" style="font-size:0.75rem;font-family:monospace">—</b></div>
+    </div>
+    <div id="ddm-stage-breakdown" style="display:none">
+      <div class="tp-breakdown" id="ddm-stage-bd"></div>
+    </div>
+    <div id="ddm-error" style="display:none;color:var(--err,#c00);font-size:0.85rem;padding:0.5rem 0"></div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">投資</span>
+    <span class="tp-result-label">Stock fair value</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">配当割引モデル</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="ddm-r-value">—</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="ddm-r-note">Gordon Growth Model</span>
   </div>
 </div>
+<script>
+(function () {
+  var divEl      = document.getElementById('ddm-div');
+  var growthEl   = document.getElementById('ddm-growth');
+  var returnEl   = document.getElementById('ddm-return');
+  var modelEl    = document.getElementById('ddm-model');
+  var hgrEl      = document.getElementById('ddm-hgr');
+  var hgyEl      = document.getElementById('ddm-hgy');
+  var stagesEl   = document.getElementById('ddm-stages');
+  var twoFields  = document.getElementById('ddm-two-stage-fields');
+  var multiFields= document.getElementById('ddm-multi-stage-fields');
+  var errorEl    = document.getElementById('ddm-error');
+  var valueEl    = document.getElementById('ddm-r-value');
+  var noteEl     = document.getElementById('ddm-r-note');
+  var nextDivEl  = document.getElementById('ddm-bd-nextdiv');
+  var yieldEl    = document.getElementById('ddm-bd-yield');
+  var formulaEl  = document.getElementById('ddm-bd-formula');
+  var stageBdWrap= document.getElementById('ddm-stage-breakdown');
+  var stageBdEl  = document.getElementById('ddm-stage-bd');
+
+  function setError(msg) {
+    errorEl.textContent = msg;
+    errorEl.style.display = msg ? '' : 'none';
+    valueEl.textContent = '—';
+    nextDivEl.textContent = '—';
+    yieldEl.textContent = '—';
+    formulaEl.textContent = '—';
+    stageBdWrap.style.display = 'none';
+  }
+
+  function fmt2(n) { return isFinite(n) ? n.toFixed(2) : '—'; }
+  function fmtMoney(n) { return isFinite(n) ? '$' + n.toFixed(2) : '—'; }
+  function fmtPct(n) { return isFinite(n) ? n.toFixed(2) + '%' : '—'; }
+
+  function calcGordon(d0, g, r) {
+    var gd = g / 100, rd = r / 100;
+    if (rd <= gd) { setError('Required return must be greater than growth rate.'); return; }
+    var d1 = d0 * (1 + gd);
+    var price = d1 / (rd - gd);
+    var dyield = (d1 / price) * 100;
+    setError('');
+    valueEl.textContent = fmt2(price);
+    nextDivEl.textContent = fmtMoney(d1);
+    yieldEl.textContent = fmtPct(dyield);
+    formulaEl.textContent = 'P = D₁ ÷ (r − g) = $' + d1.toFixed(2) + ' ÷ (' + r + '% − ' + g + '%)';
+    noteEl.textContent = 'Gordon Growth Model';
+    stageBdWrap.style.display = 'none';
+  }
+
+  function calcTwoStage(d0, stableG, r) {
+    var hg = parseFloat(hgrEl.value);
+    var hy = parseInt(hgyEl.value, 10);
+    if (!isFinite(hg) || !isFinite(hy) || hy < 1) { setError('Enter valid high growth rate and period.'); return; }
+    if (!isFinite(stableG)) { setError('Enter a valid stable growth rate.'); return; }
+    var hgd = hg / 100, sgd = stableG / 100, rd = r / 100;
+    if (rd <= sgd) { setError('Required return must be greater than stable growth rate.'); return; }
+    var div = d0, stage1 = 0;
+    for (var y = 1; y <= hy; y++) {
+      div = div * (1 + hgd);
+      stage1 += div / Math.pow(1 + rd, y);
+    }
+    var termDiv = div * (1 + sgd);
+    var termVal = termDiv / (rd - sgd);
+    var stage2 = termVal / Math.pow(1 + rd, hy);
+    var total = stage1 + stage2;
+    var d1 = d0 * (1 + hgd);
+    var dyield = (d1 / total) * 100;
+    setError('');
+    valueEl.textContent = fmt2(total);
+    nextDivEl.textContent = fmtMoney(d1);
+    yieldEl.textContent = fmtPct(dyield);
+    formulaEl.textContent = 'Two-Stage DDM: PV(High Growth) + PV(Terminal Value)';
+    noteEl.textContent = 'Two-Stage Model';
+    stageBdEl.innerHTML = '';
+    [
+      ['Stage 1 (' + hy + ' yr @ ' + hg + '%)', fmtMoney(stage1)],
+      ['Stage 2 (Terminal Value)', fmtMoney(stage2)],
+      ['Total Value', fmtMoney(total)]
+    ].forEach(function (row) {
+      var div2 = document.createElement('div');
+      div2.innerHTML = '<span class="mono">' + row[0] + '</span><b>' + row[1] + '</b>';
+      stageBdEl.appendChild(div2);
+    });
+    stageBdWrap.style.display = '';
+  }
+
+  function parseStages(str) {
+    var parts = str.split(','), result = [];
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].trim().split(':');
+      if (kv.length !== 2) throw new Error('Invalid format. Use years:rate pairs.');
+      var y = parseInt(kv[0], 10), rate = parseFloat(kv[1]);
+      if (!isFinite(y) || !isFinite(rate) || y < 1) throw new Error('Invalid years or rate.');
+      result.push({ years: y, rate: rate });
+    }
+    return result;
+  }
+
+  function calcMultiStage(d0, finalG, r) {
+    var stagesStr = stagesEl.value.trim();
+    if (!stagesStr) { setError('Enter growth stages.'); return; }
+    var stages;
+    try { stages = parseStages(stagesStr); } catch (e) { setError(e.message); return; }
+    if (!isFinite(finalG)) { setError('Enter a valid terminal growth rate.'); return; }
+    var fgd = finalG / 100, rd = r / 100;
+    if (rd <= fgd) { setError('Required return must be greater than terminal growth rate.'); return; }
+    var div = d0, total = 0, currentYear = 0, rows = [];
+    for (var i = 0; i < stages.length; i++) {
+      var s = stages[i], sgd = s.rate / 100, stageVal = 0;
+      for (var y = 1; y <= s.years; y++) {
+        div = div * (1 + sgd);
+        stageVal += div / Math.pow(1 + rd, currentYear + y);
+      }
+      rows.push(['Stage ' + (i + 1) + ' (' + s.years + ' yr @ ' + s.rate + '%)', fmtMoney(stageVal)]);
+      total += stageVal;
+      currentYear += s.years;
+    }
+    var termDiv = div * (1 + fgd);
+    var termVal = termDiv / (rd - fgd);
+    var pvTerm = termVal / Math.pow(1 + rd, currentYear);
+    rows.push(['Terminal Value (' + finalG + '% growth)', fmtMoney(pvTerm)]);
+    total += pvTerm;
+    var d1 = d0 * (1 + stages[0].rate / 100);
+    var dyield = (d1 / total) * 100;
+    rows.push(['Total Value', fmtMoney(total)]);
+    setError('');
+    valueEl.textContent = fmt2(total);
+    nextDivEl.textContent = fmtMoney(d1);
+    yieldEl.textContent = fmtPct(dyield);
+    formulaEl.textContent = 'Multi-Stage DDM: Σ PV(Stages) + PV(Terminal Value)';
+    noteEl.textContent = 'Multi-Stage Model';
+    stageBdEl.innerHTML = '';
+    rows.forEach(function (row) {
+      var div2 = document.createElement('div');
+      div2.innerHTML = '<span class="mono">' + row[0] + '</span><b>' + row[1] + '</b>';
+      stageBdEl.appendChild(div2);
+    });
+    stageBdWrap.style.display = '';
+  }
+
+  function calc() {
+    var d0 = parseFloat(divEl.value);
+    var g  = parseFloat(growthEl.value);
+    var r  = parseFloat(returnEl.value);
+    if (!isFinite(d0) || d0 <= 0) { setError('Enter a valid current dividend.'); return; }
+    if (!isFinite(r) || r <= 0)   { setError('Enter a valid required rate of return.'); return; }
+    var model = modelEl.value;
+    if (model === 'gordon') calcGordon(d0, g, r);
+    else if (model === 'two-stage') calcTwoStage(d0, g, r);
+    else calcMultiStage(d0, g, r);
+  }
+
+  function onModelChange() {
+    var m = modelEl.value;
+    twoFields.style.display   = m === 'two-stage'   ? '' : 'none';
+    multiFields.style.display = m === 'multi-stage' ? '' : 'none';
+    calc();
+  }
+
+  modelEl.addEventListener('change', onModelChange);
+  [divEl, growthEl, returnEl, hgrEl, hgyEl, stagesEl].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  onModelChange();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +799,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

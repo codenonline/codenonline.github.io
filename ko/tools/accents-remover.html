@@ -6,11 +6,15 @@
   <title>악센트 제거 도구 — Tools Catalog</title>
   <meta name="description" content="텍스트에서 악센트와 발음 기호를 제거합니다.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,152 @@ button:disabled{transform:none;}
         <p class="tp-desc">텍스트에서 악센트와 발음 기호를 제거합니다.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="ar-input" placeholder="Enter text with accents here..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">accents-remover</p>
+
+    <div class="tp-field-label mono">Options</div>
+    <div class="tp-toggles tp-toggles--wrap" id="ar-options">
+      <button class="tp-toggle mono on" data-opt="case">Preserve case</button>
+      <button class="tp-toggle mono on" data-opt="nums">Preserve numbers</button>
+      <button class="tp-toggle mono on" data-opt="punct">Preserve punctuation</button>
+    </div>
+
+    <div class="tp-field-label mono">Examples</div>
+    <div class="tp-toggles tp-toggles--wrap" id="ar-examples">
+      <button class="tp-toggle mono" data-val="Café naïve résumé">Café</button>
+      <button class="tp-toggle mono" data-val="Piñata jalapeño señor">Piñata</button>
+      <button class="tp-toggle mono" data-val="Zürich München Köln">German</button>
+      <button class="tp-toggle mono" data-val="Été créé français">French</button>
+    </div>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">텍스트</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">악센트 제거 도구</span>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Result text</span>
+    <textarea class="tp-textarea tp-textarea--tall" id="ar-output" readonly style="background:transparent; color:inherit; border-color:currentColor; margin-bottom: 1rem; resize: none;"></textarea>
+    
+    <button class="tp-gen mono" id="ar-copy" style="margin-bottom: 2rem">Copy result</button>
+
+    <div class="tp-stat-big"><b id="ar-s-accents">0</b><span>accents removed</span></div>
+    <div class="tp-statgrid">
+      <div><span class="mono">Characters</span><b id="ar-s-chars">0</b></div>
+      <div><span class="mono">Words</span><b id="ar-s-words">0</b></div>
+      <div><span class="mono">Lines</span><b id="ar-s-lines">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('ar-input');
+  const output = document.getElementById('ar-output');
+  const options = document.getElementById('ar-options');
+  const examples = document.getElementById('ar-examples');
+  const copyBtn = document.getElementById('ar-copy');
+
+  const sAccents = document.getElementById('ar-s-accents');
+  const sChars = document.getElementById('ar-s-chars');
+  const sWords = document.getElementById('ar-s-words');
+  const sLines = document.getElementById('ar-s-lines');
+
+  const accentMap = {
+    'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE',
+    'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'ae',
+    'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E',
+    'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
+    'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I',
+    'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+    'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ø': 'O', 'Œ': 'OE',
+    'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o', 'ø': 'o', 'œ': 'oe',
+    'Ù': 'U', 'Ú': 'U', 'Û': 'U', 'Ü': 'U',
+    'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
+    'Ý': 'Y', 'Ÿ': 'Y',
+    'ý': 'y', 'ÿ': 'y',
+    'Ñ': 'N', 'ñ': 'n',
+    'Ç': 'C', 'ç': 'c',
+    'ß': 'ss',
+    'Đ': 'D', 'đ': 'd',
+    'Ł': 'L', 'ł': 'l',
+    'Ś': 'S', 'ś': 's', 'Š': 'S', 'š': 's',
+    'Ź': 'Z', 'ź': 'z', 'Ž': 'Z', 'ž': 'z', 'Ż': 'Z', 'ż': 'z',
+    'Ć': 'C', 'ć': 'c', 'Č': 'C', 'č': 'c',
+    'Ř': 'R', 'ř': 'r',
+    'Ť': 'T', 'ť': 't',
+    'Ň': 'N', 'ň': 'n',
+    'Ď': 'D', 'ď': 'd'
+  };
+
+  const opts = {
+    case: true,
+    nums: true,
+    punct: true
+  };
+
+  function countAccents(text) {
+    let count = 0;
+    for (let i = 0; i < text.length; i++) {
+      if (accentMap[text[i]]) count++;
+    }
+    return count;
+  }
+
+  function calc() {
+    const text = input.value || '';
+    let result = '';
+    
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      result += accentMap[char] || char;
+    }
+
+    if (!opts.case) result = result.toLowerCase();
+    if (!opts.nums) result = result.replace(/\d/g, '');
+    if (!opts.punct) result = result.replace(/[^\w\s]/g, '');
+
+    output.value = result;
+
+    const accentCount = countAccents(text);
+    sAccents.textContent = accentCount.toLocaleString();
+    sChars.textContent = text.length.toLocaleString();
+    sWords.textContent = (result.trim() ? result.trim().split(/\s+/).length : 0).toLocaleString();
+    sLines.textContent = (text ? text.split('\n').length : 0).toLocaleString();
+  }
+
+  options.addEventListener('click', function(e) {
+    const btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    const key = btn.getAttribute('data-opt');
+    opts[key] = !opts[key];
+    btn.classList.toggle('on', opts[key]);
+    calc();
+  });
+
+  examples.addEventListener('click', function(e) {
+    const btn = e.target.closest('.tp-toggle');
+    if (!btn) return;
+    input.value = btn.getAttribute('data-val');
+    calc();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value).then(() => {
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => { copyBtn.textContent = originalText; }, 2000);
+    });
+  });
+
+  input.addEventListener('input', calc);
+  
+  // Set default value
+  input.value = 'Café, naïve, résumé, piñata, cliché';
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +702,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

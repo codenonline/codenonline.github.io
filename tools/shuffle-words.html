@@ -6,11 +6,15 @@
   <title>Shuffle Words — Tools Catalog</title>
   <meta name="description" content="Randomly shuffle the order of words in text.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,212 @@ button:disabled{transform:none;}
         <p class="tp-desc">Randomly shuffle the order of words in text.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-input tp-textarea tp-textarea--tall" id="input" placeholder="Enter text to shuffle..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">shuffle-words</p>
+
+    <div class="tp-field-label mono">Options</div>
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono on" id="opt-punct">Preserve Punctuation</button>
+      <button class="tp-toggle mono on" id="opt-caps">Preserve Capitalization</button>
+      <button class="tp-toggle mono on" id="opt-lines">Keep Line Breaks</button>
+    </div>
+
+    <div class="tp-field-label mono">Actions</div>
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-gen mono" id="gen-words" style="flex:1">Shuffle Words</button>
+      <button class="tp-gen mono" id="gen-letters" style="flex:1">Shuffle Letters</button>
+      <button class="tp-gen mono" id="gen-lines" style="flex:1">Shuffle Lines</button>
+    </div>
+
+    <div class="tp-toggles">
+      <button class="tp-toggle mono" id="btn-sample">Sample</button>
+      <button class="tp-toggle mono" id="btn-restore">Restore</button>
+      <button class="tp-toggle mono" id="btn-clear">Clear</button>
+    </div>
   </div>
+
   <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Shuffle Words</span>
+    <span class="tp-result-label mono">Shuffled text</span>
+    <textarea class="tp-input tp-textarea tp-textarea--tall" id="output" readonly placeholder="Result will appear here..." style="background:transparent; color:var(--mag); border-color:var(--mag); width:100%"></textarea>
+
+    <div class="tp-statgrid" style="margin-top:1.5rem">
+      <div><span class="mono">Words</span><b id="s-words">0</b></div>
+      <div><span class="mono">Characters</span><b id="s-chars">0</b></div>
+      <div><span class="mono">Lines</span><b id="s-lines">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <button class="tp-gen mono" id="btn-copy" style="margin-top: 1.5rem; width: 100%;">Copy Output</button>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  
+  var optPunct = document.getElementById('opt-punct');
+  var optCaps = document.getElementById('opt-caps');
+  var optLines = document.getElementById('opt-lines');
+  
+  var genWords = document.getElementById('gen-words');
+  var genLetters = document.getElementById('gen-letters');
+  var genLines = document.getElementById('gen-lines');
+  
+  var btnSample = document.getElementById('btn-sample');
+  var btnRestore = document.getElementById('btn-restore');
+  var btnClear = document.getElementById('btn-clear');
+  var btnCopy = document.getElementById('btn-copy');
+  
+  var sWords = document.getElementById('s-words');
+  var sChars = document.getElementById('s-chars');
+  var sLines = document.getElementById('s-lines');
+  
+  var originalText = '';
+
+  function updateStats(text) {
+    var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    var characters = text.length;
+    var lines = text ? text.split('\n').length : 0;
+    
+    sWords.textContent = words.toLocaleString();
+    sChars.textContent = characters.toLocaleString();
+    sLines.textContent = lines.toLocaleString();
+  }
+
+  function shuffleArray(array) {
+    var shuffled = array.slice();
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = temp;
+    }
+    return shuffled;
+  }
+
+  function extractPunctuation(word) {
+    var leadingPunct = (word.match(/^[^\w]*/) || [""])[0];
+    var trailingPunct = (word.match(/[^\w]*$/) || [""])[0];
+    var cleanWord = word.slice(leadingPunct.length, word.length - trailingPunct.length);
+    return { leading: leadingPunct, word: cleanWord, trailing: trailingPunct };
+  }
+
+  function preserveCase(original, shuffled) {
+    if (!optCaps.classList.contains('on')) return shuffled;
+    var result = '';
+    for (var i = 0; i < shuffled.length; i++) {
+      var o = original[i] || '';
+      var s = shuffled[i] || '';
+      if (o === o.toUpperCase() && o !== o.toLowerCase()) {
+        result += s.toUpperCase();
+      } else {
+        result += s.toLowerCase();
+      }
+    }
+    return result;
+  }
+
+  function doShuffleWords() {
+    var text = input.value;
+    if (!text.trim()) return;
+    if (!originalText) originalText = text;
+
+    var result = '';
+    if (optLines.classList.contains('on')) {
+      var lines = text.split('\n');
+      result = lines.map(function(line) {
+        if (!line.trim()) return line;
+        var words = line.split(/\s+/);
+        return shuffleArray(words).join(' ');
+      }).join('\n');
+    } else {
+      var words = text.split(/\s+/);
+      result = shuffleArray(words).join(' ');
+    }
+    output.value = result;
+    updateStats(result);
+  }
+
+  function doShuffleLetters() {
+    var text = input.value;
+    if (!text.trim()) return;
+    if (!originalText) originalText = text;
+
+    var words = text.split(/(\s+)/);
+    var result = words.map(function(word) {
+      if (/^\s+$/.test(word)) return word;
+      
+      if (optPunct.classList.contains('on')) {
+        var parts = extractPunctuation(word);
+        if (parts.word.length <= 1) return word;
+        var shuffledWord = shuffleArray(parts.word.split('')).join('');
+        return parts.leading + preserveCase(parts.word, shuffledWord) + parts.trailing;
+      } else {
+        if (word.length <= 1) return word;
+        return shuffleArray(word.split('')).join('');
+      }
+    }).join('');
+    
+    output.value = result;
+    updateStats(result);
+  }
+
+  function doShuffleLines() {
+    var text = input.value;
+    if (!text.trim()) return;
+    if (!originalText) originalText = text;
+
+    var lines = text.split('\n');
+    output.value = shuffleArray(lines).join('\n');
+    updateStats(output.value);
+  }
+
+  [optPunct, optCaps, optLines].forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      btn.classList.toggle('on');
+    });
+  });
+
+  genWords.addEventListener('click', doShuffleWords);
+  genLetters.addEventListener('click', doShuffleLetters);
+  genLines.addEventListener('click', doShuffleLines);
+
+  btnSample.addEventListener('click', function() {
+    input.value = "The quick brown fox jumps over the lazy dog.\nThis is a sample text with multiple lines.\nEach line can be shuffled independently.\nWords, letters, and lines can all be randomized.";
+    updateStats(input.value);
+  });
+
+  btnRestore.addEventListener('click', function() {
+    if (originalText) {
+      output.value = originalText;
+      updateStats(originalText);
+    }
+  });
+
+  btnClear.addEventListener('click', function() {
+    input.value = '';
+    output.value = '';
+    originalText = '';
+    updateStats('');
+  });
+
+  btnCopy.addEventListener('click', function() {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value);
+    var oldText = btnCopy.textContent;
+    btnCopy.textContent = 'Copied!';
+    setTimeout(function() { btnCopy.textContent = oldText; }, 2000);
+  });
+
+  input.addEventListener('input', function() { updateStats(input.value); });
+  
+  updateStats(input.value);
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +762,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

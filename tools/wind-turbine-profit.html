@@ -6,11 +6,15 @@
   <title>Wind Turbine Profit Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate profit from wind turbine investments.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,245 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Turbine capacity</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="wt-capacity" type="number" inputmode="decimal" value="1500" min="0" step="1">
+        <span class="tp-suffix">kW</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">wind-turbine-profit</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Number of turbines</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="wt-num" type="number" inputmode="numeric" value="10" min="1" step="1">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Capacity factor</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wt-cf" type="number" inputmode="decimal" value="35" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Electricity price</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="wt-price" type="number" inputmode="decimal" value="80" min="0" step="0.1">
+          <span class="tp-suffix">/MWh</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Initial investment</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="wt-invest" type="number" inputmode="decimal" value="25000000" min="0" step="1000">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">O&amp;M costs</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="wt-om" type="number" inputmode="decimal" value="35" min="0" step="0.1">
+          <span class="tp-suffix">/kW/yr</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Lifespan</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wt-life" type="number" inputmode="numeric" value="25" min="1" max="50" step="1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Discount rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wt-dr" type="number" inputmode="decimal" value="8" min="0" max="30" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Price escalation</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wt-esc" type="number" inputmode="decimal" value="2" min="-10" max="20" step="0.1">
+          <span class="tp-suffix">%/yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Annual energy</span><b id="wt-bd-energy">—</b></div>
+      <div><span class="mono">Annual revenue</span><b id="wt-bd-rev">—</b></div>
+      <div><span class="mono">Annual O&amp;M</span><b id="wt-bd-om">—</b></div>
+      <div><span class="mono">Annual cash flow</span><b id="wt-bd-cf">—</b></div>
+      <div><span class="mono">Total revenue</span><b id="wt-bd-trev">—</b></div>
+      <div><span class="mono">Total costs</span><b id="wt-bd-tcosts">—</b></div>
+      <div><span class="mono">Total profit</span><b id="wt-bd-tprofit">—</b></div>
+      <div><span class="mono">ROI</span><b id="wt-bd-roi">—</b></div>
+      <div><span class="mono">IRR</span><b id="wt-bd-irr">—</b></div>
+      <div><span class="mono">Profit margin</span><b id="wt-bd-pm">—</b></div>
+      <div><span class="mono">LCOE</span><b id="wt-bd-lcoe">—</b></div>
+      <div><span class="mono">Payback period</span><b id="wt-bd-payback">—</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
+    <span class="tp-result-label">Net present value</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Wind Turbine Profi</span>
+      <span class="tp-result-prefix" id="wt-r-prefix">$</span>
+      <span class="tp-result-num" id="wt-r-npv">—</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="wt-r-note">Enter values to calculate</span>
   </div>
 </div>
+<script>
+(function () {
+  var elCapacity = document.getElementById('wt-capacity');
+  var elNum      = document.getElementById('wt-num');
+  var elCF       = document.getElementById('wt-cf');
+  var elPrice    = document.getElementById('wt-price');
+  var elInvest   = document.getElementById('wt-invest');
+  var elOM       = document.getElementById('wt-om');
+  var elLife     = document.getElementById('wt-life');
+  var elDR       = document.getElementById('wt-dr');
+  var elEsc      = document.getElementById('wt-esc');
+
+  function fmt(n) {
+    return isFinite(n) ? Math.round(n).toLocaleString() : '—';
+  }
+  function fmtMoney(n) {
+    return isFinite(n) ? '$' + Math.round(n).toLocaleString() : '—';
+  }
+  function fmtPct(n) {
+    return isFinite(n) ? n.toFixed(2) + '%' : '—';
+  }
+
+  function calcIRR(cashFlows) {
+    var irr = 0.1;
+    for (var i = 0; i < 50; i++) {
+      var f = 0, df = 0;
+      for (var j = 0; j < cashFlows.length; j++) {
+        var pow = Math.pow(1 + irr, j);
+        f += cashFlows[j] / pow;
+        if (j > 0) df -= j * cashFlows[j] / Math.pow(1 + irr, j + 1);
+      }
+      if (Math.abs(f) < 0.001) break;
+      if (df === 0) break;
+      irr = irr - f / df;
+      if (irr < -1) irr = -0.99;
+      if (irr > 10) irr = 10;
+    }
+    return irr * 100;
+  }
+
+  function calc() {
+    var capacity   = parseFloat(elCapacity.value) || 0;
+    var num        = Math.max(1, parseInt(elNum.value, 10) || 1);
+    var cf         = parseFloat(elCF.value) || 0;
+    var price      = parseFloat(elPrice.value) || 0;
+    var invest     = parseFloat(elInvest.value) || 0;
+    var om         = parseFloat(elOM.value) || 0;
+    var life       = Math.max(1, parseInt(elLife.value, 10) || 1);
+    var dr         = parseFloat(elDR.value) || 0;
+    var esc        = parseFloat(elEsc.value) || 0;
+
+    if (!capacity || !cf || !price || !invest || !life) {
+      document.getElementById('wt-r-npv').textContent = '—';
+      document.getElementById('wt-r-note').textContent = 'Enter values to calculate';
+      return;
+    }
+
+    var totalCapacity  = capacity * num; // kW
+    var annualEnergy   = totalCapacity * 8760 * (cf / 100) / 1000; // MWh
+    var annualRevenue  = annualEnergy * price;
+    var annualOMCosts  = totalCapacity * om;
+    var annualCashFlow = annualRevenue - annualOMCosts;
+
+    var drD  = dr / 100;
+    var escD = esc / 100;
+
+    var npv = -invest;
+    var totalRevenue = 0;
+    var totalCosts   = invest;
+    var paybackPeriod = null;
+    var cumulativeCF = -invest;
+    var cashFlows = [-invest];
+
+    var pvEnergy = 0;
+    var pvOM     = invest;
+
+    for (var year = 1; year <= life; year++) {
+      var escalatedPrice = price * Math.pow(1 + escD, year - 1);
+      var yearRev  = annualEnergy * escalatedPrice;
+      var yearOM   = annualOMCosts;
+      var yearCF   = yearRev - yearOM;
+      var discFactor = Math.pow(1 + drD, year);
+
+      npv += yearCF / discFactor;
+      totalRevenue += yearRev;
+      totalCosts   += yearOM;
+      cashFlows.push(yearCF);
+
+      pvEnergy += annualEnergy / discFactor;
+      pvOM     += yearOM / discFactor;
+
+      if (paybackPeriod === null) {
+        var prevCum = cumulativeCF;
+        cumulativeCF += yearCF;
+        if (cumulativeCF >= 0) {
+          paybackPeriod = year - prevCum / yearCF;
+        }
+      }
+    }
+
+    if (paybackPeriod === null) paybackPeriod = life + 1;
+
+    var totalProfit  = totalRevenue - totalCosts;
+    var roi          = invest > 0 ? (totalProfit / invest) * 100 : 0;
+    var profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+    var lcoe         = pvEnergy > 0 ? pvOM / pvEnergy : 0;
+    var irr          = calcIRR(cashFlows);
+
+    // NPV display
+    document.getElementById('wt-r-prefix').textContent = npv < 0 ? '-$' : '$';
+    document.getElementById('wt-r-npv').textContent = Math.abs(Math.round(npv)).toLocaleString();
+
+    var recNote;
+    if (npv > 0 && irr > dr && paybackPeriod < life * 0.6) {
+      recNote = 'Strong investment — positive NPV, IRR ' + irr.toFixed(1) + '%, payback ' + paybackPeriod.toFixed(1) + ' yr';
+    } else if (npv > 0 && irr > dr) {
+      recNote = 'Viable — positive NPV, payback ' + paybackPeriod.toFixed(1) + ' yr';
+    } else if (npv < 0) {
+      recNote = 'Not recommended — negative NPV, IRR ' + irr.toFixed(1) + '%';
+    } else {
+      recNote = 'Marginal — consider improving parameters';
+    }
+    document.getElementById('wt-r-note').textContent = recNote;
+
+    document.getElementById('wt-bd-energy').textContent  = fmt(annualEnergy) + ' MWh';
+    document.getElementById('wt-bd-rev').textContent     = fmtMoney(annualRevenue);
+    document.getElementById('wt-bd-om').textContent      = fmtMoney(annualOMCosts);
+    document.getElementById('wt-bd-cf').textContent      = fmtMoney(annualCashFlow);
+    document.getElementById('wt-bd-trev').textContent    = fmtMoney(totalRevenue);
+    document.getElementById('wt-bd-tcosts').textContent  = fmtMoney(totalCosts);
+    document.getElementById('wt-bd-tprofit').textContent = fmtMoney(totalProfit);
+    document.getElementById('wt-bd-roi').textContent     = fmtPct(roi);
+    document.getElementById('wt-bd-irr').textContent     = fmtPct(irr);
+    document.getElementById('wt-bd-pm').textContent      = fmtPct(profitMargin);
+    document.getElementById('wt-bd-lcoe').textContent    = isFinite(lcoe) ? '$' + lcoe.toFixed(2) + '/MWh' : '—';
+    document.getElementById('wt-bd-payback').textContent = isFinite(paybackPeriod)
+      ? (paybackPeriod > life ? '>' + life + ' yr' : paybackPeriod.toFixed(1) + ' yr')
+      : '—';
+  }
+
+  [elCapacity, elNum, elCF, elPrice, elInvest, elOM, elLife, elDR, elEsc].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +798,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

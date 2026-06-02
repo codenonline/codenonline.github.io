@@ -6,11 +6,15 @@
   <title>Solar Farm Profit Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate profit from solar farm investments.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,219 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">System capacity</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="sf-capacity" type="number" inputmode="decimal" value="10" min="0" step="0.1">
+        <span class="tp-suffix">MW</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">solar-farm-profit</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Installation cost per MW</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="sf-cost-per-mw" type="number" inputmode="decimal" value="1000000" min="0" step="10000">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Solar irradiance</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sf-irradiance" type="number" inputmode="decimal" value="1800" min="0" step="50">
+          <span class="tp-suffix">kWh/m²/yr</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">System efficiency</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sf-efficiency" type="number" inputmode="decimal" value="20" min="0" max="100" step="0.5">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Electricity price</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="sf-price" type="number" inputmode="decimal" value="0.12" min="0" step="0.01">
+          <span class="tp-suffix">/kWh</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">O&amp;M cost</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sf-om" type="number" inputmode="decimal" value="2" min="0" max="10" step="0.1">
+          <span class="tp-suffix">% / yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Degradation rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sf-degradation" type="number" inputmode="decimal" value="0.5" min="0" max="5" step="0.1">
+          <span class="tp-suffix">% / yr</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Discount rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sf-discount" type="number" inputmode="decimal" value="8" min="0" max="20" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Project lifetime</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="sf-lifetime" type="number" inputmode="numeric" value="25" min="1" max="50" step="1">
+        <span class="tp-suffix">yr</span>
+      </div>
+    </div>
+    <div class="tp-toggles tp-toggles--wrap" id="sf-lifetime-presets">
+      <button class="tp-toggle mono" data-years="10">10 yr</button>
+      <button class="tp-toggle mono" data-years="20">20 yr</button>
+      <button class="tp-toggle mono on" data-years="25">25 yr</button>
+      <button class="tp-toggle mono" data-years="30">30 yr</button>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Total investment</span><b id="sf-bd-investment">$0</b></div>
+      <div><span class="mono">Annual energy (yr 1)</span><b id="sf-bd-energy">0 MWh</b></div>
+      <div><span class="mono">Annual revenue (yr 1)</span><b id="sf-bd-revenue">$0</b></div>
+      <div><span class="mono">Annual O&amp;M cost</span><b id="sf-bd-om">$0</b></div>
+      <div><span class="mono">Total revenue</span><b id="sf-bd-total-rev">$0</b></div>
+      <div><span class="mono">NPV</span><b id="sf-bd-npv">$0</b></div>
+      <div><span class="mono">IRR</span><b id="sf-bd-irr">0%</b></div>
+      <div><span class="mono">Capacity factor</span><b id="sf-bd-cf">0%</b></div>
+      <div><span class="mono">Payback period</span><b id="sf-bd-payback">0 yr</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
+    <span class="tp-result-label">Net profit</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Solar Farm Profit </span>
+      <span class="tp-result-prefix" id="sf-r-prefix">$</span>
+      <span class="tp-result-num" id="sf-r-profit">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="sf-r-note">over 25 years · ROI 0%</span>
   </div>
 </div>
+<script>
+(function () {
+  var elCapacity    = document.getElementById('sf-capacity');
+  var elCostPerMW   = document.getElementById('sf-cost-per-mw');
+  var elIrradiance  = document.getElementById('sf-irradiance');
+  var elEfficiency  = document.getElementById('sf-efficiency');
+  var elPrice       = document.getElementById('sf-price');
+  var elOM          = document.getElementById('sf-om');
+  var elDegradation = document.getElementById('sf-degradation');
+  var elDiscount    = document.getElementById('sf-discount');
+  var elLifetime    = document.getElementById('sf-lifetime');
+  var presets       = document.getElementById('sf-lifetime-presets');
+
+  function fmtMoney(n) {
+    if (!isFinite(n)) return '$0';
+    var abs = Math.abs(Math.round(n));
+    var sign = n < 0 ? '-' : '';
+    return sign + '$' + abs.toLocaleString();
+  }
+
+  function calcIRR(cashFlows) {
+    var low = -0.99, high = 10.0, irr = 0.1;
+    for (var i = 0; i < 100; i++) {
+      var npv = 0;
+      for (var j = 0; j < cashFlows.length; j++) {
+        npv += cashFlows[j] / Math.pow(1 + irr, j);
+      }
+      if (Math.abs(npv) < 1) break;
+      if (npv > 0) { low = irr; } else { high = irr; }
+      irr = (low + high) / 2;
+    }
+    return irr * 100;
+  }
+
+  function calc() {
+    var systemCapacity  = parseFloat(elCapacity.value)    || 0;
+    var costPerMW       = parseFloat(elCostPerMW.value)   || 0;
+    var solarIrradiance = parseFloat(elIrradiance.value)  || 0;
+    var systemEff       = parseFloat(elEfficiency.value)  || 0;
+    var electricityPrice= parseFloat(elPrice.value)       || 0;
+    var omCostPct       = parseFloat(elOM.value)          || 0;
+    var degradationRate = parseFloat(elDegradation.value) || 0;
+    var discountRatePct = parseFloat(elDiscount.value)    || 0;
+    var lifetime        = Math.max(1, parseInt(elLifetime.value, 10) || 25);
+
+    var totalInvestment   = systemCapacity * costPerMW;
+    var annualEnergyOutput = systemCapacity * solarIrradiance * (systemEff / 100) * 365 / 1000; // MWh
+    var capacityFactor    = systemCapacity > 0 ? (annualEnergyOutput / (systemCapacity * 8760)) * 100 : 0;
+    var annualRevenue     = annualEnergyOutput * electricityPrice * 1000; // MWh→kWh
+    var annualOMCost      = totalInvestment * (omCostPct / 100);
+
+    var cashFlows = [-totalInvestment];
+    var totalRevenue = 0;
+    var totalCosts = totalInvestment;
+    var cumulative = -totalInvestment;
+    var paybackPeriod = lifetime;
+    var paybackFound = false;
+
+    for (var y = 1; y <= lifetime; y++) {
+      var degFactor = Math.pow(1 - degradationRate / 100, y - 1);
+      var yearRevenue = annualEnergyOutput * degFactor * electricityPrice * 1000;
+      var yearNet = yearRevenue - annualOMCost;
+      cashFlows.push(yearNet);
+      totalRevenue += yearRevenue;
+      totalCosts += annualOMCost;
+      cumulative += yearNet;
+      if (!paybackFound && cumulative >= 0) {
+        paybackPeriod = (y - 1) + Math.abs(cashFlows[y - 1]) / yearNet;
+        paybackFound = true;
+      }
+    }
+
+    var discountRate = discountRatePct / 100;
+    var npv = -totalInvestment;
+    for (var t = 1; t <= lifetime; t++) {
+      npv += cashFlows[t] / Math.pow(1 + discountRate, t);
+    }
+
+    var irr = calcIRR(cashFlows);
+    var netProfit = totalRevenue - totalCosts;
+    var roi = totalInvestment > 0 ? (netProfit / totalInvestment) * 100 : 0;
+
+    // Update results
+    var absProfit = Math.abs(Math.round(netProfit));
+    document.getElementById('sf-r-prefix').textContent = netProfit < 0 ? '-$' : '$';
+    document.getElementById('sf-r-profit').textContent = absProfit.toLocaleString();
+    document.getElementById('sf-r-note').textContent =
+      'over ' + lifetime + ' yr · ROI ' + (isFinite(roi) ? roi.toFixed(1) : '0') + '%';
+
+    document.getElementById('sf-bd-investment').textContent  = fmtMoney(totalInvestment);
+    document.getElementById('sf-bd-energy').textContent      = (isFinite(annualEnergyOutput) ? Math.round(annualEnergyOutput).toLocaleString() : '0') + ' MWh';
+    document.getElementById('sf-bd-revenue').textContent     = fmtMoney(annualRevenue);
+    document.getElementById('sf-bd-om').textContent          = fmtMoney(annualOMCost);
+    document.getElementById('sf-bd-total-rev').textContent   = fmtMoney(totalRevenue);
+    document.getElementById('sf-bd-npv').textContent         = fmtMoney(npv);
+    document.getElementById('sf-bd-irr').textContent         = (isFinite(irr) ? irr.toFixed(2) : '0') + '%';
+    document.getElementById('sf-bd-cf').textContent          = (isFinite(capacityFactor) ? capacityFactor.toFixed(1) : '0') + '%';
+    document.getElementById('sf-bd-payback').textContent     = (isFinite(paybackPeriod) ? paybackPeriod.toFixed(1) : lifetime) + ' yr';
+
+    Array.prototype.forEach.call(presets.children, function (btn) {
+      btn.classList.toggle('on', parseInt(btn.getAttribute('data-years'), 10) === lifetime);
+    });
+  }
+
+  presets.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-years]');
+    if (!btn) return;
+    elLifetime.value = btn.getAttribute('data-years');
+    calc();
+  });
+
+  [elCapacity, elCostPerMW, elIrradiance, elEfficiency, elPrice, elOM, elDegradation, elDiscount, elLifetime]
+    .forEach(function (el) { el.addEventListener('input', calc); });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +772,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

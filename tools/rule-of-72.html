@@ -6,11 +6,15 @@
   <title>Rule of 72 Calculator — Tools Catalog</title>
   <meta name="description" content="Quickly estimate how long it takes your investment to double — just divide 72 by the annual interest rate.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,190 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+    <div class="tp-toggles" id="mode-toggles">
+      <button class="tp-toggle mono on" data-mode="time">Find Doubling Time</button>
+      <button class="tp-toggle mono" data-mode="rate">Find Required Rate</button>
+    </div>
+
+    <div id="field-rate" class="tp-field">
+      <span class="tp-field-label mono">Interest rate</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="interest-rate" type="number" inputmode="decimal" value="8" min="0.1" step="0.1">
+        <span class="tp-suffix">%</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">rule-of-72</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Financial</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Rule of 72 Calcula</span>
+
+    <div id="field-time" class="tp-field" style="display:none">
+      <span class="tp-field-label mono">Desired doubling time</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="doubling-time" type="number" inputmode="decimal" value="9" min="0.1" step="0.1">
+        <span class="tp-suffix">yrs</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Initial amount (optional)</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="initial-amount" type="number" inputmode="decimal" value="10000" min="0" step="1000">
+      </div>
+    </div>
+
+    <div class="tp-breakdown" id="bd-section">
+      <div id="bd-rule-row"><span class="mono" id="bd-rule-label">Rule of 72 time</span><b id="bd-rule-val">—</b></div>
+      <div><span class="mono" id="bd-exact-label">Exact time</span><b id="bd-exact-val">—</b></div>
+      <div><span class="mono">Accuracy</span><b id="bd-accuracy">—</b></div>
+    </div>
+
+    <div id="growth-section" style="display:none">
+      <div class="tp-breakdown">
+        <div><span class="mono">Initial amount</span><b id="bd-initial">—</b></div>
+        <div><span class="mono">After doubling</span><b id="bd-doubled">—</b></div>
+        <div><span class="mono">Total growth</span><b id="bd-growth">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="r-label">Doubling time</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-main">—</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Rule of 72 estimate</span>
+
+    <div style="margin-top:1.5rem;width:100%">
+      <div class="mono" style="font-size:0.75rem;opacity:0.6;margin-bottom:0.5rem">Multiple doublings</div>
+      <table style="width:100%;font-size:0.8rem;border-collapse:collapse" id="doublings-table">
+        <thead>
+          <tr style="border-bottom:2px solid var(--ink)">
+            <th style="text-align:left;padding:0.25rem 0" class="mono">#</th>
+            <th style="text-align:right;padding:0.25rem 0" class="mono">Years</th>
+            <th style="text-align:right;padding:0.25rem 0" class="mono">Multiple</th>
+            <th style="text-align:right;padding:0.25rem 0" class="mono" id="th-amount" style="display:none">Amount</th>
+          </tr>
+        </thead>
+        <tbody id="doublings-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
+
+<script>
+(function () {
+  var modeToggles = document.getElementById('mode-toggles');
+  var fieldRate = document.getElementById('field-rate');
+  var fieldTime = document.getElementById('field-time');
+  var interestRateEl = document.getElementById('interest-rate');
+  var doublingTimeEl = document.getElementById('doubling-time');
+  var initialAmountEl = document.getElementById('initial-amount');
+  var mode = 'time';
+
+  function fmt(n) { return isFinite(n) ? n.toFixed(1) : '—'; }
+  function fmtCurrency(n) {
+    if (!isFinite(n)) return '—';
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+  }
+
+  function calc() {
+    var rate, doublingYears, exactVal, accuracy;
+    var initial = parseFloat(initialAmountEl.value) || 0;
+
+    if (mode === 'time') {
+      rate = parseFloat(interestRateEl.value) || 0;
+      if (rate <= 0) {
+        document.getElementById('r-main').textContent = '—';
+        document.getElementById('r-note').textContent = 'Enter a positive rate';
+        return;
+      }
+      doublingYears = 72 / rate;
+      var exactTime = Math.log(2) / Math.log(1 + rate / 100);
+      exactVal = exactTime;
+      accuracy = 100 - Math.abs((doublingYears - exactTime) / exactTime * 100);
+
+      document.getElementById('r-label').textContent = 'Doubling time';
+      document.getElementById('r-main').textContent = fmt(doublingYears) + ' yrs';
+      document.getElementById('bd-rule-label').textContent = 'Rule of 72 time';
+      document.getElementById('bd-rule-val').textContent = fmt(doublingYears) + ' yrs';
+      document.getElementById('bd-exact-label').textContent = 'Exact time';
+      document.getElementById('bd-exact-val').textContent = fmt(exactTime) + ' yrs';
+    } else {
+      doublingYears = parseFloat(doublingTimeEl.value) || 0;
+      if (doublingYears <= 0) {
+        document.getElementById('r-main').textContent = '—';
+        document.getElementById('r-note').textContent = 'Enter a positive duration';
+        return;
+      }
+      rate = 72 / doublingYears;
+      var exactRate = (Math.pow(2, 1 / doublingYears) - 1) * 100;
+      exactVal = exactRate;
+      accuracy = 100 - Math.abs((rate - exactRate) / exactRate * 100);
+
+      document.getElementById('r-label').textContent = 'Required rate';
+      document.getElementById('r-main').textContent = fmt(rate) + '%';
+      document.getElementById('bd-rule-label').textContent = 'Rule of 72 rate';
+      document.getElementById('bd-rule-val').textContent = fmt(rate) + '%';
+      document.getElementById('bd-exact-label').textContent = 'Exact rate';
+      document.getElementById('bd-exact-val').textContent = fmt(exactRate) + '%';
+    }
+
+    document.getElementById('bd-accuracy').textContent = fmt(accuracy) + '%';
+
+    var noteRate = mode === 'time' ? parseFloat(interestRateEl.value) : rate;
+    var noteText = accuracy >= 95 ? 'Excellent accuracy for this rate'
+      : accuracy >= 90 ? 'Good accuracy estimate'
+      : accuracy >= 80 ? 'Moderate accuracy — best for 6–10%'
+      : 'Lower accuracy — Rule of 72 best for 6–10%';
+    document.getElementById('r-note').textContent = noteText;
+
+    var growthSection = document.getElementById('growth-section');
+    if (initial > 0) {
+      growthSection.style.display = '';
+      document.getElementById('bd-initial').textContent = fmtCurrency(initial);
+      document.getElementById('bd-doubled').textContent = fmtCurrency(initial * 2);
+      document.getElementById('bd-growth').textContent = fmtCurrency(initial);
+    } else {
+      growthSection.style.display = 'none';
+    }
+
+    var tbody = document.getElementById('doublings-body');
+    var thAmount = document.getElementById('th-amount');
+    thAmount.style.display = initial > 0 ? '' : 'none';
+    tbody.innerHTML = '';
+    var dTime = mode === 'time' ? 72 / (parseFloat(interestRateEl.value) || 0) : doublingYears;
+    if (dTime > 0 && isFinite(dTime)) {
+      for (var i = 1; i <= 5; i++) {
+        var tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--ink-20, rgba(0,0,0,0.1))';
+        var multiple = Math.pow(2, i);
+        var amtCell = initial > 0 ? '<td style="text-align:right;padding:0.2rem 0" class="mono">' + fmtCurrency(initial * multiple) + '</td>' : '';
+        tr.innerHTML = '<td style="padding:0.2rem 0" class="mono">' + i + '</td>'
+          + '<td style="text-align:right;padding:0.2rem 0" class="mono">' + (dTime * i).toFixed(1) + '</td>'
+          + '<td style="text-align:right;padding:0.2rem 0" class="mono">' + multiple + 'x</td>'
+          + amtCell;
+        tbody.appendChild(tr);
+      }
+    }
+  }
+
+  modeToggles.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    mode = btn.getAttribute('data-mode');
+    Array.prototype.forEach.call(modeToggles.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    fieldRate.style.display = mode === 'time' ? '' : 'none';
+    fieldTime.style.display = mode === 'rate' ? '' : 'none';
+    calc();
+  });
+
+  [interestRateEl, doublingTimeEl, initialAmountEl].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +742,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

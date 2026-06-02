@@ -6,11 +6,15 @@
   <title>Permutation Generator — Tools Catalog</title>
   <meta name="description" content="Generate all possible permutations from a list of items.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,293 @@ button:disabled{transform:none;}
         <p class="tp-desc">Generate all possible permutations from a list of items.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Add item</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="item-in" type="text" placeholder="e.g. A, B, C">
+        <button id="item-add" class="tp-toggle mono on" style="border:none;border-left:2px solid var(--ink);border-radius:0;margin:0;padding:0 15px;height:100%">Add</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">permutation-generator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Permutation Genera</span>
+
+    <div class="tp-toggles tp-toggles--wrap" id="items-list" style="margin-top:12px;gap:8px">
+      <!-- items appear here as toggles; click to remove -->
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" style="margin-top:20px">
+      <span class="tp-field-label mono">Permutation length · <span id="len-val">all</span></span>
+      <div class="tp-field-input" style="padding:11px 13px">
+        <input id="len-range" type="range" min="1" max="3" value="3" style="flex:1;accent-color:var(--ink)">
+      </div>
+    </div>
+
+    <div class="tp-toggles" style="margin-top:12px">
+      <button class="tp-toggle mono" id="opt-dup">Allow duplicates</button>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap" id="examples" style="margin-top:20px">
+      <span class="mono" style="width:100%;font-size:10px;margin-bottom:4px;opacity:0.6">Quick Examples</span>
+      <button class="tp-toggle mono" data-ex="colors">Colors</button>
+      <button class="tp-toggle mono" data-ex="numbers">1-4</button>
+      <button class="tp-toggle mono" data-ex="letters">A-C</button>
+    </div>
+
+    <button class="tp-gen mono" id="gen-btn" style="margin-top:24px">↻ Generate</button>
+    
+    <div class="tp-two" style="margin-top:12px">
+        <button class="tp-toggle mono" id="copy-all" style="justify-content:center">Copy All</button>
+        <button class="tp-toggle mono" id="download" style="justify-content:center">Download</button>
+    </div>
+
+    <p class="tp-hint mono" style="margin-top:20px;font-size:11px">
+      P(n,r) = n! / (n-r)! (without repetition)<br>
+      P(n,r) = n^r (with repetition)
+    </p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Total Permutations</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-count">0</span>
+    </div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Items</span><b id="s-items">0</b></div>
+      <div><span class="mono">Length</span><b id="s-len">0</b></div>
+      <div><span class="mono">Time</span><b id="s-time">0ms</b></div>
+    </div>
+
+    <div class="tp-uuids" id="out-list" style="margin-top:20px"></div>
+    <button class="tp-toggle mono" id="show-more" style="display:none;margin-top:12px;width:100%;justify-content:center">Show More</button>
   </div>
 </div>
+
+<script>
+(function () {
+  var itemIn = document.getElementById('item-in');
+  var itemAdd = document.getElementById('item-add');
+  var itemsList = document.getElementById('items-list');
+  var lenRange = document.getElementById('len-range');
+  var lenVal = document.getElementById('len-val');
+  var optDup = document.getElementById('opt-dup');
+  var examples = document.getElementById('examples');
+  var genBtn = document.getElementById('gen-btn');
+  var outList = document.getElementById('out-list');
+  var rCount = document.getElementById('r-count');
+  var sItems = document.getElementById('s-items');
+  var sLen = document.getElementById('s-len');
+  var sTime = document.getElementById('s-time');
+  var showMore = document.getElementById('show-more');
+  var copyAll = document.getElementById('copy-all');
+  var download = document.getElementById('download');
+
+  var items = ['A', 'B', 'C'];
+  var permutations = [];
+  var allowDuplicates = false;
+  var maxDisplay = 50;
+
+  function updateItemsUI() {
+    itemsList.innerHTML = '';
+    items.forEach(function (item, idx) {
+      var btn = document.createElement('button');
+      btn.className = 'tp-toggle mono on';
+      btn.innerHTML = item + ' <span style="opacity:0.5;margin-left:4px">×</span>';
+      btn.onclick = function () {
+        items.splice(idx, 1);
+        updateItemsUI();
+        calc();
+      };
+      itemsList.appendChild(btn);
+    });
+
+    var oldMax = parseInt(lenRange.max);
+    var oldVal = parseInt(lenRange.value);
+    lenRange.max = items.length || 1;
+    
+    // If we just added an item and were at "all", keep it at "all"
+    if (oldVal === oldMax && items.length > 0) {
+        lenRange.value = items.length;
+    } else if (oldVal > items.length) {
+        lenRange.value = items.length || 1;
+    }
+    
+    if (items.length === 0) {
+        lenVal.textContent = '0';
+    } else {
+        lenVal.textContent = lenRange.value == items.length ? 'all' : lenRange.value;
+    }
+  }
+
+  function generateWithRepetition(arr, length) {
+    if (length === 0) return [[]];
+    var res = [];
+    function permute(current) {
+      if (current.length === length) {
+        res.push([...current]);
+        return;
+      }
+      if (res.length >= 2000) return; // Safety limit
+      for (var i = 0; i < arr.length; i++) {
+        permute(current.concat([arr[i]]));
+        if (res.length >= 2000) return;
+      }
+    }
+    permute([]);
+    return res;
+  }
+
+  function calc() {
+    if (items.length === 0) {
+      permutations = [];
+      rCount.textContent = '0';
+      sItems.textContent = '0';
+      sLen.textContent = '0';
+      sTime.textContent = '0ms';
+      outList.innerHTML = '';
+      showMore.style.display = 'none';
+      return;
+    }
+
+    var startTime = performance.now();
+    var length = parseInt(lenRange.value, 10);
+    lenVal.textContent = length == items.length ? 'all' : length;
+
+    if (allowDuplicates) {
+      permutations = generateWithRepetition(items, length);
+    } else {
+      var res = [];
+      function p(curr) {
+        if (curr.length === length) { res.push([...curr]); return; }
+        if (res.length >= 2000) return; // Safety limit
+        for (var i = 0; i < items.length; i++) {
+          if (curr.indexOf(items[i]) === -1) {
+            curr.push(items[i]);
+            p(curr);
+            curr.pop();
+            if (res.length >= 2000) return;
+          }
+        }
+      }
+      p([]);
+      permutations = res;
+    }
+
+    var time = Math.round(performance.now() - startTime);
+    rCount.textContent = (permutations.length >= 2000 ? '2,000+' : permutations.length.toLocaleString());
+    sItems.textContent = items.length;
+    sLen.textContent = length;
+    sTime.textContent = time + 'ms';
+
+    maxDisplay = 50;
+    renderList();
+  }
+
+  function renderList() {
+    outList.innerHTML = '';
+    var display = permutations.slice(0, maxDisplay);
+    display.forEach(function (p) {
+      var div = document.createElement('div');
+      div.className = 'tp-uuid';
+      div.style.cursor = 'pointer';
+      div.textContent = p.join(', ');
+      div.title = 'Click to copy';
+      div.onclick = function() {
+          if (navigator.clipboard) navigator.clipboard.writeText(this.textContent);
+          var old = this.textContent;
+          this.textContent = 'Copied!';
+          var self = this;
+          setTimeout(function() { self.textContent = old; }, 800);
+      };
+      outList.appendChild(div);
+    });
+
+    if (permutations.length > maxDisplay) {
+      showMore.style.display = 'flex';
+      showMore.textContent = 'Show More (' + (permutations.length - maxDisplay) + ' left)';
+    } else {
+      showMore.style.display = 'none';
+    }
+  }
+
+  itemAdd.onclick = function () {
+    var val = itemIn.value.trim();
+    if (!val) return;
+    if (!allowDuplicates && items.indexOf(val) !== -1) {
+        itemIn.value = '';
+        return;
+    }
+    items.push(val);
+    itemIn.value = '';
+    updateItemsUI();
+    calc();
+  };
+
+  itemIn.onkeydown = function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        itemAdd.onclick();
+    }
+  };
+
+  lenRange.oninput = function () {
+    calc();
+  };
+
+  optDup.onclick = function () {
+    allowDuplicates = !allowDuplicates;
+    this.classList.toggle('on', allowDuplicates);
+    calc();
+  };
+
+  examples.onclick = function (e) {
+    var btn = e.target.closest('[data-ex]');
+    if (!btn) return;
+    var ex = btn.getAttribute('data-ex');
+    if (ex === 'colors') items = ['Red', 'Blue', 'Green'];
+    if (ex === 'numbers') items = ['1', '2', '3', '4'];
+    if (ex === 'letters') items = ['A', 'B', 'C'];
+    updateItemsUI();
+    lenRange.value = items.length;
+    calc();
+  };
+
+  showMore.onclick = function () {
+    maxDisplay += 50;
+    renderList();
+  };
+
+  copyAll.onclick = function () {
+    if (permutations.length === 0) return;
+    var text = permutations.map(function(p) { return p.join(', '); }).join('\n');
+    if (navigator.clipboard) navigator.clipboard.writeText(text);
+    var old = this.textContent;
+    this.textContent = 'Copied!';
+    var self = this;
+    setTimeout(function() { self.textContent = old; }, 1200);
+  };
+
+  download.onclick = function () {
+    if (permutations.length === 0) return;
+    var text = permutations.map(function(p) { return p.join(', '); }).join('\n');
+    var blob = new Blob([text], { type: 'text/plain' });
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'permutations.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  genBtn.onclick = calc;
+
+  // Init
+  updateItemsUI();
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +843,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

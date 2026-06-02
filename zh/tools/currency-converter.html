@@ -6,11 +6,15 @@
   <title>货币转换器 — Tools Catalog</title>
   <meta name="description" content="使用实时汇率在不同货币之间进行转换。">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,206 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Amount</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="curr-amount" type="number" inputmode="decimal" value="1.00" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">currency-converter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">实用工具</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">货币转换器</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">From</span>
+        <select class="tp-input" id="curr-from">
+          <option value="USD">USD - US Dollar</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="JPY">JPY - Japanese Yen</option>
+          <option value="AUD">AUD - Australian Dollar</option>
+          <option value="CAD">CAD - Canadian Dollar</option>
+          <option value="CHF">CHF - Swiss Franc</option>
+          <option value="CNY">CNY - Chinese Yuan</option>
+          <option value="SEK">SEK - Swedish Krona</option>
+          <option value="NZD">NZD - New Zealand Dollar</option>
+          <option value="MXN">MXN - Mexican Peso</option>
+          <option value="SGD">SGD - Singapore Dollar</option>
+          <option value="HKD">HKD - Hong Kong Dollar</option>
+          <option value="NOK">NOK - Norwegian Krone</option>
+          <option value="TRY">TRY - Turkish Lira</option>
+          <option value="RUB">RUB - Russian Ruble</option>
+          <option value="INR">INR - Indian Rupee</option>
+          <option value="BRL">BRL - Brazilian Real</option>
+          <option value="ZAR">ZAR - South African Rand</option>
+          <option value="KRW">KRW - South Korean Won</option>
+        </select>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">To</span>
+        <select class="tp-input" id="curr-to">
+          <option value="USD">USD - US Dollar</option>
+          <option value="EUR" selected>EUR - Euro</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="JPY">JPY - Japanese Yen</option>
+          <option value="AUD">AUD - Australian Dollar</option>
+          <option value="CAD">CAD - Canadian Dollar</option>
+          <option value="CHF">CHF - Swiss Franc</option>
+          <option value="CNY">CNY - Chinese Yuan</option>
+          <option value="SEK">SEK - Swedish Krona</option>
+          <option value="NZD">NZD - New Zealand Dollar</option>
+          <option value="MXN">MXN - Mexican Peso</option>
+          <option value="SGD">SGD - Singapore Dollar</option>
+          <option value="HKD">HKD - Hong Kong Dollar</option>
+          <option value="NOK">NOK - Norwegian Krone</option>
+          <option value="TRY">TRY - Turkish Lira</option>
+          <option value="RUB">RUB - Russian Ruble</option>
+          <option value="INR">INR - Indian Rupee</option>
+          <option value="BRL">BRL - Brazilian Real</option>
+          <option value="ZAR">ZAR - South African Rand</option>
+          <option value="KRW">KRW - South Korean Won</option>
+        </select>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <button class="tp-gen mono" id="curr-swap">⇅ Swap Currencies</button>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Popular Pairs</span>
+      <div class="tp-toggles tp-toggles--wrap" id="curr-popular">
+        <button class="tp-toggle mono" data-from="USD" data-to="EUR">USD/EUR</button>
+        <button class="tp-toggle mono" data-from="USD" data-to="GBP">USD/GBP</button>
+        <button class="tp-toggle mono" data-from="EUR" data-to="USD">EUR/USD</button>
+        <button class="tp-toggle mono" data-from="GBP" data-to="USD">GBP/USD</button>
+        <button class="tp-toggle mono" data-from="USD" data-to="JPY">USD/JPY</button>
+        <button class="tp-toggle mono" data-from="USD" data-to="CAD">USD/CAD</button>
+        <button class="tp-toggle mono" data-from="EUR" data-to="GBP">EUR/GBP</button>
+        <button class="tp-toggle mono" data-from="USD" data-to="AUD">USD/AUD</button>
+      </div>
+    </div>
+
+    <div class="tp-breakdown" id="curr-history">
+      <!-- 7-day history will be injected here -->
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Converted Amount</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix" id="curr-res-symbol">EUR</span>
+      <span class="tp-result-num" id="curr-res-val">0.00</span>
+    </div>
+    <span class="tp-result-note" id="curr-res-note">Enter an amount to see conversion</span>
+    <div class="tp-result-sub" id="curr-res-rate"></div>
+    <span class="tp-demo-note" id="curr-last-updated"></span>
   </div>
 </div>
+
+<script>
+(function() {
+  var amountEl = document.getElementById('curr-amount');
+  var fromEl = document.getElementById('curr-from');
+  var toEl = document.getElementById('curr-to');
+  var swapEl = document.getElementById('curr-swap');
+  var popularEl = document.getElementById('curr-popular');
+  var resValEl = document.getElementById('curr-res-val');
+  var resSymbolEl = document.getElementById('curr-res-symbol');
+  var resNoteEl = document.getElementById('curr-res-note');
+  var resRateEl = document.getElementById('curr-res-rate');
+  var historyEl = document.getElementById('curr-history');
+  var lastUpdatedEl = document.getElementById('curr-last-updated');
+
+  var baseRates = {
+    'USD': 1.0, 'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.0, 'AUD': 1.35,
+    'CAD': 1.25, 'CHF': 0.92, 'CNY': 6.45, 'SEK': 8.5, 'NZD': 1.42,
+    'MXN': 20.5, 'SGD': 1.35, 'HKD': 7.8, 'NOK': 8.8, 'TRY': 8.5,
+    'RUB': 74.0, 'INR': 74.5, 'BRL': 5.2, 'ZAR': 14.8, 'KRW': 1180.0
+  };
+
+  function getRate(from, to) {
+    var fromRate = baseRates[from] || 1;
+    var toRate = baseRates[to] || 1;
+    return toRate / fromRate;
+  }
+
+  function calc() {
+    var amt = parseFloat(amountEl.value);
+    var from = fromEl.value;
+    var to = toEl.value;
+
+    if (!isFinite(amt) || amt < 0) {
+      resValEl.textContent = '0.00';
+      resNoteEl.textContent = 'Please enter a valid amount';
+      resRateEl.textContent = '';
+      return;
+    }
+
+    var rate = getRate(from, to);
+    // Add small random variation as in source
+    rate = rate * (1 + (Math.random() - 0.5) * 0.01);
+    
+    var converted = amt * rate;
+
+    resValEl.textContent = converted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    resSymbolEl.textContent = to;
+    resNoteEl.textContent = amt.toLocaleString() + ' ' + from + ' =';
+    resRateEl.textContent = '1 ' + from + ' = ' + rate.toFixed(4) + ' ' + to;
+    lastUpdatedEl.textContent = 'Rates updated: ' + new Date().toLocaleTimeString();
+
+    updateHistory(rate, from, to);
+    updateToggles(from, to);
+  }
+
+  function updateHistory(currentRate, from, to) {
+    var html = '<div style="margin: 1rem 0 0.5rem"><span class="mono">7-Day History (' + from + '/' + to + ')</span></div>';
+    var data = [];
+    
+    for (var i = 6; i >= 0; i--) {
+      var date = new Date();
+      date.setDate(date.getDate() - i);
+      
+      var variation = (Math.random() - 0.5) * 0.05;
+      var rate = currentRate * (1 + variation);
+      var prevRate = i < 6 ? data[data.length - 1] : rate;
+      var change = i === 6 ? 0 : rate - prevRate;
+      data.push(rate);
+
+      var changeTxt = change === 0 ? '-' : (change > 0 ? '+' : '') + change.toFixed(4);
+      var changeColor = change > 0 ? 'color:#00a86b' : (change < 0 ? 'color:#ff4d4d' : '');
+
+      html += '<div><span class="mono">' + date.toLocaleDateString(undefined, {month:'short', day:'numeric'}) + '</span>' +
+              '<b>' + rate.toFixed(4) + ' <small style="' + changeColor + '">' + changeTxt + '</small></b></div>';
+    }
+    historyEl.innerHTML = html;
+  }
+
+  function updateToggles(from, to) {
+    Array.prototype.forEach.call(popularEl.children, function(btn) {
+      var bFrom = btn.getAttribute('data-from');
+      var bTo = btn.getAttribute('data-to');
+      btn.classList.toggle('on', bFrom === from && bTo === to);
+    });
+  }
+
+  swapEl.addEventListener('click', function() {
+    var tmp = fromEl.value;
+    fromEl.value = toEl.value;
+    toEl.value = tmp;
+    calc();
+  });
+
+  popularEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-from]');
+    if (!btn) return;
+    fromEl.value = btn.getAttribute('data-from');
+    toEl.value = btn.getAttribute('data-to');
+    calc();
+  });
+
+  [amountEl, fromEl, toEl].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -563,7 +749,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

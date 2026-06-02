@@ -6,11 +6,15 @@
   <title>Unit Converter — Tools Catalog</title>
   <meta name="description" content="Convert between different units of measurement including length, weight, temperature, and more.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,254 @@ button:disabled{transform:none;}
         <p class="tp-desc">Convert between different units of measurement including length, weight, temperature, and more.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Category</span>
+      <div class="tp-toggles tp-toggles--wrap" id="uc-categories">
+        <button class="tp-toggle mono on" data-cat="Length">Length</button>
+        <button class="tp-toggle mono" data-cat="Weight">Weight</button>
+        <button class="tp-toggle mono" data-cat="Temperature">Temperature</button>
+        <button class="tp-toggle mono" data-cat="Volume">Volume</button>
+        <button class="tp-toggle mono" data-cat="Area">Area</button>
+        <button class="tp-toggle mono" data-cat="Speed">Speed</button>
+        <button class="tp-toggle mono" data-cat="Data">Data</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">unit-converter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Math</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Unit Converter</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Value</span>
+      <input class="tp-input" id="uc-from-val" type="number" inputmode="decimal" value="1" step="any">
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">From</span>
+        <select class="tp-input" id="uc-from-unit"></select>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">To</span>
+        <select class="tp-input" id="uc-to-unit"></select>
+      </div>
+    </div>
+
+    <button class="tp-gen mono" id="uc-swap" style="margin-top: 10px; width: 100%;">⇅ Swap units</button>
+
+    <div class="tp-field" style="margin-top: 24px;">
+      <span class="tp-field-label mono">All Conversions</span>
+      <div class="tp-breakdown" id="uc-all-conversions"></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="uc-r-label">Converted value</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="uc-r-num">0</span>
+    </div>
+    <span class="tp-result-note" id="uc-r-note"></span>
   </div>
 </div>
+
+<script>
+(function() {
+  const categories = ['Length', 'Weight', 'Temperature', 'Volume', 'Area', 'Speed', 'Data'];
+  const units = {
+    Length: [
+      { value: 'mm', label: 'Millimeters', factor: 0.001 },
+      { value: 'cm', label: 'Centimeters', factor: 0.01 },
+      { value: 'm', label: 'Meters', factor: 1 },
+      { value: 'km', label: 'Kilometers', factor: 1000 },
+      { value: 'in', label: 'Inches', factor: 0.0254 },
+      { value: 'ft', label: 'Feet', factor: 0.3048 },
+      { value: 'yd', label: 'Yards', factor: 0.9144 },
+      { value: 'mi', label: 'Miles', factor: 1609.344 }
+    ],
+    Weight: [
+      { value: 'mg', label: 'Milligrams', factor: 0.001 },
+      { value: 'g', label: 'Grams', factor: 1 },
+      { value: 'kg', label: 'Kilograms', factor: 1000 },
+      { value: 't', label: 'Metric Tons', factor: 1000000 },
+      { value: 'oz', label: 'Ounces', factor: 28.3495 },
+      { value: 'lb', label: 'Pounds', factor: 453.592 },
+      { value: 'st', label: 'Stones', factor: 6350.29 }
+    ],
+    Temperature: [
+      { value: 'C', label: 'Celsius', factor: null },
+      { value: 'F', label: 'Fahrenheit', factor: null },
+      { value: 'K', label: 'Kelvin', factor: null }
+    ],
+    Volume: [
+      { value: 'ml', label: 'Milliliters', factor: 0.001 },
+      { value: 'l', label: 'Liters', factor: 1 },
+      { value: 'gal_us', label: 'US Gallons', factor: 3.78541 },
+      { value: 'gal_uk', label: 'UK Gallons', factor: 4.54609 },
+      { value: 'qt', label: 'Quarts', factor: 0.946353 },
+      { value: 'pt', label: 'Pints', factor: 0.473176 },
+      { value: 'cup', label: 'Cups', factor: 0.236588 },
+      { value: 'floz', label: 'Fluid Ounces', factor: 0.0295735 }
+    ],
+    Area: [
+      { value: 'mm2', label: 'Square Millimeters', factor: 0.000001 },
+      { value: 'cm2', label: 'Square Centimeters', factor: 0.0001 },
+      { value: 'm2', label: 'Square Meters', factor: 1 },
+      { value: 'km2', label: 'Square Kilometers', factor: 1000000 },
+      { value: 'in2', label: 'Square Inches', factor: 0.00064516 },
+      { value: 'ft2', label: 'Square Feet', factor: 0.092903 },
+      { value: 'ac', label: 'Acres', factor: 4046.86 },
+      { value: 'ha', label: 'Hectares', factor: 10000 }
+    ],
+    Speed: [
+      { value: 'ms', label: 'Meters/Second', factor: 1 },
+      { value: 'kmh', label: 'Kilometers/Hour', factor: 0.277778 },
+      { value: 'mph', label: 'Miles/Hour', factor: 0.44704 },
+      { value: 'kn', label: 'Knots', factor: 0.514444 },
+      { value: 'fts', label: 'Feet/Second', factor: 0.3048 }
+    ],
+    Data: [
+      { value: 'b', label: 'Bytes', factor: 1 },
+      { value: 'kb', label: 'Kilobytes', factor: 1024 },
+      { value: 'mb', label: 'Megabytes', factor: 1048576 },
+      { value: 'gb', label: 'Gigabytes', factor: 1073741824 },
+      { value: 'tb', label: 'Terabytes', factor: 1099511627776 },
+      { value: 'bit', label: 'Bits', factor: 0.125 }
+    ]
+  };
+
+  const catBtns = document.getElementById('uc-categories');
+  const fromVal = document.getElementById('uc-from-val');
+  const fromUnit = document.getElementById('uc-from-unit');
+  const toUnit = document.getElementById('uc-to-unit');
+  const swapBtn = document.getElementById('uc-swap');
+  const allConversions = document.getElementById('uc-all-conversions');
+  const rNum = document.getElementById('uc-r-num');
+  const rNote = document.getElementById('uc-r-note');
+
+  let currentCat = 'Length';
+
+  function format(n) {
+    if (n === null || n === undefined || isNaN(n)) return '';
+    if (!isFinite(n)) return '∞';
+    if (Math.abs(n) >= 1e6 || (Math.abs(n) < 0.001 && n !== 0)) {
+      return n.toExponential(4);
+    }
+    return parseFloat(n.toPrecision(10)).toString();
+  }
+
+  function convert(val, cat, from, to) {
+    if (cat === 'Temperature') {
+      let celsius;
+      if (from === 'C') celsius = val;
+      else if (from === 'F') celsius = (val - 32) * 5 / 9;
+      else celsius = val - 273.15; // K
+
+      if (to === 'C') return celsius;
+      if (to === 'F') return celsius * 9 / 5 + 32;
+      return celsius + 273.15; // K
+    }
+
+    const fUnit = units[cat].find(u => u.value === from);
+    const tUnit = units[cat].find(u => u.value === to);
+    if (!fUnit || !tUnit) return 0;
+    return val * fUnit.factor / tUnit.factor;
+  }
+
+  function updateUnits() {
+    const uList = units[currentCat];
+    const prevFrom = fromUnit.value;
+    const prevTo = toUnit.value;
+
+    fromUnit.innerHTML = '';
+    toUnit.innerHTML = '';
+
+    uList.forEach(u => {
+      const optFrom = document.createElement('option');
+      optFrom.value = u.value;
+      optFrom.textContent = u.label;
+      fromUnit.appendChild(optFrom);
+
+      const optTo = document.createElement('option');
+      optTo.value = u.value;
+      optTo.textContent = u.label;
+      toUnit.appendChild(optTo);
+    });
+
+    // Try to restore previous values if they exist in the new category, otherwise defaults
+    if (uList.some(u => u.value === prevFrom)) fromUnit.value = prevFrom;
+    else fromUnit.value = uList[0].value;
+
+    if (uList.some(u => u.value === prevTo)) toUnit.value = prevTo;
+    else fromUnit.value === uList[1].value ? toUnit.value = uList[0].value : toUnit.value = uList[1].value;
+
+    calc();
+  }
+
+  function calc() {
+    const val = parseFloat(fromVal.value);
+    if (isNaN(val)) {
+      rNum.textContent = '0';
+      rNote.textContent = '';
+      allConversions.innerHTML = '';
+      return;
+    }
+
+    const f = fromUnit.value;
+    const t = toUnit.value;
+    const result = convert(val, currentCat, f, t);
+
+    rNum.textContent = format(result);
+    
+    const fLabel = units[currentCat].find(u => u.value === f).label;
+    const tLabel = units[currentCat].find(u => u.value === t).label;
+    rNote.textContent = val + ' ' + fLabel + ' = ' + format(result) + ' ' + tLabel;
+
+    // All conversions
+    allConversions.innerHTML = '';
+    units[currentCat].forEach(u => {
+      if (u.value === f) return;
+      const row = document.createElement('div');
+      const res = convert(val, currentCat, f, u.value);
+      row.innerHTML = '<span class="mono">' + u.label + '</span><b>' + format(res) + '</b>';
+      allConversions.appendChild(row);
+    });
+  }
+
+  catBtns.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-cat]');
+    if (!btn) return;
+    currentCat = btn.getAttribute('data-cat');
+    Array.from(catBtns.children).forEach(b => b.classList.toggle('on', b === btn));
+    updateUnits();
+  });
+
+  swapBtn.addEventListener('click', function() {
+    const tmp = fromUnit.value;
+    fromUnit.value = toUnit.value;
+    toUnit.value = tmp;
+    calc();
+  });
+
+  [fromVal, fromUnit, toUnit].forEach(el => el.addEventListener('input', calc));
+
+  // Initial setup
+  fromUnit.innerHTML = '';
+  toUnit.innerHTML = '';
+  const initialUnits = units[currentCat];
+  initialUnits.forEach(u => {
+    const optFrom = document.createElement('option');
+    optFrom.value = u.value;
+    optFrom.textContent = u.label;
+    fromUnit.appendChild(optFrom);
+
+    const optTo = document.createElement('option');
+    optTo.value = u.value;
+    optTo.textContent = u.label;
+    toUnit.appendChild(optTo);
+  });
+  fromUnit.value = 'm';
+  toUnit.value = 'ft';
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -568,7 +799,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

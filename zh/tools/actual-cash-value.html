@@ -6,11 +6,15 @@
   <title>实际现金价值 (ACV) — Tools Catalog</title>
   <meta name="description" content="查找资产的折旧价值以用于保险索赔 — 考虑年龄、状况和替换成本。">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,194 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Category</span>
+      <select class="tp-input" id="acv-category">
+        <option value="electronics">Electronics</option>
+        <option value="furniture">Furniture</option>
+        <option value="appliances">Appliances</option>
+        <option value="vehicle">Vehicle</option>
+        <option value="jewelry">Jewelry</option>
+        <option value="clothing">Clothing</option>
+        <option value="tools">Tools &amp; Equipment</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Replacement cost</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="acv-cost" type="number" inputmode="decimal" value="1000" min="0" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">actual-cash-value</p>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Age</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="acv-age" type="number" inputmode="decimal" value="3" min="0" step="0.1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Useful life</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="acv-life" type="number" inputmode="decimal" value="5" min="1" step="0.1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Depreciation method</span>
+      <select class="tp-input" id="acv-method">
+        <option value="straight-line">Straight-Line</option>
+        <option value="declining-balance">Declining Balance</option>
+        <option value="custom">Custom Rate</option>
+      </select>
+    </div>
+    <div class="tp-field" id="acv-field-declining" style="display:none">
+      <span class="tp-field-label mono">Declining balance rate</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="acv-declining" type="number" inputmode="decimal" value="20" min="1" max="50">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field" id="acv-field-custom" style="display:none">
+      <span class="tp-field-label mono">Custom rate / year</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="acv-custom" type="number" inputmode="decimal" value="15" min="1" max="100" step="0.1">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Condition</span>
+      <select class="tp-input" id="acv-condition">
+        <option value="1.0">Excellent (100%)</option>
+        <option value="0.9">Good (90%)</option>
+        <option value="0.8">Fair (80%)</option>
+        <option value="0.7">Poor (70%)</option>
+        <option value="0.6">Very Poor (60%)</option>
+      </select>
+    </div>
+    <div class="tp-field" style="flex-direction:row;align-items:center;gap:8px">
+      <input type="checkbox" id="acv-has-salvage" style="width:auto;margin:0">
+      <label for="acv-has-salvage" class="mono" style="font-size:0.85rem;cursor:pointer">Include salvage value</label>
+    </div>
+    <div class="tp-field" id="acv-field-salvage" style="display:none">
+      <span class="tp-field-label mono">Salvage value</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="acv-salvage" type="number" inputmode="decimal" value="0" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Replacement cost</span><b id="acv-bd-cost">$0</b></div>
+      <div><span class="mono">Age depreciation</span><b id="acv-bd-age-dep">$0</b></div>
+      <div><span class="mono">Condition adjustment</span><b id="acv-bd-cond">$0</b></div>
+      <div><span class="mono">Total depreciation</span><b id="acv-bd-total-dep">$0</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">金融</span>
+    <span class="tp-result-label">Actual Cash Value</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">实际现金价值 (ACV)</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="acv-r-val">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="acv-r-note">straight-line · excellent condition</span>
   </div>
 </div>
+<script>
+(function () {
+  var elCost      = document.getElementById('acv-cost');
+  var elAge       = document.getElementById('acv-age');
+  var elLife      = document.getElementById('acv-life');
+  var elCategory  = document.getElementById('acv-category');
+  var elMethod    = document.getElementById('acv-method');
+  var elDeclining = document.getElementById('acv-declining');
+  var elCustom    = document.getElementById('acv-custom');
+  var elCondition = document.getElementById('acv-condition');
+  var elHasSalv   = document.getElementById('acv-has-salvage');
+  var elSalvage   = document.getElementById('acv-salvage');
+
+  var typicalLives = {
+    electronics: '3-7', furniture: '10-15', appliances: '8-15',
+    vehicle: '10-20', jewelry: '20+', clothing: '3-5',
+    tools: '5-15', other: '5-10'
+  };
+  var defaultLives = {
+    electronics: 5, furniture: 12, appliances: 10,
+    vehicle: 15, jewelry: 25, clothing: 4,
+    tools: 10, other: 7
+  };
+
+  function fmt(n) {
+    if (!isFinite(n) || n < 0) n = 0;
+    return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function showHide(id, visible) {
+    document.getElementById(id).style.display = visible ? '' : 'none';
+  }
+
+  function calc() {
+    var method = elMethod.value;
+    showHide('acv-field-declining', method === 'declining-balance');
+    showHide('acv-field-custom',    method === 'custom');
+    showHide('acv-field-salvage',   elHasSalv.checked);
+
+    var cost   = parseFloat(elCost.value)   || 0;
+    var age    = parseFloat(elAge.value)    || 0;
+    var life   = Math.max(0.01, parseFloat(elLife.value) || 1);
+    var condF  = parseFloat(elCondition.value) || 1;
+    var salvage = elHasSalv.checked ? (parseFloat(elSalvage.value) || 0) : 0;
+
+    var ageDepreciation = 0;
+    if (cost > 0) {
+      if (method === 'straight-line') {
+        var yearly = (cost - salvage) / life;
+        ageDepreciation = Math.min(yearly * age, cost - salvage);
+      } else if (method === 'declining-balance') {
+        var rate = (parseFloat(elDeclining.value) || 20) / 100;
+        var remaining = cost;
+        for (var i = 0; i < age; i++) remaining *= (1 - rate);
+        ageDepreciation = cost - Math.max(remaining, salvage);
+      } else {
+        var crate = (parseFloat(elCustom.value) || 15) / 100;
+        ageDepreciation = Math.min(cost * crate * age, cost - salvage);
+      }
+    }
+
+    var afterAge = cost - ageDepreciation;
+    var condAdj  = afterAge * (1 - condF);
+    var totalDep = ageDepreciation + condAdj;
+    var acv      = Math.max(cost - totalDep, salvage);
+
+    document.getElementById('acv-r-val').textContent       = fmt(acv);
+    document.getElementById('acv-bd-cost').textContent     = '$' + fmt(cost);
+    document.getElementById('acv-bd-age-dep').textContent  = '-$' + fmt(ageDepreciation);
+    document.getElementById('acv-bd-cond').textContent     = '-$' + fmt(condAdj);
+    document.getElementById('acv-bd-total-dep').textContent = '-$' + fmt(totalDep);
+
+    var condLabel = elCondition.options[elCondition.selectedIndex].text.toLowerCase().replace(/\s*\(.*\)/, '');
+    document.getElementById('acv-r-note').textContent =
+      method.replace('-', '-') + ' · ' + condLabel + ' condition';
+  }
+
+  elCategory.addEventListener('change', function () {
+    var cat = elCategory.value;
+    elLife.value = defaultLives[cat] || 7;
+    calc();
+  });
+
+  [elCost, elAge, elLife, elDeclining, elCustom, elSalvage].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  [elMethod, elCondition, elCategory].forEach(function (el) {
+    el.addEventListener('change', calc);
+  });
+  elHasSalv.addEventListener('change', calc);
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +747,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

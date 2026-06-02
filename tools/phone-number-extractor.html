@@ -6,11 +6,15 @@
   <title>Phone Number Extractor — Tools Catalog</title>
   <meta name="description" content="Extract phone numbers from text using pattern matching.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,304 @@ button:disabled{transform:none;}
         <p class="tp-desc">Extract phone numbers from text using pattern matching.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea id="input" class="tp-textarea tp-textarea--tall" placeholder="Paste your text here. Example:
+Call me at (555) 123-4567 or reach out at 555.987.6543
+You can also try +1-800-555-0199 or 800 555 0123
+International: +44 20 7946 0958"></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Format</span>
+      <div class="tp-toggles tp-toggles--wrap" id="formats">
+        <button class="tp-toggle mono on" data-val="all">All</button>
+        <button class="tp-toggle mono" data-val="us">US/Canada</button>
+        <button class="tp-toggle mono" data-val="international">International</button>
+        <button class="tp-toggle mono" data-val="mobile">Mobile</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">phone-number-extractor</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Phone Number Extra</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Options</span>
+      <div class="tp-toggles tp-toggles--wrap" id="opts">
+        <button class="tp-toggle mono on" data-opt="dedupe">No Duplicates</button>
+        <button class="tp-toggle mono on" data-opt="format">Format</button>
+        <button class="tp-toggle mono on" data-opt="validate">Validate</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-two">
+      <button class="tp-gen mono" id="extract">Extract</button>
+      <button class="tp-gen mono" id="clear" style="background:transparent;color:var(--ink)">Clear</button>
+    </div>
+    
+    <p class="tp-demo-note mono">Supports US, Canada, and International patterns</p>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Statistics</span>
+    <div class="tp-stat-big"><b id="s-total">0</b><span>Found</span></div>
+    <div class="tp-statgrid">
+      <div><span class="mono">Valid</span><b id="s-valid">0</b></div>
+      <div><span class="mono">Invalid</span><b id="s-invalid">0</b></div>
+      <div><span class="mono">Unique</span><b id="s-unique">0</b></div>
+    </div>
+
+    <span class="tp-result-label" style="margin-top:20px">Extracted numbers</span>
+    <div class="tp-uuids" id="list" style="max-height:300px;overflow-y:auto;text-align:left">
+      <!-- Phone numbers will appear here -->
+    </div>
+
+    <div class="tp-two" style="margin-top:auto;padding-top:20px">
+      <button class="tp-toggle mono" id="copy" style="width:100%">Copy All</button>
+      <button class="tp-toggle mono" id="download" style="width:100%">CSV</button>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('input');
+  const formats = document.getElementById('formats');
+  const opts = document.getElementById('opts');
+  const extractBtn = document.getElementById('extract');
+  const clearBtn = document.getElementById('clear');
+  const list = document.getElementById('list');
+  const copyBtn = document.getElementById('copy');
+  const downloadBtn = document.getElementById('download');
+
+  const sTotal = document.getElementById('s-total');
+  const sValid = document.getElementById('s-valid');
+  const sInvalid = document.getElementById('s-invalid');
+  const sUnique = document.getElementById('s-unique');
+
+  let selectedFormat = 'all';
+  let activeOpts = { dedupe: true, format: true, validate: true };
+  let extractedNumbers = [];
+
+  function cleanPhoneNumber(phone) {
+    return phone.replace(/[^\d+]/g, '');
+  }
+
+  function formatPhoneNumber(cleaned, type) {
+    if (type === 'US' && cleaned.length === 10) {
+      return '(' + cleaned.slice(0, 3) + ') ' + cleaned.slice(3, 6) + '-' + cleaned.slice(6);
+    }
+    if (type === 'US' && cleaned.length === 11 && cleaned.startsWith('1')) {
+      return '+1 (' + cleaned.slice(1, 4) + ') ' + cleaned.slice(4, 7) + '-' + cleaned.slice(7);
+    }
+    if (cleaned.startsWith('+')) {
+      return cleaned.replace(/(\+\d{1,3})(\d{3})(\d{3})(\d{4})/, '$1 $2 $3 $4');
+    }
+    return cleaned;
+  }
+
+  function validatePhoneNumber(cleaned, type) {
+    if (type === 'US') {
+      if (cleaned.length === 10) return true;
+      if (cleaned.length === 11 && cleaned.startsWith('1')) return true;
+      return false;
+    }
+    if (type === 'International') {
+      return cleaned.startsWith('+') && cleaned.length >= 7 && cleaned.length <= 15;
+    }
+    return cleaned.length >= 7 && cleaned.length <= 15;
+  }
+
+  function detectCountry(cleaned) {
+    if (cleaned.startsWith('+1')) return 'US/CA';
+    if (cleaned.startsWith('+44')) return 'UK';
+    if (cleaned.startsWith('+33')) return 'FR';
+    if (cleaned.startsWith('+49')) return 'DE';
+    if (cleaned.startsWith('+81')) return 'JP';
+    if (cleaned.startsWith('+86')) return 'CN';
+    if (cleaned.startsWith('+91')) return 'IN';
+    if (cleaned.startsWith('+61')) return 'AU';
+    if (cleaned.startsWith('+7')) return 'RU';
+    if (cleaned.startsWith('+39')) return 'IT';
+    return '';
+  }
+
+  function getPhonePatterns() {
+    const p = [];
+    if (selectedFormat === 'all' || selectedFormat === 'us') {
+      p.push(
+        { regex: /\(\d{3}\)\s*\d{3}[-.\s]?\d{4}/g, type: 'US' },
+        { regex: /\d{3}[-.\s]\d{3}[-.\s]\d{4}/g, type: 'US' },
+        { regex: /1[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/g, type: 'US' },
+        { regex: /\+1[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/g, type: 'US' }
+      );
+    }
+    if (selectedFormat === 'all' || selectedFormat === 'international') {
+      p.push(
+        { regex: /\+\d{1,3}[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/g, type: 'International' },
+        { regex: /\+\d{2}\s\d{2}\s\d{4}\s\d{4}/g, type: 'International' },
+        { regex: /\+\d{2}\s\d{3}\s\d{3}\s\d{3}/g, type: 'International' }
+      );
+    }
+    if (selectedFormat === 'all' || selectedFormat === 'mobile') {
+      p.push({ regex: /\+\d{1,3}[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/g, type: 'Mobile' });
+    }
+    return p;
+  }
+
+  function run() {
+    const text = input.value;
+    if (!text.trim()) {
+      extractedNumbers = [];
+      updateUI();
+      return;
+    }
+
+    const patterns = getPhonePatterns();
+    const found = [];
+    patterns.forEach(p => {
+      const matches = text.match(p.regex);
+      if (matches) {
+        matches.forEach(m => {
+          const cleaned = cleanPhoneNumber(m);
+          const formatted = activeOpts.format ? formatPhoneNumber(cleaned, p.type) : m;
+          const valid = activeOpts.validate ? validatePhoneNumber(cleaned, p.type) : true;
+          const country = detectCountry(cleaned);
+          found.push({ original: m, cleaned, formatted, type: p.type, country, valid });
+        });
+      }
+    });
+
+    let results = found;
+    if (activeOpts.dedupe) {
+      const seen = new Set();
+      results = results.filter(n => {
+        if (seen.has(n.cleaned)) return false;
+        seen.add(n.cleaned);
+        return true;
+      });
+    }
+    extractedNumbers = results;
+    updateUI();
+  }
+
+  function updateUI() {
+    list.innerHTML = '';
+    let validCount = 0;
+    let invalidCount = 0;
+    const uniqueSet = new Set();
+
+    extractedNumbers.forEach((n, i) => {
+      uniqueSet.add(n.cleaned);
+      const isValid = n.valid;
+      if (isValid) validCount++; else invalidCount++;
+
+      const div = document.createElement('div');
+      div.className = 'tp-uuid';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.style.fontSize = '14px';
+
+      const left = document.createElement('div');
+      left.innerHTML = `<span style="opacity:0.5;margin-right:8px">${i+1}.</span><b>${n.formatted}</b>`;
+      if (n.country) {
+        left.innerHTML += ` <small class="mono" style="margin-left:8px;padding:1px 4px;border:1px solid var(--ink)">${n.country}</small>`;
+      }
+      
+      const right = document.createElement('div');
+      right.style.display = 'flex';
+      right.style.alignItems = 'center';
+
+      if (activeOpts.validate) {
+        const indicator = document.createElement('span');
+        indicator.style.color = isValid ? '#0a0' : '#e00';
+        indicator.style.marginRight = '12px';
+        indicator.style.fontWeight = 'bold';
+        indicator.textContent = isValid ? '✓' : '✕';
+        right.appendChild(indicator);
+      }
+      
+      const copyBtnInner = document.createElement('button');
+      copyBtnInner.textContent = 'copy';
+      copyBtnInner.className = 'mono';
+      copyBtnInner.style.background = 'none';
+      copyBtnInner.style.border = '1px solid var(--ink)';
+      copyBtnInner.style.cursor = 'pointer';
+      copyBtnInner.style.padding = '2px 6px';
+      copyBtnInner.style.fontSize = '10px';
+      copyBtnInner.onclick = () => {
+        navigator.clipboard.writeText(n.formatted);
+        copyBtnInner.textContent = 'done';
+        setTimeout(() => { copyBtnInner.textContent = 'copy'; }, 1000);
+      };
+      right.appendChild(copyBtnInner);
+
+      div.appendChild(left);
+      div.appendChild(right);
+      list.appendChild(div);
+    });
+
+    sTotal.textContent = extractedNumbers.length;
+    sValid.textContent = validCount;
+    sInvalid.textContent = invalidCount;
+    sUnique.textContent = uniqueSet.size;
+  }
+
+  formats.addEventListener('click', e => {
+    const btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    selectedFormat = btn.getAttribute('data-val');
+    Array.from(formats.children).forEach(b => b.classList.toggle('on', b === btn));
+    run();
+  });
+
+  opts.addEventListener('click', e => {
+    const btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    const opt = btn.getAttribute('data-opt');
+    activeOpts[opt] = !activeOpts[opt];
+    btn.classList.toggle('on', activeOpts[opt]);
+    run();
+  });
+
+  extractBtn.addEventListener('click', run);
+  input.addEventListener('input', run);
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    run();
+  });
+
+  copyBtn.addEventListener('click', () => {
+    if (extractedNumbers.length === 0) return;
+    const text = extractedNumbers.map(n => n.formatted).join('\n');
+    navigator.clipboard.writeText(text);
+    const old = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => { copyBtn.textContent = old; }, 1000);
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    if (extractedNumbers.length === 0) return;
+    const headers = ['Number', 'Type', 'Country', 'Valid'];
+    const rows = extractedNumbers.map(n => [
+      n.formatted,
+      n.type,
+      n.country,
+      n.valid
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(f => `"${f}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'phone-numbers.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  run();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +854,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

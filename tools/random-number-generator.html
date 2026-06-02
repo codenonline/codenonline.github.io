@@ -6,11 +6,15 @@
   <title>Random Number Generator — Tools Catalog</title>
   <meta name="description" content="Generate random numbers, dice rolls, and lottery numbers with customizable ranges.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,179 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Minimum</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="min" type="number" value="1" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Maximum</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="max" type="number" value="100" step="1">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">random-number-generator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Random</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Random Number Gene</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Count (1-1000)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="count" type="number" value="10" min="1" max="1000" step="1">
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono" id="unique">Unique numbers only</button>
+    </div>
+
+    <div class="tp-field-label mono" style="margin-top:1.5rem">Sort order</div>
+    <div class="tp-toggles tp-toggles--wrap" id="sort-opts">
+      <button class="tp-toggle mono on" data-sort="none">None</button>
+      <button class="tp-toggle mono" data-sort="asc">Ascending</button>
+      <button class="tp-toggle mono" data-sort="desc">Descending</button>
+    </div>
+
+    <button class="tp-gen mono" id="gen">↻ Generate</button>
+    <p class="tp-demo-note mono">Cryptographically strong random values</p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Output</span>
+    <div class="tp-uuids" id="list" style="max-height: 400px; overflow-y: auto;"></div>
+
+    <div class="tp-statgrid" style="margin-top:auto; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1)">
+      <div><span class="mono">Sum</span><b id="s-sum">0</b></div>
+      <div><span class="mono">Average</span><b id="s-avg">0</b></div>
+    </div>
+
+    <div style="margin-top:1rem; display:flex; gap:10px">
+        <button class="tp-toggle mono" id="copy" style="border-color:var(--mag); color:var(--mag)">Copy all</button>
+    </div>
+    <div class="tp-hint mono" id="error" style="color:#ff4444; display:none; margin-top:1rem"></div>
   </div>
 </div>
+
+<script>
+(function() {
+    var minInput = document.getElementById('min');
+    var maxInput = document.getElementById('max');
+    var countInput = document.getElementById('count');
+    var uniqueBtn = document.getElementById('unique');
+    var sortOpts = document.getElementById('sort-opts');
+    var genBtn = document.getElementById('gen');
+    var copyBtn = document.getElementById('copy');
+    var listEl = document.getElementById('list');
+    var sumEl = document.getElementById('s-sum');
+    var avgEl = document.getElementById('s-avg');
+    var errorEl = document.getElementById('error');
+
+    var uniqueOnly = false;
+    var sortOption = 'none';
+    var lastNumbers = [];
+
+    function generate() {
+        errorEl.style.display = 'none';
+        listEl.innerHTML = '';
+        
+        var min = parseInt(minInput.value);
+        var max = parseInt(maxInput.value);
+        if (isNaN(min)) min = 1;
+        if (isNaN(max)) max = 100;
+
+        var lo = Math.min(min, max);
+        var hi = Math.max(min, max);
+        var nRaw = parseInt(countInput.value);
+        var n = Math.min(Math.max(1, isNaN(nRaw) ? 1 : nRaw), 1000);
+        var range = hi - lo + 1;
+
+        if (uniqueOnly && n > range) {
+            errorEl.textContent = 'Cannot generate ' + n + ' unique numbers in range ' + lo + '-' + hi + ' (only ' + range + ' possible).';
+            errorEl.style.display = 'block';
+            sumEl.textContent = '0';
+            avgEl.textContent = '0';
+            lastNumbers = [];
+            return;
+        }
+
+        var numbers = [];
+        if (uniqueOnly) {
+            var set = new Set();
+            var safety = 0;
+            while (set.size < n && safety < 10000) {
+                var arr = new Uint32Array(1);
+                crypto.getRandomValues(arr);
+                set.add(lo + (arr[0] % range));
+                safety++;
+            }
+            numbers = Array.from(set);
+        } else {
+            var arr = new Uint32Array(n);
+            crypto.getRandomValues(arr);
+            for (var i = 0; i < n; i++) {
+                numbers.push(lo + (arr[i] % range));
+            }
+        }
+
+        if (sortOption === 'asc') numbers.sort(function(a, b) { return a - b; });
+        else if (sortOption === 'desc') numbers.sort(function(a, b) { return b - a; });
+
+        lastNumbers = numbers;
+        var sum = 0;
+
+        var fragment = document.createDocumentFragment();
+        for (var j = 0; j < numbers.length; j++) {
+            var num = numbers[j];
+            sum += num;
+            var div = document.createElement('div');
+            div.className = 'tp-uuid';
+            div.textContent = num.toLocaleString();
+            fragment.appendChild(div);
+        }
+        listEl.appendChild(fragment);
+
+        sumEl.textContent = isFinite(sum) ? sum.toLocaleString() : '0';
+        avgEl.textContent = (numbers.length && isFinite(sum)) ? (sum / numbers.length).toFixed(2) : '0';
+    }
+
+    uniqueBtn.addEventListener('click', function() {
+        uniqueOnly = !uniqueOnly;
+        uniqueBtn.classList.toggle('on', uniqueOnly);
+        generate();
+    });
+
+    sortOpts.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-sort]');
+        if (!btn) return;
+        var children = sortOpts.querySelectorAll('.tp-toggle');
+        for (var i = 0; i < children.length; i++) {
+            children[i].classList.remove('on');
+        }
+        btn.classList.add('on');
+        sortOption = btn.getAttribute('data-sort');
+        generate();
+    });
+
+    genBtn.addEventListener('click', generate);
+    [minInput, maxInput, countInput].forEach(function(el) {
+        el.addEventListener('input', generate);
+    });
+
+    copyBtn.addEventListener('click', function() {
+        if (!lastNumbers.length) return;
+        var text = lastNumbers.join(', ');
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text);
+            var self = this;
+            var oldText = this.textContent;
+            this.textContent = 'Copied!';
+            setTimeout(function() { self.textContent = oldText; }, 1500);
+        }
+    });
+
+    generate();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -568,7 +726,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

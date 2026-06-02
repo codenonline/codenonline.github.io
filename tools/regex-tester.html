@@ -6,11 +6,15 @@
   <title>Regex Tester — Tools Catalog</title>
   <meta name="description" content="Test and debug regular expressions with real-time matching and explanation.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,351 @@ button:disabled{transform:none;}
         <p class="tp-desc">Test and debug regular expressions with real-time matching and explanation.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid" style="--tp-cols:1">
   <div class="tp-inputs">
+
+    <!-- Pattern input -->
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Pattern</span>
+      <div class="tp-field-input" style="display:flex;align-items:center;gap:4px">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink);font-family:monospace">/</span>
+        <input class="tp-input" id="rt-pattern" type="text" placeholder="e.g. \d+" style="font-family:monospace;flex:1">
+        <span class="tp-suffix" style="border-right:none;border-left:2px solid var(--ink);font-family:monospace">/</span>
+        <input class="tp-input" id="rt-flags" type="text" value="g" maxlength="6" style="font-family:monospace;width:3.5rem;text-align:center">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">regex-tester</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Regex Tester</span>
+
+    <!-- Flag toggles -->
+    <div class="tp-toggles tp-toggles--wrap" id="rt-flag-btns">
+      <button class="tp-toggle mono on" data-flag="g" title="Find all matches">g global</button>
+      <button class="tp-toggle mono" data-flag="i" title="Case-insensitive">i ignore case</button>
+      <button class="tp-toggle mono" data-flag="m" title="^ $ match line breaks">m multiline</button>
+      <button class="tp-toggle mono" data-flag="s" title=". matches newlines">s dot-all</button>
+      <button class="tp-toggle mono" data-flag="u" title="Unicode mode">u unicode</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Quick patterns -->
+    <div class="tp-field" style="gap:4px">
+      <span class="tp-field-label mono">Quick patterns</span>
+      <div class="tp-toggles tp-toggles--wrap" id="rt-quick-btns">
+        <button class="tp-toggle mono" data-pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" data-flags="g">Email</button>
+        <button class="tp-toggle mono" data-pattern="\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}" data-flags="g">Phone</button>
+        <button class="tp-toggle mono" data-pattern="https?:\/\/[^\s]+" data-flags="g">URL</button>
+        <button class="tp-toggle mono" data-pattern="\b(?:\d{1,3}\.){3}\d{1,3}\b" data-flags="g">IP Address</button>
+        <button class="tp-toggle mono" data-pattern="<[^>]+>" data-flags="g">HTML Tag</button>
+        <button class="tp-toggle mono" data-pattern="\d{1,2}[/-]\d{1,2}[/-]\d{2,4}" data-flags="g">Date</button>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div id="rt-error" style="display:none;background:var(--err-bg,#fee2e2);border:1px solid var(--err-border,#fca5a5);border-radius:6px;padding:8px 12px;font-size:.85rem;color:#b91c1c;font-family:monospace"></div>
+
+    <!-- Test string -->
+    <div class="tp-field">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="tp-field-label mono">Test string</span>
+        <span style="display:flex;gap:8px">
+          <button id="rt-load-sample" class="tp-toggle mono" style="padding:2px 8px;font-size:.75rem">Load sample</button>
+          <button id="rt-clear" class="tp-toggle mono" style="padding:2px 8px;font-size:.75rem">Clear</button>
+        </span>
+      </div>
+      <textarea id="rt-text" rows="5" placeholder="Enter text to test..." style="font-family:monospace;font-size:.85rem;width:100%;box-sizing:border-box;resize:vertical;padding:8px;border:2px solid var(--ink);border-radius:4px;background:var(--bg)"></textarea>
+    </div>
+
+    <!-- Highlighted output -->
+    <div id="rt-highlight-wrap" style="display:none">
+      <span class="tp-field-label mono">Highlighted matches</span>
+      <div id="rt-highlight" style="font-family:monospace;font-size:.85rem;white-space:pre-wrap;word-break:break-all;padding:8px;border:2px solid var(--ink);border-radius:4px;min-height:2rem;background:var(--bg)"></div>
+    </div>
+
+    <!-- Stats breakdown -->
+    <div class="tp-breakdown" id="rt-stats" style="display:none">
+      <div><span class="mono">Matches</span><b id="rt-match-count">0</b></div>
+      <div><span class="mono">Text length</span><b id="rt-text-len">0</b></div>
+      <div><span class="mono">Coverage</span><b id="rt-coverage">0%</b></div>
+      <div><span class="mono">test()</span><b id="rt-test-result">false</b></div>
+      <div><span class="mono">search() index</span><b id="rt-search-index">-1</b></div>
+    </div>
+
+    <!-- Matches list -->
+    <div id="rt-matches-wrap" style="display:none">
+      <span class="tp-field-label mono">Match details</span>
+      <div id="rt-matches" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Pattern explanation -->
+    <div id="rt-explain-wrap" style="display:none">
+      <span class="tp-field-label mono">Pattern explanation</span>
+      <div style="font-family:monospace;font-size:.82rem;padding:8px;border:2px solid var(--ink);border-radius:4px;background:var(--bg);margin-bottom:4px" id="rt-pattern-display"></div>
+      <ul id="rt-explain" style="margin:4px 0 0;padding-left:1.2em;font-size:.82rem;line-height:1.7"></ul>
+    </div>
+
+    <!-- Cheat sheet -->
+    <details style="border:2px solid var(--ink);border-radius:4px;padding:0">
+      <summary style="padding:8px 12px;cursor:pointer;font-family:monospace;font-weight:600;font-size:.88rem">Regex cheat sheet</summary>
+      <div id="rt-cheatsheet" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:12px"></div>
+    </details>
+
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Matches found</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="rt-result-num">0</span>
+    </div>
+    <span class="tp-result-note" id="rt-result-note">Enter a pattern to begin</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var patInput   = document.getElementById('rt-pattern');
+  var flagInput  = document.getElementById('rt-flags');
+  var textArea   = document.getElementById('rt-text');
+  var errorEl    = document.getElementById('rt-error');
+  var hlWrap     = document.getElementById('rt-highlight-wrap');
+  var hlEl       = document.getElementById('rt-highlight');
+  var statsEl    = document.getElementById('rt-stats');
+  var matchCount = document.getElementById('rt-match-count');
+  var textLen    = document.getElementById('rt-text-len');
+  var coverage   = document.getElementById('rt-coverage');
+  var testRes    = document.getElementById('rt-test-result');
+  var searchIdx  = document.getElementById('rt-search-index');
+  var matchWrap  = document.getElementById('rt-matches-wrap');
+  var matchList  = document.getElementById('rt-matches');
+  var explWrap   = document.getElementById('rt-explain-wrap');
+  var patDisp    = document.getElementById('rt-pattern-display');
+  var explList   = document.getElementById('rt-explain');
+  var resultNum  = document.getElementById('rt-result-num');
+  var resultNote = document.getElementById('rt-result-note');
+  var flagBtns   = document.getElementById('rt-flag-btns');
+  var quickBtns  = document.getElementById('rt-quick-btns');
+  var cheatEl    = document.getElementById('rt-cheatsheet');
+
+  var cheatSheet = [
+    { title: 'Character Classes', items: [
+      ['.','Any character'],['\\d','Digit'],['\\w','Word char'],['\\s','Whitespace'],
+      ['[abc]','Any of a,b,c'],['[^abc]','Not a,b,c'],['[a-z]','Range']
+    ]},
+    { title: 'Quantifiers', items: [
+      ['*','0 or more'],['+','1 or more'],['?','0 or 1'],['{3}','Exactly 3'],
+      ['{3,}','3 or more'],['{3,5}','3 to 5']
+    ]},
+    { title: 'Anchors', items: [
+      ['^','Start of string'],['$','End of string'],['\\b','Word boundary'],['\\B','Not word boundary']
+    ]},
+    { title: 'Groups', items: [
+      ['(abc)','Capturing group'],['(?:abc)','Non-capturing'],['(a|b)','Alternative'],['\\1','Backreference']
+    ]},
+    { title: 'Lookaround', items: [
+      ['(?=abc)','Positive lookahead'],['(?!abc)','Negative lookahead'],['(?<=abc)','Positive lookbehind'],['(?<!abc)','Negative lookbehind']
+    ]}
+  ];
+
+  // Build cheat sheet
+  cheatSheet.forEach(function (cat) {
+    var sec = document.createElement('div');
+    sec.innerHTML = '<strong style="font-family:monospace;font-size:.82rem">' + cat.title + '</strong>';
+    var tbl = document.createElement('div');
+    tbl.style.cssText = 'margin-top:4px;display:flex;flex-direction:column;gap:2px';
+    cat.items.forEach(function (item) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;justify-content:space-between;font-size:.78rem;gap:8px';
+      row.innerHTML = '<code style="background:var(--subtle,#f3f4f6);padding:0 4px;border-radius:3px;white-space:nowrap">' +
+        escHtml(item[0]) + '</code><span style="color:var(--muted,#6b7280)">' + escHtml(item[1]) + '</span>';
+      tbl.appendChild(row);
+    });
+    sec.appendChild(tbl);
+    cheatEl.appendChild(sec);
+  });
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function syncFlagButtons() {
+    var f = flagInput.value;
+    Array.prototype.forEach.call(flagBtns.children, function (btn) {
+      var flag = btn.getAttribute('data-flag');
+      if (flag) btn.classList.toggle('on', f.indexOf(flag) !== -1);
+    });
+  }
+
+  function run() {
+    var pat = patInput.value;
+    var flags = flagInput.value;
+    var text = textArea.value;
+
+    syncFlagButtons();
+
+    if (!pat) {
+      errorEl.style.display = 'none';
+      hlWrap.style.display = 'none';
+      statsEl.style.display = 'none';
+      matchWrap.style.display = 'none';
+      explWrap.style.display = 'none';
+      resultNum.textContent = '0';
+      resultNote.textContent = 'Enter a pattern to begin';
+      return;
+    }
+
+    var re;
+    try {
+      re = new RegExp(pat, flags);
+      errorEl.style.display = 'none';
+    } catch (e) {
+      errorEl.style.display = '';
+      errorEl.textContent = e.message;
+      hlWrap.style.display = 'none';
+      statsEl.style.display = 'none';
+      matchWrap.style.display = 'none';
+      explWrap.style.display = 'none';
+      resultNum.textContent = '!';
+      resultNote.textContent = 'Invalid pattern';
+      return;
+    }
+
+    // Pattern explanation
+    explWrap.style.display = '';
+    patDisp.textContent = '/' + pat + '/' + flags;
+    var exps = explain(pat, flags);
+    explList.innerHTML = exps.map(function (e) { return '<li>' + escHtml(e) + '</li>'; }).join('');
+
+    if (!text) {
+      hlWrap.style.display = 'none';
+      statsEl.style.display = 'none';
+      matchWrap.style.display = 'none';
+      resultNum.textContent = '0';
+      resultNote.textContent = 'Enter test text';
+      return;
+    }
+
+    // Collect matches (always global for collection)
+    var reG;
+    try {
+      reG = new RegExp(pat, flags.indexOf('g') === -1 ? flags + 'g' : flags);
+    } catch(e) { reG = re; }
+
+    var matches = Array.from(text.matchAll(reG));
+    var totalChars = matches.reduce(function (s, m) { return s + m[0].length; }, 0);
+    var pct = text.length ? Math.round(totalChars / text.length * 100) : 0;
+    var testBool = re.test(text);
+    var searchI = text.search(re);
+
+    // Stats
+    statsEl.style.display = '';
+    matchCount.textContent = matches.length;
+    textLen.textContent = text.length.toLocaleString();
+    coverage.textContent = pct + '%';
+    testRes.textContent = testBool ? 'true' : 'false';
+    testRes.style.color = testBool ? 'var(--green,#16a34a)' : 'var(--red,#dc2626)';
+    searchIdx.textContent = searchI >= 0 ? searchI : 'Not found';
+
+    // Highlight
+    hlWrap.style.display = '';
+    if (matches.length === 0) {
+      hlEl.innerHTML = escHtml(text);
+    } else {
+      var html = '';
+      var last = 0;
+      matches.forEach(function (m) {
+        html += escHtml(text.slice(last, m.index));
+        html += '<mark style="background:#fef08a;padding:0 2px;border-radius:2px">' + escHtml(m[0]) + '</mark>';
+        last = m.index + m[0].length;
+      });
+      html += escHtml(text.slice(last));
+      hlEl.innerHTML = html;
+    }
+
+    // Match list
+    if (matches.length > 0) {
+      matchWrap.style.display = '';
+      matchList.innerHTML = matches.map(function (m, i) {
+        var groups = '';
+        if (m.length > 1) {
+          groups = '<div style="margin-top:4px;font-size:.78rem">' +
+            m.slice(1).map(function (g, gi) {
+              return '<div style="font-family:monospace;background:var(--subtle,#eff6ff);padding:1px 4px;border-radius:3px;margin-top:2px">Group ' + (gi+1) + ': ' + escHtml(g != null ? g : '(empty)') + '</div>';
+            }).join('') + '</div>';
+        }
+        return '<div style="border:1px solid var(--ink);border-radius:4px;padding:8px">' +
+          '<div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">' +
+          '<span style="font-family:monospace;font-weight:600">Match ' + (i+1) + '</span>' +
+          '<span style="color:var(--muted,#6b7280)">pos ' + m.index + '&ndash;' + (m.index + m[0].length) + '</span></div>' +
+          '<div style="font-family:monospace;font-size:.85rem;background:#fef9c3;padding:4px 8px;border-radius:3px;border-left:3px solid #eab308">' +
+          escHtml(m[0]) + '</div>' + groups + '</div>';
+      }).join('');
+    } else {
+      matchWrap.style.display = '';
+      matchList.innerHTML = '<div style="text-align:center;color:var(--muted,#6b7280);padding:12px;font-family:monospace;font-size:.85rem">No matches found</div>';
+    }
+
+    // Result
+    resultNum.textContent = matches.length.toLocaleString();
+    resultNote.textContent = matches.length === 1 ? '1 match in ' + text.length + ' chars'
+      : matches.length + ' matches in ' + text.length + ' chars';
+  }
+
+  function explain(pat, flags) {
+    var out = [];
+    if (flags.indexOf('g') !== -1) out.push('Global: find all matches');
+    if (flags.indexOf('i') !== -1) out.push('Case-insensitive: ignore letter case');
+    if (flags.indexOf('m') !== -1) out.push('Multiline: ^ and $ match line breaks');
+    if (flags.indexOf('s') !== -1) out.push('Dot-all: . matches newline characters');
+    if (flags.indexOf('u') !== -1) out.push('Unicode: full Unicode matching');
+    if (pat.indexOf('^') !== -1) out.push('^ anchors to start of string/line');
+    if (pat.indexOf('$') !== -1) out.push('$ anchors to end of string/line');
+    if (pat.indexOf('\\d') !== -1) out.push('\\d matches any digit (0-9)');
+    if (pat.indexOf('\\w') !== -1) out.push('\\w matches word characters (a-z, A-Z, 0-9, _)');
+    if (pat.indexOf('\\s') !== -1) out.push('\\s matches whitespace');
+    if (pat.indexOf('\\b') !== -1) out.push('\\b is a word boundary assertion');
+    if (/\+/.test(pat)) out.push('+ quantifier: one or more occurrences');
+    if (/(?<!\+)\*/.test(pat)) out.push('* quantifier: zero or more occurrences');
+    if (/\?(?![=!:])/.test(pat)) out.push('? quantifier: zero or one occurrence');
+    if (pat.indexOf('|') !== -1) out.push('| alternation: matches left or right side');
+    if (/\((?!\?)/.test(pat)) out.push('(...) creates a capturing group');
+    if (pat.indexOf('(?:') !== -1) out.push('(?:...) is a non-capturing group');
+    if (pat.indexOf('(?=') !== -1) out.push('(?=...) is a positive lookahead');
+    if (pat.indexOf('(?!') !== -1) out.push('(?!...) is a negative lookahead');
+    if (out.length === 0) out.push('Pattern uses standard regex characters');
+    return out;
+  }
+
+  // Flag toggle buttons
+  flagBtns.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-flag]');
+    if (!btn) return;
+    var flag = btn.getAttribute('data-flag');
+    var cur = flagInput.value;
+    flagInput.value = cur.indexOf(flag) !== -1 ? cur.replace(flag, '') : cur + flag;
+    run();
+  });
+
+  // Quick pattern buttons
+  quickBtns.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-pattern]');
+    if (!btn) return;
+    patInput.value = btn.getAttribute('data-pattern');
+    flagInput.value = btn.getAttribute('data-flags') || 'g';
+    run();
+  });
+
+  document.getElementById('rt-load-sample').addEventListener('click', function () {
+    textArea.value = 'John Doe - john.doe@example.com - (555) 123-4567\nVisit our website: https://www.example.com or call +1-800-555-0199\nEmail support@company.org for assistance.\nIP Address: 192.168.1.1\nDate: 12/25/2023 or 2023-12-25\nHTML: <div class="container">Content</div>';
+    run();
+  });
+
+  document.getElementById('rt-clear').addEventListener('click', function () {
+    textArea.value = '';
+    run();
+  });
+
+  [patInput, flagInput].forEach(function (el) { el.addEventListener('input', run); });
+  textArea.addEventListener('input', run);
+
+  run();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +901,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

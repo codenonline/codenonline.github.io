@@ -6,11 +6,15 @@
   <title>Suppression des Espaces Supplémentaires — Tools Catalog</title>
   <meta name="description" content="Supprime les espaces supplémentaires, les tabulations et normalise les espaces.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,193 @@ button:disabled{transform:none;}
         <p class="tp-desc">Supprime les espaces supplémentaires, les tabulations et normalise les espaces.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-input tp-textarea tp-textarea--tall" id="esr-input" placeholder="Paste text here..."></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Action</span>
+      <div class="tp-toggles tp-toggles--wrap" id="esr-modes">
+        <button class="tp-toggle mono on" data-mode="spaces">Spaces</button>
+        <button class="tp-toggle mono" data-mode="normalize">Normalize</button>
+        <button class="tp-toggle mono" data-mode="tabs">Tabs</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">extra-space-remover</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Texte</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Suppression des Es</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Options</span>
+      <div class="tp-toggles tp-toggles--wrap" id="esr-options">
+        <button class="tp-toggle mono on" data-opt="removeLeadingSpaces">Leading</button>
+        <button class="tp-toggle mono on" data-opt="removeTrailingSpaces">Trailing</button>
+        <button class="tp-toggle mono" data-opt="removeEmptyLines">Empty lines</button>
+        <button class="tp-toggle mono on" data-opt="convertTabsToSpaces">Tabs→Spaces</button>
+        <button class="tp-toggle mono on" data-opt="preserveSingleSpaces">Keep single</button>
+        <button class="tp-toggle mono on" data-opt="trimLines">Trim lines</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Tab size</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="esr-tab-size" type="number" value="4" min="1" max="8">
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label mono">Cleaned text</span>
+    <textarea class="tp-input tp-textarea tp-textarea--tall" id="esr-output" readonly style="margin-bottom: 20px;"></textarea>
+    
+    <div class="tp-stat-big"><b id="esr-s-pct">0%</b><span>reduction</span></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Characters removed</span><b id="esr-s-removed">0</b></div>
+      <div><span class="mono">Lines cleaned</span><b id="esr-s-lines">0</b></div>
+      <div><span class="mono">Extra spaces found</span><b id="esr-s-extra">0</b></div>
+    </div>
+    
+    <div class="tp-breakdown">
+        <div><span class="mono">Original length</span><b id="esr-s-orig">0</b></div>
+        <div><span class="mono">Cleaned length</span><b id="esr-s-clean">0</b></div>
+    </div>
+
+    <button class="tp-gen mono" id="esr-copy" style="margin-top: 20px">Copy result</button>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('esr-input');
+  const output = document.getElementById('esr-output');
+  const tabSize = document.getElementById('esr-tab-size');
+  const modes = document.getElementById('esr-modes');
+  const options = document.getElementById('esr-options');
+  const copyBtn = document.getElementById('esr-copy');
+
+  const sOrig = document.getElementById('esr-s-orig');
+  const sClean = document.getElementById('esr-s-clean');
+  const sPct = document.getElementById('esr-s-pct');
+  const sRemoved = document.getElementById('esr-s-removed');
+  const sLines = document.getElementById('esr-s-lines');
+  const sExtra = document.getElementById('esr-s-extra');
+
+  let currentMode = 'spaces';
+  let opts = {
+    removeLeadingSpaces: true,
+    removeTrailingSpaces: true,
+    removeEmptyLines: false,
+    convertTabsToSpaces: true,
+    preserveSingleSpaces: true,
+    trimLines: true
+  };
+
+  function update() {
+    let text = input.value;
+    if (!text) {
+      output.value = '';
+      updateStats('', '');
+      return;
+    }
+
+    let result = text;
+
+    if (currentMode === 'spaces') {
+      if (!opts.preserveSingleSpaces) {
+        result = result.replace(/\s+/g, ' ');
+      } else {
+        result = result.replace(/[ ]{2,}/g, ' ');
+      }
+    } else if (currentMode === 'normalize') {
+      result = result.replace(/[\s\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]+/g, ' ');
+    } else if (currentMode === 'tabs') {
+      if (opts.convertTabsToSpaces) {
+        const spaces = ' '.repeat(parseInt(tabSize.value) || 4);
+        result = result.replace(/\t/g, spaces);
+      } else {
+        result = result.replace(/\t/g, '');
+      }
+    }
+
+    let lines = result.split('\n');
+    if (opts.trimLines) {
+      lines = lines.map(line => line.trim());
+    } else {
+      if (opts.removeLeadingSpaces) {
+        lines = lines.map(line => line.replace(/^\s+/, ''));
+      }
+      if (opts.removeTrailingSpaces) {
+        lines = lines.map(line => line.replace(/\s+$/, ''));
+      }
+    }
+
+    if (opts.removeEmptyLines) {
+      lines = lines.filter(line => line.length > 0);
+    }
+
+    if (opts.convertTabsToSpaces && currentMode !== 'tabs') {
+      const spaces = ' '.repeat(parseInt(tabSize.value) || 4);
+      lines = lines.map(line => line.replace(/\t/g, spaces));
+    }
+
+    const finalResult = lines.join('\n');
+    output.value = finalResult;
+    updateStats(text, finalResult);
+  }
+
+  function updateStats(orig, clean) {
+    const origLen = orig.length;
+    const cleanLen = clean.length;
+    const removed = origLen - cleanLen;
+    const pct = origLen > 0 ? Math.round((removed / origLen) * 100) : 0;
+    
+    const extraSpaces = (orig.match(/\s{2,}/g) || []).length;
+    const origLines = orig ? orig.split('\n').length : 0;
+    const cleanLines = clean ? clean.split('\n').length : 0;
+    const linesCleaned = Math.max(0, origLines - cleanLines);
+
+    sOrig.textContent = origLen.toLocaleString();
+    sClean.textContent = cleanLen.toLocaleString();
+    sPct.textContent = pct + '%';
+    sRemoved.textContent = removed.toLocaleString();
+    sLines.textContent = linesCleaned.toLocaleString();
+    sExtra.textContent = extraSpaces.toLocaleString();
+  }
+
+  input.addEventListener('input', update);
+  tabSize.addEventListener('input', update);
+
+  modes.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    Array.from(modes.querySelectorAll('.tp-toggle')).forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    currentMode = btn.getAttribute('data-mode');
+    update();
+  });
+
+  options.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    btn.classList.toggle('on');
+    const opt = btn.getAttribute('data-opt');
+    opts[opt] = btn.classList.contains('on');
+    update();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value);
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => { copyBtn.textContent = originalText; }, 2000);
+  });
+
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +743,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

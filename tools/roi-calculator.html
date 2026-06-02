@@ -6,11 +6,15 @@
   <title>ROI Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate Return on Investment for business and personal investments.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,193 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Initial Investment</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="initial" type="number" inputmode="decimal" value="10000" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">roi-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">ROI Calculator</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Final Value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="final" type="number" inputmode="decimal" value="12500" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Addl. Costs</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="costs" type="number" inputmode="decimal" value="250" step="0.01">
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Period</span>
+        <input class="tp-input" id="period" type="number" inputmode="decimal" value="2" step="0.1">
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Unit</span>
+        <div class="tp-toggles" id="period-type">
+          <button class="tp-toggle mono on" data-v="years">Yrs</button>
+          <button class="tp-toggle mono" data-v="months">Mos</button>
+          <button class="tp-toggle mono" data-v="days">Days</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Calculation Method</span>
+      <div class="tp-toggles tp-toggles--wrap" id="method">
+        <button class="tp-toggle mono" data-v="simple">Simple ROI</button>
+        <button class="tp-toggle mono on" data-v="annualized">Annualized</button>
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Scenarios</span>
+      <div class="tp-toggles tp-toggles--wrap" id="scenarios">
+        <button class="tp-toggle mono" data-s="stock">Stock</button>
+        <button class="tp-toggle mono" data-s="realestate">Real Estate</button>
+        <button class="tp-toggle mono" data-s="business">Business</button>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total Investment</span><b id="bd-total-inv">$0.00</b></div>
+      <div><span class="mono">Total Gain/Loss</span><b id="bd-gain-loss">$0.00</b></div>
+      <div id="bd-ann-row"><span class="mono">Annualized Return</span><b id="bd-ann-roi">0.00%</b></div>
+      <div><span class="mono">Break-even Point</span><b id="bd-be">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="r-label">Annualized ROI</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-out">0.00</span>
+      <span class="tp-result-prefix" style="border-right:none;border-left:2px solid var(--ink)">%</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Performance: Positive</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var initial = document.getElementById('initial');
+  var final = document.getElementById('final');
+  var costs = document.getElementById('costs');
+  var period = document.getElementById('period');
+  var periodType = document.getElementById('period-type');
+  var method = document.getElementById('method');
+  var scenarios = document.getElementById('scenarios');
+
+  var curPeriodType = 'years';
+  var curMethod = 'annualized';
+
+  function money(n) {
+    return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    var ini = parseFloat(initial.value) || 0;
+    var fin = parseFloat(final.value) || 0;
+    var cst = parseFloat(costs.value) || 0;
+    var per = parseFloat(period.value) || 0;
+
+    var totalInv = ini + cst;
+    var gainLoss = fin - totalInv;
+    
+    var roi = 0;
+    if (totalInv > 0) {
+      roi = (gainLoss / totalInv) * 100;
+    }
+
+    var yearsHeld = per;
+    if (curPeriodType === 'months') yearsHeld = per / 12;
+    if (curPeriodType === 'days') yearsHeld = per / 365;
+
+    var annRoi = roi;
+    if (yearsHeld > 0 && totalInv > 0 && fin > 0) {
+      annRoi = (Math.pow(fin / totalInv, 1 / yearsHeld) - 1) * 100;
+    }
+
+    var displayRoi = curMethod === 'annualized' ? annRoi : roi;
+
+    document.getElementById('bd-total-inv').textContent = money(totalInv);
+    document.getElementById('bd-gain-loss').textContent = (gainLoss >= 0 ? '+' : '') + money(gainLoss);
+    document.getElementById('bd-ann-roi').textContent = annRoi.toFixed(2) + '%';
+    document.getElementById('bd-ann-row').style.display = curMethod === 'annualized' ? 'flex' : 'none';
+    document.getElementById('bd-be').textContent = money(totalInv);
+
+    document.getElementById('r-out').textContent = displayRoi.toFixed(2);
+    document.getElementById('r-label').textContent = curMethod === 'annualized' ? 'Annualized ROI' : 'Simple ROI';
+
+    var perf = 'No data';
+    if (totalInv > 0) {
+      if (roi > 20) perf = 'Excellent';
+      else if (roi > 10) perf = 'Good';
+      else if (roi > 0) perf = 'Positive';
+      else if (roi === 0) perf = 'Break-even';
+      else perf = 'Loss';
+    }
+    
+    var note = 'Performance: ' + perf;
+    if (per > 0) {
+      note += ' over ' + per + ' ' + curPeriodType;
+    }
+    document.getElementById('r-note').textContent = note;
+  }
+
+  periodType.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-v]');
+    if (!btn) return;
+    curPeriodType = btn.getAttribute('data-v');
+    Array.prototype.forEach.call(periodType.children, function (b) { b.classList.toggle('on', b === btn); });
+    calc();
+  });
+
+  method.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-v]');
+    if (!btn) return;
+    curMethod = btn.getAttribute('data-v');
+    Array.prototype.forEach.call(method.children, function (b) { b.classList.toggle('on', b === btn); });
+    calc();
+  });
+
+  scenarios.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-s]');
+    if (!btn) return;
+    var s = btn.getAttribute('data-s');
+    if (s === 'stock') {
+      initial.value = 10000; final.value = 12500; costs.value = 25; period.value = 1;
+      setPeriodType('years');
+    } else if (s === 'realestate') {
+      initial.value = 250000; final.value = 300000; costs.value = 15000; period.value = 5;
+      setPeriodType('years');
+    } else if (s === 'business') {
+      initial.value = 50000; final.value = 75000; costs.value = 5000; period.value = 3;
+      setPeriodType('years');
+    }
+    curMethod = 'annualized';
+    Array.prototype.forEach.call(method.children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === 'annualized'); });
+    calc();
+  });
+
+  function setPeriodType(v) {
+    curPeriodType = v;
+    Array.prototype.forEach.call(periodType.children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === v); });
+  }
+
+  [initial, final, costs, period].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +746,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

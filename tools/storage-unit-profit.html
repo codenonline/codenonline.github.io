@@ -6,11 +6,15 @@
   <title>Storage Unit Profit Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate profit from storage unit investments.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,285 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
+
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Purchase price</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="sup-price" type="number" inputmode="decimal" value="500000" min="0" step="1000">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">storage-unit-profit</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Storage Unit Profi</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Down payment</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-down" type="number" inputmode="decimal" value="25" min="0" max="100" step="1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Interest rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-rate" type="number" inputmode="decimal" value="6.5" min="0" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Loan term</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-term" type="number" inputmode="numeric" value="30" min="1" max="40" step="1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Analysis period</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-period" type="number" inputmode="numeric" value="10" min="1" max="30" step="1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Renovation costs</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="sup-reno" type="number" inputmode="decimal" value="50000" min="0" step="1000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Closing costs</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="sup-closing" type="number" inputmode="decimal" value="15000" min="0" step="1000">
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total units</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-units" type="number" inputmode="numeric" value="100" min="1" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Avg monthly rent</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="sup-rent" type="number" inputmode="decimal" value="150" min="0" step="10">
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Occupancy rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-occ" type="number" inputmode="decimal" value="85" min="0" max="100" step="1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Annual rent increase</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="sup-rent-inc" type="number" inputmode="decimal" value="3" min="0" max="20" step="0.5">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <details>
+      <summary class="mono" style="cursor:pointer;font-size:.85rem;padding:.35rem 0;user-select:none">Monthly expenses ▸</summary>
+      <div style="padding-top:.5rem">
+        <div class="tp-two">
+          <div class="tp-field">
+            <span class="tp-field-label mono">Property taxes</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-tax" type="number" inputmode="decimal" value="1500" min="0" step="100">
+            </div>
+          </div>
+          <div class="tp-field">
+            <span class="tp-field-label mono">Insurance</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-ins" type="number" inputmode="decimal" value="800" min="0" step="50">
+            </div>
+          </div>
+        </div>
+        <div class="tp-two">
+          <div class="tp-field">
+            <span class="tp-field-label mono">Maintenance</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-maint" type="number" inputmode="decimal" value="1000" min="0" step="100">
+            </div>
+          </div>
+          <div class="tp-field">
+            <span class="tp-field-label mono">Management fees</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-mgmt" type="number" inputmode="decimal" value="2000" min="0" step="100">
+            </div>
+          </div>
+        </div>
+        <div class="tp-two">
+          <div class="tp-field">
+            <span class="tp-field-label mono">Utilities</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-util" type="number" inputmode="decimal" value="600" min="0" step="50">
+            </div>
+          </div>
+          <div class="tp-field">
+            <span class="tp-field-label mono">Other expenses</span>
+            <div class="tp-field-input">
+              <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+              <input class="tp-input" id="sup-other" type="number" inputmode="decimal" value="500" min="0" step="50">
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Cash invested</span><b id="sup-bd-cash">$0</b></div>
+      <div><span class="mono">Monthly income (net)</span><b id="sup-bd-income">$0</b></div>
+      <div><span class="mono">Monthly expenses</span><b id="sup-bd-exp">$0</b></div>
+      <div><span class="mono">Cap rate</span><b id="sup-bd-cap">0.00%</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Monthly cash flow</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix" id="sup-r-prefix">$</span>
+      <span class="tp-result-num" id="sup-r-cf">0</span>
+    </div>
+    <span class="tp-result-note" id="sup-r-note">CoC: 0.00% · ROI: 0.00%</span>
+
+    <div id="sup-table-wrap" style="margin-top:1.25rem;overflow-x:auto;font-size:.78rem;width:100%">
+      <table style="width:100%;border-collapse:collapse;text-align:right" id="sup-proj-table">
+        <thead>
+          <tr style="border-bottom:2px solid var(--ink)">
+            <th style="text-align:left;padding:.25rem .4rem" class="mono">Yr</th>
+            <th style="padding:.25rem .4rem" class="mono">Gross</th>
+            <th style="padding:.25rem .4rem" class="mono">Net</th>
+            <th style="padding:.25rem .4rem" class="mono">Exp</th>
+            <th style="padding:.25rem .4rem" class="mono">Cash flow</th>
+            <th style="padding:.25rem .4rem" class="mono">Cumul.</th>
+          </tr>
+        </thead>
+        <tbody id="sup-proj-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
+<script>
+(function () {
+  function el(id) { return document.getElementById(id); }
+  function n(id) { return parseFloat(el(id).value) || 0; }
+  function fmt(v) { return '$' + Math.round(Math.abs(v)).toLocaleString(); }
+  function sign(v) { return v < 0 ? '-$' : '$'; }
+
+  function calc() {
+    var price    = n('sup-price');
+    var downPct  = n('sup-down');
+    var rate     = n('sup-rate');
+    var term     = Math.max(1, parseInt(el('sup-term').value, 10) || 1);
+    var period   = Math.max(1, Math.min(30, parseInt(el('sup-period').value, 10) || 10));
+    var reno     = n('sup-reno');
+    var closing  = n('sup-closing');
+    var units    = Math.max(1, parseInt(el('sup-units').value, 10) || 1);
+    var rent     = n('sup-rent');
+    var occ      = n('sup-occ');
+    var rentInc  = n('sup-rent-inc');
+    var tax      = n('sup-tax');
+    var ins      = n('sup-ins');
+    var maint    = n('sup-maint');
+    var mgmt     = n('sup-mgmt');
+    var util     = n('sup-util');
+    var other    = n('sup-other');
+
+    var downPayment = price * (downPct / 100);
+    var loanAmount  = price - downPayment;
+    var totalCash   = downPayment + closing + reno;
+
+    var grossIncome = units * rent;
+    var vacancyLoss = grossIncome * ((100 - occ) / 100);
+    var netIncome   = grossIncome - vacancyLoss;
+
+    var opExp = tax + ins + maint + mgmt + util + other;
+
+    var mortgage = 0;
+    if (rate > 0 && term > 0 && loanAmount > 0) {
+      var r   = rate / 100 / 12;
+      var np  = term * 12;
+      var pow = Math.pow(1 + r, np);
+      mortgage = loanAmount * (r * pow) / (pow - 1);
+    }
+
+    var totalExp  = opExp + mortgage;
+    var cashFlow  = netIncome - totalExp;
+    var annualNOI = (netIncome - opExp) * 12;
+    var capRate   = price > 0 ? (annualNOI / price) * 100 : 0;
+    var annualCF  = cashFlow * 12;
+    var coc       = totalCash > 0 ? (annualCF / totalCash) * 100 : 0;
+
+    // yearly projection
+    var rows = '';
+    var cumul = 0;
+    var totalCumul = 0;
+    for (var yr = 1; yr <= period; yr++) {
+      var adjRent      = rent * Math.pow(1 + rentInc / 100, yr - 1);
+      var yGross       = units * adjRent * 12;
+      var yVacancy     = yGross * ((100 - occ) / 100);
+      var yNet         = yGross - yVacancy;
+      var yExp         = (opExp + mortgage) * 12;
+      var yCF          = yNet - yExp;
+      cumul           += yCF;
+      totalCumul       = cumul;
+      var cfColor      = yCF  >= 0 ? 'color:var(--green,#2a7)' : 'color:var(--red,#c33)';
+      var cumColor     = cumul >= 0 ? 'color:var(--green,#2a7)' : 'color:var(--red,#c33)';
+      rows += '<tr style="border-bottom:1px solid var(--border,#ddd)">'
+        + '<td style="text-align:left;padding:.2rem .4rem" class="mono">' + yr + '</td>'
+        + '<td style="padding:.2rem .4rem">' + fmt(yGross) + '</td>'
+        + '<td style="padding:.2rem .4rem">' + fmt(yNet) + '</td>'
+        + '<td style="padding:.2rem .4rem">' + fmt(yExp) + '</td>'
+        + '<td style="padding:.2rem .4rem;' + cfColor + '">' + (yCF < 0 ? '-' : '') + fmt(yCF) + '</td>'
+        + '<td style="padding:.2rem .4rem;' + cumColor + '">' + (cumul < 0 ? '-' : '') + fmt(cumul) + '</td>'
+        + '</tr>';
+    }
+
+    var totalROI = totalCash > 0 ? (totalCumul / totalCash) * 100 : 0;
+
+    el('sup-r-cf').textContent  = isFinite(cashFlow) ? Math.round(Math.abs(cashFlow)).toLocaleString() : '0';
+    el('sup-r-prefix').textContent = cashFlow < 0 ? '-$' : '$';
+    el('sup-r-note').textContent = 'CoC: ' + (isFinite(coc) ? coc.toFixed(2) : '0.00') + '% · ROI (' + period + 'yr): ' + (isFinite(totalROI) ? totalROI.toFixed(2) : '0.00') + '%';
+
+    el('sup-bd-cash').textContent   = fmt(totalCash);
+    el('sup-bd-income').textContent = fmt(netIncome);
+    el('sup-bd-exp').textContent    = fmt(totalExp);
+    el('sup-bd-cap').textContent    = (isFinite(capRate) ? capRate.toFixed(2) : '0.00') + '%';
+
+    el('sup-proj-body').innerHTML = rows;
+  }
+
+  var inputs = ['sup-price','sup-down','sup-rate','sup-term','sup-period',
+    'sup-reno','sup-closing','sup-units','sup-rent','sup-occ','sup-rent-inc',
+    'sup-tax','sup-ins','sup-maint','sup-mgmt','sup-util','sup-other'];
+  inputs.forEach(function(id) {
+    el(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +837,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

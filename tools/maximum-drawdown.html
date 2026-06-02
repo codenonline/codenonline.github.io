@@ -6,11 +6,15 @@
   <title>Maximum Drawdown Calculator — Tools Catalog</title>
   <meta name="description" content="Identify the largest peak-to-trough decline in a portfolio&#39;s value to assess worst-case loss and evaluate risk tolerance.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,186 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+      <span class="tp-field-label mono">Portfolio values (comma-separated)</span>
+      <textarea class="tp-input" id="mdd-values" rows="4" placeholder="100000, 105000, 103000, 110000, 95000, 98000..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">maximum-drawdown</p>
+    <div class="tp-toggles" id="mdd-sample-btn">
+      <button class="tp-toggle mono" id="mdd-load-sample">Load sample data</button>
+    </div>
+    <div class="tp-breakdown" id="mdd-breakdown" style="display:none">
+      <div><span class="mono">Peak value</span><b id="mdd-peak-val">—</b></div>
+      <div><span class="mono">Trough value</span><b id="mdd-trough-val">—</b></div>
+      <div><span class="mono">Peak period</span><b id="mdd-peak-idx">—</b></div>
+      <div><span class="mono">Trough period</span><b id="mdd-trough-idx">—</b></div>
+      <div><span class="mono">Recovery</span><b id="mdd-recovery">—</b></div>
+      <div><span class="mono">Total return</span><b id="mdd-total-return">—</b></div>
+      <div><span class="mono">Volatility</span><b id="mdd-volatility">—</b></div>
+      <div><span class="mono">Periods</span><b id="mdd-periods">—</b></div>
+    </div>
+    <div id="mdd-error" style="display:none;color:var(--red,#dc2626);font-size:.85em;margin-top:.5rem"></div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
+    <span class="tp-result-label">Max drawdown</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Maximum Drawdown C</span>
+      <span class="tp-result-num" id="mdd-result">—</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="mdd-note">Enter values to calculate</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var textarea = document.getElementById('mdd-values');
+  var resultEl = document.getElementById('mdd-result');
+  var noteEl   = document.getElementById('mdd-note');
+  var errorEl  = document.getElementById('mdd-error');
+  var breakdown = document.getElementById('mdd-breakdown');
+
+  var SAMPLE = '100000, 105000, 103000, 110000, 115000, 108000, 95000, 98000, 102000, 118000, 112000, 125000, 120000, 135000';
+
+  document.getElementById('mdd-load-sample').addEventListener('click', function () {
+    textarea.value = SAMPLE;
+    calc();
+  });
+
+  function fmt(n) {
+    if (!isFinite(n)) return '—';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function fmtPct(n) {
+    if (!isFinite(n)) return '—';
+    return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+  }
+
+  function fmtPctAbs(n) {
+    if (!isFinite(n)) return '—';
+    return n.toFixed(2) + '%';
+  }
+
+  function computeMaxDrawdown(values) {
+    var runningMax = values[0];
+    var maxDD = 0, peakIdx = 0, troughIdx = 0, curPeak = 0;
+    var inDD = false, curDD = 0;
+    var drawdowns = [];
+
+    for (var i = 0; i < values.length; i++) {
+      var v = values[i];
+      if (v > runningMax) {
+        if (inDD && curDD < 0) {
+          drawdowns.push({ peakIndex: curPeak, troughIndex: i - 1, drawdown: Math.abs(curDD), recoveryPeriod: null });
+        }
+        runningMax = v;
+        curPeak = i;
+        curDD = 0;
+        inDD = false;
+      } else {
+        curDD = (v - runningMax) / runningMax * 100;
+        inDD = true;
+        if (Math.abs(curDD) > Math.abs(maxDD)) {
+          maxDD = curDD;
+          peakIdx = curPeak;
+          troughIdx = i;
+        }
+      }
+    }
+    if (inDD && curDD < 0) {
+      drawdowns.push({ peakIndex: curPeak, troughIndex: values.length - 1, drawdown: Math.abs(curDD), recoveryPeriod: null });
+    }
+
+    drawdowns.forEach(function (dd) {
+      var pv = values[dd.peakIndex];
+      for (var i = dd.troughIndex + 1; i < values.length; i++) {
+        if (values[i] >= pv) { dd.recoveryPeriod = i - dd.troughIndex; break; }
+      }
+    });
+    drawdowns.sort(function (a, b) { return b.drawdown - a.drawdown; });
+
+    var recoveryPeriod = null;
+    var peakVal = values[peakIdx];
+    for (var i = troughIdx + 1; i < values.length; i++) {
+      if (values[i] >= peakVal) { recoveryPeriod = i - troughIdx; break; }
+    }
+
+    var initial = values[0], final = values[values.length - 1];
+    var totalReturn = (final - initial) / initial * 100;
+    var avg = values.reduce(function (s, x) { return s + x; }, 0) / values.length;
+
+    var returns = [];
+    for (var i = 1; i < values.length; i++) {
+      returns.push((values[i] - values[i-1]) / values[i-1] * 100);
+    }
+    var avgR = returns.reduce(function (s, r) { return s + r; }, 0) / returns.length;
+    var variance = returns.reduce(function (s, r) { return s + Math.pow(r - avgR, 2); }, 0) / returns.length;
+    var volatility = Math.sqrt(variance);
+
+    return {
+      maxDrawdown: Math.abs(maxDD),
+      peakValue: values[peakIdx],
+      troughValue: values[troughIdx],
+      peakIndex: peakIdx,
+      troughIndex: troughIdx,
+      recoveryPeriod: recoveryPeriod,
+      totalReturn: totalReturn,
+      volatility: volatility,
+      periods: values.length
+    };
+  }
+
+  function calc() {
+    errorEl.style.display = 'none';
+    var raw = textarea.value.trim();
+    if (!raw) {
+      resultEl.textContent = '—';
+      noteEl.textContent = 'Enter values to calculate';
+      breakdown.style.display = 'none';
+      return;
+    }
+
+    var parts = raw.split(',');
+    var values = [];
+    for (var i = 0; i < parts.length; i++) {
+      var n = parseFloat(parts[i].trim());
+      if (isNaN(n) || n <= 0) {
+        errorEl.textContent = 'Invalid value at position ' + (i + 1) + '. All values must be positive numbers.';
+        errorEl.style.display = 'block';
+        resultEl.textContent = '—';
+        noteEl.textContent = 'Fix input to calculate';
+        breakdown.style.display = 'none';
+        return;
+      }
+      values.push(n);
+    }
+
+    if (values.length < 2) {
+      errorEl.textContent = 'Enter at least 2 values.';
+      errorEl.style.display = 'block';
+      resultEl.textContent = '—';
+      breakdown.style.display = 'none';
+      return;
+    }
+
+    var r = computeMaxDrawdown(values);
+
+    resultEl.textContent = fmtPctAbs(r.maxDrawdown);
+    noteEl.textContent = 'Period ' + (r.peakIndex + 1) + ' → ' + (r.troughIndex + 1);
+
+    document.getElementById('mdd-peak-val').textContent    = fmt(r.peakValue);
+    document.getElementById('mdd-trough-val').textContent  = fmt(r.troughValue);
+    document.getElementById('mdd-peak-idx').textContent    = r.peakIndex + 1;
+    document.getElementById('mdd-trough-idx').textContent  = r.troughIndex + 1;
+    document.getElementById('mdd-recovery').textContent    = r.recoveryPeriod ? r.recoveryPeriod + ' periods' : 'Not recovered';
+    document.getElementById('mdd-total-return').textContent = fmtPct(r.totalReturn);
+    document.getElementById('mdd-volatility').textContent  = fmtPctAbs(r.volatility);
+    document.getElementById('mdd-periods').textContent     = r.periods;
+
+    breakdown.style.display = '';
+  }
+
+  textarea.addEventListener('input', calc);
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +739,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

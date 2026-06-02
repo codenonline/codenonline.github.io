@@ -6,11 +6,15 @@
   <title>Text Case Converter — Tools Catalog</title>
   <meta name="description" content="Convert text between different cases (upper, lower, title, camel, etc.).">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,183 @@ button:disabled{transform:none;}
         <p class="tp-desc">Convert text between different cases (upper, lower, title, camel, etc.).</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="input" placeholder="Type or paste text here..."></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Case style</span>
+      <div class="tp-toggles tp-toggles--wrap" id="case-toggles">
+        <button class="tp-toggle mono on" data-case="upper">UPPER CASE</button>
+        <button class="tp-toggle mono" data-case="lower">lower case</button>
+        <button class="tp-toggle mono" data-case="title">Title Case</button>
+        <button class="tp-toggle mono" data-case="sentence">Sentence case</button>
+        <button class="tp-toggle mono" data-case="camel">camelCase</button>
+        <button class="tp-toggle mono" data-case="pascal">PascalCase</button>
+        <button class="tp-toggle mono" data-case="snake">snake_case</button>
+        <button class="tp-toggle mono" data-case="kebab">kebab-case</button>
+        <button class="tp-toggle mono" data-case="constant">CONSTANT_CASE</button>
+        <button class="tp-toggle mono" data-case="dot">dot.case</button>
+        <button class="tp-toggle mono" data-case="path">path/case</button>
+        <button class="tp-toggle mono" data-case="toggle">tOGGLE cASE</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">text-case-converter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Text Case Converte</span>
+
+    <div class="tp-two" style="margin-top:10px">
+      <button class="tp-toggle mono" id="paste-btn" style="border-color:var(--ink)">Paste</button>
+      <button class="tp-toggle mono" id="clear-btn" style="border-color:var(--ink)">Clear</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+  </div>
+
+  <div class="tp-result tp-result--pw">
+    <span class="tp-result-label">Converted result</span>
+    <div class="tp-pw" id="output" style="min-height:120px; white-space:pre-wrap; word-break:break-all; font-size:1.1rem; margin-bottom:20px">—</div>
+    
+    <button class="tp-gen mono" id="copy-btn">Copy result</button>
+
+    <div class="tp-statgrid" style="margin-top:auto">
+      <div><span class="mono">Characters</span><b id="s-chars">0</b></div>
+      <div><span class="mono">Chars (no spaces)</span><b id="s-chars-ns">0</b></div>
+      <div><span class="mono">Words</span><b id="s-words">0</b></div>
+      <div><span class="mono">Lines</span><b id="s-lines">0</b></div>
+      <div><span class="mono">Sentences</span><b id="s-sentences">0</b></div>
+      <div><span class="mono">Paragraphs</span><b id="s-paragraphs">0</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  var caseToggles = document.getElementById('case-toggles');
+  var copyBtn = document.getElementById('copy-btn');
+  var pasteBtn = document.getElementById('paste-btn');
+  var clearBtn = document.getElementById('clear-btn');
+  
+  var currentCase = 'upper';
+
+  var converters = {
+    upper: function(t) { return t.toUpperCase(); },
+    lower: function(t) { return t.toLowerCase(); },
+    title: function(t) {
+      return t.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      });
+    },
+    sentence: function(t) {
+      return t.toLowerCase().replace(/(^\w|[.!?]\s*\w)/g, function(match) {
+        return match.toUpperCase();
+      });
+    },
+    camel: function(t) {
+      return t.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+      }).replace(/\s+/g, '').replace(/[^\w]/g, '');
+    },
+    pascal: function(t) {
+      return t.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word) {
+        return word.toUpperCase();
+      }).replace(/\s+/g, '').replace(/[^\w]/g, '');
+    },
+    snake: function(t) {
+      return t.toLowerCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '').replace(/_+/g, '_').replace(/^_|_$/g, '');
+    },
+    kebab: function(t) {
+      return t.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    },
+    constant: function(t) {
+      return t.toUpperCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '').replace(/_+/g, '_').replace(/^_|_$/g, '');
+    },
+    dot: function(t) {
+      return t.toLowerCase().replace(/\s+/g, '.').replace(/[^\w.]/g, '').replace(/\.+/g, '.').replace(/^\.|\.$/g, '');
+    },
+    path: function(t) {
+      return t.toLowerCase().replace(/\s+/g, '/').replace(/[^\w/]/g, '').replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
+    },
+    toggle: function(t) {
+      return t.split('').map(function(char) {
+        return char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase();
+      }).join('');
+    }
+  };
+
+  function update() {
+    var text = input.value || '';
+    
+    // Update stats
+    document.getElementById('s-chars').textContent = text.length.toLocaleString();
+    document.getElementById('s-chars-ns').textContent = text.replace(/\s/g, '').length.toLocaleString();
+    document.getElementById('s-words').textContent = (text.trim() ? text.trim().split(/\s+/).length : 0).toLocaleString();
+    document.getElementById('s-lines').textContent = (text ? text.split('\n').length : 0).toLocaleString();
+    document.getElementById('s-sentences').textContent = (text.trim() ? (text.match(/[.!?]+/g) || []).length : 0).toLocaleString();
+    document.getElementById('s-paragraphs').textContent = (text.trim() ? text.split(/\n\s*\n/).filter(function(p) { return p.trim(); }).length : 0).toLocaleString();
+
+    // Update output
+    if (!text) {
+      output.textContent = '—';
+      return;
+    }
+    
+    if (converters[currentCase]) {
+      output.textContent = converters[currentCase](text);
+    } else {
+      output.textContent = text;
+    }
+  }
+
+  caseToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-case]');
+    if (!btn) return;
+    
+    currentCase = btn.getAttribute('data-case');
+    
+    Array.prototype.forEach.call(caseToggles.querySelectorAll('.tp-toggle'), function(el) {
+      el.classList.remove('on');
+    });
+    btn.classList.add('on');
+    
+    update();
+  });
+
+  input.addEventListener('input', update);
+
+  copyBtn.addEventListener('click', function() {
+    var text = output.textContent;
+    if (!text || text === '—') return;
+    
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        var oldText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(function() { copyBtn.textContent = oldText; }, 1500);
+      });
+    }
+  });
+
+  pasteBtn.addEventListener('click', function() {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      navigator.clipboard.readText().then(function(text) {
+        input.value = text;
+        update();
+      }).catch(function(err) {
+        console.error('Paste failed:', err);
+      });
+    }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    update();
+  });
+
+  // Initial load
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +733,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

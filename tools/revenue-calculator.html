@@ -6,11 +6,15 @@
   <title>Revenue Calculator — Tools Catalog</title>
   <meta name="description" content="Multiply units sold by price, or sum multiple revenue streams, to get total revenue for a product, period, or business unit.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,320 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Mode</span>
+      <div class="tp-toggles" id="mode-btns">
+        <button class="tp-toggle mono on" data-mode="simple">Simple</button>
+        <button class="tp-toggle mono" data-mode="products">Products</button>
+        <button class="tp-toggle mono" data-mode="streams">Streams</button>
+        <button class="tp-toggle mono" data-mode="period">Period</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">revenue-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Revenue Calculator</span>
+
+    <!-- Simple -->
+    <div id="pane-simple">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Units sold</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="s-units" type="number" inputmode="decimal" min="0" step="1" placeholder="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Price per unit</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="s-price" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Products -->
+    <div id="pane-products" style="display:none">
+      <div id="products-list"></div>
+      <button class="tp-toggle mono" id="add-product" style="margin-top:8px">+ Add product</button>
+    </div>
+
+    <!-- Streams -->
+    <div id="pane-streams" style="display:none">
+      <div id="streams-list"></div>
+      <button class="tp-toggle mono" id="add-stream" style="margin-top:8px">+ Add stream</button>
+    </div>
+
+    <!-- Period -->
+    <div id="pane-period" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Period type</span>
+          <div class="tp-field-input">
+            <select class="tp-input" id="p-type">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Periods</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="p-count" type="number" inputmode="numeric" min="1" max="12" step="1" value="3">
+          </div>
+        </div>
+      </div>
+      <div id="period-inputs" style="margin-top:8px"></div>
+    </div>
+
+    <div class="tp-breakdown" id="breakdown" style="display:none"></div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Total Revenue</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-total">0</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Enter values to calculate</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var mode = 'simple';
+  var products = [{ name: '', units: '', price: '' }];
+  var streams = [{ source: '', amount: '' }];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = function (n) { return isFinite(n) && n > 0 ? n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'; };
+  var fmtFull = function (n) { return '$' + fmt(n); };
+
+  function setMode(m) {
+    mode = m;
+    ['simple', 'products', 'streams', 'period'].forEach(function (id) {
+      $('pane-' + id).style.display = id === m ? '' : 'none';
+    });
+    Array.prototype.forEach.call($('mode-btns').children, function (btn) {
+      btn.classList.toggle('on', btn.getAttribute('data-mode') === m);
+    });
+    if (m === 'period') rebuildPeriodInputs();
+    calc();
+  }
+
+  // --- Products ---
+  function renderProducts() {
+    var list = $('products-list');
+    list.innerHTML = '';
+    products.forEach(function (p, i) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:6px;align-items:flex-end;margin-bottom:6px';
+      row.innerHTML =
+        '<div class="tp-field" style="flex:2"><span class="tp-field-label mono">Name</span>' +
+        '<div class="tp-field-input"><input class="tp-input" type="text" placeholder="Product ' + (i + 1) + '" value="' + (p.name || '') + '" data-i="' + i + '" data-key="name"></div></div>' +
+        '<div class="tp-field" style="flex:1"><span class="tp-field-label mono">Units</span>' +
+        '<div class="tp-field-input"><input class="tp-input" type="number" min="0" step="1" placeholder="0" value="' + (p.units || '') + '" data-i="' + i + '" data-key="units"></div></div>' +
+        '<div class="tp-field" style="flex:1"><span class="tp-field-label mono">Price $</span>' +
+        '<div class="tp-field-input"><input class="tp-input" type="number" min="0" step="0.01" placeholder="0.00" value="' + (p.price || '') + '" data-i="' + i + '" data-key="price"></div></div>' +
+        (products.length > 1 ? '<button class="tp-toggle mono" data-remove="' + i + '" style="margin-bottom:2px">×</button>' : '');
+      list.appendChild(row);
+    });
+    list.querySelectorAll('input').forEach(function (el) {
+      el.addEventListener('input', function () {
+        products[+this.getAttribute('data-i')][this.getAttribute('data-key')] = this.value;
+        calc();
+      });
+    });
+    list.querySelectorAll('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        products.splice(+this.getAttribute('data-remove'), 1);
+        renderProducts();
+        calc();
+      });
+    });
+  }
+
+  // --- Streams ---
+  function renderStreams() {
+    var list = $('streams-list');
+    list.innerHTML = '';
+    streams.forEach(function (s, i) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:6px;align-items:flex-end;margin-bottom:6px';
+      row.innerHTML =
+        '<div class="tp-field" style="flex:2"><span class="tp-field-label mono">Source</span>' +
+        '<div class="tp-field-input"><input class="tp-input" type="text" placeholder="e.g. Sales" value="' + (s.source || '') + '" data-i="' + i + '" data-key="source"></div></div>' +
+        '<div class="tp-field" style="flex:1"><span class="tp-field-label mono">Amount $</span>' +
+        '<div class="tp-field-input"><input class="tp-input" type="number" min="0" step="0.01" placeholder="0.00" value="' + (s.amount || '') + '" data-i="' + i + '" data-key="amount"></div></div>' +
+        (streams.length > 1 ? '<button class="tp-toggle mono" data-remove="' + i + '" style="margin-bottom:2px">×</button>' : '');
+      list.appendChild(row);
+    });
+    list.querySelectorAll('input').forEach(function (el) {
+      el.addEventListener('input', function () {
+        streams[+this.getAttribute('data-i')][this.getAttribute('data-key')] = this.value;
+        calc();
+      });
+    });
+    list.querySelectorAll('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        streams.splice(+this.getAttribute('data-remove'), 1);
+        renderStreams();
+        calc();
+      });
+    });
+  }
+
+  // --- Period ---
+  function getPeriodLabel(type, n) {
+    if (type === 'quarterly') return 'Q' + n;
+    if (type === 'yearly') return 'Year ' + n;
+    return 'Month ' + n;
+  }
+
+  function rebuildPeriodInputs() {
+    var count = Math.min(12, Math.max(1, parseInt($('p-count').value, 10) || 1));
+    var type = $('p-type').value;
+    var container = $('period-inputs');
+    container.innerHTML = '';
+    for (var i = 1; i <= count; i++) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:8px;align-items:flex-end;margin-bottom:6px';
+      row.innerHTML =
+        '<span class="mono" style="min-width:60px;line-height:2.2">' + getPeriodLabel(type, i) + '</span>' +
+        '<div class="tp-field" style="flex:1"><div class="tp-field-input">' +
+        '<span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>' +
+        '<input class="tp-input" type="number" min="0" step="0.01" placeholder="0.00" data-period="' + i + '"></div></div>';
+      container.appendChild(row);
+    }
+    container.querySelectorAll('input').forEach(function (el) {
+      el.addEventListener('input', calc);
+    });
+  }
+
+  // --- Calc ---
+  function calc() {
+    var total = 0;
+    var bd = $('breakdown');
+    var note = '';
+
+    if (mode === 'simple') {
+      var units = parseFloat($('s-units').value) || 0;
+      var price = parseFloat($('s-price').value) || 0;
+      total = units * price;
+      if (units > 0 && price > 0) {
+        bd.style.display = '';
+        bd.innerHTML = '<div><span class="mono">Units sold</span><b>' + units.toLocaleString() + '</b></div>' +
+          '<div><span class="mono">Price/unit</span><b>' + fmtFull(price) + '</b></div>' +
+          '<div><span class="mono">Total</span><b>' + fmtFull(total) + '</b></div>';
+        note = units.toLocaleString() + ' × ' + fmtFull(price);
+      } else {
+        bd.style.display = 'none';
+        note = 'Enter units and price';
+      }
+    } else if (mode === 'products') {
+      var rows = '';
+      products.forEach(function (p, i) {
+        var u = parseFloat(p.units) || 0;
+        var pr = parseFloat(p.price) || 0;
+        var sub = u * pr;
+        if (sub > 0) {
+          total += sub;
+          var label = p.name || ('Product ' + (i + 1));
+          rows += '<div><span class="mono">' + label + '</span><b>' + fmtFull(sub) + '</b></div>';
+        }
+      });
+      if (total > 0) {
+        bd.style.display = '';
+        bd.innerHTML = rows + '<div><span class="mono">Total</span><b>' + fmtFull(total) + '</b></div>';
+        note = products.filter(function (p) { return (parseFloat(p.units)||0)*(parseFloat(p.price)||0) > 0; }).length + ' product(s)';
+      } else {
+        bd.style.display = 'none';
+        note = 'Enter product data';
+      }
+    } else if (mode === 'streams') {
+      var srows = '';
+      streams.forEach(function (s, i) {
+        var amt = parseFloat(s.amount) || 0;
+        if (amt > 0) {
+          total += amt;
+          var label = s.source || ('Stream ' + (i + 1));
+          srows += '<div><span class="mono">' + label + '</span><b>' + fmtFull(amt) + '</b></div>';
+        }
+      });
+      if (total > 0) {
+        bd.style.display = '';
+        // add % breakdown
+        var bhtml = '';
+        streams.forEach(function (s, i) {
+          var amt = parseFloat(s.amount) || 0;
+          if (amt > 0) {
+            var label = s.source || ('Stream ' + (i + 1));
+            bhtml += '<div><span class="mono">' + label + ' (' + ((amt/total)*100).toFixed(1) + '%)</span><b>' + fmtFull(amt) + '</b></div>';
+          }
+        });
+        bd.innerHTML = bhtml + '<div><span class="mono">Total</span><b>' + fmtFull(total) + '</b></div>';
+        note = streams.filter(function (s) { return (parseFloat(s.amount)||0) > 0; }).length + ' stream(s)';
+      } else {
+        bd.style.display = 'none';
+        note = 'Enter stream amounts';
+      }
+    } else if (mode === 'period') {
+      var type = $('p-type').value;
+      var inputs = $('period-inputs').querySelectorAll('input');
+      var prows = '';
+      var validCount = 0;
+      inputs.forEach(function (el, idx) {
+        var rev = parseFloat(el.value) || 0;
+        if (rev > 0) {
+          total += rev;
+          validCount++;
+          prows += '<div><span class="mono">' + getPeriodLabel(type, idx + 1) + '</span><b>' + fmtFull(rev) + '</b></div>';
+        }
+      });
+      if (total > 0) {
+        var avg = total / validCount;
+        bd.style.display = '';
+        bd.innerHTML = prows +
+          '<div><span class="mono">Average</span><b>' + fmtFull(avg) + '</b></div>' +
+          '<div><span class="mono">Total</span><b>' + fmtFull(total) + '</b></div>';
+        note = validCount + ' period(s), avg ' + fmtFull(avg);
+      } else {
+        bd.style.display = 'none';
+        note = 'Enter revenue per period';
+      }
+    }
+
+    $('r-total').textContent = fmt(total);
+    $('r-note').textContent = note;
+  }
+
+  // --- Wire events ---
+  $('mode-btns').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    setMode(btn.getAttribute('data-mode'));
+  });
+
+  $('add-product').addEventListener('click', function () {
+    products.push({ name: '', units: '', price: '' });
+    renderProducts();
+  });
+
+  $('add-stream').addEventListener('click', function () {
+    streams.push({ source: '', amount: '' });
+    renderStreams();
+  });
+
+  $('s-units').addEventListener('input', calc);
+  $('s-price').addEventListener('input', calc);
+
+  $('p-type').addEventListener('change', function () { rebuildPeriodInputs(); calc(); });
+  $('p-count').addEventListener('input', function () { rebuildPeriodInputs(); calc(); });
+
+  // --- Init ---
+  renderProducts();
+  renderStreams();
+  rebuildPeriodInputs();
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +873,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

@@ -6,11 +6,15 @@
   <title>Rendement à l&#39;échéance des obligations — Tools Catalog</title>
   <meta name="description" content="Trouvez le rendement annualisé total d&#39;une obligation détenue jusqu&#39;à l&#39;échéance, en tenant compte des paiements de coupon, du prix d&#39;achat et de la valeur nominale.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,151 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Bond price</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="byt-price" type="number" inputmode="decimal" value="950" min="0.01" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">bond-yield-to-maturity</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Face value</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="byt-face" type="number" inputmode="decimal" value="1000" min="0.01" step="0.01">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Coupon rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="byt-coupon" type="number" inputmode="decimal" value="5" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Years to maturity</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="byt-years" type="number" inputmode="decimal" value="10" min="0.1" step="0.1">
+          <span class="tp-suffix">yr</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Payment frequency</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="byt-freq" style="flex:1">
+          <option value="1">Annual</option>
+          <option value="2" selected>Semi-annual</option>
+          <option value="4">Quarterly</option>
+          <option value="12">Monthly</option>
+        </select>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Current yield</span><b id="byt-bd-cy">—</b></div>
+      <div><span class="mono">Coupon rate</span><b id="byt-bd-cr">—</b></div>
+      <div><span class="mono">Total coupons</span><b id="byt-bd-tc">—</b></div>
+      <div><span class="mono">Capital gain/loss</span><b id="byt-bd-cg">—</b></div>
+      <div><span class="mono">Total return</span><b id="byt-bd-tr">—</b></div>
+      <div><span class="mono">Bond type</span><b id="byt-bd-bt">—</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investissement</span>
+    <span class="tp-result-label">Yield to maturity</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Rendement à l&#39;éché</span>
+      <span class="tp-result-num" id="byt-r-ytm">—</span>
+      <span class="tp-result-prefix">%</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="byt-r-note">annualized return if held to maturity</span>
   </div>
 </div>
+<script>
+(function () {
+  var elPrice  = document.getElementById('byt-price');
+  var elFace   = document.getElementById('byt-face');
+  var elCoupon = document.getElementById('byt-coupon');
+  var elYears  = document.getElementById('byt-years');
+  var elFreq   = document.getElementById('byt-freq');
+
+  function money(v) {
+    if (!isFinite(v)) return '—';
+    var sign = v < 0 ? '-$' : '$';
+    return sign + Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Returns annualized YTM as a decimal (e.g. 0.0557 for 5.57%) using Newton-Raphson.
+  function calcYTM(price, face, periodicCoupon, totalPeriods, freq) {
+    // Initial guess: approximate annual YTM as decimal
+    var ytm = ((periodicCoupon + (face - price) / totalPeriods) / ((face + price) / 2)) * freq;
+
+    for (var i = 0; i < 100; i++) {
+      var pRate = ytm / freq;        // periodic rate
+      var pv = 0;
+      var dpv = 0;
+
+      for (var t = 1; t <= totalPeriods; t++) {
+        var df = Math.pow(1 + pRate, t);
+        pv  += periodicCoupon / df;
+        dpv -= t * periodicCoupon / (freq * df * (1 + pRate));
+      }
+
+      var pDf = Math.pow(1 + pRate, totalPeriods);
+      pv  += face / pDf;
+      dpv -= totalPeriods * face / (freq * pDf * (1 + pRate));
+
+      var diff = pv - price;
+      if (Math.abs(diff) < 1e-6) break;
+      ytm -= diff / dpv;
+    }
+
+    return ytm; // annual decimal
+  }
+
+  function calc() {
+    var price  = parseFloat(elPrice.value)  || 0;
+    var face   = parseFloat(elFace.value)   || 0;
+    var coupon = parseFloat(elCoupon.value) || 0;
+    var years  = parseFloat(elYears.value)  || 0;
+    var freq   = parseInt(elFreq.value, 10) || 1;
+
+    if (price <= 0 || face <= 0 || years <= 0) {
+      document.getElementById('byt-r-ytm').textContent  = '—';
+      document.getElementById('byt-r-note').textContent = 'enter valid inputs';
+      return;
+    }
+
+    var totalPeriods   = years * freq;
+    var annualCoupon   = face * coupon / 100;
+    var periodicCoupon = annualCoupon / freq;
+
+    var ytmDecimal  = calcYTM(price, face, periodicCoupon, totalPeriods, freq);
+    var ytmPct      = ytmDecimal * 100;
+
+    var currentYield = annualCoupon / price * 100;
+    var priceVsPar   = price / face * 100;
+    var bondType     = price > face * 1.001 ? 'Premium' : price < face * 0.999 ? 'Discount' : 'At Par';
+    var totalCoupons = annualCoupon * years;
+    var capitalGL    = face - price;
+    var totalReturn  = totalCoupons + capitalGL;
+
+    var freqLabel = { 1: 'annual', 2: 'semi-annual', 4: 'quarterly', 12: 'monthly' }[freq] || freq + 'x/yr';
+
+    document.getElementById('byt-r-ytm').textContent  = isFinite(ytmPct) ? ytmPct.toFixed(4) : '—';
+    document.getElementById('byt-r-note').textContent = bondType + ' · ' + years + ' yr · ' + freqLabel;
+
+    document.getElementById('byt-bd-cy').textContent = isFinite(currentYield) ? currentYield.toFixed(4) + '%' : '—';
+    document.getElementById('byt-bd-cr').textContent = coupon.toFixed(2) + '%';
+    document.getElementById('byt-bd-tc').textContent = money(totalCoupons);
+    document.getElementById('byt-bd-cg').textContent = money(capitalGL);
+    document.getElementById('byt-bd-tr').textContent = money(totalReturn);
+    document.getElementById('byt-bd-bt').textContent = bondType + ' (' + priceVsPar.toFixed(1) + '% of par)';
+  }
+
+  [elPrice, elFace, elCoupon, elYears].forEach(function (el) { el.addEventListener('input', calc); });
+  elFreq.addEventListener('change', calc);
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +704,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

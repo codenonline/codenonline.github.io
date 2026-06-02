@@ -6,11 +6,15 @@
   <title>Unlevered Beta Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate unlevered beta for stock analysis.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,116 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Levered Beta (βL)</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="ub-lb" type="number" inputmode="decimal" value="1.20" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">unlevered-beta</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Unlevered Beta Cal</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Tax Rate (%)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="ub-tax" type="number" inputmode="decimal" value="21" min="0" max="100" step="0.1">
+        <span class="tp-suffix">%</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Debt-to-Equity Ratio (D/E)</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="ub-der" type="number" inputmode="decimal" value="0.50" min="0" step="0.01">
+      </div>
+    </div>
+
+    <div class="tp-hint mono" style="margin-top: 1rem; margin-bottom: 0.5rem; opacity: 0.7; font-size: 0.75rem;">
+      OR ENTER DEBT AND EQUITY SEPARATELY (OVERRIDES ABOVE)
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total Debt</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="ub-debt" type="number" inputmode="decimal" placeholder="e.g. 500000" min="0" step="1000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total Equity</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="ub-equity" type="number" inputmode="decimal" placeholder="e.g. 1000000" min="0" step="1000">
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Effective D/E Ratio</span><b id="ub-bd-der">0.0000</b></div>
+      <div><span class="mono">Tax Shield Factor</span><b id="ub-bd-tax">0.0000</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Unlevered Beta (βU)</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="ub-r-val">0.0000</span>
+    </div>
+    <span class="tp-result-note" id="ub-r-note">Pure business risk excluding leverage.</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var lbInput = document.getElementById('ub-lb');
+  var taxInput = document.getElementById('ub-tax');
+  var derInput = document.getElementById('ub-der');
+  var debtInput = document.getElementById('ub-debt');
+  var equityInput = document.getElementById('ub-equity');
+
+  var rVal = document.getElementById('ub-r-val');
+  var bdDer = document.getElementById('ub-bd-der');
+  var bdTax = document.getElementById('ub-bd-tax');
+  var rNote = document.getElementById('ub-r-note');
+
+  function calc() {
+    var lb = parseFloat(lbInput.value) || 0;
+    var tax = parseFloat(taxInput.value) || 0;
+    var der = parseFloat(derInput.value) || 0;
+    var debt = parseFloat(debtInput.value) || 0;
+    var equity = parseFloat(equityInput.value) || 0;
+
+    var effectiveDER;
+    var usedValues = false;
+
+    if (debt > 0 && equity > 0) {
+      effectiveDER = debt / equity;
+      usedValues = true;
+    } else {
+      effectiveDER = der;
+    }
+
+    var taxRateDec = Math.max(0, Math.min(100, tax)) / 100;
+    var taxShield = 1 - taxRateDec;
+    var denominator = 1 + (taxShield * effectiveDER);
+    var unleveredBeta = denominator !== 0 ? lb / denominator : 0;
+
+    bdDer.textContent = isFinite(effectiveDER) ? effectiveDER.toFixed(4) : '0.0000';
+    bdTax.textContent = isFinite(taxShield) ? taxShield.toFixed(4) : '0.0000';
+    rVal.textContent = isFinite(unleveredBeta) ? unleveredBeta.toFixed(4) : '0.0000';
+
+    if (usedValues) {
+      rNote.textContent = 'Calculated using debt/equity values ($' + debt.toLocaleString() + ' / $' + equity.toLocaleString() + ').';
+    } else {
+      rNote.textContent = 'Calculated using D/E ratio of ' + effectiveDER.toFixed(2) + ' and ' + tax + '% tax rate.';
+    }
+  }
+
+  [lbInput, taxInput, derInput, debtInput, equityInput].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +669,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

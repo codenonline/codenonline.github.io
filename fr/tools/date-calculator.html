@@ -6,11 +6,15 @@
   <title>Calculatrice de Dates — Tools Catalog</title>
   <meta name="description" content="Calculez les différences entre les dates, ajoutez/soustrayez des jours et convertissez entre les fuseaux horaires.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,371 @@ button:disabled{transform:none;}
         <p class="tp-desc">Calculez les différences entre les dates, ajoutez/soustrayez des jours et convertissez entre les fuseaux horaires.</p>
       </div>
 
-      <div class="tp-grid">
-  <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <div class="tp-grid" id="date-calc-root">
+  <div class="tp-inputs" style="flex:1 1 320px">
+
+    <!-- Mode tabs -->
+    <div class="tp-toggles tp-toggles--wrap" id="dc-modes" style="margin-bottom:8px">
+      <button class="tp-toggle mono on" data-mode="difference">Date Difference</button>
+      <button class="tp-toggle mono" data-mode="addsubtract">Add / Subtract</button>
+      <button class="tp-toggle mono" data-mode="timezone">Time Zone</button>
+    </div>
+
+    <!-- ── DIFFERENCE ── -->
+    <div id="panel-difference">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Start date</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="dc-start" type="date">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">End date</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="dc-end" type="date">
+          </div>
+        </div>
+      </div>
+      <div class="tp-toggles tp-toggles--wrap" style="margin-bottom:8px">
+        <button class="tp-toggle mono" id="dc-start-today">Start = today</button>
+        <button class="tp-toggle mono" id="dc-end-today">End = today</button>
+        <button class="tp-toggle mono" id="dc-swap">Swap</button>
+      </div>
+      <div class="tp-breakdown" id="dc-diff-breakdown">
+        <div><span class="mono">Days</span><b id="bd-days">—</b></div>
+        <div><span class="mono">Weeks</span><b id="bd-weeks">—</b></div>
+        <div><span class="mono">Months</span><b id="bd-months">—</b></div>
+        <div><span class="mono">Years</span><b id="bd-years">—</b></div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">date-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Date et heure</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Calculatrice de Da</span>
+
+    <!-- ── ADD / SUBTRACT ── -->
+    <div id="panel-addsubtract" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Base date</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="dc-base" type="date">
+        </div>
+      </div>
+      <button class="tp-toggle mono" id="dc-base-today" style="margin-bottom:8px">Set to today</button>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Operation</span>
+          <div class="tp-field-input">
+            <select class="tp-input" id="dc-op" style="background:var(--surface)">
+              <option value="add">Add</option>
+              <option value="subtract">Subtract</option>
+            </select>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Amount</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="dc-amount" type="number" min="0" value="30">
+          </div>
+        </div>
+      </div>
+      <div class="tp-toggles tp-toggles--wrap" id="dc-units" style="margin-bottom:8px">
+        <button class="tp-toggle mono on" data-unit="days">Days</button>
+        <button class="tp-toggle mono" data-unit="weeks">Weeks</button>
+        <button class="tp-toggle mono" data-unit="months">Months</button>
+        <button class="tp-toggle mono" data-unit="years">Years</button>
+      </div>
+      <div class="tp-breakdown" id="dc-as-breakdown">
+        <div><span class="mono">Calculation</span><b id="bd-as-desc" style="font-size:0.8em;text-align:right;max-width:60%">—</b></div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- ── TIME ZONE ── -->
+    <div id="panel-timezone" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Date &amp; time</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="dc-dt" type="datetime-local">
+        </div>
+      </div>
+      <button class="tp-toggle mono" id="dc-now" style="margin-bottom:8px">Set to now</button>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Source time zone</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="dc-src-tz" style="background:var(--surface)"></select>
+        </div>
+      </div>
+      <div class="tp-breakdown" id="dc-tz-breakdown">
+        <!-- filled dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RESULT PANEL ── -->
+  <div class="tp-result" id="dc-result">
+    <span class="tp-result-label" id="r-label">Difference</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-main" style="font-size:2.6rem">—</span>
+    </div>
+    <span class="tp-result-note" id="r-note"></span>
   </div>
 </div>
+
+<script>
+(function () {
+  var TIMEZONES = [
+    { value: 'UTC',                label: 'UTC' },
+    { value: 'America/New_York',   label: 'Eastern (US)' },
+    { value: 'America/Chicago',    label: 'Central (US)' },
+    { value: 'America/Denver',     label: 'Mountain (US)' },
+    { value: 'America/Los_Angeles',label: 'Pacific (US)' },
+    { value: 'Europe/London',      label: 'London' },
+    { value: 'Europe/Paris',       label: 'Paris' },
+    { value: 'Europe/Berlin',      label: 'Berlin' },
+    { value: 'Asia/Tokyo',         label: 'Tokyo' },
+    { value: 'Asia/Shanghai',      label: 'Shanghai' },
+    { value: 'Asia/Kolkata',       label: 'India (IST)' },
+    { value: 'Australia/Sydney',   label: 'Sydney' },
+    { value: 'Pacific/Auckland',   label: 'Auckland' }
+  ];
+
+  var DEFAULT_TARGETS = ['America/New_York', 'Europe/London', 'Asia/Tokyo'];
+  var selectedTargets = DEFAULT_TARGETS.slice();
+  var mode = 'difference';
+
+  // ── element refs ──
+  var modes      = document.getElementById('dc-modes');
+  var panels     = { difference: document.getElementById('panel-difference'),
+                     addsubtract: document.getElementById('panel-addsubtract'),
+                     timezone: document.getElementById('panel-timezone') };
+  var rLabel     = document.getElementById('r-label');
+  var rMain      = document.getElementById('r-main');
+  var rNote      = document.getElementById('r-note');
+
+  // difference
+  var dcStart    = document.getElementById('dc-start');
+  var dcEnd      = document.getElementById('dc-end');
+
+  // add/subtract
+  var dcBase     = document.getElementById('dc-base');
+  var dcOp       = document.getElementById('dc-op');
+  var dcAmount   = document.getElementById('dc-amount');
+  var dcUnits    = document.getElementById('dc-units');
+  var selectedUnit = 'days';
+
+  // timezone
+  var dcDt       = document.getElementById('dc-dt');
+  var dcSrcTz    = document.getElementById('dc-src-tz');
+  var tzBreak    = document.getElementById('dc-tz-breakdown');
+
+  // ── helpers ──
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  function nowLocal() {
+    var n = new Date();
+    n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
+    return n.toISOString().slice(0, 16);
+  }
+
+  function fmtDate(d) {
+    if (!d || isNaN(d)) return '—';
+    return d.toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+  }
+
+  function parseLocalDate(s) {
+    if (!s) return null;
+    var p = s.split('-');
+    return new Date(+p[0], +p[1] - 1, +p[2]);
+  }
+
+  // ── populate tz select ──
+  TIMEZONES.forEach(function (tz) {
+    var o = document.createElement('option');
+    o.value = tz.value; o.textContent = tz.label;
+    dcSrcTz.appendChild(o);
+  });
+
+  // ── init values ──
+  dcStart.value = today();
+  dcEnd.value   = today();
+  dcBase.value  = today();
+  dcDt.value    = nowLocal();
+
+  // ── mode switching ──
+  modes.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    mode = btn.getAttribute('data-mode');
+    Array.prototype.forEach.call(modes.children, function (b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    Object.keys(panels).forEach(function (k) {
+      panels[k].style.display = k === mode ? '' : 'none';
+    });
+    calc();
+  });
+
+  // ── quick buttons (difference) ──
+  document.getElementById('dc-start-today').addEventListener('click', function () { dcStart.value = today(); calc(); });
+  document.getElementById('dc-end-today').addEventListener('click', function () { dcEnd.value = today(); calc(); });
+  document.getElementById('dc-swap').addEventListener('click', function () {
+    var t = dcStart.value; dcStart.value = dcEnd.value; dcEnd.value = t; calc();
+  });
+
+  // ── quick buttons (addsubtract) ──
+  document.getElementById('dc-base-today').addEventListener('click', function () { dcBase.value = today(); calc(); });
+  document.getElementById('dc-now').addEventListener('click', function () { dcDt.value = nowLocal(); calc(); });
+
+  // ── unit toggles ──
+  dcUnits.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-unit]');
+    if (!btn) return;
+    selectedUnit = btn.getAttribute('data-unit');
+    Array.prototype.forEach.call(dcUnits.children, function (b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    calc();
+  });
+
+  // ── inputs ──
+  [dcStart, dcEnd].forEach(function (el) { el.addEventListener('change', calc); });
+  [dcBase, dcOp, dcAmount].forEach(function (el) { el.addEventListener('input', calc); });
+  dcDt.addEventListener('input', calc);
+  dcSrcTz.addEventListener('change', calc);
+
+  // ── calc functions ──
+  function calcDifference() {
+    var s = parseLocalDate(dcStart.value);
+    var e = parseLocalDate(dcEnd.value);
+    if (!s || !e) { rMain.textContent = '—'; rNote.textContent = ''; return; }
+
+    var diffMs   = e - s;
+    var diffDays = Math.round(Math.abs(diffMs) / 86400000);
+    var weeks    = Math.floor(diffDays / 7);
+    var months   = Math.floor(diffDays / 30.44);
+    var years    = Math.floor(diffDays / 365.25);
+
+    document.getElementById('bd-days').textContent   = diffDays.toLocaleString();
+    document.getElementById('bd-weeks').textContent  = weeks.toLocaleString();
+    document.getElementById('bd-months').textContent = months.toLocaleString();
+    document.getElementById('bd-years').textContent  = years.toLocaleString();
+
+    // detailed breakdown (years + months + days remainder)
+    var absS = diffMs < 0 ? e : s;
+    var absE = diffMs < 0 ? s : e;
+    var yy = absE.getFullYear() - absS.getFullYear();
+    var mm = absE.getMonth()    - absS.getMonth();
+    var dd = absE.getDate()     - absS.getDate();
+    if (dd < 0) { mm--; dd += new Date(absE.getFullYear(), absE.getMonth(), 0).getDate(); }
+    if (mm < 0) { yy--; mm += 12; }
+    var parts = [];
+    if (yy > 0) parts.push(yy + ' year' + (yy !== 1 ? 's' : ''));
+    if (mm > 0) parts.push(mm + ' month' + (mm !== 1 ? 's' : ''));
+    if (dd > 0) parts.push(dd + ' day'   + (dd !== 1 ? 's' : ''));
+    var detail = parts.length ? parts.join(', ') : '0 days';
+    if (diffMs < 0) detail += ' (negative)';
+
+    rLabel.textContent = 'Difference';
+    rMain.textContent  = diffDays.toLocaleString();
+    rNote.textContent  = detail + (diffMs < 0 ? '' : '');
+  }
+
+  function calcAddSubtract() {
+    var base = parseLocalDate(dcBase.value);
+    var amt  = parseInt(dcAmount.value, 10);
+    if (!base || isNaN(amt) || amt < 0) { rMain.textContent = '—'; rNote.textContent = ''; return; }
+
+    var result = new Date(base);
+    var mult   = dcOp.value === 'add' ? 1 : -1;
+    switch (selectedUnit) {
+      case 'days':   result.setDate(result.getDate() + amt * mult); break;
+      case 'weeks':  result.setDate(result.getDate() + amt * 7 * mult); break;
+      case 'months': result.setMonth(result.getMonth() + amt * mult); break;
+      case 'years':  result.setFullYear(result.getFullYear() + amt * mult); break;
+    }
+
+    var unitLabel = amt === 1 ? selectedUnit.replace(/s$/, '') : selectedUnit;
+    var opWord    = dcOp.value === 'add' ? 'Adding' : 'Subtracting';
+    var desc      = opWord + ' ' + amt + ' ' + unitLabel + ' ' + (dcOp.value === 'add' ? 'to' : 'from') + ' ' + fmtDate(base);
+    document.getElementById('bd-as-desc').textContent = desc;
+
+    rLabel.textContent = dcOp.value === 'add' ? 'Result date' : 'Result date';
+    rMain.textContent  = result.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    rNote.textContent  = fmtDate(result);
+  }
+
+  function calcTimezone() {
+    var dt = dcDt.value;
+    if (!dt) { rMain.textContent = '—'; rNote.textContent = ''; return; }
+
+    var srcTz  = dcSrcTz.value || 'UTC';
+    var srcDate;
+    try {
+      // Interpret the local datetime string as if it is in srcTz
+      // We parse it as a wall-clock time in the source zone via Intl
+      srcDate = new Date(dt); // fallback; refine below
+      // Build a date from the parts adjusted to UTC via the source offset
+      var parts = dt.split(/[T:\-]/);
+      var iso = parts[0]+'-'+parts[1]+'-'+parts[2]+'T'+parts[3]+':'+parts[4]+':00';
+      // Use the trick: format UTC date in source tz, compare to find offset
+      var probe = new Date(iso + 'Z');
+      var fmtd  = new Intl.DateTimeFormat('en-CA', { timeZone: srcTz,
+          year:'numeric', month:'2-digit', day:'2-digit',
+          hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false }).format(probe);
+      // fmtd is "YYYY-MM-DD, HH:MM:SS" — parse and compute skew
+      var clean = fmtd.replace(',','');
+      var fp    = clean.trim().split(/[\s:\-]+/);
+      var probeLocal = new Date(Date.UTC(+fp[0],+fp[1]-1,+fp[2],+fp[3],+fp[4],+fp[5]));
+      var offset = probe - probeLocal; // ms
+      srcDate    = new Date(probe.getTime() + offset);
+    } catch (err) {
+      srcDate = new Date(dt);
+    }
+
+    // Render result for source tz
+    var srcFmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: srcTz, year:'numeric', month:'short', day:'numeric',
+      hour:'2-digit', minute:'2-digit', hour12: true
+    }).format(srcDate);
+    rLabel.textContent = 'Source time';
+    rMain.textContent  = '';
+    rNote.textContent  = srcFmt + ' (' + srcTz + ')';
+
+    // Render target rows
+    tzBreak.innerHTML = '';
+    selectedTargets.forEach(function (tzVal) {
+      var label = (TIMEZONES.find(function (t) { return t.value === tzVal; }) || { label: tzVal }).label;
+      var converted;
+      try {
+        converted = new Intl.DateTimeFormat('en-US', {
+          timeZone: tzVal, year:'numeric', month:'short', day:'numeric',
+          hour:'2-digit', minute:'2-digit', hour12: true
+        }).format(srcDate);
+      } catch (e) { converted = '—'; }
+      var row = document.createElement('div');
+      row.innerHTML = '<span class="mono">' + label + '</span><b>' + converted + '</b>';
+      tzBreak.appendChild(row);
+    });
+
+    // Show first target as main result
+    if (selectedTargets.length) {
+      var firstTz = selectedTargets[0];
+      try {
+        var firstFmt = new Intl.DateTimeFormat('en-US', {
+          timeZone: firstTz, month:'short', day:'numeric',
+          hour:'2-digit', minute:'2-digit', hour12: true
+        }).format(srcDate);
+        rMain.textContent = firstFmt;
+        rLabel.textContent = (TIMEZONES.find(function(t){return t.value===firstTz;})||{label:firstTz}).label;
+      } catch(e) {}
+    }
+  }
+
+  function calc() {
+    if (mode === 'difference')  calcDifference();
+    else if (mode === 'addsubtract') calcAddSubtract();
+    else calcTimezone();
+  }
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -563,7 +911,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

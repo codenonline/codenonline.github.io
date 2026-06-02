@@ -6,11 +6,15 @@
   <title>Calculatrice de Pouvoir d&#39;Achat — Tools Catalog</title>
   <meta name="description" content="Voyez comment l&#39;inflation érode votre pouvoir d&#39;achat au fil du temps — entrez un montant et découvrez sa valeur en dollars actuels.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,126 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">From year</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="bp-from-year" type="number" inputmode="numeric" value="2000" min="1900" max="2076" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">To year</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="bp-to-year" type="number" inputmode="numeric" value="2026" min="1900" max="2076" step="1">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">buying-power</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Amount</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="bp-amount" type="number" inputmode="decimal" value="100" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Annual inflation rate</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="bp-rate" type="number" inputmode="decimal" value="3.2" min="0" max="50" step="0.1">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-toggles tp-toggles--wrap" id="bp-examples">
+      <button class="tp-toggle mono" data-from="1980" data-amount="3.50" data-rate="3.1">Movie Ticket</button>
+      <button class="tp-toggle mono" data-from="2000" data-amount="1.50" data-rate="2.8">Gasoline</button>
+      <button class="tp-toggle mono" data-from="1990" data-amount="15000" data-rate="5.2">College</button>
+      <button class="tp-toggle mono" data-from="1970" data-amount="1.60" data-rate="3.7">Min Wage</button>
+      <button class="tp-toggle mono" data-from="1995" data-amount="18000" data-rate="2.9">New Car</button>
+      <button class="tp-toggle mono" data-from="2010" data-amount="250000" data-rate="4.1">Housing</button>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Equivalent in target year</span><b id="bp-bd-equiv">$0.00</b></div>
+      <div><span class="mono">Power loss</span><b id="bp-bd-loss">0%</b></div>
+      <div><span class="mono">Total inflation</span><b id="bp-bd-inflation">0%</b></div>
+      <div><span class="mono">Multiplier</span><b id="bp-bd-mult">1.00x</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
+    <span class="tp-result-label">Equivalent amount</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Calculatrice de Po</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="bp-r-equiv">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="bp-r-note">in target year</span>
   </div>
 </div>
+<script>
+(function () {
+  var fromYear = document.getElementById('bp-from-year');
+  var toYear   = document.getElementById('bp-to-year');
+  var amount   = document.getElementById('bp-amount');
+  var rate     = document.getElementById('bp-rate');
+  var examples = document.getElementById('bp-examples');
+  var currentYear = new Date().getFullYear();
+
+  toYear.value = currentYear;
+  toYear.max   = currentYear + 50;
+  fromYear.max = currentYear + 50;
+
+  function calc() {
+    var fy    = parseInt(fromYear.value, 10) || 0;
+    var ty    = parseInt(toYear.value, 10)   || 0;
+    var amt   = parseFloat(amount.value)     || 0;
+    var r     = parseFloat(rate.value)       || 0;
+
+    if (amt <= 0 || fy < 1900 || ty < 1900) {
+      document.getElementById('bp-r-equiv').textContent     = '0';
+      document.getElementById('bp-bd-equiv').textContent    = '$0.00';
+      document.getElementById('bp-bd-loss').textContent     = '0%';
+      document.getElementById('bp-bd-inflation').textContent = '0%';
+      document.getElementById('bp-bd-mult').textContent     = '1.00x';
+      document.getElementById('bp-r-note').textContent      = 'enter valid values';
+      return;
+    }
+
+    var years  = ty - fy;
+    var rDec   = r / 100;
+    var mult   = Math.pow(1 + rDec, years);
+    var equiv  = amt * mult;
+    var totalInfl  = (mult - 1) * 100;
+    var powerLoss  = (1 - 1 / mult) * 100;
+
+    var equivRounded = Math.round(equiv * 100) / 100;
+
+    document.getElementById('bp-r-equiv').textContent =
+      isFinite(equivRounded) ? equivRounded.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0';
+    document.getElementById('bp-bd-equiv').textContent =
+      '$' + (isFinite(equivRounded) ? equivRounded.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00');
+    document.getElementById('bp-bd-loss').textContent =
+      isFinite(powerLoss) ? (Math.round(powerLoss * 10) / 10).toFixed(1) + '%' : '0%';
+    document.getElementById('bp-bd-inflation').textContent =
+      isFinite(totalInfl) ? (Math.round(totalInfl * 10) / 10).toFixed(1) + '%' : '0%';
+    document.getElementById('bp-bd-mult').textContent =
+      isFinite(mult) ? mult.toFixed(2) + 'x' : '1.00x';
+    document.getElementById('bp-r-note').textContent =
+      '$' + amt.toLocaleString() + ' in ' + fy + ' → ' + ty + ' at ' + r + '%/yr';
+  }
+
+  examples.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-from]');
+    if (!btn) return;
+    fromYear.value = btn.getAttribute('data-from');
+    toYear.value   = currentYear;
+    amount.value   = btn.getAttribute('data-amount');
+    rate.value     = btn.getAttribute('data-rate');
+    Array.prototype.forEach.call(examples.children, function (b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    calc();
+  });
+
+  [fromYear, toYear, amount, rate].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +678,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

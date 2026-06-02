@@ -6,11 +6,15 @@
   <title>Profitto Butterfly Spread — Tools Catalog</title>
   <meta name="description" content="Valuta il profitto e la perdita di una strategia di opzioni butterfly spread in diversi scenari di prezzo alla scadenza.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,311 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-toggles tp-toggles--wrap" id="bs-type-btns">
+      <button class="tp-toggle mono on" data-type="long">Long Butterfly</button>
+      <button class="tp-toggle mono" data-type="short">Short Butterfly</button>
+    </div>
+    <div class="tp-two" style="--tp-cols:3">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Lower strike</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-lower-strike" type="number" inputmode="decimal" value="45" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Middle strike</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-mid-strike" type="number" inputmode="decimal" value="50" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Upper strike</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-upper-strike" type="number" inputmode="decimal" value="55" min="0" step="0.01">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">butterfly-spread-profit</p>
+    <div class="tp-two" style="--tp-cols:3">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Lower premium</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-lower-prem" type="number" inputmode="decimal" value="1.50" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Middle premium</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-mid-prem" type="number" inputmode="decimal" value="3.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Upper premium</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="bs-upper-prem" type="number" inputmode="decimal" value="1.50" min="0" step="0.01">
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Contracts</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="bs-contracts" type="number" inputmode="numeric" value="1" min="1" step="1">
+        <span class="tp-suffix">× 100</span>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Net premium</span><b id="bs-bd-net">$0.00</b></div>
+      <div><span class="mono">Max profit/contract</span><b id="bs-bd-maxprofit">$0.00</b></div>
+      <div><span class="mono">Max loss/contract</span><b id="bs-bd-maxloss">$0.00</b></div>
+      <div><span class="mono">Break-even lower</span><b id="bs-bd-be-lo">$0.00</b></div>
+      <div><span class="mono">Break-even upper</span><b id="bs-bd-be-hi">$0.00</b></div>
+    </div>
+    <div style="background:var(--ink-5,#f5f5f5);border-radius:6px;padding:10px 12px;font-size:0.82rem;line-height:1.6" id="bs-strategy-note"></div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Investimento</span>
+    <span class="tp-result-label">Max profit (total)</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Profitto Butterfly</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="bs-r-profit">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="bs-r-note">Long butterfly · 1 contract</span>
+    <div style="margin-top:1rem;width:100%">
+      <canvas id="bs-chart" style="width:100%;display:block"></canvas>
+    </div>
   </div>
 </div>
+<script>
+(function () {
+  var lowerStrikeEl = document.getElementById('bs-lower-strike');
+  var midStrikeEl   = document.getElementById('bs-mid-strike');
+  var upperStrikeEl = document.getElementById('bs-upper-strike');
+  var lowerPremEl   = document.getElementById('bs-lower-prem');
+  var midPremEl     = document.getElementById('bs-mid-prem');
+  var upperPremEl   = document.getElementById('bs-upper-prem');
+  var contractsEl   = document.getElementById('bs-contracts');
+  var typeBtns      = document.getElementById('bs-type-btns');
+  var selectedType  = 'long';
+
+  function money(n) {
+    return '$' + (isFinite(n) ? Math.abs(n) : 0).toFixed(2);
+  }
+
+  function calcPL(stockPrice, lS, mS, uS, netDebit, type) {
+    var profit = 0;
+    if (type === 'long') {
+      if (stockPrice <= lS || stockPrice >= uS) {
+        profit = -Math.abs(netDebit);
+      } else if (stockPrice < mS) {
+        profit = (stockPrice - lS) - Math.abs(netDebit);
+      } else if (stockPrice > mS) {
+        profit = (uS - stockPrice) - Math.abs(netDebit);
+      } else {
+        var lowerSpread = mS - lS;
+        profit = lowerSpread - Math.abs(netDebit);
+      }
+    } else {
+      if (stockPrice <= lS || stockPrice >= uS) {
+        profit = Math.abs(netDebit);
+      } else if (stockPrice < mS) {
+        profit = Math.abs(netDebit) - (stockPrice - lS);
+      } else if (stockPrice > mS) {
+        profit = Math.abs(netDebit) - (uS - stockPrice);
+      } else {
+        var lowerSpread2 = mS - lS;
+        profit = -(lowerSpread2 - Math.abs(netDebit));
+      }
+    }
+    return profit;
+  }
+
+  function calc() {
+    var lS = parseFloat(lowerStrikeEl.value) || 0;
+    var mS = parseFloat(midStrikeEl.value) || 0;
+    var uS = parseFloat(upperStrikeEl.value) || 0;
+    var lP = parseFloat(lowerPremEl.value) || 0;
+    var mP = parseFloat(midPremEl.value) || 0;
+    var uP = parseFloat(upperPremEl.value) || 0;
+    var contracts = Math.max(1, parseInt(contractsEl.value, 10) || 1);
+
+    var valid = lS > 0 && mS > lS && uS > mS && lP >= 0 && mP >= 0 && uP >= 0;
+
+    if (!valid) {
+      document.getElementById('bs-bd-net').textContent = '—';
+      document.getElementById('bs-bd-maxprofit').textContent = '—';
+      document.getElementById('bs-bd-maxloss').textContent = '—';
+      document.getElementById('bs-bd-be-lo').textContent = '—';
+      document.getElementById('bs-bd-be-hi').textContent = '—';
+      document.getElementById('bs-r-profit').textContent = '—';
+      document.getElementById('bs-r-note').textContent = 'Enter valid strikes (lower < middle < upper)';
+      document.getElementById('bs-strategy-note').textContent = '';
+      return;
+    }
+
+    var lowerSpread = mS - lS;
+
+    // Net premium: long butterfly buys low+high, sells 2 middle
+    var netPremium = (2 * mP) - lP - uP;
+    // netDebit > 0 means debit (cost), < 0 means credit received
+    var netDebit = selectedType === 'long' ? -netPremium : netPremium;
+
+    var maxProfit = selectedType === 'long'
+      ? lowerSpread - Math.abs(netDebit)
+      : Math.abs(netDebit);
+
+    var maxLoss = selectedType === 'long'
+      ? -Math.abs(netDebit)
+      : -(lowerSpread - Math.abs(netDebit));
+
+    var beLower = lS + Math.abs(netDebit);
+    var beUpper = uS - Math.abs(netDebit);
+
+    var totalMaxProfit = maxProfit * contracts * 100;
+
+    document.getElementById('bs-bd-net').textContent =
+      (netPremium >= 0 ? 'Credit ' : 'Debit ') + money(netPremium);
+    document.getElementById('bs-bd-maxprofit').textContent = money(maxProfit * 100);
+    document.getElementById('bs-bd-maxloss').textContent = money(Math.abs(maxLoss) * 100);
+    document.getElementById('bs-bd-be-lo').textContent = '$' + beLower.toFixed(2);
+    document.getElementById('bs-bd-be-hi').textContent = '$' + beUpper.toFixed(2);
+
+    document.getElementById('bs-r-profit').textContent =
+      isFinite(totalMaxProfit) ? totalMaxProfit.toFixed(2) : '0.00';
+    document.getElementById('bs-r-note').textContent =
+      (selectedType === 'long' ? 'Long' : 'Short') + ' butterfly · ' +
+      contracts + (contracts === 1 ? ' contract' : ' contracts') +
+      ' · at $' + mS.toFixed(2);
+
+    var optType = selectedType === 'long' ? 'Call' : 'Put';
+    document.getElementById('bs-strategy-note').innerHTML =
+      '<strong>$' + lS.toFixed(2) + ':</strong> Buy ' + optType + ' −$' + lP.toFixed(2) + ' &nbsp;|&nbsp; ' +
+      '<strong>$' + mS.toFixed(2) + ':</strong> Sell 2 ' + optType + 's +$' + (mP * 2).toFixed(2) + ' &nbsp;|&nbsp; ' +
+      '<strong>$' + uS.toFixed(2) + ':</strong> Buy ' + optType + ' −$' + uP.toFixed(2);
+
+    drawChart(lS, mS, uS, netDebit, beLower, beUpper, maxProfit);
+  }
+
+  function drawChart(lS, mS, uS, netDebit, beL, beU, maxProfit) {
+    var canvas = document.getElementById('bs-chart');
+    var parent = canvas.parentElement;
+    var W = parent.clientWidth || 280;
+    var H = 160;
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    var priceRange = uS - lS;
+    var minP = lS - priceRange * 0.3;
+    var maxP = uS + priceRange * 0.3;
+
+    var absMax = Math.max(Math.abs(maxProfit), Math.abs(netDebit)) * 1.3 || 1;
+    var pad = { t: 10, b: 20, l: 10, r: 10 };
+
+    function px(price) {
+      return pad.l + ((price - minP) / (maxP - minP)) * (W - pad.l - pad.r);
+    }
+    function py(pl) {
+      return pad.t + (1 - (pl + absMax) / (2 * absMax)) * (H - pad.t - pad.b);
+    }
+
+    // Zero line
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, py(0));
+    ctx.lineTo(W - pad.r, py(0));
+    ctx.stroke();
+
+    // Fill profit zone (green)
+    ctx.fillStyle = 'rgba(34,197,94,0.18)';
+    ctx.beginPath();
+    var started = false;
+    var steps = 120;
+    for (var i = 0; i <= steps; i++) {
+      var price = minP + (maxP - minP) * i / steps;
+      var pl = calcPL(price, lS, mS, uS, netDebit, selectedType);
+      if (pl > 0) {
+        if (!started) {
+          ctx.moveTo(px(price), py(0));
+          started = true;
+        }
+        ctx.lineTo(px(price), py(pl));
+      } else if (started) {
+        ctx.lineTo(px(price), py(0));
+        ctx.closePath();
+        ctx.fill();
+        started = false;
+        ctx.beginPath();
+      }
+    }
+    if (started) {
+      ctx.lineTo(px(maxP), py(0));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // P/L line
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (var j = 0; j <= steps; j++) {
+      var p2 = minP + (maxP - minP) * j / steps;
+      var pl2 = calcPL(p2, lS, mS, uS, netDebit, selectedType);
+      if (j === 0) ctx.moveTo(px(p2), py(pl2));
+      else ctx.lineTo(px(p2), py(pl2));
+    }
+    ctx.stroke();
+
+    // Strike dashes
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    [lS, mS, uS].forEach(function (s) {
+      ctx.beginPath();
+      ctx.moveTo(px(s), pad.t);
+      ctx.lineTo(px(s), H - pad.b);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // Break-even dots
+    ctx.fillStyle = '#6b7280';
+    [beL, beU].forEach(function (be) {
+      ctx.beginPath();
+      ctx.arc(px(be), py(0), 4, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+
+    // Max profit dot
+    ctx.fillStyle = '#059669';
+    ctx.beginPath();
+    ctx.arc(px(mS), py(maxProfit), 4, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  typeBtns.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    selectedType = btn.getAttribute('data-type');
+    Array.prototype.forEach.call(typeBtns.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  [lowerStrikeEl, midStrikeEl, upperStrikeEl,
+   lowerPremEl, midPremEl, upperPremEl, contractsEl].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +863,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

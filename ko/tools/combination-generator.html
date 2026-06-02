@@ -6,11 +6,15 @@
   <title>조합 생성기 — Tools Catalog</title>
   <meta name="description" content="항목 목록에서 모든 가능한 조합을 생성합니다.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,356 @@ button:disabled{transform:none;}
         <p class="tp-desc">항목 목록에서 모든 가능한 조합을 생성합니다.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Items (one per line)</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="items" placeholder="Apple&#10;Banana&#10;Cherry&#10;Date"></textarea>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Combination Size</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <select class="tp-input" id="size">
+          <option value="all">All sizes (1 to n)</option>
+        </select>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">combination-generator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">텍스트</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">조합 생성기</span>
+
+    <div class="tp-toggles tp-toggles--wrap" id="opts">
+      <button class="tp-toggle mono" data-opt="duplicates">Allow duplicates</button>
+      <button class="tp-toggle mono" data-opt="order">Order matters</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <button class="tp-gen mono" id="gen">↻ Generate</button>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total Items</span><b id="s-items">0</b></div>
+      <div><span class="mono">Total Combinations</span><b id="s-combos">0</b></div>
+      <div><span class="mono">Type</span><b id="s-type">Combinations</b></div>
+      <div><span class="mono">Size Range</span><b id="s-range">-</b></div>
+    </div>
+    
+    <p class="tp-demo-note mono">Computed locally · Supports large lists</p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Results</span>
+    
+    <div id="filter-container" class="tp-toggles tp-toggles--wrap" style="display:none; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:1rem;">
+      <!-- Filter buttons injected here -->
+    </div>
+
+    <div class="tp-uuids" id="list"></div>
+
+    <div class="tp-toggles" style="margin-top:auto; padding-top:1.5rem; gap:10px">
+      <button class="tp-toggle mono" id="copy" style="border-color:var(--mag);color:var(--mag);flex:1">Copy</button>
+      <button class="tp-toggle mono" id="download" style="border-color:var(--mag);color:var(--mag);flex:1">Download</button>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var itemsEl = document.getElementById('items');
+  var sizeEl = document.getElementById('size');
+  var optsEl = document.getElementById('opts');
+  var genBtn = document.getElementById('gen');
+  var listEl = document.getElementById('list');
+  var filterContainer = document.getElementById('filter-container');
+  
+  var sItems = document.getElementById('s-items');
+  var sCombos = document.getElementById('s-combos');
+  var sType = document.getElementById('s-type');
+  var sRange = document.getElementById('s-range');
+  
+  var copyBtn = document.getElementById('copy');
+  var downloadBtn = document.getElementById('download');
+
+  var activeOpts = {
+    duplicates: false,
+    order: false
+  };
+  
+  var combinations = [];
+  var filterSize = 'all';
+
+  function getItems() {
+    return itemsEl.value
+      .split('\n')
+      .map(function(item) { return item.trim(); })
+      .filter(function(item) { return item.length > 0; });
+  }
+
+  function updateSizeSelect() {
+    var items = getItems();
+    var currentSize = sizeEl.value;
+    var n = items.length;
+    
+    // Keep "all" option
+    var html = '<option value="all">All sizes (1 to n)</option>';
+    for (var i = 1; i <= Math.max(1, n); i++) {
+      html += '<option value="' + i + '">' + i + ' item' + (i > 1 ? 's' : '') + '</option>';
+    }
+    sizeEl.innerHTML = html;
+    
+    // Restore selection if possible
+    if (currentSize === 'all' || parseInt(currentSize) <= n) {
+      sizeEl.value = currentSize;
+    } else {
+      sizeEl.value = 'all';
+    }
+    
+    sItems.textContent = n;
+  }
+
+  function generateCombinationsOfSize(items, size) {
+    if (activeOpts.order) {
+      return activeOpts.duplicates 
+        ? generatePermutationsWithRepetition(items, size)
+        : generatePermutations(items, size);
+    } else {
+      return activeOpts.duplicates 
+        ? generateCombinationsWithRepetition(items, size)
+        : generateCombinationsWithoutRepetition(items, size);
+    }
+  }
+
+  function generateCombinationsWithoutRepetition(items, size) {
+    var result = [];
+    function combine(start, current) {
+      if (current.length === size) {
+        result.push(current.slice());
+        return;
+      }
+      for (var i = start; i < items.length; i++) {
+        current.push(items[i]);
+        combine(i + 1, current);
+        current.pop();
+      }
+    }
+    combine(0, []);
+    return result;
+  }
+
+  function generateCombinationsWithRepetition(items, size) {
+    var result = [];
+    function combine(start, current) {
+      if (current.length === size) {
+        result.push(current.slice());
+        return;
+      }
+      for (var i = start; i < items.length; i++) {
+        current.push(items[i]);
+        combine(i, current);
+        current.pop();
+      }
+    }
+    combine(0, []);
+    return result;
+  }
+
+  function generatePermutations(items, size) {
+    var result = [];
+    var used = new Array(items.length).fill(false);
+    function permute(current) {
+      if (current.length === size) {
+        result.push(current.slice());
+        return;
+      }
+      for (var i = 0; i < items.length; i++) {
+        if (!used[i]) {
+          used[i] = true;
+          current.push(items[i]);
+          permute(current);
+          current.pop();
+          used[i] = false;
+        }
+      }
+    }
+    permute([]);
+    return result;
+  }
+
+  function generatePermutationsWithRepetition(items, size) {
+    var result = [];
+    function permute(current) {
+      if (current.length === size) {
+        result.push(current.slice());
+        return;
+      }
+      for (var i = 0; i < items.length; i++) {
+        current.push(items[i]);
+        permute(current);
+        current.pop();
+      }
+    }
+    permute([]);
+    return result;
+  }
+
+  function getTypeDescription() {
+    if (activeOpts.order && activeOpts.duplicates) return 'Permutations (Rep)';
+    if (activeOpts.order) return 'Permutations';
+    if (activeOpts.duplicates) return 'Combinations (Rep)';
+    return 'Combinations';
+  }
+
+  function renderResults() {
+    var filtered = combinations;
+    if (filterSize !== 'all') {
+      var sizeInt = parseInt(filterSize);
+      filtered = combinations.filter(function(c) { return c.length === sizeInt; });
+    }
+
+    listEl.innerHTML = '';
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="tp-uuid" style="opacity:0.5">No results</div>';
+      return;
+    }
+
+    // Performance optimization for very large lists
+    var maxDisplay = 1000;
+    var toDisplay = filtered.slice(0, maxDisplay);
+
+    toDisplay.forEach(function(combo, idx) {
+      var div = document.createElement('div');
+      div.className = 'tp-uuid';
+      div.innerHTML = '<span style="opacity:0.5;margin-right:8px">#' + (idx + 1) + '</span>' + 
+                      '(' + combo.join(', ') + ')';
+      listEl.appendChild(div);
+    });
+
+    if (filtered.length > maxDisplay) {
+      var note = document.createElement('div');
+      note.className = 'tp-hint';
+      note.style.marginTop = '1rem';
+      note.textContent = 'Showing first ' + maxDisplay + ' of ' + filtered.length.toLocaleString() + ' results. Use Download for full list.';
+      listEl.appendChild(note);
+    }
+  }
+
+  function updateFilters() {
+    if (sizeEl.value !== 'all' || combinations.length === 0) {
+      filterContainer.style.display = 'none';
+      return;
+    }
+
+    filterContainer.style.display = 'flex';
+    var sizes = [...new Set(combinations.map(function(c) { return c.length; }))].sort(function(a,b){return a-b;});
+    
+    var html = '<button class="tp-toggle mono' + (filterSize === 'all' ? ' on' : '') + '" data-filter="all">All (' + combinations.length + ')</button>';
+    sizes.forEach(function(s) {
+      var count = combinations.filter(function(c) { return c.length === s; }).length;
+      html += '<button class="tp-toggle mono' + (filterSize === s.toString() ? ' on' : '') + '" data-filter="' + s + '">Size ' + s + ' (' + count + ')</button>';
+    });
+    filterContainer.innerHTML = html;
+  }
+
+  function run() {
+    var items = getItems();
+    if (items.length === 0) {
+      combinations = [];
+      renderResults();
+      sCombos.textContent = '0';
+      sRange.textContent = '-';
+      return;
+    }
+
+    combinations = [];
+    var sizeVal = sizeEl.value;
+
+    if (sizeVal === 'all') {
+      for (var i = 1; i <= items.length; i++) {
+        combinations.push.apply(combinations, generateCombinationsOfSize(items, i));
+      }
+    } else {
+      combinations = generateCombinationsOfSize(items, parseInt(sizeVal));
+    }
+
+    filterSize = 'all';
+    
+    // Update stats
+    sCombos.textContent = combinations.length.toLocaleString();
+    sType.textContent = getTypeDescription();
+    
+    if (combinations.length > 0) {
+      var minS = combinations[0].length;
+      var maxS = combinations[combinations.length - 1].length;
+      sRange.textContent = minS === maxS ? minS : minS + ' - ' + maxS;
+    } else {
+      sRange.textContent = '-';
+    }
+
+    updateFilters();
+    renderResults();
+  }
+
+  // Listeners
+  itemsEl.addEventListener('input', updateSizeSelect);
+  
+  optsEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    var opt = btn.getAttribute('data-opt');
+    activeOpts[opt] = !activeOpts[opt];
+    btn.classList.toggle('on', activeOpts[opt]);
+    // For this tool, we usually wait for "Generate" click if it might be slow, 
+    // but the source has a Generate button, so we'll honor that.
+  });
+
+  filterContainer.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-filter]');
+    if (!btn) return;
+    filterSize = btn.getAttribute('data-filter');
+    Array.prototype.forEach.call(filterContainer.children, function(b) {
+      b.classList.toggle('on', b.getAttribute('data-filter') === filterSize);
+    });
+    renderResults();
+  });
+
+  genBtn.addEventListener('click', run);
+
+  copyBtn.addEventListener('click', function() {
+    var filtered = combinations;
+    if (filterSize !== 'all') {
+      var sizeInt = parseInt(filterSize);
+      filtered = combinations.filter(function(c) { return c.length === sizeInt; });
+    }
+    var text = filtered.map(function(c) { return '(' + c.join(', ') + ')'; }).join('\n');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      var self = this;
+      var old = this.textContent;
+      this.textContent = 'Copied ✓';
+      setTimeout(function() { self.textContent = old; }, 1200);
+    }
+  });
+
+  downloadBtn.addEventListener('click', function() {
+    var filtered = combinations;
+    if (filterSize !== 'all') {
+      var sizeInt = parseInt(filterSize);
+      filtered = combinations.filter(function(c) { return c.length === sizeInt; });
+    }
+    var text = filtered.map(function(c, i) { return (i + 1) + '. (' + c.join(', ') + ')'; }).join('\n');
+    var blob = new Blob([text], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'combinations.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // Init
+  itemsEl.value = "Apple\nBanana\nCherry\nDate";
+  updateSizeSelect();
+  run();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +906,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

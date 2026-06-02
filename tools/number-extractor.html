@@ -6,11 +6,15 @@
   <title>Number Extractor — Tools Catalog</title>
   <meta name="description" content="Extract numbers from text using pattern matching.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,212 @@ button:disabled{transform:none;}
         <p class="tp-desc">Extract numbers from text using pattern matching.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <div class="tp-field-label mono" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Input text</span>
+        <div style="display:flex;gap:12px">
+          <button class="tp-hint mono" id="ne-sample" style="cursor:pointer;background:none;border:none;padding:0;color:inherit;text-decoration:underline">Sample</button>
+          <button class="tp-hint mono" id="ne-clear" style="cursor:pointer;background:none;border:none;padding:0;color:inherit;text-decoration:underline">Clear</button>
+        </div>
       </div>
+      <textarea class="tp-textarea tp-textarea--tall" id="ne-input" placeholder="Paste text here..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">number-extractor</p>
+
+    <div class="tp-field-label mono">Extraction Type</div>
+    <div class="tp-toggles tp-toggles--wrap" id="ne-types">
+      <button class="tp-toggle mono on" data-type="all">All</button>
+      <button class="tp-toggle mono" data-type="integers">Integers</button>
+      <button class="tp-toggle mono" data-type="decimals">Decimals</button>
+      <button class="tp-toggle mono" data-type="positive">Positive</button>
+      <button class="tp-toggle mono" data-type="currency">Currency</button>
+    </div>
+
+    <div class="tp-field-label mono">Options</div>
+    <div class="tp-toggles tp-toggles--wrap" id="ne-opts">
+      <button class="tp-toggle mono on" data-opt="includeNegative">Negative</button>
+      <button class="tp-toggle mono on" data-opt="includeDecimals">Decimals</button>
+      <button class="tp-toggle mono" data-opt="removeDuplicates">No Duplicates</button>
+    </div>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Number Extractor</span>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Numbers found</span>
+    <div class="tp-stat-big"><b id="ne-r-count">0</b></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Sum</span><b id="ne-r-sum">0</b></div>
+      <div><span class="mono">Average</span><b id="ne-r-avg">0</b></div>
+      <div><span class="mono">Min</span><b id="ne-r-min">0</b></div>
+      <div><span class="mono">Max</span><b id="ne-r-max">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <div class="tp-result-label mono" style="margin-top:20px">List</div>
+    <div class="tp-mono-out" id="ne-r-list" style="margin-top:8px; max-height:160px; overflow-y:auto; word-break:break-all; font-size:13px; opacity:0.8"></div>
+    
+    <div class="tp-toggles tp-toggles--wrap" style="margin-top:auto; padding-top:20px">
+      <button class="tp-toggle mono" id="ne-copy">Copy All</button>
+      <button class="tp-toggle mono" id="ne-dl">Download</button>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const input = document.getElementById('ne-input');
+  const types = document.getElementById('ne-types');
+  const opts = document.getElementById('ne-opts');
+  const rCount = document.getElementById('ne-r-count');
+  const rSum = document.getElementById('ne-r-sum');
+  const rAvg = document.getElementById('ne-r-avg');
+  const rMin = document.getElementById('ne-r-min');
+  const rMax = document.getElementById('ne-r-max');
+  const rList = document.getElementById('ne-r-list');
+  const btnCopy = document.getElementById('ne-copy');
+  const btnDl = document.getElementById('ne-dl');
+  const btnSample = document.getElementById('ne-sample');
+  const btnClear = document.getElementById('ne-clear');
+
+  let state = {
+    type: 'all',
+    includeNegative: true,
+    includeDecimals: true,
+    removeDuplicates: false,
+    matches: []
+  };
+
+  function extract() {
+    const text = input.value;
+    if (!text.trim()) {
+      state.matches = [];
+      update();
+      return;
+    }
+
+    let p;
+    switch (state.type) {
+      case 'integers':
+        p = state.includeNegative ? /-?\d+/g : /\d+/g;
+        break;
+      case 'decimals':
+        p = state.includeNegative ? /-?\d*\.\d+/g : /\d*\.\d+/g;
+        break;
+      case 'positive':
+        p = state.includeDecimals ? /\d+\.?\d*/g : /\d+/g;
+        break;
+      case 'currency':
+        p = /[$£€¥]\s*\d+(?:\.\d{2})?|\d+(?:\.\d{2})?\s*[$£€¥]/g;
+        break;
+      default:
+        if (state.includeNegative && state.includeDecimals) p = /-?\d+(?:\.\d+)?/g;
+        else if (state.includeNegative) p = /-?\d+/g;
+        else if (state.includeDecimals) p = /\d+(?:\.\d+)?/g;
+        else p = /\d+/g;
+    }
+
+    let matches = text.match(p) || [];
+
+    if (state.type === 'currency') {
+      matches = matches.map(m => m.replace(/[$£€¥\s]/g, ''));
+    }
+
+    if (state.removeDuplicates) {
+      matches = [...new Set(matches)];
+    }
+
+    if (state.type === 'all') {
+      matches = matches.filter(m => {
+        const n = parseFloat(m);
+        if (!state.includeNegative && n < 0) return false;
+        if (!state.includeDecimals && m.includes('.')) return false;
+        return true;
+      });
+    }
+
+    state.matches = matches;
+    update();
+  }
+
+  function update() {
+    const nums = state.matches.map(n => parseFloat(n)).filter(isFinite);
+    rCount.textContent = state.matches.length.toLocaleString();
+    
+    if (nums.length > 0) {
+      const sum = nums.reduce((a, b) => a + b, 0);
+      const avg = sum / nums.length;
+      const min = Math.min(...nums);
+      const max = Math.max(...nums);
+
+      rSum.textContent = sum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      rAvg.textContent = avg.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      rMin.textContent = min.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      rMax.textContent = max.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      rList.textContent = state.matches.join(', ');
+    } else {
+      rSum.textContent = '0';
+      rAvg.textContent = '0';
+      rMin.textContent = '0';
+      rMax.textContent = '0';
+      rList.textContent = '(none)';
+    }
+  }
+
+  types.addEventListener('click', e => {
+    const btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    Array.from(types.children).forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    state.type = btn.dataset.type;
+    extract();
+  });
+
+  opts.addEventListener('click', e => {
+    const btn = e.target.closest('[data-opt]');
+    if (!btn) return;
+    const k = btn.dataset.opt;
+    state[k] = !state[k];
+    btn.classList.toggle('on', state[k]);
+    extract();
+  });
+
+  input.addEventListener('input', extract);
+
+  btnCopy.addEventListener('click', () => {
+    if (!state.matches.length) return;
+    navigator.clipboard.writeText(state.matches.join('\n'));
+    const old = btnCopy.textContent;
+    btnCopy.textContent = 'Copied!';
+    setTimeout(() => btnCopy.textContent = old, 1000);
+  });
+
+  btnDl.addEventListener('click', () => {
+    if (!state.matches.length) return;
+    const blob = new Blob([state.matches.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'numbers.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  btnSample.addEventListener('click', () => {
+    input.value = `The price is $29.99, stock: 150 items.
+Order #12345 on 2023-10-15.
+Temps: 72.5, 68.2, -5.7.
+Discount: 15.5% off, Total: €1,234.56`;
+    extract();
+  });
+
+  btnClear.addEventListener('click', () => {
+    input.value = '';
+    extract();
+  });
+
+  extract();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +762,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

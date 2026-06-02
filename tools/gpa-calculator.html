@@ -6,11 +6,15 @@
   <title>GPA Calculator — Tools Catalog</title>
   <meta name="description" content="Calculate Grade Point Average for academic performance.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -453,25 +457,255 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">GPA Scale</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="gpa-scale">
+            <option value="4.0">4.0 Scale</option>
+            <option value="5.0">5.0 Scale (Weighted)</option>
+            <option value="100">100 Point Scale</option>
+          </select>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Mode</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="gpa-mode">
+            <option value="current">Current Semester</option>
+            <option value="cumulative">Cumulative GPA</option>
+          </select>
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">gpa-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Utility</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">GPA Calculator</span>
+
+    <div id="gpa-prev-section" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Previous GPA</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="gpa-prev-gpa" type="number" inputmode="decimal" value="3.50" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Prev. credits</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="gpa-prev-credits" type="number" inputmode="decimal" value="60" min="0" step="0.5">
+            <span class="tp-suffix">cr</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div id="gpa-courses"></div>
+
+    <button class="tp-toggle mono" id="gpa-add" style="width:100%;margin-top:4px">+ Add Course</button>
+
+    <div class="tp-breakdown" id="gpa-breakdown">
+      <div><span class="mono">Semester credits</span><b id="gpa-bd-credits">0</b></div>
+      <div><span class="mono">Quality points</span><b id="gpa-bd-qp">0.00</b></div>
+      <div><span class="mono">Semester GPA</span><b id="gpa-bd-sem">—</b></div>
+      <div id="gpa-bd-cum-row" style="display:none"><span class="mono">Cumulative GPA</span><b id="gpa-bd-cum">—</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="gpa-r-label">Semester GPA</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="gpa-r-val">—</span>
+    </div>
+    <span class="tp-result-note" id="gpa-r-note">Add courses to calculate</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var scaleEl   = document.getElementById('gpa-scale');
+  var modeEl    = document.getElementById('gpa-mode');
+  var prevSec   = document.getElementById('gpa-prev-section');
+  var prevGpaEl = document.getElementById('gpa-prev-gpa');
+  var prevCrEl  = document.getElementById('gpa-prev-credits');
+  var coursesEl = document.getElementById('gpa-courses');
+  var addBtn    = document.getElementById('gpa-add');
+  var cumRow    = document.getElementById('gpa-bd-cum-row');
+
+  var courses = [];
+  var courseId = 0;
+
+  var GRADES = {
+    '4.0': [
+      {l:'A+',p:4.0},{l:'A',p:4.0},{l:'A-',p:3.7},
+      {l:'B+',p:3.3},{l:'B',p:3.0},{l:'B-',p:2.7},
+      {l:'C+',p:2.3},{l:'C',p:2.0},{l:'C-',p:1.7},
+      {l:'D+',p:1.3},{l:'D',p:1.0},{l:'D-',p:0.7},
+      {l:'F',p:0.0}
+    ],
+    '5.0': [
+      {l:'A+',p:5.0},{l:'A',p:5.0},{l:'A-',p:4.7},
+      {l:'B+',p:4.3},{l:'B',p:4.0},{l:'B-',p:3.7},
+      {l:'C+',p:3.3},{l:'C',p:3.0},{l:'C-',p:2.7},
+      {l:'D+',p:2.3},{l:'D',p:2.0},{l:'D-',p:1.7},
+      {l:'F',p:0.0}
+    ],
+    '100': [
+      {l:'95-100',p:97},{l:'90-94',p:92},{l:'85-89',p:87},
+      {l:'80-84',p:82},{l:'75-79',p:77},{l:'70-74',p:72},
+      {l:'65-69',p:67},{l:'60-64',p:62},{l:'55-59',p:57},
+      {l:'50-54',p:52},{l:'0-49',p:0}
+    ]
+  };
+
+  function gradeOptions(scale) {
+    return GRADES[scale] || GRADES['4.0'];
+  }
+
+  function buildGradeSelect(scale, selectedVal) {
+    var opts = gradeOptions(scale);
+    var html = '<option value="">Grade</option>';
+    opts.forEach(function (g) {
+      var sel = (selectedVal !== undefined && parseFloat(selectedVal) === g.p) ? ' selected' : '';
+      html += '<option value="' + g.p + '"' + sel + '>' + g.l + ' (' + g.p + ')</option>';
+    });
+    return html;
+  }
+
+  function addCourse() {
+    var id = 'c' + (++courseId);
+    courses.push({id: id, credits: 3, grade: ''});
+    var row = document.createElement('div');
+    row.className = 'tp-two';
+    row.id = 'row-' + id;
+    row.style.cssText = 'align-items:flex-end;gap:4px';
+    row.innerHTML =
+      '<div class="tp-field" style="flex:1">' +
+        '<span class="tp-field-label mono">Credits</span>' +
+        '<div class="tp-field-input">' +
+          '<input class="tp-input" id="cr-' + id + '" type="number" inputmode="decimal" value="3" min="0" max="10" step="0.5">' +
+          '<span class="tp-suffix">cr</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tp-field" style="flex:2">' +
+        '<span class="tp-field-label mono">Grade</span>' +
+        '<div class="tp-field-input">' +
+          '<select class="tp-input" id="gr-' + id + '">' + buildGradeSelect(scaleEl.value, '') + '</select>' +
+        '</div>' +
+      '</div>' +
+      '<button class="tp-toggle mono" data-remove="' + id + '" style="height:38px;margin-bottom:0;padding:0 10px;flex-shrink:0">×</button>';
+    coursesEl.appendChild(row);
+
+    document.getElementById('cr-' + id).addEventListener('input', function () {
+      var c = courses.find(function (x) { return x.id === id; });
+      if (c) c.credits = parseFloat(this.value) || 0;
+      calc();
+    });
+    document.getElementById('gr-' + id).addEventListener('change', function () {
+      var c = courses.find(function (x) { return x.id === id; });
+      if (c) c.grade = this.value;
+      calc();
+    });
+    calc();
+  }
+
+  function removeCourse(id) {
+    courses = courses.filter(function (c) { return c.id !== id; });
+    var row = document.getElementById('row-' + id);
+    if (row) row.remove();
+    calc();
+  }
+
+  function rebuildGradeSelects() {
+    var scale = scaleEl.value;
+    courses.forEach(function (c) {
+      var sel = document.getElementById('gr-' + c.id);
+      if (!sel) return;
+      var prev = c.grade;
+      sel.innerHTML = buildGradeSelect(scale, prev);
+      c.grade = sel.value;
+    });
+  }
+
+  function honorStr(gpa) {
+    if (gpa >= 3.9) return 'Summa Cum Laude';
+    if (gpa >= 3.7) return 'Magna Cum Laude';
+    if (gpa >= 3.5) return 'Cum Laude / Dean\'s List';
+    if (gpa >= 2.0) return 'Good Standing';
+    return 'Below Good Standing';
+  }
+
+  function calc() {
+    var scale = scaleEl.value;
+    var mode  = modeEl.value;
+    var is100 = scale === '100';
+
+    var totalCr = 0, totalQP = 0, validCount = 0;
+    courses.forEach(function (c) {
+      var cr = parseFloat(c.credits) || 0;
+      var gr = parseFloat(c.grade);
+      if (cr > 0 && c.grade !== '' && !isNaN(gr)) {
+        totalCr += cr;
+        totalQP += cr * gr;
+        validCount++;
+      }
+    });
+
+    var semGPA = totalCr > 0 ? totalQP / totalCr : NaN;
+
+    var prevGpa = parseFloat(prevGpaEl.value) || 0;
+    var prevCr  = parseFloat(prevCrEl.value)  || 0;
+    var cumGPA  = NaN;
+    if (mode === 'cumulative') {
+      var cumCr = prevCr + totalCr;
+      var cumQP = prevGpa * prevCr + totalQP;
+      cumGPA = cumCr > 0 ? cumQP / cumCr : NaN;
+    }
+
+    var displayGPA = mode === 'cumulative' && isFinite(cumGPA) ? cumGPA : semGPA;
+    var decimals = is100 ? 1 : 2;
+
+    document.getElementById('gpa-bd-credits').textContent = totalCr;
+    document.getElementById('gpa-bd-qp').textContent = isFinite(totalQP) ? totalQP.toFixed(decimals) : '0.00';
+    document.getElementById('gpa-bd-sem').textContent = isFinite(semGPA) ? semGPA.toFixed(decimals) : '—';
+    cumRow.style.display = mode === 'cumulative' ? '' : 'none';
+    document.getElementById('gpa-bd-cum').textContent = isFinite(cumGPA) ? cumGPA.toFixed(decimals) : '—';
+
+    document.getElementById('gpa-r-label').textContent =
+      mode === 'cumulative' ? 'Cumulative GPA' : 'Semester GPA';
+    document.getElementById('gpa-r-val').textContent =
+      isFinite(displayGPA) ? displayGPA.toFixed(decimals) : '—';
+
+    var note = validCount === 0 ? 'Add courses to calculate' :
+      validCount + ' course' + (validCount !== 1 ? 's' : '') +
+      ', ' + totalCr + ' credit' + (totalCr !== 1 ? 's' : '');
+    if (!is100 && isFinite(displayGPA)) {
+      note += ' — ' + honorStr(displayGPA);
+    }
+    document.getElementById('gpa-r-note').textContent = note;
+  }
+
+  coursesEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-remove]');
+    if (btn) removeCourse(btn.getAttribute('data-remove'));
+  });
+
+  scaleEl.addEventListener('change', function () {
+    rebuildGradeSelects();
+    calc();
+  });
+
+  modeEl.addEventListener('change', function () {
+    prevSec.style.display = this.value === 'cumulative' ? '' : 'none';
+    calc();
+  });
+
+  [prevGpaEl, prevCrEl].forEach(function (el) { el.addEventListener('input', calc); });
+
+  addBtn.addEventListener('click', addCourse);
+
+  addCourse();
+  addCourse();
+  addCourse();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +807,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

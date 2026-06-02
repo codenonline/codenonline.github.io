@@ -6,11 +6,15 @@
   <title>WACC Calculator — Tools Catalog</title>
   <meta name="description" content="Blend the cost of equity and after-tax cost of debt, weighted by capital structure, to get the minimum return a company must earn.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,156 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Equity market value</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="wc-equity-val" type="number" inputmode="decimal" value="500000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">wacc-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">WACC Calculator</span>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Cost of equity</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="wc-equity-cost" type="number" inputmode="decimal" value="12" min="0" max="100" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Debt market value</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="wc-debt-val" type="number" inputmode="decimal" value="200000" min="0" step="1">
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Cost of debt</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wc-debt-cost" type="number" inputmode="decimal" value="6" min="0" max="100" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Tax rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wc-tax" type="number" inputmode="decimal" value="21" min="0" max="100" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+      <input type="checkbox" id="wc-pref-toggle" style="width:16px;height:16px;cursor:pointer">
+      <label for="wc-pref-toggle" class="mono" style="font-size:0.85rem;cursor:pointer">Include preferred stock</label>
+    </div>
+    <div id="wc-pref-section" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Preferred market value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="wc-pref-val" type="number" inputmode="decimal" value="0" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Cost of preferred</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="wc-pref-cost" type="number" inputmode="decimal" value="0" min="0" max="100" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Equity weight</span><b id="wc-bd-ew">—</b></div>
+      <div><span class="mono">Debt weight</span><b id="wc-bd-dw">—</b></div>
+      <div><span class="mono">After-tax debt cost</span><b id="wc-bd-atd">—</b></div>
+      <div><span class="mono">Total firm value</span><b id="wc-bd-tv">—</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">WACC</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="wc-r-wacc">—</span>
+      <span class="tp-result-prefix">%</span>
+    </div>
+    <span class="tp-result-note" id="wc-r-note">Weighted avg. cost of capital</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var equityVal  = document.getElementById('wc-equity-val');
+  var equityCost = document.getElementById('wc-equity-cost');
+  var debtVal    = document.getElementById('wc-debt-val');
+  var debtCost   = document.getElementById('wc-debt-cost');
+  var taxRate    = document.getElementById('wc-tax');
+  var prefToggle = document.getElementById('wc-pref-toggle');
+  var prefSection= document.getElementById('wc-pref-section');
+  var prefVal    = document.getElementById('wc-pref-val');
+  var prefCost   = document.getElementById('wc-pref-cost');
+
+  function fmt(n) {
+    if (!isFinite(n)) return '—';
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+    return '$' + n.toLocaleString();
+  }
+
+  function round2(n) {
+    return Math.round((n + Number.EPSILON) * 100) / 100;
+  }
+
+  function calc() {
+    var E  = Math.max(0, parseFloat(equityVal.value)  || 0);
+    var Re = parseFloat(equityCost.value) || 0;
+    var D  = Math.max(0, parseFloat(debtVal.value)    || 0);
+    var Rd = parseFloat(debtCost.value)  || 0;
+    var T  = parseFloat(taxRate.value)   || 0;
+    var P  = prefToggle.checked ? Math.max(0, parseFloat(prefVal.value) || 0) : 0;
+    var Rp = prefToggle.checked ? (parseFloat(prefCost.value) || 0) : 0;
+
+    var V = E + D + P;
+    var waccEl = document.getElementById('wc-r-wacc');
+
+    if (V === 0) {
+      waccEl.textContent = '—';
+      document.getElementById('wc-bd-ew').textContent  = '—';
+      document.getElementById('wc-bd-dw').textContent  = '—';
+      document.getElementById('wc-bd-atd').textContent = '—';
+      document.getElementById('wc-bd-tv').textContent  = '—';
+      document.getElementById('wc-r-note').textContent = 'Enter values above';
+      return;
+    }
+
+    var afterTaxDebt = Rd * (1 - T / 100);
+    var equityW  = (E / V) * 100;
+    var debtW    = (D / V) * 100;
+
+    var wacc = (E / V) * Re + (D / V) * afterTaxDebt + (P / V) * Rp;
+
+    waccEl.textContent = round2(wacc).toFixed(2);
+    document.getElementById('wc-bd-ew').textContent  = round2(equityW).toFixed(2) + '%';
+    document.getElementById('wc-bd-dw').textContent  = round2(debtW).toFixed(2) + '%';
+    document.getElementById('wc-bd-atd').textContent = round2(afterTaxDebt).toFixed(2) + '%';
+    document.getElementById('wc-bd-tv').textContent  = fmt(V);
+    document.getElementById('wc-r-note').textContent =
+      'E=' + round2(equityW).toFixed(1) + '% · D=' + round2(debtW).toFixed(1) + '%' +
+      (prefToggle.checked && P > 0 ? ' · P=' + round2((P/V)*100).toFixed(1) + '%' : '');
+  }
+
+  prefToggle.addEventListener('change', function () {
+    prefSection.style.display = this.checked ? '' : 'none';
+    calc();
+  });
+
+  [equityVal, equityCost, debtVal, debtCost, taxRate, prefVal, prefCost].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +709,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

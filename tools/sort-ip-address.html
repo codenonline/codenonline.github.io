@@ -6,11 +6,15 @@
   <title>Sort IP Address — Tools Catalog</title>
   <meta name="description" content="Sort IP addresses in numerical order.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -451,27 +455,178 @@ button:disabled{transform:none;}
         <p class="tp-desc">Sort IP addresses in numerical order.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">IP addresses</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="input-ips" placeholder="Enter IP addresses, one per line:
+192.168.1.1
+10.0.0.1
+172.16.0.1"></textarea>
+    </div>
+    
+    <div class="tp-field">
+      <span class="tp-field-label mono">Sort order</span>
+      <div class="tp-toggles" id="sort-order">
+        <button class="tp-toggle mono on" data-order="asc">Ascending</button>
+        <button class="tp-toggle mono" data-order="desc">Descending</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">sort-ip-address</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Sort IP Address</span>
+
+    <div class="tp-toggles tp-toggles--wrap" style="margin-top:1rem">
+       <button class="tp-toggle mono" id="load-example">Load example</button>
+       <button class="tp-toggle mono" id="clear-input">Clear</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <p class="tp-hint">Enter IPv4 addresses one per line. The tool validates each entry and sorts them numerically.</p>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <div class="tp-stat-big">
+      <b id="valid-count">0</b>
+      <span>valid ips</span>
+    </div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Total lines</span><b id="total-count">0</b></div>
+      <div><span class="mono">Invalid IPs</span><b id="invalid-count">0</b></div>
+      <div><span class="mono">Unique nets</span><b id="unique-nets">0</b></div>
+    </div>
+
+    <div class="tp-field" style="margin-top:1.5rem; flex:1; display:flex; flex-direction:column">
+      <span class="tp-field-label mono" style="color:var(--mag)">Sorted output</span>
+      <textarea class="tp-mono-out" id="output-ips" readonly style="flex:1; min-height:160px; background:transparent; color:var(--mag); border:2px solid var(--mag); padding:10px; font-family:var(--mono); font-size:14px; resize:none; margin-top:5px"></textarea>
+    </div>
+
+    <div class="tp-breakdown" style="margin-top:1.5rem; border-top:1px solid var(--mag); padding-top:1rem">
+      <div><span class="mono" style="color:var(--mag)">First IP</span><b id="first-ip" style="color:var(--mag)">-</b></div>
+      <div><span class="mono" style="color:var(--mag)">Last IP</span><b id="last-ip" style="color:var(--mag)">-</b></div>
+    </div>
+
+    <button class="tp-toggle mono" id="copy-output" style="margin-top:1rem; border-color:var(--mag); color:var(--mag); align-self:stretch">Copy sorted IPs</button>
   </div>
 </div>
+
+<script>
+(function () {
+  var input = document.getElementById('input-ips');
+  var output = document.getElementById('output-ips');
+  var sortOrderToggles = document.getElementById('sort-order');
+  var loadExampleBtn = document.getElementById('load-example');
+  var clearInputBtn = document.getElementById('clear-input');
+  var copyOutputBtn = document.getElementById('copy-output');
+
+  var validCount = document.getElementById('valid-count');
+  var totalCount = document.getElementById('total-count');
+  var invalidCount = document.getElementById('invalid-count');
+  var firstIp = document.getElementById('first-ip');
+  var lastIp = document.getElementById('last-ip');
+  var uniqueNets = document.getElementById('unique-nets');
+
+  var sortOrder = 'asc';
+
+  function isValidIP(ip) {
+    var parts = ip.split('.');
+    if (parts.length !== 4) return false;
+    return parts.every(function (part) {
+      var num = parseInt(part, 10);
+      return !isNaN(num) && num >= 0 && num <= 255 && part === num.toString();
+    });
+  }
+
+  function compareIPs(ip1, ip2) {
+    var parts1 = ip1.split('.').map(function (p) { return parseInt(p, 10); });
+    var parts2 = ip2.split('.').map(function (p) { return parseInt(p, 10); });
+    for (var i = 0; i < 4; i++) {
+      if (parts1[i] !== parts2[i]) return parts1[i] - parts2[i];
+    }
+    return 0;
+  }
+
+  function calc() {
+    var val = input.value;
+    var lines = val.split('\n').map(function (l) { return l.trim(); }).filter(function (l) { return l !== ''; });
+    
+    var valid = [];
+    var invalid = 0;
+
+    lines.forEach(function (line) {
+      if (isValidIP(line)) {
+        valid.push(line);
+      } else {
+        invalid++;
+      }
+    });
+
+    valid.sort(function (a, b) {
+      var cmp = compareIPs(a, b);
+      return sortOrder === 'asc' ? cmp : -cmp;
+    });
+
+    output.value = valid.join('\n');
+    validCount.textContent = valid.length.toLocaleString();
+    totalCount.textContent = lines.length.toLocaleString();
+    invalidCount.textContent = invalid.toLocaleString();
+    
+    if (valid.length > 0) {
+      firstIp.textContent = valid[0];
+      lastIp.textContent = valid[valid.length - 1];
+      
+      var networks = {};
+      valid.forEach(function (ip) {
+        var parts = ip.split('.');
+        var net = parts[0] + '.' + parts[1] + '.' + parts[2] + '.x';
+        networks[net] = true;
+      });
+      uniqueNets.textContent = Object.keys(networks).length.toLocaleString();
+    } else {
+      firstIp.textContent = '-';
+      lastIp.textContent = '-';
+      uniqueNets.textContent = '0';
+    }
+  }
+
+  input.addEventListener('input', calc);
+  
+  sortOrderToggles.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-order]');
+    if (!btn) return;
+    sortOrder = btn.getAttribute('data-order');
+    Array.prototype.forEach.call(sortOrderToggles.children, function (b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  loadExampleBtn.addEventListener('click', function () {
+    input.value = [
+      '192.168.1.1', '10.0.0.1', '172.16.0.1', '192.168.1.10', '192.168.0.1',
+      '10.0.0.255', '172.16.1.1', '192.168.1.2', '10.0.1.1', '172.16.0.255',
+      '192.168.0.10', '10.0.0.10', '192.168.1.100', '172.16.1.10', '10.0.1.255'
+    ].join('\n');
+    calc();
+  });
+
+  clearInputBtn.addEventListener('click', function () {
+    input.value = '';
+    calc();
+  });
+
+  copyOutputBtn.addEventListener('click', function () {
+    var txt = output.value;
+    if (!txt) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt);
+      var self = this;
+      var old = self.textContent;
+      self.textContent = 'Copied!';
+      setTimeout(function () { self.textContent = old; }, 1500);
+    }
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +728,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }

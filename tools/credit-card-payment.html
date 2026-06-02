@@ -6,11 +6,15 @@
   <title>Credit Card Payment Calculator — Tools Catalog</title>
   <meta name="description" content="Understand your credit card billing — see minimum payment amounts and how long it takes to pay off your balance.">
   <script>
-    // Apply the saved background color before first paint to avoid a flash.
+    // Apply the saved or initial random background color before first paint.
     (function () {
       try {
-        var c = localStorage.getItem('tc_v2_bg');
-        if (c) document.documentElement.style.setProperty('--mag', c);
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
       } catch (e) {}
     })();
   </script>
@@ -454,24 +458,303 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Balance</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="cc-balance" type="number" inputmode="decimal" value="5000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">credit-card-payment</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Financial</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Credit Card Paymen</span>
+    <div class="tp-field">
+      <span class="tp-field-label mono">APR</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="cc-apr" type="number" inputmode="decimal" value="18.99" min="0" step="0.01">
+        <span class="tp-suffix">%</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Payment strategy</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="cc-strategy">
+          <option value="minimum">Minimum payment</option>
+          <option value="fixed">Fixed monthly amount</option>
+          <option value="percentage">% of balance</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="cc-min-group">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Min payment type</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="cc-min-type">
+            <option value="percentage">% of balance</option>
+            <option value="fixed">Fixed amount</option>
+            <option value="interestPlus">Interest + fixed</option>
+          </select>
+        </div>
+      </div>
+      <div class="tp-field" id="cc-min-pct-field">
+        <span class="tp-field-label mono">Minimum %</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="cc-min-pct" type="number" inputmode="decimal" value="2.0" min="0" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field" id="cc-min-fixed-field" style="display:none">
+        <span class="tp-field-label mono">Fixed minimum</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="cc-min-fixed" type="number" inputmode="decimal" value="25" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-field" id="cc-min-iplus-field" style="display:none">
+        <span class="tp-field-label mono">Amount above interest</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="cc-iplus" type="number" inputmode="decimal" value="10" min="0" step="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-field" id="cc-fixed-group" style="display:none">
+      <span class="tp-field-label mono">Monthly payment</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="cc-fixed-amt" type="number" inputmode="decimal" value="200" min="0" step="1">
+      </div>
+    </div>
+
+    <div class="tp-field" id="cc-pct-group" style="display:none">
+      <span class="tp-field-label mono">Payment % of balance</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="cc-pay-pct" type="number" inputmode="decimal" value="5.0" min="0" step="0.1">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Monthly payment</span><b id="cc-bd-payment">$0.00</b></div>
+      <div><span class="mono">Interest this month</span><b id="cc-bd-interest">$0.00</b></div>
+      <div><span class="mono">Principal this month</span><b id="cc-bd-principal">$0.00</b></div>
+      <div><span class="mono">Total interest</span><b id="cc-bd-total-interest">$0.00</b></div>
+      <div><span class="mono">Total paid</span><b id="cc-bd-total-paid">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result" style="flex-direction:column;align-items:stretch;gap:0.75rem">
+    <div style="text-align:center">
+      <span class="tp-result-label">Time to pay off</span>
+      <div class="tp-result-val" style="justify-content:center">
+        <span class="tp-result-num" id="cc-r-time" style="font-size:clamp(1.5rem,5vw,2.5rem)">—</span>
+      </div>
+      <span class="tp-result-note" id="cc-r-note">at 18.99% APR</span>
+    </div>
+
+    <div style="margin-top:0.5rem">
+      <div class="mono" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;opacity:0.6">Strategy comparison</div>
+      <table style="width:100%;font-size:0.75rem;border-collapse:collapse" id="cc-compare-table">
+        <thead>
+          <tr style="border-bottom:2px solid var(--ink)">
+            <th style="text-align:left;padding:0.2rem 0.25rem" class="mono">Strategy</th>
+            <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">$/mo</th>
+            <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Time</th>
+            <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Interest</th>
+          </tr>
+        </thead>
+        <tbody id="cc-compare-body"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:0.5rem">
+      <div class="mono" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;opacity:0.6">First 12 months</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;font-size:0.72rem;border-collapse:collapse" id="cc-sched-table">
+          <thead>
+            <tr style="border-bottom:2px solid var(--ink)">
+              <th style="text-align:left;padding:0.2rem 0.25rem" class="mono">Mo</th>
+              <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Payment</th>
+              <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Interest</th>
+              <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Principal</th>
+              <th style="text-align:right;padding:0.2rem 0.25rem" class="mono">Balance</th>
+            </tr>
+          </thead>
+          <tbody id="cc-sched-body"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
+<script>
+(function () {
+  var elBalance    = document.getElementById('cc-balance');
+  var elApr        = document.getElementById('cc-apr');
+  var elStrategy   = document.getElementById('cc-strategy');
+  var elMinType    = document.getElementById('cc-min-type');
+  var elMinPct     = document.getElementById('cc-min-pct');
+  var elMinFixed   = document.getElementById('cc-min-fixed');
+  var elIplus      = document.getElementById('cc-iplus');
+  var elFixedAmt   = document.getElementById('cc-fixed-amt');
+  var elPayPct     = document.getElementById('cc-pay-pct');
+
+  var grpMin       = document.getElementById('cc-min-group');
+  var grpFixed     = document.getElementById('cc-fixed-group');
+  var grpPct       = document.getElementById('cc-pct-group');
+  var fldMinPct    = document.getElementById('cc-min-pct-field');
+  var fldMinFixed  = document.getElementById('cc-min-fixed-field');
+  var fldIplus     = document.getElementById('cc-min-iplus-field');
+
+  function money(n) {
+    if (!isFinite(n) || n < 0) n = 0;
+    return '$' + n.toFixed(2);
+  }
+
+  function formatPayoffTime(months) {
+    if (months >= 600) return 'Never';
+    var y = Math.floor(months / 12);
+    var m = months % 12;
+    if (y === 0) return m + ' mo';
+    if (m === 0) return y + ' yr';
+    return y + ' yr ' + m + ' mo';
+  }
+
+  function calcMinPayment(balance, monthlyRate) {
+    var strategy = elStrategy.value;
+    if (strategy === 'fixed') return parseFloat(elFixedAmt.value) || 0;
+    if (strategy === 'percentage') return balance * (parseFloat(elPayPct.value) || 0) / 100;
+    // minimum
+    var minType = elMinType.value;
+    if (minType === 'fixed') return parseFloat(elMinFixed.value) || 0;
+    if (minType === 'interestPlus') return balance * monthlyRate + (parseFloat(elIplus.value) || 0);
+    // percentage (default), min $15
+    return Math.max(balance * (parseFloat(elMinPct.value) || 0) / 100, 15);
+  }
+
+  function buildSchedule(balance, monthlyRate) {
+    var schedule = [];
+    var month = 1;
+    var b = balance;
+    while (b > 0.01 && month <= 600) {
+      var interest = b * monthlyRate;
+      var payment = calcPaymentForBalance(b, monthlyRate);
+      if (payment > b + interest) payment = b + interest;
+      var principal = payment - interest;
+      b -= principal;
+      schedule.push({ month: month, payment: payment, interest: interest, principal: principal, balance: Math.max(0, b) });
+      month++;
+    }
+    return schedule;
+  }
+
+  function calcPaymentForBalance(b, monthlyRate) {
+    var strategy = elStrategy.value;
+    if (strategy === 'fixed') return parseFloat(elFixedAmt.value) || 0;
+    if (strategy === 'percentage') return b * (parseFloat(elPayPct.value) || 0) / 100;
+    var minType = elMinType.value;
+    if (minType === 'fixed') return parseFloat(elMinFixed.value) || 0;
+    if (minType === 'interestPlus') return b * monthlyRate + (parseFloat(elIplus.value) || 0);
+    return Math.max(b * (parseFloat(elMinPct.value) || 0) / 100, 15);
+  }
+
+  function calcStrategySchedule(balance, monthlyRate, type, value) {
+    var b = balance;
+    var months = 0;
+    var totalInterest = 0;
+    while (b > 0.01 && months < 600) {
+      var interest = b * monthlyRate;
+      var payment;
+      if (type === 'percentage') {
+        payment = Math.max(b * value / 100, 15);
+      } else {
+        payment = value;
+      }
+      if (payment > b + interest) payment = b + interest;
+      var principal = payment - interest;
+      b -= principal;
+      totalInterest += interest;
+      months++;
+    }
+    return { months: months, totalInterest: totalInterest, payment: type === 'percentage' ? Math.max(balance * value / 100, 15) : value };
+  }
+
+  function showHide() {
+    var s = elStrategy.value;
+    grpMin.style.display   = s === 'minimum'    ? '' : 'none';
+    grpFixed.style.display = s === 'fixed'      ? '' : 'none';
+    grpPct.style.display   = s === 'percentage' ? '' : 'none';
+    var mt = elMinType.value;
+    fldMinPct.style.display   = mt === 'percentage'  ? '' : 'none';
+    fldMinFixed.style.display = mt === 'fixed'       ? '' : 'none';
+    fldIplus.style.display    = mt === 'interestPlus'? '' : 'none';
+  }
+
+  function calc() {
+    showHide();
+    var balance = parseFloat(elBalance.value) || 0;
+    var annualRate = parseFloat(elApr.value) || 0;
+    var monthlyRate = annualRate / 100 / 12;
+
+    var monthlyInterest = balance * monthlyRate;
+    var payment = calcMinPayment(balance, monthlyRate);
+    var monthlyPrincipal = Math.max(0, payment - monthlyInterest);
+
+    var schedule = buildSchedule(balance, monthlyRate);
+    var totalInterest = schedule.reduce(function (s, r) { return s + r.interest; }, 0);
+    var totalPaid = balance + totalInterest;
+
+    document.getElementById('cc-bd-payment').textContent        = money(payment);
+    document.getElementById('cc-bd-interest').textContent       = money(monthlyInterest);
+    document.getElementById('cc-bd-principal').textContent      = money(monthlyPrincipal);
+    document.getElementById('cc-bd-total-interest').textContent = money(totalInterest);
+    document.getElementById('cc-bd-total-paid').textContent     = money(totalPaid);
+    document.getElementById('cc-r-time').textContent            = formatPayoffTime(schedule.length);
+    document.getElementById('cc-r-note').textContent            = 'at ' + annualRate + '% APR';
+
+    // Strategy comparison
+    var strategies = [
+      { label: 'Min 2%',    type: 'percentage', value: 2 },
+      { label: '$100/mo',   type: 'fixed',       value: 100 },
+      { label: '$200/mo',   type: 'fixed',       value: 200 },
+      { label: '5% bal',    type: 'percentage', value: 5 }
+    ];
+    var tbody = document.getElementById('cc-compare-body');
+    tbody.innerHTML = '';
+    strategies.forEach(function (st) {
+      var res = calcStrategySchedule(balance, monthlyRate, st.type, st.value);
+      var tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
+      tr.innerHTML =
+        '<td style="padding:0.2rem 0.25rem" class="mono">' + st.label + '</td>' +
+        '<td style="text-align:right;padding:0.2rem 0.25rem">' + money(res.payment) + '</td>' +
+        '<td style="text-align:right;padding:0.2rem 0.25rem">' + formatPayoffTime(res.months) + '</td>' +
+        '<td style="text-align:right;padding:0.2rem 0.25rem">' + money(res.totalInterest) + '</td>';
+      tbody.appendChild(tr);
+    });
+
+    // Schedule preview (first 12 months)
+    var sbody = document.getElementById('cc-sched-body');
+    sbody.innerHTML = '';
+    var preview = schedule.slice(0, 12);
+    preview.forEach(function (row) {
+      var tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(0,0,0,0.07)';
+      tr.innerHTML =
+        '<td style="padding:0.15rem 0.25rem" class="mono">' + row.month + '</td>' +
+        '<td style="text-align:right;padding:0.15rem 0.25rem">' + money(row.payment) + '</td>' +
+        '<td style="text-align:right;padding:0.15rem 0.25rem">' + money(row.interest) + '</td>' +
+        '<td style="text-align:right;padding:0.15rem 0.25rem">' + money(row.principal) + '</td>' +
+        '<td style="text-align:right;padding:0.15rem 0.25rem">' + money(row.balance) + '</td>';
+      sbody.appendChild(tr);
+    });
+  }
+
+  elStrategy.addEventListener('change', calc);
+  elMinType.addEventListener('change', calc);
+  [elBalance, elApr, elMinPct, elMinFixed, elIplus, elFixedAmt, elPayPct].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -573,7 +856,8 @@ button:disabled{transform:none;}
     var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
     if (!btn || !panel) return;
     var KEY = 'tc_v2_bg';
-    var DEFAULT = '#ec18e6';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
 
     function current() {
       try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }
