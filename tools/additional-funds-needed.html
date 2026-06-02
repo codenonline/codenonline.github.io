@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -404,24 +454,157 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Current Sales</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="afn-sales" type="number" inputmode="decimal" value="1000000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">additional-funds-needed</p>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total Assets</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="afn-assets" type="number" inputmode="decimal" value="500000" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Spontaneous Liabilities</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="afn-liabilities" type="number" inputmode="decimal" value="100000" min="0" step="1">
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Sales Growth Rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="afn-growth" type="number" inputmode="decimal" value="20" min="0" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Profit Margin</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="afn-margin" type="number" inputmode="decimal" value="5" min="0" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Retention Ratio</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="afn-retention" type="number" inputmode="decimal" value="60" min="0" max="100" step="0.1">
+        <span class="tp-suffix">%</span>
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Projected Sales</span><b id="bd-proj-sales">$0</b></div>
+      <div><span class="mono">Required Assets</span><b id="bd-req-assets">$0</b></div>
+      <div><span class="mono">Retained Earnings</span><b id="bd-retained">$0</b></div>
+      <div><span class="mono">Increase in Assets</span><b id="bd-inc-assets">$0</b></div>
+      <div><span class="mono">Increase in Liabilities</span><b id="bd-inc-liab">$0</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Business</span>
+    <span class="tp-result-label">Additional Funds Needed</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Additional Funds N</span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-afn">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note">Enter values to calculate</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var sales = document.getElementById('afn-sales');
+  var assets = document.getElementById('afn-assets');
+  var liabilities = document.getElementById('afn-liabilities');
+  var growth = document.getElementById('afn-growth');
+  var margin = document.getElementById('afn-margin');
+  var retention = document.getElementById('afn-retention');
+
+  var money = function (n) {
+    if (!isFinite(n)) return '$0';
+    return (n >= 0 ? '' : '-') + '$' + Math.abs(n).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  };
+
+  function calc() {
+    var s0 = parseFloat(sales.value) || 0;
+    var a = parseFloat(assets.value) || 0;
+    var l = parseFloat(liabilities.value) || 0;
+    var g = parseFloat(growth.value) || 0;
+    var m = parseFloat(margin.value) || 0;
+    var r = parseFloat(retention.value) || 0;
+
+    if (s0 <= 0) {
+      document.getElementById('r-afn').textContent = '0';
+      document.getElementById('r-note').textContent = 'Enter sales to calculate';
+      document.getElementById('bd-proj-sales').textContent = '$0';
+      document.getElementById('bd-req-assets').textContent = '$0';
+      document.getElementById('bd-retained').textContent = '$0';
+      document.getElementById('bd-inc-assets').textContent = '$0';
+      document.getElementById('bd-inc-liab').textContent = '$0';
+      return;
+    }
+
+    // Sales change
+    var deltaS = s0 * (g / 100);
+
+    // Projected sales
+    var projSales = s0 + deltaS;
+
+    // Asset-to-sales and liability-to-sales ratios
+    var assetRatio = a / s0;
+    var liabRatio = l / s0;
+
+    // Increase in assets and liabilities
+    var incAssets = assetRatio * deltaS;
+    var incLiab = liabRatio * deltaS;
+
+    // Projected net income and retained earnings
+    var projNetIncome = projSales * (m / 100);
+    var retainedEarnings = projNetIncome * (r / 100);
+
+    // AFN calculation
+    var afn = incAssets - incLiab - retainedEarnings;
+
+    // Update result display
+    document.getElementById('r-afn').textContent = Math.abs(afn).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+
+    var interpretation = '';
+    if (afn > 0) {
+      interpretation = 'Need external financing of ' + money(afn);
+    } else if (afn < 0) {
+      interpretation = 'Surplus funds of ' + money(Math.abs(afn));
+    } else {
+      interpretation = 'Self-financed growth';
+    }
+    document.getElementById('r-note').textContent = interpretation;
+
+    // Update breakdown
+    document.getElementById('bd-proj-sales').textContent = money(projSales);
+    document.getElementById('bd-req-assets').textContent = money(a + incAssets);
+    document.getElementById('bd-retained').textContent = money(retainedEarnings);
+    document.getElementById('bd-inc-assets').textContent = money(incAssets);
+    document.getElementById('bd-inc-liab').textContent = money(incLiab);
+  }
+
+  [sales, assets, liabilities, growth, margin, retention].forEach(function (el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +659,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +739,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

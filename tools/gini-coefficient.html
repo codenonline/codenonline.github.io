@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,287 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono on" data-method="individual">Individual</button>
+      <button class="tp-toggle mono" data-method="grouped">Grouped</button>
+      <button class="tp-toggle mono" data-method="percentiles">Percentiles</button>
+    </div>
+
+    <!-- Individual Income Values -->
+    <div id="method-individual" class="tp-method">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Income values</span>
+        <textarea class="tp-textarea tp-textarea--tall" id="individual-incomes" placeholder="25000&#10;30000&#10;45000&#10;50000&#10;75000&#10;100000"></textarea>
+      </div>
+      <div class="tp-toggles">
+        <button class="tp-toggle mono" id="btn-sample">Load sample</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">gini-coefficient</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Gini Coefficient C</span>
+
+    <!-- Income Groups -->
+    <div id="method-grouped" class="tp-method" style="display:none">
+      <div id="groups-list"></div>
+      <button class="tp-toggle mono" id="btn-add-group">+ Add group</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Income Percentiles -->
+    <div id="method-percentiles" class="tp-method" style="display:none">
+      <div id="percentiles-list"></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Gini coefficient</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-gini">0.0000</span>
+    </div>
+    <span class="tp-result-note" id="r-inequality"></span>
+    <div class="tp-breakdown">
+      <div><span class="mono">As %</span><b id="bd-gini-pct">0.00%</b></div>
+      <div><span class="mono">Mean income</span><b id="bd-mean">$0</b></div>
+      <div><span class="mono">Median income</span><b id="bd-median">$0</b></div>
+    </div>
+    <div id="lorenz-section" style="margin-top:1.5rem">
+      <div class="mono" style="margin-bottom:0.5rem">Lorenz curve</div>
+      <div id="lorenz-table" style="font-size:0.8rem;max-height:200px;overflow-y:auto"></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var methodToggle = document.querySelectorAll('[data-method]');
+  var methodSections = document.querySelectorAll('.tp-method');
+  var individualIncomes = document.getElementById('individual-incomes');
+  var btnSample = document.getElementById('btn-sample');
+  var btnAddGroup = document.getElementById('btn-add-group');
+  var rGini = document.getElementById('r-gini');
+  var rInequality = document.getElementById('r-inequality');
+  var bdGiniPct = document.getElementById('bd-gini-pct');
+  var bdMean = document.getElementById('bd-mean');
+  var bdMedian = document.getElementById('bd-median');
+  var lorenzTable = document.getElementById('lorenz-table');
+  var groupsList = document.getElementById('groups-list');
+  var percentilesList = document.getElementById('percentiles-list');
+
+  var state = {
+    method: 'individual',
+    groups: [
+      { min: 0, max: 25000, population: 100 },
+      { min: 25000, max: 50000, population: 150 },
+      { min: 50000, max: 100000, population: 200 },
+      { min: 100000, max: 200000, population: 100 },
+      { min: 200000, max: 500000, population: 50 }
+    ],
+    percentiles: {
+      10: 15000, 20: 25000, 30: 35000, 40: 45000, 50: 55000,
+      60: 70000, 70: 85000, 80: 105000, 90: 140000, 100: 250000
+    }
+  };
+
+  function formatMoney(n) {
+    return isFinite(n) ? '$' + n.toLocaleString('en-US', {maximumFractionDigits: 0}) : '$0';
+  }
+
+  function getInequalityLevel(gini) {
+    if (isNaN(gini)) return '';
+    if (gini < 0.25) return 'Very low inequality';
+    if (gini < 0.35) return 'Low inequality';
+    if (gini < 0.45) return 'Moderate inequality';
+    if (gini < 0.60) return 'High inequality';
+    return 'Very high inequality';
+  }
+
+  function parseIncomes() {
+    var text = individualIncomes.value;
+    return text
+      .replace(/,/g, '\n')
+      .split('\n')
+      .map(function(s) { return parseFloat(s.trim()); })
+      .filter(function(n) { return isFinite(n) && n >= 0; });
+  }
+
+  function generateFromGroups() {
+    var incomes = [];
+    state.groups.forEach(function(g) {
+      var avg = (g.min + g.max) / 2;
+      for (var i = 0; i < g.population; i++) {
+        incomes.push(avg);
+      }
+    });
+    return incomes;
+  }
+
+  function generateFromPercentiles() {
+    var incomes = [];
+    for (var p = 10; p <= 100; p += 10) {
+      var income = state.percentiles[p] || 0;
+      for (var i = 0; i < 10; i++) {
+        incomes.push(income);
+      }
+    }
+    return incomes;
+  }
+
+  function calculate() {
+    var incomes = [];
+    if (state.method === 'individual') {
+      incomes = parseIncomes();
+    } else if (state.method === 'grouped') {
+      incomes = generateFromGroups();
+    } else if (state.method === 'percentiles') {
+      incomes = generateFromPercentiles();
+    }
+
+    if (incomes.length === 0) {
+      rGini.textContent = '0.0000';
+      rInequality.textContent = '';
+      bdGiniPct.textContent = '0.00%';
+      bdMean.textContent = '$0';
+      bdMedian.textContent = '$0';
+      lorenzTable.innerHTML = '';
+      return;
+    }
+
+    var sorted = incomes.slice().sort(function(a, b) { return a - b; });
+    var n = sorted.length;
+    var total = sorted.reduce(function(sum, x) { return sum + x; }, 0);
+
+    if (total === 0) {
+      rGini.textContent = '0.0000';
+      rInequality.textContent = '';
+      bdGiniPct.textContent = '0.00%';
+      bdMean.textContent = '$0';
+      bdMedian.textContent = '$0';
+      lorenzTable.innerHTML = '';
+      return;
+    }
+
+    // Gini coefficient: G = (2 * Σ(i * yi)) / (n * Σ(yi)) - (n + 1) / n
+    var numerator = 0;
+    for (var i = 0; i < n; i++) {
+      numerator += (i + 1) * sorted[i];
+    }
+    var gini = (2 * numerator) / (n * total) - (n + 1) / n;
+    gini = Math.max(0, Math.min(1, gini));
+
+    var mean = total / n;
+    var median = n % 2 === 0
+      ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2
+      : sorted[Math.floor(n / 2)];
+
+    rGini.textContent = isFinite(gini) ? gini.toFixed(4) : '0.0000';
+    rInequality.textContent = getInequalityLevel(gini);
+    bdGiniPct.textContent = (gini * 100).toFixed(2) + '%';
+    bdMean.textContent = formatMoney(mean);
+    bdMedian.textContent = formatMoney(median);
+
+    // Lorenz curve
+    var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.75rem">';
+    html += '<div><span class="mono">Pop %</span></div><div><span class="mono">Income %</span></div>';
+    html += '<div style="border-top:1px solid var(--ink)">0%</div>';
+    html += '<div style="border-top:1px solid var(--ink)">0%</div>';
+    var cumIncome = 0;
+    for (var i = 0; i < n; i++) {
+      cumIncome += sorted[i];
+      var popPct = ((i + 1) / n * 100).toFixed(1);
+      var incPct = (cumIncome / total * 100).toFixed(1);
+      if (i < 5 || i >= n - 5) { // Show first 5 and last 5
+        html += '<div>' + popPct + '%</div><div>' + incPct + '%</div>';
+      } else if (i === 5) {
+        html += '<div>…</div><div>…</div>';
+      }
+    }
+    html += '</div>';
+    lorenzTable.innerHTML = html;
+  }
+
+  function renderGroups() {
+    var html = '';
+    state.groups.forEach(function(g, idx) {
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.5rem;margin-bottom:0.5rem">';
+      html += '<input class="tp-input group-min" type="number" value="' + g.min + '" data-idx="' + idx + '" placeholder="Min">';
+      html += '<input class="tp-input group-max" type="number" value="' + g.max + '" data-idx="' + idx + '" placeholder="Max">';
+      html += '<input class="tp-input group-pop" type="number" value="' + g.population + '" data-idx="' + idx + '" placeholder="Pop" min="1">';
+      if (state.groups.length > 1) {
+        html += '<button class="tp-toggle mono" style="padding:0.5rem" data-del="' + idx + '">×</button>';
+      }
+      html += '</div>';
+    });
+    groupsList.innerHTML = html;
+
+    // Attach listeners
+    document.querySelectorAll('.group-min, .group-max, .group-pop').forEach(function(el) {
+      el.addEventListener('input', function() {
+        var idx = parseInt(this.getAttribute('data-idx'), 10);
+        if (el.classList.contains('group-min')) state.groups[idx].min = parseFloat(el.value) || 0;
+        else if (el.classList.contains('group-max')) state.groups[idx].max = parseFloat(el.value) || 0;
+        else state.groups[idx].population = Math.max(1, parseInt(el.value, 10) || 1);
+        calculate();
+      });
+    });
+    document.querySelectorAll('[data-del]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var idx = parseInt(this.getAttribute('data-del'), 10);
+        state.groups.splice(idx, 1);
+        renderGroups();
+        calculate();
+      });
+    });
+  }
+
+  function renderPercentiles() {
+    var html = '';
+    for (var p = 10; p <= 100; p += 10) {
+      html += '<div class="tp-field">';
+      html += '<span class="tp-field-label mono">' + p + 'th percentile</span>';
+      html += '<div class="tp-field-input">';
+      html += '<span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>';
+      html += '<input class="tp-input percentile-val" type="number" value="' + (state.percentiles[p] || 0) + '" data-p="' + p + '" inputmode="decimal">';
+      html += '</div></div>';
+    }
+    percentilesList.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">' + html + '</div>';
+
+    document.querySelectorAll('.percentile-val').forEach(function(el) {
+      el.addEventListener('input', function() {
+        var p = parseInt(this.getAttribute('data-p'), 10);
+        state.percentiles[p] = parseFloat(el.value) || 0;
+        calculate();
+      });
+    });
+  }
+
+  // Event listeners
+  methodToggle.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      state.method = this.getAttribute('data-method');
+      methodToggle.forEach(function(b) { b.classList.remove('on'); });
+      this.classList.add('on');
+      methodSections.forEach(function(s) { s.style.display = 'none'; });
+      document.getElementById('method-' + state.method).style.display = 'block';
+      calculate();
+    });
+  });
+
+  btnSample.addEventListener('click', function() {
+    individualIncomes.value = '15000\n25000\n28000\n32000\n38000\n42000\n48000\n52000\n58000\n65000\n72000\n78000\n85000\n92000\n105000\n125000\n150000\n180000\n220000\n350000';
+    calculate();
+  });
+
+  btnAddGroup.addEventListener('click', function() {
+    state.groups.push({ min: 0, max: 10000, population: 50 });
+    renderGroups();
+    calculate();
+  });
+
+  individualIncomes.addEventListener('input', calculate);
+
+  // Init
+  renderGroups();
+  renderPercentiles();
+  calculate();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +788,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +868,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

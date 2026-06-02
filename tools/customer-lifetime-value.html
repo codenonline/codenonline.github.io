@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -404,24 +454,255 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Calculation method</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <select class="tp-input" id="method" style="width:100%">
+          <option value="simple">Simple LTV Model</option>
+          <option value="traditional">Traditional LTV Model</option>
+          <option value="cohort">Cohort-based Model</option>
+        </select>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">customer-lifetime-value</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Customer Lifetime </span>
+
+    <!-- Simple Model -->
+    <div id="simple-inputs" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Average order value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="aov" type="number" inputmode="decimal" value="75.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Purchase frequency (per year)</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="frequency" type="number" inputmode="decimal" value="4.5" min="0" step="0.1">
+          <span class="tp-suffix">times</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Customer lifespan</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lifespan" type="number" inputmode="decimal" value="3.5" min="0" step="0.1">
+          <span class="tp-suffix">years</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Traditional Model -->
+    <div id="traditional-inputs" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly revenue per customer</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="monthly-revenue" type="number" inputmode="decimal" value="50.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Gross margin</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="gross-margin" type="number" inputmode="decimal" value="60.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly churn rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="churn-rate" type="number" inputmode="decimal" value="5.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cohort Model -->
+    <div id="cohort-inputs" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Initial cohort size</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="cohort-size" type="number" inputmode="numeric" value="1000" min="1" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Month 1 revenue per customer</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="m1-revenue" type="number" inputmode="decimal" value="100.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Month 1 retention rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="m1-retention" type="number" inputmode="decimal" value="85.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly revenue decline</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="rev-decline" type="number" inputmode="decimal" value="10.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly retention decline</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ret-decline" type="number" inputmode="decimal" value="5.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common CAC Input -->
+    <div class="tp-field" style="border-top:1px solid var(--ink-20);padding-top:1em;margin-top:1em">
+      <span class="tp-field-label mono">Customer acquisition cost</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="cac" type="number" inputmode="decimal" value="75.00" min="0" step="0.01">
+      </div>
+    </div>
+
+    <!-- Breakdown Section -->
+    <div class="tp-breakdown">
+      <div><span class="mono">LTV:CAC Ratio</span><b id="bd-ratio">0.0:1</b></div>
+      <div><span class="mono">Net customer value</span><b id="bd-net">$0.00</b></div>
+      <div id="bd-extra" style="display:none"><span class="mono" id="bd-extra-label"></span><b id="bd-extra-val">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Customer lifetime value</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="result-ltv">0</span>
+    </div>
+    <span class="tp-result-note" id="result-note">Simple model</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var method = document.getElementById('method');
+  var simpleInputs = document.getElementById('simple-inputs');
+  var traditionalInputs = document.getElementById('traditional-inputs');
+  var cohortInputs = document.getElementById('cohort-inputs');
+
+  // Simple model
+  var aov = document.getElementById('aov');
+  var frequency = document.getElementById('frequency');
+  var lifespan = document.getElementById('lifespan');
+
+  // Traditional model
+  var monthlyRevenue = document.getElementById('monthly-revenue');
+  var grossMargin = document.getElementById('gross-margin');
+  var churnRate = document.getElementById('churn-rate');
+
+  // Cohort model
+  var cohortSize = document.getElementById('cohort-size');
+  var m1Revenue = document.getElementById('m1-revenue');
+  var m1Retention = document.getElementById('m1-retention');
+  var revDecline = document.getElementById('rev-decline');
+  var retDecline = document.getElementById('ret-decline');
+
+  // Common
+  var cac = document.getElementById('cac');
+
+  // Results
+  var resultLtv = document.getElementById('result-ltv');
+  var resultNote = document.getElementById('result-note');
+  var bdRatio = document.getElementById('bd-ratio');
+  var bdNet = document.getElementById('bd-net');
+  var bdExtra = document.getElementById('bd-extra');
+  var bdExtraLabel = document.getElementById('bd-extra-label');
+  var bdExtraVal = document.getElementById('bd-extra-val');
+
+  function money(n) {
+    return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
+  }
+
+  function showSection() {
+    simpleInputs.style.display = method.value === 'simple' ? 'block' : 'none';
+    traditionalInputs.style.display = method.value === 'traditional' ? 'block' : 'none';
+    cohortInputs.style.display = method.value === 'cohort' ? 'block' : 'none';
+    calc();
+  }
+
+  function calc() {
+    var ltv = 0;
+    var extraLabel = '';
+    var extraVal = 0;
+    var methodName = method.value.charAt(0).toUpperCase() + method.value.slice(1);
+
+    if (method.value === 'simple') {
+      var a = parseFloat(aov.value) || 0;
+      var f = parseFloat(frequency.value) || 0;
+      var l = parseFloat(lifespan.value) || 0;
+      ltv = a * f * l;
+      extraLabel = 'Annual customer value';
+      extraVal = a * f;
+    } else if (method.value === 'traditional') {
+      var mr = parseFloat(monthlyRevenue.value) || 0;
+      var gm = parseFloat(grossMargin.value) || 0;
+      var cr = parseFloat(churnRate.value) || 1;
+      var monthlyProfit = mr * (gm / 100);
+      var avgLifespanMonths = cr > 0 ? 1 / (cr / 100) : 0;
+      ltv = monthlyProfit * avgLifespanMonths;
+      extraLabel = 'Monthly profit';
+      extraVal = monthlyProfit;
+    } else if (method.value === 'cohort') {
+      var cs = parseFloat(cohortSize.value) || 0;
+      var mr1 = parseFloat(m1Revenue.value) || 0;
+      var ret1 = parseFloat(m1Retention.value) || 0;
+      var rd = parseFloat(revDecline.value) || 0;
+      var rrd = parseFloat(retDecline.value) || 0;
+
+      var customers = cs;
+      var retention = 100;
+      var revPerCust = mr1;
+      var cumulativeRev = 0;
+
+      for (var m = 1; m <= 24; m++) {
+        if (m === 1) {
+          retention = ret1;
+          revPerCust = mr1;
+        } else {
+          retention = Math.max(0, retention - rrd);
+          revPerCust = Math.max(0, revPerCust * (1 - rd / 100));
+        }
+        customers = customers * (retention / 100);
+        cumulativeRev += customers * revPerCust;
+        if (customers < 1) break;
+      }
+
+      ltv = cs > 0 ? cumulativeRev / cs : 0;
+      extraLabel = 'Total cohort value';
+      extraVal = cumulativeRev;
+    }
+
+    var cacVal = parseFloat(cac.value) || 0;
+    var ratio = cacVal > 0 ? ltv / cacVal : 0;
+    var netValue = ltv - cacVal;
+
+    resultLtv.textContent = isFinite(ltv) ? ltv.toFixed(2) : '0.00';
+    resultNote.textContent = methodName + ' model';
+    bdRatio.textContent = ratio.toFixed(1) + ':1';
+    bdNet.textContent = money(netValue);
+
+    if (extraVal > 0 || method.value !== 'simple') {
+      bdExtra.style.display = 'block';
+      bdExtraLabel.textContent = extraLabel;
+      bdExtraVal.textContent = money(extraVal);
+    } else {
+      bdExtra.style.display = 'none';
+    }
+  }
+
+  method.addEventListener('change', showSection);
+  [aov, frequency, lifespan, monthlyRevenue, grossMargin, churnRate, cohortSize, m1Revenue, m1Retention, revDecline, retDecline, cac]
+    .forEach(function (el) { el.addEventListener('input', calc); });
+
+  showSection();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +757,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +837,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

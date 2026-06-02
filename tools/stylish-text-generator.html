@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/text/">Text Tools</a>
+      <a href="/text/">Text</a>
       <span>/</span>
       <span class="on">Stylish Text Generator</span>
     </div>
@@ -396,32 +446,187 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Text Tools · Tool</div>
+        <div class="tp-kicker mono">Text · Tool</div>
         <h1 class="tp-title">Stylish Text Generator</h1>
         <p class="tp-desc">Generate stylish text with Unicode characters and fonts.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
-      </div>
+      <span class="tp-field-label mono">Input text</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="input" placeholder="Type your text here..."></textarea>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">stylish-text-generator</p>
+
+    <span class="tp-field-label mono">Select primary style</span>
+    <div class="tp-toggles tp-toggles--wrap" id="styles"></div>
+    
+    <p class="tp-demo-note mono">Unicode-based text transformation · works in most social apps</p>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text Tools</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Stylish Text Gener</span>
-    </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Selected Style Preview</span>
+    <div class="tp-pw" id="main-out" style="min-height:3em; margin-bottom:1rem; word-break: break-all;">—</div>
+    <button class="tp-toggle mono" id="copy-main" style="border-color:var(--mag);color:var(--mag);margin-bottom:2rem; align-self: flex-start;">Copy result</button>
+
+    <span class="tp-result-label">All variations</span>
+    <div id="all-styles" class="tp-uuids"></div>
+    <p class="tp-demo-note mono">Click any variation above to copy</p>
   </div>
 </div>
+
+<script>
+(function () {
+  var STYLES = {
+    'Bold': {
+      lower: '\u{1D5EE}\u{1D5EF}\u{1D5F0}\u{1D5F1}\u{1D5F2}\u{1D5F3}\u{1D5F4}\u{1D5F5}\u{1D5F6}\u{1D5F7}\u{1D5F8}\u{1D5F9}\u{1D5FA}\u{1D5FB}\u{1D5FC}\u{1D5FD}\u{1D5FE}\u{1D5FF}\u{1D600}\u{1D601}\u{1D602}\u{1D603}\u{1D604}\u{1D605}\u{1D606}\u{1D607}',
+      upper: '\u{1D5D4}\u{1D5D5}\u{1D5D6}\u{1D5D7}\u{1D5D8}\u{1D5D9}\u{1D5DA}\u{1D5DB}\u{1D5DC}\u{1D5DD}\u{1D5DE}\u{1D5DF}\u{1D5E0}\u{1D5E1}\u{1D5E2}\u{1D5E3}\u{1D5E4}\u{1D5E5}\u{1D5E6}\u{1D5E7}\u{1D5E8}\u{1D5E9}\u{1D5EA}\u{1D5EB}\u{1D5EC}\u{1D5ED}'
+    },
+    'Italic': {
+      lower: '\u{1D622}\u{1D623}\u{1D624}\u{1D625}\u{1D626}\u{1D627}\u{1D628}\u{1D629}\u{1D62A}\u{1D62B}\u{1D62C}\u{1D62D}\u{1D62E}\u{1D62F}\u{1D630}\u{1D631}\u{1D632}\u{1D633}\u{1D634}\u{1D635}\u{1D636}\u{1D637}\u{1D638}\u{1D639}\u{1D63A}\u{1D63B}',
+      upper: '\u{1D608}\u{1D609}\u{1D60A}\u{1D60B}\u{1D60C}\u{1D60D}\u{1D60E}\u{1D60F}\u{1D610}\u{1D611}\u{1D612}\u{1D613}\u{1D614}\u{1D615}\u{1D616}\u{1D617}\u{1D618}\u{1D619}\u{1D61A}\u{1D61B}\u{1D61C}\u{1D61D}\u{1D61E}\u{1D61F}\u{1D620}\u{1D621}'
+    },
+    'Bold Italic': {
+      lower: '\u{1D656}\u{1D657}\u{1D658}\u{1D659}\u{1D65A}\u{1D65B}\u{1D65C}\u{1D65D}\u{1D65E}\u{1D65F}\u{1D660}\u{1D661}\u{1D662}\u{1D663}\u{1D664}\u{1D665}\u{1D666}\u{1D667}\u{1D668}\u{1D669}\u{1D66A}\u{1D66B}\u{1D66C}\u{1D66D}\u{1D66E}\u{1D66F}',
+      upper: '\u{1D63C}\u{1D63D}\u{1D63E}\u{1D63F}\u{1D640}\u{1D641}\u{1D642}\u{1D643}\u{1D644}\u{1D645}\u{1D646}\u{1D647}\u{1D648}\u{1D649}\u{1D64A}\u{1D64B}\u{1D64C}\u{1D64D}\u{1D64E}\u{1D64F}\u{1D650}\u{1D651}\u{1D652}\u{1D653}\u{1D654}\u{1D655}'
+    },
+    'Monospace': {
+      lower: '\u{1D68A}\u{1D68B}\u{1D68C}\u{1D68D}\u{1D68E}\u{1D68F}\u{1D690}\u{1D691}\u{1D692}\u{1D693}\u{1D694}\u{1D695}\u{1D696}\u{1D697}\u{1D698}\u{1D699}\u{1D69A}\u{1D69B}\u{1D69C}\u{1D69D}\u{1D69E}\u{1D69F}\u{1D6A0}\u{1D6A1}\u{1D6A2}\u{1D6A3}',
+      upper: '\u{1D670}\u{1D671}\u{1D672}\u{1D673}\u{1D674}\u{1D675}\u{1D676}\u{1D677}\u{1D678}\u{1D679}\u{1D67A}\u{1D67B}\u{1D67C}\u{1D67D}\u{1D67E}\u{1D67F}\u{1D680}\u{1D681}\u{1D682}\u{1D683}\u{1D684}\u{1D685}\u{1D686}\u{1D687}\u{1D688}\u{1D689}'
+    },
+    'Circled': {
+      lower: '\u24D0\u24D1\u24D2\u24D3\u24D4\u24D5\u24D6\u24D7\u24D8\u24D9\u24DA\u24DB\u24DC\u24DD\u24DE\u24DF\u24E0\u24E1\u24E2\u24E3\u24E4\u24E5\u24E6\u24E7\u24E8\u24E9',
+      upper: '\u24B6\u24B7\u24B8\u24B9\u24BA\u24BB\u24BC\u24BD\u24BE\u24BF\u24C0\u24C1\u24C2\u24C3\u24C4\u24C5\u24C6\u24C7\u24C8\u24C9\u24CA\u24CB\u24CC\u24CD\u24CE\u24CF'
+    },
+    'Squared': {
+      upper: '\u{1F130}\u{1F131}\u{1F132}\u{1F133}\u{1F134}\u{1F135}\u{1F136}\u{1F137}\u{1F138}\u{1F139}\u{1F13A}\u{1F13B}\u{1F13C}\u{1F13D}\u{1F13E}\u{1F13F}\u{1F140}\u{1F141}\u{1F142}\u{1F143}\u{1F144}\u{1F145}\u{1F146}\u{1F147}\u{1F148}\u{1F149}',
+      lower: '\u{1F130}\u{1F131}\u{1F132}\u{1F133}\u{1F134}\u{1F135}\u{1F136}\u{1F137}\u{1F138}\u{1F139}\u{1F13A}\u{1F13B}\u{1F13C}\u{1F13D}\u{1F13E}\u{1F13F}\u{1F140}\u{1F141}\u{1F142}\u{1F143}\u{1F144}\u{1F145}\u{1F146}\u{1F147}\u{1F148}\u{1F149}'
+    },
+    'Fullwidth': {
+      lower: '\uFF41\uFF42\uFF43\uFF44\uFF45\uFF46\uFF47\uFF48\uFF49\uFF4A\uFF4B\uFF4C\uFF4D\uFF4E\uFF4F\uFF50\uFF51\uFF52\uFF53\uFF54\uFF55\uFF56\uFF57\uFF58\uFF59\uFF5A',
+      upper: '\uFF21\uFF22\uFF23\uFF24\uFF25\uFF26\uFF27\uFF28\uFF29\uFF2A\uFF2B\uFF2C\uFF2D\uFF2E\uFF2F\uFF30\uFF31\uFF32\uFF33\uFF34\uFF35\uFF36\uFF37\uFF38\uFF39\uFF3A'
+    }
+  };
+
+  var lowerAlpha = 'abcdefghijklmnopqrstuvwxyz';
+  var upperAlpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var styleMaps = {};
+  var styleNames = Object.keys(STYLES);
+  
+  styleNames.forEach(function (name) {
+    var maps = STYLES[name];
+    var charMap = {};
+    var lArr = Array.from(maps.lower);
+    var uArr = Array.from(maps.upper);
+    for (var i = 0; i < 26; i++) {
+      charMap[lowerAlpha[i]] = lArr[i];
+      charMap[upperAlpha[i]] = uArr[i];
+    }
+    styleMaps[name] = charMap;
+  });
+
+  var input = document.getElementById('input');
+  var stylesContainer = document.getElementById('styles');
+  var mainOut = document.getElementById('main-out');
+  var copyMain = document.getElementById('copy-main');
+  var allStyles = document.getElementById('all-styles');
+  var selectedStyle = 'Bold';
+
+  function convert(text, styleName) {
+    if (!text) return '';
+    var map = styleMaps[styleName];
+    if (!map) return text;
+    return Array.from(text).map(function (c) { return map[c] || c; }).join('');
+  }
+
+  function update() {
+    var txt = input.value;
+    mainOut.textContent = convert(txt, selectedStyle) || '—';
+
+    // Update the list of all styles
+    allStyles.innerHTML = '';
+    styleNames.forEach(function (name) {
+      var val = convert(txt || 'Type something...', name);
+      var div = document.createElement('div');
+      div.className = 'tp-uuid';
+      div.style.flexDirection = 'column';
+      div.style.alignItems = 'flex-start';
+      div.style.cursor = 'pointer';
+      div.style.padding = '12px';
+
+      var sName = document.createElement('span');
+      sName.className = 'mono';
+      sName.style.fontSize = '10px';
+      sName.style.marginBottom = '4px';
+      sName.style.opacity = '0.6';
+      sName.textContent = name;
+
+      var sVal = document.createElement('div');
+      sVal.style.wordBreak = 'break-all';
+      sVal.style.fontSize = '1.1em';
+      sVal.textContent = val;
+
+      div.appendChild(sName);
+      div.appendChild(sVal);
+
+      div.onclick = function () {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(val);
+          var old = sName.textContent;
+          sName.textContent = 'COPIED ✓';
+          sName.style.color = 'var(--mag)';
+          sName.style.opacity = '1';
+          setTimeout(function () {
+            sName.textContent = old;
+            sName.style.color = '';
+            sName.style.opacity = '0.6';
+          }, 1000);
+        }
+      };
+
+      allStyles.appendChild(div);
+    });
+  }
+
+  // Initialize toggle buttons
+  styleNames.forEach(function (name) {
+    var btn = document.createElement('button');
+    btn.className = 'tp-toggle mono';
+    if (name === selectedStyle) btn.classList.add('on');
+    btn.textContent = name;
+    btn.onclick = function () {
+      selectedStyle = name;
+      Array.from(stylesContainer.children).forEach(function (b) {
+        b.classList.toggle('on', b.textContent === name);
+      });
+      update();
+    };
+    stylesContainer.appendChild(btn);
+  });
+
+  input.addEventListener('input', update);
+
+  copyMain.addEventListener('click', function () {
+    var txt = mainOut.textContent;
+    if (!txt || txt === '—') return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt);
+      var self = this;
+      var old = self.textContent;
+      self.textContent = 'Copied ✓';
+      self.classList.add('on');
+      setTimeout(function () {
+        self.textContent = old;
+        self.classList.remove('on');
+      }, 1200);
+    }
+  });
+
+  // Default value
+  input.value = 'Stylish Text';
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -441,7 +646,7 @@ button:disabled{transform:none;}
 
     
     <div class="tp-related">
-      <span class="tp-related-label mono">Related in Text Tools</span>
+      <span class="tp-related-label mono">Related in Text</span>
       <div class="tp-related-list">
         
         <a class="tp-related-card" href="/tools/markdown-converter.html">
@@ -476,27 +681,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +761,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

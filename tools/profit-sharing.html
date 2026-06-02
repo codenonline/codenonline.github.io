@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -404,24 +454,238 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Total profit</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="ps-profit" type="number" inputmode="decimal" value="100000" min="0" step="1">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">profit-sharing</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Profit Sharing Cal</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Distribution method</span>
+      <select class="tp-input" id="ps-method">
+        <option value="salary">Proportional to salary</option>
+        <option value="equal">Equal distribution</option>
+        <option value="tenure">Proportional to tenure</option>
+        <option value="custom">Custom weights</option>
+      </select>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field" id="ps-tenure-cap-field" style="display:none;">
+      <span class="tp-field-label mono">Years cap</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="ps-tenure-cap" type="number" inputmode="decimal" value="10" min="0" step="0.1">
+      </div>
+    </div>
+
+    <div style="margin-top: 1.5rem; margin-bottom: 1rem;">
+      <div class="tp-field-label mono" style="margin-bottom: 0.75rem;">Employees</div>
+      <div id="ps-employees" style="display: grid; gap: 0.75rem; font-size: 0.875rem;"></div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total distributed</span><b id="ps-bd-distributed">$0.00</b></div>
+      <div><span class="mono">Remaining</span><b id="ps-bd-remaining">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Total distributed</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="ps-r-distributed">0.00</span>
+    </div>
+    <span class="tp-result-note" id="ps-r-note">Distributed among employees</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var profit = document.getElementById('ps-profit');
+  var method = document.getElementById('ps-method');
+  var tenureCapField = document.getElementById('ps-tenure-cap-field');
+  var tenureCap = document.getElementById('ps-tenure-cap');
+  var employeesContainer = document.getElementById('ps-employees');
+
+  var money = function(n) {
+    return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
+  };
+
+  var employees = [
+    { name: 'John Smith', salary: 60000, tenure: 5, weight: 1 },
+    { name: 'Sarah Johnson', salary: 75000, tenure: 3, weight: 1 },
+    { name: 'Mike Davis', salary: 55000, tenure: 8, weight: 1 }
+  ];
+
+  function renderEmployees() {
+    employeesContainer.innerHTML = '';
+    employees.forEach(function(emp, idx) {
+      var row = document.createElement('div');
+      row.style.display = 'grid';
+      row.style.gap = '0.5rem';
+
+      if (method.value === 'tenure') {
+        row.style.gridTemplateColumns = '1.5fr 1fr 0.75fr auto';
+      } else if (method.value === 'custom') {
+        row.style.gridTemplateColumns = '1.5fr 1fr 0.75fr auto';
+      } else {
+        row.style.gridTemplateColumns = '1.5fr 1fr auto';
+      }
+
+      var nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'tp-input';
+      nameInput.placeholder = 'Name';
+      nameInput.value = emp.name;
+      nameInput.addEventListener('input', function() {
+        emp.name = this.value;
+        calc();
+      });
+      row.appendChild(nameInput);
+
+      var salaryInput = document.createElement('input');
+      salaryInput.type = 'number';
+      salaryInput.className = 'tp-input';
+      salaryInput.placeholder = 'Salary';
+      salaryInput.value = emp.salary;
+      salaryInput.inputMode = 'decimal';
+      salaryInput.min = '0';
+      salaryInput.step = '1';
+      salaryInput.addEventListener('input', function() {
+        emp.salary = parseFloat(this.value) || 0;
+        calc();
+      });
+      row.appendChild(salaryInput);
+
+      if (method.value === 'tenure') {
+        var tenureInput = document.createElement('input');
+        tenureInput.type = 'number';
+        tenureInput.className = 'tp-input';
+        tenureInput.placeholder = 'Yrs';
+        tenureInput.value = emp.tenure;
+        tenureInput.inputMode = 'decimal';
+        tenureInput.min = '0';
+        tenureInput.step = '0.1';
+        tenureInput.addEventListener('input', function() {
+          emp.tenure = parseFloat(this.value) || 0;
+          calc();
+        });
+        row.appendChild(tenureInput);
+      } else if (method.value === 'custom') {
+        var weightInput = document.createElement('input');
+        weightInput.type = 'number';
+        weightInput.className = 'tp-input';
+        weightInput.placeholder = 'Wt';
+        weightInput.value = emp.weight;
+        weightInput.inputMode = 'decimal';
+        weightInput.min = '0';
+        weightInput.step = '0.1';
+        weightInput.addEventListener('input', function() {
+          emp.weight = parseFloat(this.value) || 0;
+          calc();
+        });
+        row.appendChild(weightInput);
+      }
+
+      var shareSpan = document.createElement('span');
+      shareSpan.style.textAlign = 'right';
+      shareSpan.style.paddingRight = '0.5rem';
+      shareSpan.style.fontWeight = '500';
+      shareSpan.id = 'ps-share-' + idx;
+      shareSpan.textContent = '0%';
+      row.appendChild(shareSpan);
+
+      employeesContainer.appendChild(row);
+    });
+  }
+
+  function calc() {
+    var p = parseFloat(profit.value) || 0;
+    var m = method.value;
+    var tc = parseFloat(tenureCap.value) || 10;
+
+    if (employees.length === 0 || p === 0) {
+      document.getElementById('ps-r-distributed').textContent = '0.00';
+      document.getElementById('ps-bd-distributed').textContent = money(0);
+      document.getElementById('ps-bd-remaining').textContent = money(p);
+      document.getElementById('ps-r-note').textContent = 'No employees';
+      employees.forEach(function(emp, idx) {
+        var shareEl = document.getElementById('ps-share-' + idx);
+        if (shareEl) shareEl.textContent = '0%';
+      });
+      return;
+    }
+
+    var totalWeight = 0;
+    employees.forEach(function(emp) {
+      var weight = 0;
+      switch (m) {
+        case 'salary':
+          weight = parseFloat(emp.salary) || 0;
+          break;
+        case 'equal':
+          weight = 1;
+          break;
+        case 'tenure':
+          var effectiveTenure = Math.min(parseFloat(emp.tenure) || 0, tc);
+          weight = Math.max(effectiveTenure, 0.5);
+          break;
+        case 'custom':
+          weight = parseFloat(emp.weight) || 0;
+          break;
+      }
+      totalWeight += weight;
+    });
+
+    var totalDistributed = 0;
+    employees.forEach(function(emp, idx) {
+      var weight = 0;
+      switch (m) {
+        case 'salary':
+          weight = parseFloat(emp.salary) || 0;
+          break;
+        case 'equal':
+          weight = 1;
+          break;
+        case 'tenure':
+          var effectiveTenure = Math.min(parseFloat(emp.tenure) || 0, tc);
+          weight = Math.max(effectiveTenure, 0.5);
+          break;
+        case 'custom':
+          weight = parseFloat(emp.weight) || 0;
+          break;
+      }
+      emp.percentage = totalWeight > 0 ? ((weight / totalWeight) * 100) : 0;
+      emp.amount = totalWeight > 0 ? ((weight / totalWeight) * p) : 0;
+      totalDistributed += emp.amount;
+
+      var shareEl = document.getElementById('ps-share-' + idx);
+      if (shareEl) {
+        shareEl.textContent = emp.percentage.toFixed(1) + '%';
+      }
+    });
+
+    var remaining = p - totalDistributed;
+    document.getElementById('ps-r-distributed').textContent = isFinite(totalDistributed) ? totalDistributed.toFixed(2) : '0.00';
+    document.getElementById('ps-bd-distributed').textContent = money(totalDistributed);
+    document.getElementById('ps-bd-remaining').textContent = money(remaining);
+    document.getElementById('ps-r-note').textContent = m.replace(/_/g, ' ');
+  }
+
+  method.addEventListener('change', function() {
+    tenureCapField.style.display = this.value === 'tenure' ? 'block' : 'none';
+    renderEmployees();
+    calc();
+  });
+
+  [profit, tenureCap].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  renderEmployees();
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +740,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +820,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

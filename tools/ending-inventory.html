@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,263 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
+    <!-- Method Selection -->
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Costing method</span>
+      <div class="tp-toggles tp-toggles--wrap" id="ei-method">
+        <button class="tp-toggle mono on" data-method="fifo">FIFO</button>
+        <button class="tp-toggle mono" data-method="lifo">LIFO</button>
+        <button class="tp-toggle mono" data-method="weighted">Weighted Avg</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">ending-inventory</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Ending Inventory C</span>
+
+    <!-- Beginning Inventory -->
+    <div class="tp-field">
+      <span class="tp-field-label mono">Beginning inventory units</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="ei-begin-units" type="number" inputmode="numeric" value="100" min="0" step="1">
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Beginning unit cost</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="ei-begin-cost" type="number" inputmode="decimal" value="10.00" min="0" step="0.01">
+      </div>
+    </div>
+
+    <!-- Purchases -->
+    <div class="tp-field">
+      <span class="tp-field-label mono">Purchases during period</span>
+      <div id="ei-purchases" style="margin-bottom:8px"></div>
+      <button class="tp-gen mono" id="ei-add-purchase">+ Add purchase</button>
+    </div>
+
+    <!-- Units Sold -->
+    <div class="tp-field">
+      <span class="tp-field-label mono">Units sold</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="ei-sold" type="number" inputmode="numeric" value="150" min="0" step="1">
+      </div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="tp-breakdown">
+      <div><span class="mono">Units available</span><b id="ei-bd-avail">0</b></div>
+      <div><span class="mono">Ending units</span><b id="ei-bd-ending">0</b></div>
+      <div><span class="mono">Cost of goods sold</span><b id="ei-bd-cogs">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Ending inventory value</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="ei-r-value">0</span>
+    </div>
+    <span class="tp-result-note" id="ei-r-note">using FIFO method</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const methodToggle = document.getElementById('ei-method');
+  const beginUnits = document.getElementById('ei-begin-units');
+  const beginCost = document.getElementById('ei-begin-cost');
+  const sold = document.getElementById('ei-sold');
+  const purchasesContainer = document.getElementById('ei-purchases');
+  const addPurchaseBtn = document.getElementById('ei-add-purchase');
+
+  let purchases = [];
+  let selectedMethod = 'fifo';
+
+  function money(n) {
+    return (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
+  }
+
+  function createPurchaseRow(index) {
+    const wrapper = document.createElement('div');
+    wrapper.style.marginBottom = '12px';
+    wrapper.style.paddingBottom = '8px';
+    wrapper.style.borderBottom = '1px solid var(--ink)';
+    wrapper.dataset.purchaseIndex = index;
+
+    const fieldRow = document.createElement('div');
+    fieldRow.className = 'tp-two';
+    fieldRow.innerHTML = `
+      <div class="tp-field">
+        <span class="tp-field-label mono">Units</span>
+        <div class="tp-field-input">
+          <input class="tp-input ei-p-units" type="number" inputmode="numeric" min="0" step="1" value="">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Unit cost</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input ei-p-cost" type="number" inputmode="decimal" min="0" step="0.01" value="">
+        </div>
+      </div>
+    `;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'tp-gen mono';
+    removeBtn.style.marginTop = '4px';
+    removeBtn.textContent = '− Remove';
+    removeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      purchases.splice(index, 1);
+      renderPurchases();
+      calc();
+    });
+
+    wrapper.appendChild(fieldRow);
+    wrapper.appendChild(removeBtn);
+
+    const unitsInput = wrapper.querySelector('.ei-p-units');
+    const costInput = wrapper.querySelector('.ei-p-cost');
+
+    unitsInput.addEventListener('input', calc);
+    costInput.addEventListener('input', calc);
+
+    return wrapper;
+  }
+
+  function renderPurchases() {
+    purchasesContainer.innerHTML = '';
+    purchases.forEach((_, i) => {
+      purchasesContainer.appendChild(createPurchaseRow(i));
+    });
+  }
+
+  function addPurchase(e) {
+    e.preventDefault();
+    purchases.push({});
+    renderPurchases();
+  }
+
+  function getPurchaseInputs() {
+    const rows = [];
+    document.querySelectorAll('[data-purchaseIndex]').forEach(row => {
+      const units = parseFloat(row.querySelector('.ei-p-units').value) || 0;
+      const cost = parseFloat(row.querySelector('.ei-p-cost').value) || 0;
+      rows.push({
+        units: Math.max(0, units),
+        cost: Math.max(0, cost)
+      });
+    });
+    return rows;
+  }
+
+  function calculateFIFO(layers, soldUnits) {
+    let remaining = soldUnits;
+    let cogs = 0;
+
+    for (const layer of layers) {
+      if (remaining <= 0) break;
+      const from = Math.min(remaining, layer.units);
+      cogs += from * layer.cost;
+      remaining -= from;
+    }
+
+    const total = layers.reduce((sum, l) => sum + l.value, 0);
+    return { endingValue: total - cogs, cogs };
+  }
+
+  function calculateLIFO(layers, soldUnits) {
+    let remaining = soldUnits;
+    let cogs = 0;
+
+    for (let i = layers.length - 1; i >= 0; i--) {
+      if (remaining <= 0) break;
+      const from = Math.min(remaining, layers[i].units);
+      cogs += from * layers[i].cost;
+      remaining -= from;
+    }
+
+    const total = layers.reduce((sum, l) => sum + l.value, 0);
+    return { endingValue: total - cogs, cogs };
+  }
+
+  function calculateWeightedAverage(layers, soldUnits) {
+    const totalUnits = layers.reduce((sum, l) => sum + l.units, 0);
+    const totalValue = layers.reduce((sum, l) => sum + l.value, 0);
+    const avgCost = totalUnits > 0 ? totalValue / totalUnits : 0;
+
+    return {
+      endingValue: (totalUnits - soldUnits) * avgCost,
+      cogs: soldUnits * avgCost
+    };
+  }
+
+  function calc() {
+    const beginU = Math.max(0, parseInt(beginUnits.value) || 0);
+    const beginC = Math.max(0, parseFloat(beginCost.value) || 0);
+    const soldU = Math.max(0, parseInt(sold.value) || 0);
+
+    const layers = [];
+    if (beginU > 0) {
+      layers.push({
+        units: beginU,
+        cost: beginC,
+        value: beginU * beginC
+      });
+    }
+
+    const purchasesData = getPurchaseInputs();
+    purchasesData.forEach((p) => {
+      if (p.units > 0) {
+        layers.push({
+          units: p.units,
+          cost: p.cost,
+          value: p.units * p.cost
+        });
+      }
+    });
+
+    const totalAvail = layers.reduce((sum, l) => sum + l.units, 0);
+    const endingU = totalAvail - soldU;
+
+    document.getElementById('ei-bd-avail').textContent = totalAvail.toLocaleString();
+    document.getElementById('ei-bd-ending').textContent = Math.max(0, endingU).toLocaleString();
+
+    if (endingU < 0) {
+      document.getElementById('ei-bd-cogs').textContent = '—';
+      document.getElementById('ei-r-value').textContent = '0.00';
+      return;
+    }
+
+    let result;
+    if (selectedMethod === 'fifo') {
+      result = calculateFIFO(layers, soldU);
+    } else if (selectedMethod === 'lifo') {
+      result = calculateLIFO(layers, soldU);
+    } else {
+      result = calculateWeightedAverage(layers, soldU);
+    }
+
+    document.getElementById('ei-bd-cogs').textContent = '$' + money(result.cogs);
+    document.getElementById('ei-r-value').textContent = money(result.endingValue);
+    document.getElementById('ei-r-note').textContent =
+      'using ' + (selectedMethod === 'fifo' ? 'FIFO' : selectedMethod === 'lifo' ? 'LIFO' : 'weighted average');
+  }
+
+  methodToggle.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-method]');
+    if (!btn) return;
+    selectedMethod = btn.dataset.method;
+    document.querySelectorAll('#ei-method .tp-toggle').forEach(b => {
+      b.classList.toggle('on', b.dataset.method === selectedMethod);
+    });
+    calc();
+  });
+
+  addPurchaseBtn.addEventListener('click', addPurchase);
+  [beginUnits, beginCost, sold].forEach(el => el.addEventListener('input', calc));
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +764,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +844,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

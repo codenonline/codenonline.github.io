@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,412 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <!-- Mode selector -->
+    <div class="tp-toggles tp-toggles--wrap" id="mode-selector">
+      <button class="tp-toggle mono on" data-mode="basic">Basic Rate</button>
+      <button class="tp-toggle mono" data-mode="ab-test">A/B Test</button>
+      <button class="tp-toggle mono" data-mode="funnel">Funnel</button>
+      <button class="tp-toggle mono" data-mode="revenue">Revenue</button>
+    </div>
+
+    <!-- Basic mode -->
+    <div id="basic-fields" class="mode-panel">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Visitors</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="basic-v" type="number" inputmode="decimal" value="1000" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Conversions</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="basic-c" type="number" inputmode="decimal" value="50" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Rate</span><b id="bd-basic-rate">5%</b></div>
+        <div><span class="mono">Ratio</span><b id="bd-basic-ratio">1:20</b></div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">conversion-rate-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Conversion Rate Ca</span>
+
+    <!-- A/B Test mode -->
+    <div id="ab-test-fields" class="mode-panel" style="display:none;">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Variant A Visitors</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ab-va" type="number" inputmode="decimal" value="5000" min="0" step="1">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Conversions</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ab-ca" type="number" inputmode="decimal" value="150" min="0" step="1">
+          </div>
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Variant B Visitors</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ab-vb" type="number" inputmode="decimal" value="5000" min="0" step="1">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Conversions</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="ab-cb" type="number" inputmode="decimal" value="180" min="0" step="1">
+          </div>
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Variant A Rate</span><b id="bd-ab-ra">3%</b></div>
+        <div><span class="mono">Variant B Rate</span><b id="bd-ab-rb">3.6%</b></div>
+        <div><span class="mono">Improvement</span><b id="bd-ab-imp">20%</b></div>
+        <div><span class="mono">Confidence</span><b id="bd-ab-conf">95%</b></div>
+        <div><span class="mono">Significant</span><b id="bd-ab-sig">Yes</b></div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Funnel mode -->
+    <div id="funnel-fields" class="mode-panel" style="display:none;">
+      <div id="funnel-steps-container"></div>
+      <button class="tp-gen mono" id="add-funnel-step">+ Add Step</button>
+      <div class="tp-breakdown" id="funnel-breakdown-out"></div>
+    </div>
+
+    <!-- Revenue mode -->
+    <div id="revenue-fields" class="mode-panel" style="display:none;">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Monthly Visitors</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="rev-v" type="number" inputmode="decimal" value="10000" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Current Rate</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="rev-cr" type="number" inputmode="decimal" value="2" step="0.1" min="0">
+            <span class="tp-suffix">%</span>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Target Rate</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="rev-tr" type="number" inputmode="decimal" value="3" step="0.1" min="0">
+            <span class="tp-suffix">%</span>
+          </div>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Avg Order Value</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="rev-aov" type="number" inputmode="decimal" value="50" step="0.01" min="0">
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Current Revenue</span><b id="bd-rev-cr">$0.00</b></div>
+        <div><span class="mono">Projected Revenue</span><b id="bd-rev-pr">$0.00</b></div>
+        <div><span class="mono">Monthly Increase</span><b id="bd-rev-mi">$0.00</b></div>
+        <div><span class="mono">Annual Increase</span><b id="bd-rev-ai">$0.00</b></div>
+        <div><span class="mono">% Increase</span><b id="bd-rev-pi">0%</b></div>
+        <div><span class="mono">Additional Conversions</span><b id="bd-rev-ac">0</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="result-label">Conversion rate</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="result-num">0</span><span id="result-unit">%</span>
+    </div>
+    <span class="tp-result-note" id="result-note">—</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var state = {
+    mode: 'basic',
+    funnel: {
+      steps: [
+        { name: 'Landing Page', v: 10000, c: 5000 },
+        { name: 'Product Page', v: 5000, c: 2000 },
+        { name: 'Checkout', v: 2000, c: 400 }
+      ]
+    }
+  };
+
+  function fmt(n) {
+    if (!isFinite(n)) return '0';
+    return Math.round(n * 100) / 100;
+  }
+  function fmtMoney(n) {
+    if (!isFinite(n)) return '$0.00';
+    return '$' + n.toFixed(2);
+  }
+  function fmtPct(n) {
+    if (!isFinite(n)) return '0%';
+    return fmt(n) + '%';
+  }
+
+  var modeSelector = document.getElementById('mode-selector');
+  var panels = {
+    basic: document.getElementById('basic-fields'),
+    'ab-test': document.getElementById('ab-test-fields'),
+    funnel: document.getElementById('funnel-fields'),
+    revenue: document.getElementById('revenue-fields')
+  };
+  var inputs = {
+    basicV: document.getElementById('basic-v'),
+    basicC: document.getElementById('basic-c'),
+    abVa: document.getElementById('ab-va'),
+    abCa: document.getElementById('ab-ca'),
+    abVb: document.getElementById('ab-vb'),
+    abCb: document.getElementById('ab-cb'),
+    revV: document.getElementById('rev-v'),
+    revCr: document.getElementById('rev-cr'),
+    revTr: document.getElementById('rev-tr'),
+    revAov: document.getElementById('rev-aov')
+  };
+  var results = {
+    label: document.getElementById('result-label'),
+    num: document.getElementById('result-num'),
+    unit: document.getElementById('result-unit'),
+    note: document.getElementById('result-note')
+  };
+
+  function setMode(m) {
+    state.mode = m;
+    Object.keys(panels).forEach(function(k) {
+      panels[k].style.display = (k === m) ? 'block' : 'none';
+    });
+    Array.prototype.forEach.call(modeSelector.children, function(btn) {
+      btn.classList.toggle('on', btn.getAttribute('data-mode') === m);
+    });
+    calc();
+  }
+
+  function calcBasic() {
+    var v = parseFloat(inputs.basicV.value) || 0;
+    var c = parseFloat(inputs.basicC.value) || 0;
+    var rate = v > 0 ? (c / v) * 100 : 0;
+    var ratio = c > 0 ? '1:' + Math.round(v / c) : '0:0';
+
+    document.getElementById('bd-basic-rate').textContent = fmtPct(rate);
+    document.getElementById('bd-basic-ratio').textContent = ratio;
+
+    results.num.textContent = fmt(rate);
+    results.unit.textContent = '%';
+    results.label.textContent = 'Conversion rate';
+    results.note.textContent = c + ' conversions from ' + v.toLocaleString() + ' visitors';
+  }
+
+  function normalCDF(x) {
+    var t = 1 / (1 + 0.2316419 * Math.abs(x));
+    var d = 0.3989423 * Math.exp(-x * x / 2);
+    var prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+    return x > 0 ? 1 - prob : prob;
+  }
+
+  function calcABTest() {
+    var va = parseFloat(inputs.abVa.value) || 0;
+    var ca = parseFloat(inputs.abCa.value) || 0;
+    var vb = parseFloat(inputs.abVb.value) || 0;
+    var cb = parseFloat(inputs.abCb.value) || 0;
+
+    var ra = va > 0 ? (ca / va) * 100 : 0;
+    var rb = vb > 0 ? (cb / vb) * 100 : 0;
+    var imp = ra > 0 ? ((rb - ra) / ra) * 100 : 0;
+
+    var sig = false, conf = 0;
+    if (va > 30 && vb > 30) {
+      var pooled = (ca + cb) / (va + vb);
+      var se = Math.sqrt(pooled * (1 - pooled) * (1/va + 1/vb));
+      var z = Math.abs((rb/100) - (ra/100)) / se;
+      sig = z > 1.96;
+      conf = Math.min(95, Math.round((1 - 2 * (1 - normalCDF(Math.abs(z)))) * 100));
+    }
+
+    document.getElementById('bd-ab-ra').textContent = fmtPct(ra);
+    document.getElementById('bd-ab-rb').textContent = fmtPct(rb);
+    document.getElementById('bd-ab-imp').textContent = (imp >= 0 ? '+' : '') + fmtPct(imp);
+    document.getElementById('bd-ab-conf').textContent = conf + '%';
+    document.getElementById('bd-ab-sig').textContent = sig ? 'Yes' : 'No';
+
+    results.num.textContent = fmt(rb);
+    results.unit.textContent = '%';
+    results.label.textContent = 'Variant B rate';
+    results.note.textContent = (sig ? 'Significant' : 'Not significant') + ' at ' + conf + '% confidence';
+  }
+
+  function renderFunnelSteps() {
+    var container = document.getElementById('funnel-steps-container');
+    container.innerHTML = '';
+    state.funnel.steps.forEach(function(step, i) {
+      var stepDiv = document.createElement('div');
+      stepDiv.style.marginBottom = '1rem';
+
+      var title = document.createElement('div');
+      title.style.fontSize = '0.9em';
+      title.style.fontWeight = 'bold';
+      title.style.marginBottom = '0.5rem';
+      title.textContent = 'Step ' + (i + 1) + ': ' + step.name;
+      stepDiv.appendChild(title);
+
+      var inputsDiv = document.createElement('div');
+      inputsDiv.className = 'tp-two';
+
+      var vField = document.createElement('div');
+      vField.className = 'tp-field';
+      vField.innerHTML = '<span class="tp-field-label mono">Visitors</span>' +
+        '<div class="tp-field-input"><input type="number" class="tp-input funnel-v" data-step="' + i + '" value="' + step.v + '" min="0" step="1"></div>';
+      inputsDiv.appendChild(vField);
+
+      var cField = document.createElement('div');
+      cField.className = 'tp-field';
+      cField.innerHTML = '<span class="tp-field-label mono">Conversions</span>' +
+        '<div class="tp-field-input"><input type="number" class="tp-input funnel-c" data-step="' + i + '" value="' + step.c + '" min="0" step="1"></div>';
+      inputsDiv.appendChild(cField);
+
+      stepDiv.appendChild(inputsDiv);
+
+      if (state.funnel.steps.length > 1) {
+        var removeBtn = document.createElement('button');
+        removeBtn.className = 'tp-toggle mono';
+        removeBtn.style.marginTop = '0.5rem';
+        removeBtn.textContent = '✕ Remove';
+        removeBtn.onclick = function() { removeFunnelStep(i); };
+        stepDiv.appendChild(removeBtn);
+      }
+
+      container.appendChild(stepDiv);
+    });
+
+    Array.prototype.forEach.call(container.querySelectorAll('input'), function(inp) {
+      inp.addEventListener('input', function() {
+        var step = parseInt(this.getAttribute('data-step'), 10);
+        var isV = this.classList.contains('funnel-v');
+        state.funnel.steps[step][isV ? 'v' : 'c'] = parseFloat(this.value) || 0;
+        calcFunnel();
+      });
+    });
+  }
+
+  function removeFunnelStep(i) {
+    state.funnel.steps.splice(i, 1);
+    renderFunnelSteps();
+    calcFunnel();
+  }
+
+  function calcFunnel() {
+    var breakdown = document.getElementById('funnel-breakdown-out');
+    breakdown.innerHTML = '';
+    var prevC = null, firstV = 0;
+
+    state.funnel.steps.forEach(function(step, i) {
+      var rate = step.v > 0 ? (step.c / step.v) * 100 : 0;
+      var dropoff = prevC && prevC > 0 ? ((prevC - step.v) / prevC) * 100 : 0;
+
+      var div = document.createElement('div');
+      var label = 'Step ' + (i + 1);
+      div.innerHTML = '<span class="mono">' + label + ': ' + step.name + '</span><b>' + fmtPct(rate) + '</b>';
+      if (dropoff > 0 && i > 0) {
+        var dropSpan = document.createElement('span');
+        dropSpan.style.fontSize = '0.85em';
+        dropSpan.style.opacity = '0.6';
+        dropSpan.style.marginLeft = '0.5rem';
+        dropSpan.textContent = '↓' + fmt(dropoff) + '%';
+        div.appendChild(dropSpan);
+      }
+      breakdown.appendChild(div);
+
+      if (i === 0) firstV = step.v;
+      prevC = step.v;
+    });
+
+    var finalStep = state.funnel.steps[state.funnel.steps.length - 1];
+    var overall = firstV > 0 ? (finalStep.c / firstV) * 100 : 0;
+
+    var divider = document.createElement('div');
+    divider.style.marginTop = '0.5rem';
+    divider.style.paddingTop = '0.5rem';
+    divider.style.borderTop = '1px solid var(--ink)';
+    divider.innerHTML = '<span class="mono">Overall</span><b>' + fmtPct(overall) + '</b>';
+    breakdown.appendChild(divider);
+
+    results.num.textContent = fmt(overall);
+    results.unit.textContent = '%';
+    results.label.textContent = 'Overall conversion rate';
+    results.note.textContent = finalStep.c + ' final conversions from ' + firstV.toLocaleString() + ' initial visitors';
+  }
+
+  function calcRevenue() {
+    var v = parseFloat(inputs.revV.value) || 0;
+    var cr = parseFloat(inputs.revCr.value) || 0;
+    var tr = parseFloat(inputs.revTr.value) || 0;
+    var aov = parseFloat(inputs.revAov.value) || 0;
+
+    var cc = (v * cr) / 100;
+    var tc = (v * tr) / 100;
+    var crev = cc * aov;
+    var prev = tc * aov;
+    var mi = prev - crev;
+    var ai = mi * 12;
+    var pi = crev > 0 ? ((prev - crev) / crev) * 100 : 0;
+    var ac = tc - cc;
+
+    document.getElementById('bd-rev-cr').textContent = fmtMoney(crev);
+    document.getElementById('bd-rev-pr').textContent = fmtMoney(prev);
+    document.getElementById('bd-rev-mi').textContent = fmtMoney(mi);
+    document.getElementById('bd-rev-ai').textContent = fmtMoney(ai);
+    document.getElementById('bd-rev-pi').textContent = fmtPct(pi);
+    document.getElementById('bd-rev-ac').textContent = Math.round(ac);
+
+    results.num.textContent = isFinite(prev) ? prev.toFixed(2) : '0.00';
+    results.unit.textContent = ' $';
+    results.label.textContent = 'Projected monthly revenue';
+    results.note.textContent = fmtMoney(mi) + ' monthly increase (' + fmtPct(pi) + ')';
+  }
+
+  function calc() {
+    switch(state.mode) {
+      case 'basic':
+        calcBasic();
+        break;
+      case 'ab-test':
+        calcABTest();
+        break;
+      case 'funnel':
+        renderFunnelSteps();
+        calcFunnel();
+        break;
+      case 'revenue':
+        calcRevenue();
+        break;
+    }
+  }
+
+  modeSelector.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-mode]');
+    if (btn) setMode(btn.getAttribute('data-mode'));
+  });
+
+  Object.keys(inputs).forEach(function(key) {
+    if (inputs[key]) inputs[key].addEventListener('input', calc);
+  });
+
+  document.getElementById('add-funnel-step').addEventListener('click', function() {
+    state.funnel.steps.push({ name: 'Step ' + (state.funnel.steps.length + 1), v: 0, c: 0 });
+    renderFunnelSteps();
+    calcFunnel();
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +913,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +993,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

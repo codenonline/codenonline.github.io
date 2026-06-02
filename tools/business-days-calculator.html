@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -401,27 +451,268 @@ button:disabled{transform:none;}
         <p class="tp-desc">Calculate business days between dates excluding weekends and holidays.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Start date</span>
+      <input class="tp-input" id="bd-start" type="date">
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">End date</span>
+      <input class="tp-input" id="bd-end" type="date">
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Country / Region</span>
+      <select class="tp-input" id="bd-country">
+        <option value="US">United States</option>
+        <option value="UK">United Kingdom</option>
+        <option value="CA">Canada</option>
+        <option value="AU">Australia</option>
+        <option value="DE">Germany</option>
+        <option value="FR">France</option>
+        <option value="JP">Japan</option>
+        <option value="CN">China</option>
+      </select>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap" id="bd-options">
+      <button class="tp-toggle mono on" id="bd-opt-inc">Include end date</button>
+      <button class="tp-toggle mono on" id="bd-opt-exc">Exclude holidays</button>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total days</span><b id="bd-res-total">0</b></div>
+      <div><span class="mono">Weekend days</span><b id="bd-res-weekends">0</b></div>
+      <div><span class="mono">Holidays</span><b id="bd-res-holidays">0</b></div>
+    </div>
+
+    <div class="tp-hint" id="bd-holiday-list-hint" style="margin-top: 2rem; display: none;">
+      <span class="mono" style="display: block; margin-bottom: 0.5rem; opacity: 0.7;">Observed holidays (2024):</span>
+      <div id="bd-holiday-list" style="font-size: 0.8rem; line-height: 1.4; opacity: 0.8;"></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Business days</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="bd-res-main">0</span>
+    </div>
+    <span class="tp-result-note" id="bd-res-note"></span>
+
+    <div class="tp-result-sub" style="margin-top: 2.5rem; border-top: 2px solid var(--mag); padding-top: 1.5rem;">
+      <span class="mono" style="display: block; margin-bottom: 1rem; font-size: 0.8rem; opacity: 0.7;">Day by day breakdown</span>
+      <div id="bd-list" class="tp-uuids" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+        <!-- Dynamic content -->
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">business-days-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Date &amp; Time</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Business Days Calc</span>
-    </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var startInput = document.getElementById('bd-start');
+  var endInput   = document.getElementById('bd-end');
+  var countrySel = document.getElementById('bd-country');
+  var optInc     = document.getElementById('bd-opt-inc');
+  var optExc     = document.getElementById('bd-opt-exc');
+
+  var resMain     = document.getElementById('bd-res-main');
+  var resTotal    = document.getElementById('bd-res-total');
+  var resWeekends = document.getElementById('bd-res-weekends');
+  var resHolidays = document.getElementById('bd-res-holidays');
+  var resNote     = document.getElementById('bd-res-note');
+  var resList     = document.getElementById('bd-list');
+  var holidayHint = document.getElementById('bd-holiday-list-hint');
+  var holidayList = document.getElementById('bd-holiday-list');
+
+  var holidays = {
+    US: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Martin Luther King Jr. Day", date: '2024-01-15' },
+      { name: "Presidents' Day", date: '2024-02-19' },
+      { name: "Memorial Day", date: '2024-05-27' },
+      { name: "Independence Day", date: '2024-07-04' },
+      { name: "Labor Day", date: '2024-09-02' },
+      { name: "Columbus Day", date: '2024-10-14' },
+      { name: "Veterans Day", date: '2024-11-11' },
+      { name: "Thanksgiving Day", date: '2024-11-28' },
+      { name: "Christmas Day", date: '2024-12-25' }
+    ],
+    UK: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Good Friday", date: '2024-03-29' },
+      { name: "Easter Monday", date: '2024-04-01' },
+      { name: "Early May Bank Holiday", date: '2024-05-06' },
+      { name: "Spring Bank Holiday", date: '2024-05-27' },
+      { name: "Summer Bank Holiday", date: '2024-08-26' },
+      { name: "Christmas Day", date: '2024-12-25' },
+      { name: "Boxing Day", date: '2024-12-26' }
+    ],
+    CA: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Good Friday", date: '2024-03-29' },
+      { name: "Victoria Day", date: '2024-05-20' },
+      { name: "Canada Day", date: '2024-07-01' },
+      { name: "Labour Day", date: '2024-09-02' },
+      { name: "Thanksgiving", date: '2024-10-14' },
+      { name: "Christmas Day", date: '2024-12-25' },
+      { name: "Boxing Day", date: '2024-12-26' }
+    ],
+    AU: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Australia Day", date: '2024-01-26' },
+      { name: "Good Friday", date: '2024-03-29' },
+      { name: "Easter Monday", date: '2024-04-01' },
+      { name: "Anzac Day", date: '2024-04-25' },
+      { name: "Christmas Day", date: '2024-12-25' },
+      { name: "Boxing Day", date: '2024-12-26' }
+    ],
+    DE: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Good Friday", date: '2024-03-29' },
+      { name: "Easter Monday", date: '2024-04-01' },
+      { name: "Labour Day", date: '2024-05-01' },
+      { name: "German Unity Day", date: '2024-10-03' },
+      { name: "Christmas Day", date: '2024-12-25' },
+      { name: "Boxing Day", date: '2024-12-26' }
+    ],
+    FR: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Easter Monday", date: '2024-04-01' },
+      { name: "Labour Day", date: '2024-05-01' },
+      { name: "Victory in Europe Day", date: '2024-05-08' },
+      { name: "Bastille Day", date: '2024-07-14' },
+      { name: "Assumption of Mary", date: '2024-08-15' },
+      { name: "All Saints' Day", date: '2024-11-01' },
+      { name: "Armistice Day", date: '2024-11-11' },
+      { name: "Christmas Day", date: '2024-12-25' }
+    ],
+    JP: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Coming of Age Day", date: '2024-01-08' },
+      { name: "National Foundation Day", date: '2024-02-11' },
+      { name: "Showa Day", date: '2024-04-29' },
+      { name: "Constitution Memorial Day", date: '2024-05-03' },
+      { name: "Greenery Day", date: '2024-05-04' },
+      { name: "Children's Day", date: '2024-05-05' },
+      { name: "Culture Day", date: '2024-11-03' },
+      { name: "Labour Thanksgiving Day", date: '2024-11-23' }
+    ],
+    CN: [
+      { name: "New Year's Day", date: '2024-01-01' },
+      { name: "Chinese New Year", date: '2024-02-10' },
+      { name: "Tomb-Sweeping Day", date: '2024-04-04' },
+      { name: "Labour Day", date: '2024-05-01' },
+      { name: "Dragon Boat Festival", date: '2024-06-10' },
+      { name: "Mid-Autumn Festival", date: '2024-09-17' },
+      { name: "National Day", date: '2024-10-01' }
+    ]
+  };
+
+  function init() {
+    var today = new Date();
+    startInput.value = today.toISOString().split('T')[0];
+    
+    var nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+    endInput.value = nextWeek.toISOString().split('T')[0];
+    
+    calc();
+  }
+
+  function calc() {
+    var startStr = startInput.value;
+    var endStr   = endInput.value;
+    if (!startStr || !endStr) return;
+
+    var start = new Date(startStr);
+    var end   = new Date(endStr);
+    
+    if (start > end) {
+      resNote.textContent = 'End date must be after start date';
+      resMain.textContent = '0';
+      resTotal.textContent = '0';
+      resWeekends.textContent = '0';
+      resHolidays.textContent = '0';
+      resList.innerHTML = '';
+      return;
+    }
+
+    var country = countrySel.value;
+    var includeEnd = optInc.classList.contains('on');
+    var excludeHols = optExc.classList.contains('on');
+    
+    var countryHols = holidays[country] || [];
+    var holidayDates = excludeHols ? countryHols.map(function(h) { return h.date; }) : [];
+
+    var businessDays = 0;
+    var weekendDays = 0;
+    var holidayCount = 0;
+    var html = '';
+
+    var current = new Date(start);
+    var finalDate = includeEnd ? end : new Date(end.getTime() - 86400000);
+
+    // Update holiday hint
+    if (excludeHols && countryHols.length > 0) {
+      holidayHint.style.display = 'block';
+      holidayList.innerHTML = countryHols.map(function(h) {
+        return '<div style="display:flex;justify-content:space-between"><span>' + h.name + '</span><b>' + h.date + '</b></div>';
+      }).join('');
+    } else {
+      holidayHint.style.display = 'none';
+    }
+
+    while (current <= finalDate) {
+      var dow = current.getDay();
+      var dateStr = current.toISOString().split('T')[0];
+      var dayName = current.toLocaleDateString('en-US', { weekday: 'long' });
+      
+      var type = 'business';
+      var typeLabel = 'Business';
+      var style = '';
+
+      if (dow === 0 || dow === 6) {
+        type = 'weekend';
+        typeLabel = 'Weekend';
+        weekendDays++;
+      } else if (excludeHols && holidayDates.indexOf(dateStr) !== -1) {
+        type = 'holiday';
+        typeLabel = 'Holiday';
+        holidayCount++;
+      } else {
+        businessDays++;
+      }
+
+      html += '<div class="tp-uuid" style="display:flex; justify-content:space-between; align-items:center; padding: 4px 8px; opacity: ' + (type === 'business' ? '1' : '0.6') + '">';
+      html += '<span>' + dateStr + ' <small>(' + dayName + ')</small></span>';
+      html += '<span class="mono" style="font-size: 10px; border: 1px solid currentColor; padding: 1px 4px; border-radius: 2px;">' + typeLabel + '</span>';
+      html += '</div>';
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    var totalDays = Math.max(0, Math.floor((finalDate.getTime() - start.getTime()) / 86400000) + 1);
+    if (finalDate < start) totalDays = 0;
+
+    resMain.textContent = businessDays.toLocaleString();
+    resTotal.textContent = totalDays.toLocaleString();
+    resWeekends.textContent = weekendDays.toLocaleString();
+    resHolidays.textContent = holidayCount.toLocaleString();
+    resNote.textContent = startStr + ' to ' + endStr;
+    resList.innerHTML = html;
+  }
+
+  [startInput, endInput, countrySel].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  optInc.addEventListener('click', function() { this.classList.toggle('on'); calc(); });
+  optExc.addEventListener('click', function() { this.classList.toggle('on'); calc(); });
+
+  init();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -471,27 +762,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -551,6 +842,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

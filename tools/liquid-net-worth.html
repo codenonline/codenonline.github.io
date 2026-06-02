@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/financial/">Finance</a>
+      <a href="/financial/">Financial</a>
       <span>/</span>
       <span class="on">Liquid Net Worth Calculator</span>
     </div>
@@ -396,32 +446,241 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Finance · Tool</div>
+        <div class="tp-kicker mono">Financial · Tool</div>
         <h1 class="tp-title">Liquid Net Worth Calculator</h1>
         <p class="tp-desc">Measure your financial cushion by calculating net worth using only assets you can quickly convert to cash.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-hint mono" style="margin-bottom:10px">Liquid assets</div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Checking</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="checking" type="number" inputmode="decimal" value="5000" placeholder="5000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Savings</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="savings" type="number" inputmode="decimal" value="15000" placeholder="15000">
+        </div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">liquid-net-worth</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Liquid Net Worth C</span>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Money Market</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="moneyMarket" type="number" inputmode="decimal" value="0" placeholder="10000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">CDs</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="cd" type="number" inputmode="decimal" value="0" placeholder="5000">
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Stocks & Bonds</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="stocks" type="number" inputmode="decimal" value="0" placeholder="25000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Mutual Funds</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input asset" id="mutualFunds" type="number" inputmode="decimal" value="0" placeholder="20000">
+        </div>
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Other Assets</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input asset" id="other-asset" type="number" inputmode="decimal" value="0" placeholder="0">
+      </div>
+    </div>
+
+    <div style="height:24px"></div>
+
+    <div class="tp-hint mono" style="margin-bottom:10px">Liabilities</div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Credit Cards</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="creditCards" type="number" inputmode="decimal" value="1500" placeholder="3000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Personal Loans</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="personalLoans" type="number" inputmode="decimal" value="0" placeholder="5000">
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Student Loans</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="studentLoans" type="number" inputmode="decimal" value="0" placeholder="15000">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Auto Loans</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="autoLoans" type="number" inputmode="decimal" value="0" placeholder="12000">
+        </div>
+      </div>
+    </div>
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Bills</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="bills" type="number" inputmode="decimal" value="0" placeholder="500">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Other Debts</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input liab" id="otherDebts" type="number" inputmode="decimal" value="0" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div style="height:24px"></div>
+
+    <div class="tp-hint mono" style="margin-bottom:10px">Emergency fund analysis</div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Monthly expenses</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="expenses" type="number" inputmode="decimal" value="2500" placeholder="5000">
+      </div>
+    </div>
+
+    <button class="tp-gen mono" id="clear" style="margin-top:24px">Clear All</button>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Liquid Net Worth</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix" id="r-prefix">$</span>
+      <span class="tp-result-num" id="r-nw">0</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Enter your assets and liabilities.</span>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total Assets</span><b id="bd-assets">$0</b></div>
+      <div><span class="mono">Total Liabilities</span><b id="bd-liabs">$0</b></div>
+      <div id="row-months" style="display:none"><span class="mono">Months Covered</span><b id="bd-months">0</b></div>
+      <div id="row-status" style="display:none"><span class="mono">Fund Status</span><b id="bd-status">N/A</b></div>
+      <div id="row-rec" style="display:none"><span class="mono">Recommended fund</span><b id="bd-rec">$0</b></div>
+    </div>
+    
+    <div class="tp-demo-note">Liquid net worth measures your immediate financial cushion.</div>
   </div>
 </div>
+
+<script>
+(function() {
+  const assets = document.querySelectorAll('.asset');
+  const liabs = document.querySelectorAll('.liab');
+  const expenses = document.getElementById('expenses');
+  const clearBtn = document.getElementById('clear');
+
+  const rNw = document.getElementById('r-nw');
+  const rPrefix = document.getElementById('r-prefix');
+  const rNote = document.getElementById('r-note');
+  const bdAssets = document.getElementById('bd-assets');
+  const bdLiabs = document.getElementById('bd-liabs');
+  const bdMonths = document.getElementById('bd-months');
+  const bdStatus = document.getElementById('bd-status');
+  const bdRec = document.getElementById('bd-rec');
+
+  const rowMonths = document.getElementById('row-months');
+  const rowStatus = document.getElementById('row-status');
+  const rowRec = document.getElementById('row-rec');
+
+  function money(n) {
+    const val = isFinite(n) ? n : 0;
+    const formatted = Math.abs(val).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return (val < 0 ? '-' : '') + '$' + formatted;
+  }
+
+  function calc() {
+    let totalAssets = 0;
+    assets.forEach(el => totalAssets += (parseFloat(el.value) || 0));
+
+    let totalLiabs = 0;
+    liabs.forEach(el => totalLiabs += (parseFloat(el.value) || 0));
+
+    const nw = totalAssets - totalLiabs;
+    const exp = parseFloat(expenses.value) || 0;
+
+    rPrefix.textContent = nw < 0 ? '-$' : '$';
+    rNw.textContent = Math.abs(nw).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+    bdAssets.textContent = money(totalAssets);
+    bdLiabs.textContent = money(totalLiabs);
+
+    // Health Message
+    let msg = '';
+    if (nw >= 50000) msg = 'Excellent liquid net worth! You have strong financial flexibility.';
+    else if (nw >= 10000) msg = 'Good liquid net worth. You have decent financial flexibility.';
+    else if (nw >= 0) msg = 'Positive liquid net worth, but consider building more liquid savings.';
+    else msg = 'Negative liquid net worth indicates more debt than liquid assets.';
+    rNote.textContent = msg;
+
+    // Emergency Fund
+    if (exp > 0 && nw > 0) {
+      rowMonths.style.display = 'flex';
+      rowStatus.style.display = 'flex';
+      rowRec.style.display = 'flex';
+
+      const months = nw / exp;
+      bdMonths.textContent = isFinite(months) ? months.toFixed(1) : '0.0';
+
+      let status = 'Insufficient';
+      if (months >= 6) status = 'Excellent';
+      else if (months >= 3) status = 'Good';
+      else if (months >= 1) status = 'Minimal';
+      bdStatus.textContent = status;
+
+      bdRec.textContent = money(exp * 6);
+    } else {
+      rowMonths.style.display = 'none';
+      rowStatus.style.display = 'none';
+      rowRec.style.display = 'none';
+    }
+  }
+
+  [...assets, ...liabs, expenses].forEach(el => {
+    el.addEventListener('input', calc);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    [...assets, ...liabs, expenses].forEach(el => el.value = '');
+    calc();
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -441,7 +700,7 @@ button:disabled{transform:none;}
 
     
     <div class="tp-related">
-      <span class="tp-related-label mono">Related in Finance</span>
+      <span class="tp-related-label mono">Related in Financial</span>
       <div class="tp-related-list">
         
         <a class="tp-related-card" href="/tools/50-30-20-budget.html">
@@ -476,27 +735,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +815,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

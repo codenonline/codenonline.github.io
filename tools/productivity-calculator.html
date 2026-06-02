@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,287 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <!-- Type selector -->
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono on" id="btn-labor">Labor</button>
+      <button class="tp-toggle mono" id="btn-revenue">Revenue</button>
+      <button class="tp-toggle mono" id="btn-task">Task</button>
+      <button class="tp-toggle mono" id="btn-mfg">Mfg</button>
+    </div>
+
+    <!-- Labor calculator -->
+    <div id="labor-calc">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total Output</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="labor-output" type="number" inputmode="decimal" value="100000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Total Hours</span>
+          <input class="tp-input" id="labor-hours" type="number" inputmode="numeric" value="2000" min="0" step="1">
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Employees</span>
+          <input class="tp-input" id="labor-employees" type="number" inputmode="numeric" value="10" min="1" step="1">
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Output / Hour</span><b id="labor-per-hour">$0</b></div>
+        <div><span class="mono">Output / Employee</span><b id="labor-per-emp">$0</b></div>
+        <div><span class="mono">Hours / Employee</span><b id="labor-hours-per-emp">0 h</b></div>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">productivity-calculator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Productivity Calcu</span>
+
+    <!-- Revenue calculator -->
+    <div id="revenue-calc" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Total Revenue</span>
+        <div class="tp-field-input">
+          <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+          <input class="tp-input" id="revenue-total" type="number" inputmode="decimal" value="1000000" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Employees</span>
+          <input class="tp-input" id="revenue-employees" type="number" inputmode="numeric" value="25" min="1" step="1">
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Period</span>
+          <select class="tp-input" id="revenue-period">
+            <option value="annual">Annual</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Per Employee</span><b id="revenue-per-emp">$0</b></div>
+        <div><span class="mono">Annual Rate</span><b id="revenue-annual">$0</b></div>
+        <div><span class="mono">Monthly Rate</span><b id="revenue-monthly">$0</b></div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Task calculator -->
+    <div id="task-calc" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Completed</span>
+          <input class="tp-input" id="task-completed" type="number" inputmode="numeric" value="85" min="0" step="1">
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Total</span>
+          <input class="tp-input" id="task-total" type="number" inputmode="numeric" value="100" min="1" step="1">
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Time Spent</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="task-time-spent" type="number" inputmode="decimal" value="40" min="0" step="0.1">
+            <span class="tp-suffix">h</span>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Estimated</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="task-time-est" type="number" inputmode="decimal" value="45" min="0" step="0.1">
+            <span class="tp-suffix">h</span>
+          </div>
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Completion</span><b id="task-completion">0%</b></div>
+        <div><span class="mono">Tasks / Hour</span><b id="task-per-hour">0</b></div>
+        <div><span class="mono">Time Efficiency</span><b id="task-time-eff">0%</b></div>
+      </div>
+    </div>
+
+    <!-- Manufacturing calculator -->
+    <div id="mfg-calc" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Units Produced</span>
+          <input class="tp-input" id="mfg-produced" type="number" inputmode="numeric" value="950" min="0" step="1">
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Max Units</span>
+          <input class="tp-input" id="mfg-max" type="number" inputmode="numeric" value="1000" min="1" step="1">
+        </div>
+      </div>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Operating Time</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="mfg-operating" type="number" inputmode="decimal" value="8" min="0" step="0.1">
+            <span class="tp-suffix">h</span>
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Defective</span>
+          <input class="tp-input" id="mfg-defective" type="number" inputmode="numeric" value="25" min="0" step="1">
+        </div>
+      </div>
+      <div class="tp-breakdown">
+        <div><span class="mono">Production Eff.</span><b id="mfg-prod-eff">0%</b></div>
+        <div><span class="mono">Quality Rate</span><b id="mfg-quality">0%</b></div>
+        <div><span class="mono">Units / Hour</span><b id="mfg-per-hour">0</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="result-label">Output per hour</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix" id="result-prefix">$</span>
+      <span class="tp-result-num" id="result-num">0</span>
+    </div>
+    <span class="tp-result-note" id="result-note">Labor productivity</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var calcType = 'labor';
+
+  function money(n) {
+    if (!isFinite(n)) n = 0;
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function num(n) {
+    if (!isFinite(n)) return '0';
+    return (Math.round(n * 100) / 100).toLocaleString();
+  }
+
+  function calcLabor() {
+    var output = parseFloat(document.getElementById('labor-output').value) || 0;
+    var hours = parseFloat(document.getElementById('labor-hours').value) || 0;
+    var employees = parseFloat(document.getElementById('labor-employees').value) || 1;
+
+    var perHour = hours > 0 ? output / hours : 0;
+    var perEmp = employees > 0 ? output / employees : 0;
+    var hoursPerEmp = employees > 0 ? hours / employees : 0;
+
+    document.getElementById('labor-per-hour').textContent = money(perHour);
+    document.getElementById('labor-per-emp').textContent = money(perEmp);
+    document.getElementById('labor-hours-per-emp').textContent = num(hoursPerEmp) + ' h';
+
+    document.getElementById('result-prefix').textContent = '$';
+    document.getElementById('result-num').textContent = Math.round(perHour).toLocaleString();
+    document.getElementById('result-label').textContent = 'Output per hour';
+    document.getElementById('result-note').textContent = 'Labor productivity';
+  }
+
+  function calcRevenue() {
+    var total = parseFloat(document.getElementById('revenue-total').value) || 0;
+    var employees = parseFloat(document.getElementById('revenue-employees').value) || 1;
+    var period = document.getElementById('revenue-period').value;
+
+    var perEmp = employees > 0 ? total / employees : 0;
+    var annual = perEmp;
+    if (period === 'quarterly') annual *= 4;
+    if (period === 'monthly') annual *= 12;
+    var monthly = annual / 12;
+
+    document.getElementById('revenue-per-emp').textContent = money(perEmp);
+    document.getElementById('revenue-annual').textContent = money(annual);
+    document.getElementById('revenue-monthly').textContent = money(monthly);
+
+    document.getElementById('result-prefix').textContent = '$';
+    document.getElementById('result-num').textContent = Math.round(perEmp).toLocaleString();
+    document.getElementById('result-label').textContent = 'Per employee (' + period + ')';
+    document.getElementById('result-note').textContent = 'Revenue productivity';
+  }
+
+  function calcTask() {
+    var completed = parseFloat(document.getElementById('task-completed').value) || 0;
+    var total = parseFloat(document.getElementById('task-total').value) || 1;
+    var timeSpent = parseFloat(document.getElementById('task-time-spent').value) || 0.1;
+    var timeEst = parseFloat(document.getElementById('task-time-est').value) || 0;
+
+    var completionRate = Math.round((completed / total) * 100);
+    var perHour = timeSpent > 0 ? (completed / timeSpent).toFixed(1) : 0;
+    var timeEff = timeSpent > 0 ? Math.round((timeEst / timeSpent) * 100) : 0;
+    var overall = Math.round((completionRate + Math.min(timeEff, 100)) / 2);
+
+    document.getElementById('task-completion').textContent = completionRate + '%';
+    document.getElementById('task-per-hour').textContent = perHour;
+    document.getElementById('task-time-eff').textContent = timeEff + '%';
+
+    document.getElementById('result-prefix').textContent = '';
+    document.getElementById('result-num').textContent = overall;
+    document.getElementById('result-label').textContent = 'Overall productivity';
+    document.getElementById('result-note').textContent = 'Task efficiency';
+  }
+
+  function calcMfg() {
+    var produced = parseFloat(document.getElementById('mfg-produced').value) || 0;
+    var max = parseFloat(document.getElementById('mfg-max').value) || 1;
+    var opTime = parseFloat(document.getElementById('mfg-operating').value) || 0.1;
+    var defective = parseFloat(document.getElementById('mfg-defective').value) || 0;
+
+    var prodEff = Math.round((produced / max) * 100);
+    var quality = produced > 0 ? Math.round(((produced - defective) / produced) * 100) : 0;
+    var perHour = (produced / opTime).toFixed(1);
+    var oee = Math.round((prodEff * quality) / 100);
+
+    document.getElementById('mfg-prod-eff').textContent = prodEff + '%';
+    document.getElementById('mfg-quality').textContent = quality + '%';
+    document.getElementById('mfg-per-hour').textContent = perHour;
+
+    document.getElementById('result-prefix').textContent = '';
+    document.getElementById('result-num').textContent = oee;
+    document.getElementById('result-label').textContent = 'OEE';
+    document.getElementById('result-note').textContent = 'Manufacturing efficiency';
+  }
+
+  function updateDisplay() {
+    document.getElementById('labor-calc').style.display = calcType === 'labor' ? '' : 'none';
+    document.getElementById('revenue-calc').style.display = calcType === 'revenue' ? '' : 'none';
+    document.getElementById('task-calc').style.display = calcType === 'task' ? '' : 'none';
+    document.getElementById('mfg-calc').style.display = calcType === 'mfg' ? '' : 'none';
+
+    document.getElementById('btn-labor').classList.toggle('on', calcType === 'labor');
+    document.getElementById('btn-revenue').classList.toggle('on', calcType === 'revenue');
+    document.getElementById('btn-task').classList.toggle('on', calcType === 'task');
+    document.getElementById('btn-mfg').classList.toggle('on', calcType === 'mfg');
+
+    if (calcType === 'labor') calcLabor();
+    else if (calcType === 'revenue') calcRevenue();
+    else if (calcType === 'task') calcTask();
+    else if (calcType === 'mfg') calcMfg();
+  }
+
+  document.getElementById('btn-labor').addEventListener('click', function() { calcType = 'labor'; updateDisplay(); });
+  document.getElementById('btn-revenue').addEventListener('click', function() { calcType = 'revenue'; updateDisplay(); });
+  document.getElementById('btn-task').addEventListener('click', function() { calcType = 'task'; updateDisplay(); });
+  document.getElementById('btn-mfg').addEventListener('click', function() { calcType = 'mfg'; updateDisplay(); });
+
+  document.getElementById('labor-output').addEventListener('input', calcLabor);
+  document.getElementById('labor-hours').addEventListener('input', calcLabor);
+  document.getElementById('labor-employees').addEventListener('input', calcLabor);
+
+  document.getElementById('revenue-total').addEventListener('input', calcRevenue);
+  document.getElementById('revenue-employees').addEventListener('input', calcRevenue);
+  document.getElementById('revenue-period').addEventListener('change', calcRevenue);
+
+  document.getElementById('task-completed').addEventListener('input', calcTask);
+  document.getElementById('task-total').addEventListener('input', calcTask);
+  document.getElementById('task-time-spent').addEventListener('input', calcTask);
+  document.getElementById('task-time-est').addEventListener('input', calcTask);
+
+  document.getElementById('mfg-produced').addEventListener('input', calcMfg);
+  document.getElementById('mfg-max').addEventListener('input', calcMfg);
+  document.getElementById('mfg-operating').addEventListener('input', calcMfg);
+  document.getElementById('mfg-defective').addEventListener('input', calcMfg);
+
+  updateDisplay();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +788,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +868,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

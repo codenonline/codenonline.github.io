@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -401,27 +451,192 @@ button:disabled{transform:none;}
         <p class="tp-desc">Convert between Unix timestamps and human-readable dates with timezone support.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
+    <!-- Current Time -->
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Current unix timestamp</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="cur-ts" readonly style="font-weight:bold;background:rgba(0,0,0,0.05)">
+        <button class="tp-toggle mono" id="btn-use-cur" style="border-top:none;border-bottom:none;border-right:none;white-space:nowrap">Use this</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">timestamp-converter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Date &amp; Time</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Timestamp Converte</span>
+
+    <!-- Mode Toggle -->
+    <div class="tp-toggles" id="modes">
+      <button class="tp-toggle mono on" data-mode="toDate">Timestamp to date</button>
+      <button class="tp-toggle mono" data-mode="toTimestamp">Date to timestamp</button>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Mode: To Date -->
+    <div id="section-toDate">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Unix timestamp</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="ts-in" type="number" inputmode="numeric" placeholder="e.g. 1700000000">
+          <select class="tp-suffix" id="ts-unit" style="border-left:2px solid var(--ink);background:transparent;cursor:pointer;padding-right:8px">
+            <option value="s">sec</option>
+            <option value="ms">ms</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode: To Timestamp -->
+    <div id="section-toTimestamp" style="display:none">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Date</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="date-in" type="date">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Time</span>
+          <div class="tp-field-input">
+            <input class="tp-input" id="time-in" type="time" step="1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="tp-hint mono">Enter a timestamp or date to see converted formats.</p>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Converted formats</span>
+    <div class="tp-stat-big"><b id="r-headline">Enter value</b></div>
+    
+    <div class="tp-statgrid">
+      <div><span class="mono">Unix (sec)</span><b id="r-sec">—</b></div>
+      <div><span class="mono">Unix (ms)</span><b id="r-ms">—</b></div>
+      <div><span class="mono">UTC String</span><b id="r-utc">—</b></div>
+      <div><span class="mono">Local Time</span><b id="r-local">—</b></div>
+      <div><span class="mono">ISO 8601</span><b id="r-iso">—</b></div>
+    </div>
+
+    <span class="tp-result-note" id="r-rel">Relative: —</span>
   </div>
 </div>
+
+<script>
+(function() {
+  var mode = 'toDate';
+  var curTsEl = document.getElementById('cur-ts');
+  var btnUseCur = document.getElementById('btn-use-cur');
+  var modes = document.getElementById('modes');
+  var sectionToDate = document.getElementById('section-toDate');
+  var sectionToTimestamp = document.getElementById('section-toTimestamp');
+  
+  var tsIn = document.getElementById('ts-in');
+  var tsUnit = document.getElementById('ts-unit');
+  var dateIn = document.getElementById('date-in');
+  var timeIn = document.getElementById('time-in');
+
+  var rHeadline = document.getElementById('r-headline');
+  var rSec = document.getElementById('r-sec');
+  var rMs = document.getElementById('r-ms');
+  var rUtc = document.getElementById('r-utc');
+  var rLocal = document.getElementById('r-local');
+  var rIso = document.getElementById('r-iso');
+  var rRel = document.getElementById('r-rel');
+
+  function updateCurTs() {
+    curTsEl.textContent = Math.floor(Date.now() / 1000);
+  }
+  setInterval(updateCurTs, 1000);
+  updateCurTs();
+
+  function getRelativeTime(d) {
+    var now = new Date();
+    var diffMs = now - d;
+    var absDiff = Math.abs(diffMs);
+    var seconds = Math.floor(absDiff / 1000);
+    var minutes = Math.floor(seconds / 60);
+    var hours = Math.floor(minutes / 60);
+    var days = Math.floor(hours / 24);
+    var years = Math.floor(days / 365);
+    
+    var rel = '';
+    if (years > 0) rel = years + ' year' + (years > 1 ? 's' : '');
+    else if (days > 0) rel = days + ' day' + (days > 1 ? 's' : '');
+    else if (hours > 0) rel = hours + ' hour' + (hours > 1 ? 's' : '');
+    else if (minutes > 0) rel = minutes + ' minute' + (minutes > 1 ? 's' : '');
+    else rel = seconds + ' second' + (seconds !== 1 ? 's' : '');
+    
+    return rel + (diffMs >= 0 ? ' ago' : ' from now');
+  }
+
+  function calc() {
+    var d = null;
+    if (mode === 'toDate') {
+      var val = parseFloat(tsIn.value);
+      if (!isNaN(val)) {
+        var ms = tsUnit.value === 'ms' ? val : val * 1000;
+        d = new Date(ms);
+      }
+    } else {
+      if (dateIn.value) {
+        var dt = dateIn.value + 'T' + (timeIn.value || '00:00:00');
+        d = new Date(dt);
+      }
+    }
+
+    if (d && !isNaN(d.getTime())) {
+      rHeadline.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      rSec.textContent = Math.floor(d.getTime() / 1000);
+      rMs.textContent = d.getTime();
+      rUtc.textContent = d.toUTCString();
+      rLocal.textContent = d.toLocaleString();
+      rIso.textContent = d.toISOString();
+      rRel.textContent = 'Relative: ' + getRelativeTime(d);
+    } else {
+      rHeadline.textContent = 'Enter value';
+      rSec.textContent = '—';
+      rMs.textContent = '—';
+      rUtc.textContent = '—';
+      rLocal.textContent = '—';
+      rIso.textContent = '—';
+      rRel.textContent = 'Relative: —';
+    }
+  }
+
+  modes.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    mode = btn.getAttribute('data-mode');
+    Array.prototype.forEach.call(modes.children, function(b) { b.classList.toggle('on', b === btn); });
+    sectionToDate.style.display = mode === 'toDate' ? 'block' : 'none';
+    sectionToTimestamp.style.display = mode === 'toTimestamp' ? 'block' : 'none';
+    calc();
+  });
+
+  btnUseCur.addEventListener('click', function() {
+    mode = 'toDate';
+    Array.prototype.forEach.call(modes.children, function(b) { b.classList.toggle('on', b.getAttribute('data-mode') === 'toDate'); });
+    sectionToDate.style.display = 'block';
+    sectionToTimestamp.style.display = 'none';
+    tsIn.value = Math.floor(Date.now() / 1000);
+    tsUnit.value = 's';
+    calc();
+  });
+
+  [tsIn, tsUnit, dateIn, timeIn].forEach(function(el) {
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+
+  // Default value: today
+  var now = new Date();
+  dateIn.value = now.toISOString().split('T')[0];
+  timeIn.value = now.toTimeString().split(' ')[0].split(':').slice(0,2).join(':') + ':00';
+  
+  // Set default timestamp to now
+  tsIn.value = Math.floor(Date.now() / 1000);
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -471,27 +686,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -551,6 +766,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

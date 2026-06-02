@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/text/">Text Tools</a>
+      <a href="/text/">Text</a>
       <span>/</span>
       <span class="on">Shuffle Lines</span>
     </div>
@@ -396,32 +446,175 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Text Tools · Tool</div>
+        <div class="tp-kicker mono">Text · Tool</div>
         <h1 class="tp-title">Shuffle Lines</h1>
         <p class="tp-desc">Randomly shuffle the order of lines in text.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Original text</span>
+      <textarea class="tp-input tp-textarea tp-textarea--tall" id="input-text" placeholder="Enter text here, each line will be shuffled randomly..."></textarea>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono on" id="opt-preserve">Preserve empty lines</button>
+      <button class="tp-toggle mono" id="opt-trim">Trim whitespace</button>
+    </div>
+
+    <button class="tp-gen mono" id="btn-shuffle" style="margin-top: 10px">↻ Shuffle lines</button>
+
+    <div class="tp-toggles" style="margin-top: 10px">
+      <button class="tp-toggle mono" id="btn-restore">Restore original</button>
+      <button class="tp-toggle mono" id="btn-clear">Clear</button>
+    </div>
+
+    <div class="tp-field" style="margin-top: 24px">
+      <span class="tp-field-label mono">Examples</span>
+      <div class="tp-toggles tp-toggles--wrap" id="examples">
+        <button class="tp-toggle mono" data-type="list">Shopping</button>
+        <button class="tp-toggle mono" data-type="names">Names</button>
+        <button class="tp-toggle mono" data-type="tasks">Tasks</button>
+        <button class="tp-toggle mono" data-type="quotes">Quotes</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">shuffle-lines</p>
   </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text Tools</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Shuffle Lines</span>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label">Shuffled output</span>
+    
+    <div class="tp-mono-out" id="output-text" style="min-height: 200px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; margin: 15px 0; font-size: 14px; border: 1px solid var(--mag); padding: 10px;"></div>
+    
+    <button class="tp-toggle mono" id="btn-copy" style="width: 100%; margin-bottom: 24px;">Copy to clipboard</button>
+
+    <div class="tp-statgrid">
+      <div><span class="mono">Total lines</span><b id="s-total">0</b></div>
+      <div><span class="mono">Non-empty</span><b id="s-nonempty">0</b></div>
+      <div><span class="mono">Empty lines</span><b id="s-empty">0</b></div>
+      <div><span class="mono">Characters</span><b id="s-chars">0</b></div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <p class="tp-demo-note">Randomized using the Fisher-Yates algorithm.</p>
   </div>
 </div>
+
+<script>
+(function() {
+  const inputEl = document.getElementById('input-text');
+  const outputEl = document.getElementById('output-text');
+  const optPreserve = document.getElementById('opt-preserve');
+  const optTrim = document.getElementById('opt-trim');
+  const btnShuffle = document.getElementById('btn-shuffle');
+  const btnRestore = document.getElementById('btn-restore');
+  const btnClear = document.getElementById('btn-clear');
+  const btnCopy = document.getElementById('btn-copy');
+  const exampleBtns = document.getElementById('examples');
+
+  const sTotal = document.getElementById('s-total');
+  const sNonEmpty = document.getElementById('s-nonempty');
+  const sEmpty = document.getElementById('s-empty');
+  const sChars = document.getElementById('s-chars');
+
+  let originalText = '';
+
+  const examples = {
+    list: "Apples\nBananas\nBread\nMilk\nEggs\nCheese\nChicken\nRice\nPasta\nTomatoes\nOnions\nCarrots",
+    names: "Alice Johnson\nBob Smith\nCarol Davis\nDavid Wilson\nEmma Brown\nFrank Miller\nGrace Lee\nHenry Taylor\nIris Anderson\nJack Thompson",
+    tasks: "Review project requirements\nCreate database schema\nImplement user authentication\nDesign user interface\nWrite unit tests\nDeploy to staging\nConduct code review\nUpdate documentation\nTest integration\nRelease to production",
+    quotes: '"The only way to do great work is to love what you do." - Steve Jobs\n"Life is what happens to you while you\'re busy making other plans." - John Lennon\n"The future belongs to those who believe in the beauty of their dreams." - Eleanor Roosevelt\n"It is during our darkest moments that we must focus to see the light." - Aristotle\n"The way to get started is to quit talking and begin doing." - Walt Disney\n"Innovation distinguishes between a leader and a follower." - Steve Jobs\n"Your time is limited, don\'t waste it living someone else\'s life." - Steve Jobs\n"Stay hungry, stay foolish." - Stewart Brand\n"The greatest glory in living lies not in never falling, but in rising every time we fall." - Nelson Mandela\n"Be yourself; everyone else is already taken." - Oscar Wilde'
+  };
+
+  function updateStats(text) {
+    const lines = text ? text.split('\n') : [];
+    const nonEmpty = lines.filter(l => l.trim().length > 0).length;
+    const empty = lines.length - nonEmpty;
+    
+    const fmt = (n) => isFinite(n) ? n.toLocaleString() : '0';
+    
+    sTotal.textContent = fmt(lines.length);
+    sNonEmpty.textContent = fmt(nonEmpty);
+    sEmpty.textContent = fmt(empty);
+    sChars.textContent = fmt(text ? text.length : 0);
+  }
+
+  function shuffle() {
+    const text = inputEl.value;
+    if (!text.trim()) return;
+
+    if (!originalText) {
+      originalText = text;
+    }
+
+    let lines = text.split('\n');
+    if (optTrim.classList.contains('on')) {
+      lines = lines.map(l => l.trim());
+    }
+    if (!optPreserve.classList.contains('on')) {
+      lines = lines.filter(l => l.length > 0);
+    }
+
+    // Fisher-Yates
+    for (let i = lines.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [lines[i], lines[j]] = [lines[j], lines[i]];
+    }
+
+    const result = lines.join('\n');
+    outputEl.textContent = result;
+    updateStats(result);
+  }
+
+  inputEl.addEventListener('input', () => {
+    updateStats(inputEl.value);
+  });
+
+  optPreserve.addEventListener('click', () => optPreserve.classList.toggle('on'));
+  optTrim.addEventListener('click', () => optTrim.classList.toggle('on'));
+
+  btnShuffle.addEventListener('click', shuffle);
+
+  btnRestore.addEventListener('click', () => {
+    if (originalText) {
+      inputEl.value = originalText;
+      outputEl.textContent = '';
+      originalText = '';
+      updateStats(inputEl.value);
+    }
+  });
+
+  btnClear.addEventListener('click', () => {
+    inputEl.value = '';
+    outputEl.textContent = '';
+    originalText = '';
+    updateStats('');
+  });
+
+  btnCopy.addEventListener('click', () => {
+    const text = outputEl.textContent;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+        const old = btnCopy.textContent;
+        btnCopy.textContent = 'Copied!';
+        setTimeout(() => btnCopy.textContent = old, 1500);
+    });
+  });
+
+  exampleBtns.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    const type = btn.getAttribute('data-type');
+    inputEl.value = examples[type];
+    outputEl.textContent = '';
+    originalText = '';
+    updateStats(inputEl.value);
+  });
+
+  // Init
+  inputEl.value = examples.list;
+  updateStats(inputEl.value);
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -441,7 +634,7 @@ button:disabled{transform:none;}
 
     
     <div class="tp-related">
-      <span class="tp-related-label mono">Related in Text Tools</span>
+      <span class="tp-related-label mono">Related in Text</span>
       <div class="tp-related-list">
         
         <a class="tp-related-card" href="/tools/markdown-converter.html">
@@ -476,27 +669,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +749,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

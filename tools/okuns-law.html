@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,299 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
-    <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+    <div class="tp-toggles tp-toggles--wrap" id="methods">
+      <button class="tp-toggle mono on" data-method="gdp">GDP → Unemployment</button>
+      <button class="tp-toggle mono" data-method="unemployment">Unemployment → GDP</button>
+      <button class="tp-toggle mono" data-method="historical">Historical Analysis</button>
+    </div>
+
+    <!-- GDP to Unemployment method -->
+    <div id="gdp-method" class="tp-method">
+      <div class="tp-field">
+        <span class="tp-field-label mono">GDP growth rate</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="gdp-growth" type="number" inputmode="decimal" value="2.5" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
       </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Okun's coefficient</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="gdp-coeff" type="number" inputmode="decimal" value="-0.5" step="0.1">
+        </div>
+      </div>
+      <p class="tp-hint">Coefficient typically ranges from -0.2 to -0.8</p>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">okuns-law</p>
+
+    <!-- Unemployment to GDP method -->
+    <div id="unemployment-method" class="tp-method" style="display:none">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Unemployment change</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="unemp-change" type="number" inputmode="decimal" value="-0.5" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Okun's coefficient</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="unemp-coeff" type="number" inputmode="decimal" value="-0.5" step="0.1">
+        </div>
+      </div>
+      <p class="tp-hint">Coefficient typically ranges from -0.2 to -0.8</p>
+    </div>
+
+    <!-- Historical Analysis method -->
+    <div id="historical-method" class="tp-method" style="display:none">
+      <div id="data-points"></div>
+      <button class="tp-toggle" id="add-point" style="margin-top:0.5rem">+ Add data point</button>
+      <p class="tp-hint">Enter at least 2 data points for regression analysis</p>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono" id="bd-label-1">Unemployment change</span><b id="bd-val-1">—</b></div>
+      <div><span class="mono" id="bd-label-2">Coefficient</span><b id="bd-val-2">—</b></div>
+      <div><span class="mono" id="bd-label-3">Relationship</span><b id="bd-val-3">—</b></div>
+    </div>
   </div>
+
   <div class="tp-result">
-    <span class="tp-result-label">Business</span>
+    <span class="tp-result-label" id="r-label">Unemployment change</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Okun&#39;s Law Calcula</span>
+      <span class="tp-result-num" id="r-out">—</span>
+      <span class="tp-result-prefix" style="margin-left:0.25rem">%</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note">GDP 2.5% growth</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var gdpGrowth = document.getElementById('gdp-growth');
+  var gdpCoeff = document.getElementById('gdp-coeff');
+  var unempChange = document.getElementById('unemp-change');
+  var unempCoeff = document.getElementById('unemp-coeff');
+  var addPointBtn = document.getElementById('add-point');
+  var dataPointsContainer = document.getElementById('data-points');
+  var methodsContainer = document.getElementById('methods');
+
+  var methods = document.querySelectorAll('[id$="-method"]');
+  var state = {
+    method: 'gdp',
+    historicalData: [
+      { gdp: 2.5, unemployment: -1.2 },
+      { gdp: 1.0, unemployment: -0.5 }
+    ]
+  };
+
+  function fmt(n, decimals) {
+    decimals = decimals || 2;
+    if (!isFinite(n)) return '—';
+    return n.toFixed(decimals);
+  }
+
+  function fmtNum(n) {
+    if (!isFinite(n)) return '0';
+    return n.toLocaleString();
+  }
+
+  function setMethod(m) {
+    state.method = m;
+    methods.forEach(function(el) {
+      el.style.display = el.id === m + '-method' ? 'block' : 'none';
+    });
+    Array.prototype.forEach.call(methodsContainer.querySelectorAll('[data-method]'), function(btn) {
+      btn.classList.toggle('on', btn.getAttribute('data-method') === m);
+    });
+    calc();
+  }
+
+  function renderDataPoints() {
+    dataPointsContainer.innerHTML = '';
+    state.historicalData.forEach(function(point, idx) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'tp-two';
+      var gdpField = document.createElement('div');
+      gdpField.className = 'tp-field';
+      gdpField.innerHTML = '<span class="tp-field-label mono">GDP ' + (idx + 1) + '</span>' +
+        '<div class="tp-field-input">' +
+        '<input class="tp-input hist-gdp" type="number" inputmode="decimal" step="0.1" value="' + (point.gdp !== null ? point.gdp : '') + '">' +
+        '<span class="tp-suffix">%</span></div>';
+
+      var unempField = document.createElement('div');
+      unempField.className = 'tp-field';
+      unempField.innerHTML = '<span class="tp-field-label mono">Unemployment ' + (idx + 1) + '</span>' +
+        '<div class="tp-field-input">' +
+        '<input class="tp-input hist-unemp" type="number" inputmode="decimal" step="0.1" value="' + (point.unemployment !== null ? point.unemployment : '') + '">' +
+        '<span class="tp-suffix">%</span></div>';
+
+      wrapper.appendChild(gdpField);
+      wrapper.appendChild(unempField);
+      dataPointsContainer.appendChild(wrapper);
+    });
+
+    // Attach input listeners
+    Array.prototype.forEach.call(dataPointsContainer.querySelectorAll('.hist-gdp'), function(el, idx) {
+      el.addEventListener('input', function() {
+        state.historicalData[idx].gdp = parseFloat(el.value) || null;
+        calc();
+      });
+    });
+    Array.prototype.forEach.call(dataPointsContainer.querySelectorAll('.hist-unemp'), function(el, idx) {
+      el.addEventListener('input', function() {
+        state.historicalData[idx].unemployment = parseFloat(el.value) || null;
+        calc();
+      });
+    });
+  }
+
+  function calculateFromGDP() {
+    var gdp = parseFloat(gdpGrowth.value) || 0;
+    var coeff = parseFloat(gdpCoeff.value) || 0;
+    var unemploymentResult = coeff * gdp;
+    var strength = getRelationshipStrength(Math.abs(coeff));
+
+    document.getElementById('r-label').textContent = 'Unemployment change';
+    document.getElementById('r-out').textContent = fmt(unemploymentResult);
+    document.getElementById('r-note').textContent = 'GDP ' + fmt(gdp) + '% growth';
+
+    document.getElementById('bd-label-1').textContent = 'Expected change';
+    document.getElementById('bd-val-1').textContent = fmt(unemploymentResult) + '%';
+    document.getElementById('bd-label-2').textContent = 'Coefficient';
+    document.getElementById('bd-val-2').textContent = fmt(coeff, 1);
+    document.getElementById('bd-label-3').textContent = 'Relationship';
+    document.getElementById('bd-val-3').textContent = strength;
+  }
+
+  function calculateFromUnemployment() {
+    var unemp = parseFloat(unempChange.value) || 0;
+    var coeff = parseFloat(unempCoeff.value) || 0;
+    var gdpResult = coeff !== 0 ? unemp / coeff : 0;
+    var strength = getRelationshipStrength(Math.abs(coeff));
+
+    document.getElementById('r-label').textContent = 'Required GDP growth';
+    document.getElementById('r-out').textContent = fmt(gdpResult);
+    document.getElementById('r-note').textContent = 'Unemployment change ' + fmt(unemp) + '%';
+
+    document.getElementById('bd-label-1').textContent = 'Implied GDP growth';
+    document.getElementById('bd-val-1').textContent = fmt(gdpResult) + '%';
+    document.getElementById('bd-label-2').textContent = 'Coefficient';
+    document.getElementById('bd-val-2').textContent = fmt(coeff, 1);
+    document.getElementById('bd-label-3').textContent = 'Relationship';
+    document.getElementById('bd-val-3').textContent = strength;
+  }
+
+  function calculateHistorical() {
+    var validPoints = state.historicalData.filter(function(p) {
+      return p.gdp !== null && p.unemployment !== null;
+    });
+
+    if (validPoints.length < 2) {
+      document.getElementById('r-out').textContent = '—';
+      document.getElementById('bd-val-1').textContent = '—';
+      document.getElementById('bd-val-2').textContent = '—';
+      document.getElementById('bd-val-3').textContent = '—';
+      return;
+    }
+
+    var regression = calculateRegression(validPoints);
+    var rSquared = regression.rSquared;
+
+    document.getElementById('r-label').textContent = 'Okun's coefficient';
+    document.getElementById('r-out').textContent = fmt(regression.slope, 3);
+    document.getElementById('r-note').textContent = 'From ' + validPoints.length + ' data points';
+
+    document.getElementById('bd-label-1').textContent = 'R-squared';
+    document.getElementById('bd-val-1').textContent = fmt(rSquared, 3);
+    document.getElementById('bd-label-2').textContent = 'Data points';
+    document.getElementById('bd-val-2').textContent = fmtNum(validPoints.length);
+    document.getElementById('bd-label-3').textContent = 'Fit quality';
+    document.getElementById('bd-val-3').textContent = getHistoricalStrength(rSquared);
+  }
+
+  function calculateRegression(data) {
+    var n = data.length;
+    var sumX = 0, sumY = 0, sumXY = 0, sumXX = 0, sumYY = 0;
+    var i;
+
+    for (i = 0; i < n; i++) {
+      var x = data[i].gdp;
+      var y = data[i].unemployment;
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumXX += x * x;
+      sumYY += y * y;
+    }
+
+    var slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    var intercept = (sumY - slope * sumX) / n;
+
+    var meanY = sumY / n;
+    var ssTotal = 0;
+    for (i = 0; i < n; i++) {
+      ssTotal += Math.pow(data[i].unemployment - meanY, 2);
+    }
+
+    var ssResidual = 0;
+    for (i = 0; i < n; i++) {
+      var predicted = intercept + slope * data[i].gdp;
+      ssResidual += Math.pow(data[i].unemployment - predicted, 2);
+    }
+
+    var rSquared = ssTotal > 0 ? 1 - (ssResidual / ssTotal) : 0;
+    rSquared = Math.max(0, rSquared);
+
+    return { slope: slope, intercept: intercept, rSquared: rSquared };
+  }
+
+  function getRelationshipStrength(coeff) {
+    if (coeff >= 0.7) return 'Very strong';
+    if (coeff >= 0.5) return 'Strong';
+    if (coeff >= 0.3) return 'Moderate';
+    if (coeff >= 0.1) return 'Weak';
+    return 'Very weak';
+  }
+
+  function getHistoricalStrength(rSq) {
+    if (rSq >= 0.7) return 'Strong fit';
+    if (rSq >= 0.4) return 'Moderate fit';
+    return 'Weak fit';
+  }
+
+  function calc() {
+    if (state.method === 'gdp') {
+      calculateFromGDP();
+    } else if (state.method === 'unemployment') {
+      calculateFromUnemployment();
+    } else {
+      calculateHistorical();
+    }
+  }
+
+  // Event listeners
+  methodsContainer.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-method]');
+    if (btn) {
+      setMethod(btn.getAttribute('data-method'));
+    }
+  });
+
+  [gdpGrowth, gdpCoeff, unempChange, unempCoeff].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  addPointBtn.addEventListener('click', function() {
+    state.historicalData.push({ gdp: null, unemployment: null });
+    renderDataPoints();
+    calc();
+  });
+
+  // Initialize
+  renderDataPoints();
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +800,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +880,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

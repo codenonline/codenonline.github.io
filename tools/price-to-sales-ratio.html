@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -403,25 +453,174 @@ button:disabled{transform:none;}
 
       <div class="tp-grid">
   <div class="tp-inputs">
+    <!-- Method Toggle -->
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Calculation Method</span>
+      <div class="tp-toggles tp-toggles--wrap" id="m-toggles">
+        <button class="tp-toggle mono on" data-val="perShare">Per Share</button>
+        <button class="tp-toggle mono" data-val="marketCap">Market Cap</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">price-to-sales-ratio</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Price to Sales Rat</span>
+
+    <!-- Per Share Inputs -->
+    <div id="group-perShare">
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Share Price</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="price" type="number" inputmode="decimal" value="150.00" step="0.01" min="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Sales/Share</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="sales" type="number" inputmode="decimal" value="50.00" step="0.01" min="0">
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <!-- Market Cap Inputs -->
+    <div id="group-marketCap" hidden>
+      <div class="tp-two">
+        <div class="tp-field">
+          <span class="tp-field-label mono">Market Cap</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="mcap" type="number" inputmode="decimal" value="1000000" step="1000" min="0">
+          </div>
+        </div>
+        <div class="tp-field">
+          <span class="tp-field-label mono">Total Revenue</span>
+          <div class="tp-field-input">
+            <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+            <input class="tp-input" id="rev" type="number" inputmode="decimal" value="500000" step="1000" min="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Period -->
+    <div class="tp-field">
+      <span class="tp-field-label mono">Time Period</span>
+      <div class="tp-toggles tp-toggles--wrap" id="p-toggles">
+        <button class="tp-toggle mono on" data-val="ttm">TTM</button>
+        <button class="tp-toggle mono" data-val="forward">Forward</button>
+      </div>
+    </div>
+
+    <p class="tp-hint">The Price-to-Sales (P/S) ratio shows how much investors are willing to pay per dollar of sales. It is particularly useful for valuing companies with negative earnings.</p>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Under 1.0</span><b>Undervalued</b></div>
+      <div><span class="mono">1.0 – 2.0</span><b>Reasonable</b></div>
+      <div><span class="mono">2.0 – 5.0</span><b>High</b></div>
+      <div><span class="mono">Over 5.0</span><b>Very High</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="res-label">P/S Ratio (TTM)</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="res-out">0.00</span>
+    </div>
+    <span class="tp-result-note" id="res-note">Enter values to calculate</span>
+    <div class="tp-result-sub" id="res-desc">
+      A lower P/S ratio generally indicates a better investment, but varies significantly by industry.
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var method = 'perShare';
+  var period = 'ttm';
+
+  var mToggles = document.getElementById('m-toggles');
+  var pToggles = document.getElementById('p-toggles');
+  
+  var groupPS = document.getElementById('group-perShare');
+  var groupMC = document.getElementById('group-marketCap');
+
+  var inPrice = document.getElementById('price');
+  var inSales = document.getElementById('sales');
+  var inMCap = document.getElementById('mcap');
+  var inRev = document.getElementById('rev');
+
+  var resOut = document.getElementById('res-out');
+  var resLabel = document.getElementById('res-label');
+  var resNote = document.getElementById('res-note');
+  var resDesc = document.getElementById('res-desc');
+
+  function getValuation(ratio) {
+    if (ratio < 1) return 'Undervalued';
+    if (ratio < 2) return 'Reasonable';
+    if (ratio < 5) return 'High';
+    return 'Very High';
+  }
+
+  function getInterpretation(ratio) {
+    var r = ratio.toFixed(2);
+    if (ratio < 1) return 'A P/S ratio of ' + r + ' suggests the stock may be undervalued, but investigate whether low sales or business challenges are the cause.';
+    if (ratio < 2) return 'A P/S ratio of ' + r + ' is generally considered reasonable, indicating the stock is trading at a fair multiple of sales.';
+    if (ratio < 5) return 'A P/S ratio of ' + r + ' is relatively high. Ensure the company has strong growth prospects to justify this valuation.';
+    return 'A P/S ratio of ' + r + ' is very high and may indicate overvaluation, unless the company has exceptional growth potential.';
+  }
+
+  function calc() {
+    var ratio = 0;
+    if (method === 'perShare') {
+      var p = parseFloat(inPrice.value) || 0;
+      var s = parseFloat(inSales.value) || 0;
+      ratio = s > 0 ? p / s : 0;
+    } else {
+      var m = parseFloat(inMCap.value) || 0;
+      var r = parseFloat(inRev.value) || 0;
+      ratio = r > 0 ? m / r : 0;
+    }
+
+    var val = getValuation(ratio);
+    resOut.textContent = ratio.toFixed(2);
+    resLabel.textContent = 'P/S Ratio (' + (period === 'ttm' ? 'TTM' : 'Forward') + ')';
+    resNote.textContent = val;
+    resDesc.textContent = getInterpretation(ratio);
+
+    // Update toggles state
+    Array.prototype.forEach.call(mToggles.children, function(btn) {
+      btn.classList.toggle('on', btn.getAttribute('data-val') === method);
+    });
+    Array.prototype.forEach.call(pToggles.children, function(btn) {
+      btn.classList.toggle('on', btn.getAttribute('data-val') === period);
+    });
+
+    // Update visibility
+    groupPS.hidden = (method !== 'perShare');
+    groupMC.hidden = (method !== 'marketCap');
+  }
+
+  mToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    method = btn.getAttribute('data-val');
+    calc();
+  });
+
+  pToggles.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    period = btn.getAttribute('data-val');
+    calc();
+  });
+
+  [inPrice, inSales, inMCap, inRev].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +675,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +755,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

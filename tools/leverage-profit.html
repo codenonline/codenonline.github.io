@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -404,24 +454,219 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Initial Investment</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="lp-initial" type="number" inputmode="decimal" value="10000" min="0" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">leverage-profit</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Investment</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Leverage Profit Ca</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Leverage Ratio</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="lp-leverage" type="number" inputmode="decimal" value="5" min="1" step="0.1">
+        <span class="tp-suffix">:1</span>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <div class="tp-toggles tp-toggles--wrap" id="lp-lev-presets" style="margin-top:-10px;margin-bottom:15px">
+      <button class="tp-toggle mono" data-val="1">1x</button>
+      <button class="tp-toggle mono" data-val="2">2x</button>
+      <button class="tp-toggle mono" data-val="3">3x</button>
+      <button class="tp-toggle mono on" data-val="5">5x</button>
+      <button class="tp-toggle mono" data-val="10">10x</button>
+      <button class="tp-toggle mono" data-val="20">20x</button>
+      <button class="tp-toggle mono" data-val="50">50x</button>
+      <button class="tp-toggle mono" data-val="100">100x</button>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Asset Price Change</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lp-change" type="number" inputmode="decimal" value="5" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Interest Rate (Annual)</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lp-rate" type="number" inputmode="decimal" value="3.5" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Holding Period</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lp-period" type="number" inputmode="numeric" value="30" min="1">
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Period Unit</span>
+        <div class="tp-toggles" id="lp-period-type">
+          <button class="tp-toggle mono on" data-unit="days">Days</button>
+          <button class="tp-toggle mono" data-unit="months">Mo</button>
+          <button class="tp-toggle mono" data-unit="years">Yr</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Trading Fees</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lp-fees" type="number" inputmode="decimal" value="0.1" min="0" step="0.01">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Margin Call Level</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="lp-margin" type="number" inputmode="decimal" value="50" min="0" max="100" step="1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Total Position</span><b id="lp-bd-pos">$0.00</b></div>
+      <div><span class="mono">Borrowed Amount</span><b id="lp-bd-borrow">$0.00</b></div>
+      <div><span class="mono">Interest Cost</span><b id="lp-bd-interest">$0.00</b></div>
+      <div><span class="mono">Trading Fees</span><b id="lp-bd-fees">$0.00</b></div>
+      <div><span class="mono">Position P&L</span><b id="lp-bd-ppl">$0.00</b></div>
+      <div><span class="mono">ROI on Capital</span><b id="lp-bd-roi">0.00%</b></div>
+    </div>
+    
+    <div class="tp-breakdown" style="margin-top:20px; border-top:2px solid var(--ink); padding-top:20px">
+      <div><span class="mono">Margin Call Price</span><b id="lp-bd-mcall">$0.00</b></div>
+      <div><span class="mono">Liquidation Price</span><b id="lp-bd-liq">$0.00</b></div>
+      <div><span class="mono">Maximum Loss</span><b id="lp-bd-max">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Net Profit/Loss</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="lp-r-profit">0</span>
+    </div>
+    <span class="tp-result-note" id="lp-r-note">Based on 5:1 leverage</span>
   </div>
 </div>
+
+<script>
+(function() {
+  const initial = document.getElementById('lp-initial');
+  const leverage = document.getElementById('lp-leverage');
+  const levPresets = document.getElementById('lp-lev-presets');
+  const change = document.getElementById('lp-change');
+  const rate = document.getElementById('lp-rate');
+  const period = document.getElementById('lp-period');
+  const periodType = document.getElementById('lp-period-type');
+  const fees = document.getElementById('lp-fees');
+  const margin = document.getElementById('lp-margin');
+
+  const bdPos = document.getElementById('lp-bd-pos');
+  const bdBorrow = document.getElementById('lp-bd-borrow');
+  const bdInterest = document.getElementById('lp-bd-interest');
+  const bdFees = document.getElementById('lp-bd-fees');
+  const bdPpl = document.getElementById('lp-bd-ppl');
+  const bdRoi = document.getElementById('lp-bd-roi');
+  const bdMcall = document.getElementById('lp-bd-mcall');
+  const bdLiq = document.getElementById('lp-bd-liq');
+  const bdMax = document.getElementById('lp-bd-max');
+  
+  const rProfit = document.getElementById('lp-r-profit');
+  const rNote = document.getElementById('lp-r-note');
+
+  let currentUnit = 'days';
+
+  function fmt(n) {
+    return (isFinite(n) ? n : 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  
+  function money(n) {
+    return '$' + fmt(n);
+  }
+
+  function calc() {
+    const vInitial = parseFloat(initial.value) || 0;
+    const vLev = parseFloat(leverage.value) || 1;
+    const vChange = parseFloat(change.value) || 0;
+    const vRate = parseFloat(rate.value) || 0;
+    const vPeriod = parseFloat(period.value) || 0;
+    const vFees = parseFloat(fees.value) || 0;
+    const vMargin = parseFloat(margin.value) || 0;
+
+    const totalPosition = vInitial * vLev;
+    const borrowedAmount = totalPosition - vInitial;
+
+    let timeInYears;
+    if (currentUnit === 'days') timeInYears = vPeriod / 365;
+    else if (currentUnit === 'months') timeInYears = vPeriod / 12;
+    else timeInYears = vPeriod;
+
+    const interestCost = (borrowedAmount * vRate / 100) * timeInYears;
+    const totalFees = (totalPosition * vFees / 100) * 2;
+    
+    const positionPL = totalPosition * (vChange / 100);
+    const netProfit = positionPL - interestCost - totalFees;
+    const roi = vInitial > 0 ? (netProfit / vInitial) * 100 : 0;
+
+    // Risk calculations
+    const currentPrice = 100;
+    const marginCallEquity = vMargin / 100;
+    const priceDropForMarginCall = vLev > 0 ? ((1 - marginCallEquity) / vLev) * 100 : 0;
+    const marginCallPrice = currentPrice * (1 - priceDropForMarginCall / 100);
+
+    const priceDropForLiquidation = vLev > 0 ? (1 / vLev) * 100 : 0;
+    const liquidationPrice = currentPrice * (1 - priceDropForLiquidation / 100);
+
+    const maxLoss = vInitial + interestCost + totalFees;
+
+    bdPos.textContent = money(totalPosition);
+    bdBorrow.textContent = money(borrowedAmount);
+    bdInterest.textContent = money(interestCost);
+    bdFees.textContent = money(totalFees);
+    bdPpl.textContent = money(positionPL);
+    bdRoi.textContent = fmt(roi) + '%';
+    
+    bdMcall.textContent = money(marginCallPrice);
+    bdLiq.textContent = money(liquidationPrice);
+    bdMax.textContent = money(maxLoss);
+
+    rProfit.textContent = fmt(netProfit);
+    rNote.textContent = 'Based on ' + vLev.toFixed(1) + ':1 leverage';
+
+    Array.from(levPresets.children).forEach(btn => {
+      btn.classList.toggle('on', parseFloat(btn.getAttribute('data-val')) === vLev);
+    });
+  }
+
+  levPresets.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-val]');
+    if (!btn) return;
+    leverage.value = btn.getAttribute('data-val');
+    calc();
+  });
+
+  periodType.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-unit]');
+    if (!btn) return;
+    currentUnit = btn.getAttribute('data-unit');
+    Array.from(periodType.children).forEach(b => b.classList.toggle('on', b === btn));
+    calc();
+  });
+
+  [initial, leverage, change, rate, period, fees, margin].forEach(el => {
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -476,27 +721,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +801,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

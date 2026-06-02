@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/text/">Text Tools</a>
+      <a href="/text/">Text</a>
       <span>/</span>
       <span class="on">Markdown Converter</span>
     </div>
@@ -396,32 +446,204 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Text Tools · Tool</div>
+        <div class="tp-kicker mono">Text · Tool</div>
         <h1 class="tp-title">Markdown Converter</h1>
         <p class="tp-desc">Convert Markdown to HTML and vice versa with live preview and syntax highlighting.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Mode</span>
+      <div class="tp-toggles">
+        <button class="tp-toggle mono on" id="m-m2h">MD → HTML</button>
+        <button class="tp-toggle mono" id="m-h2m">HTML → MD</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">markdown-converter</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Text Tools</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Markdown Converter</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono" id="in-label">Markdown input</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="in" placeholder="# Hello world"></textarea>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-two">
+      <button class="tp-gen mono" id="btn-sample" style="margin-top:0">Sample</button>
+      <button class="tp-gen mono" id="btn-clear" style="margin-top:0;background:transparent;color:var(--ink)">Clear</button>
+    </div>
+
+    <div class="tp-demo-note mono" style="margin-top:20px">
+      # Header · **Bold** · *Italic* · - List · [Link](url) · `Code`
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label" id="out-label">HTML output</span>
+    <div class="tp-mono-out" id="out" style="white-space:pre-wrap;overflow-y:auto;height:240px;margin-bottom:20px;font-size:13px"></div>
+    
+    <div id="preview-box" style="display:none">
+      <span class="tp-result-label">Preview</span>
+      <div id="preview" style="font-family:var(--grotesk);line-height:1.5;font-size:14px;margin-bottom:20px;opacity:0.9"></div>
+    </div>
+
+    <div class="tp-statgrid" style="margin-top:auto">
+      <div><span class="mono">In Chars</span><b id="s-in-c">0</b></div>
+      <div><span class="mono">Out Chars</span><b id="s-out-c">0</b></div>
+      <div><span class="mono">In Lines</span><b id="s-in-l">0</b></div>
+      <div><span class="mono">Out Lines</span><b id="s-out-l">0</b></div>
+    </div>
+
+    <button class="tp-toggle mono" id="copy" style="border-color:var(--mag);color:var(--mag);align-self:flex-start;margin-top:20px">Copy output</button>
   </div>
 </div>
+
+<script>
+(function() {
+  var mode = 'md-to-html';
+  var mM2H = document.getElementById('m-m2h');
+  var mH2M = document.getElementById('m-h2m');
+  var input = document.getElementById('in');
+  var output = document.getElementById('out');
+  var inLabel = document.getElementById('in-label');
+  var outLabel = document.getElementById('out-label');
+  var previewBox = document.getElementById('preview-box');
+  var preview = document.getElementById('preview');
+  var btnSample = document.getElementById('btn-sample');
+  var btnClear = document.getElementById('btn-clear');
+  var btnCopy = document.getElementById('copy');
+
+  var sInC = document.getElementById('s-in-c');
+  var sOutC = document.getElementById('s-out-c');
+  var sInL = document.getElementById('s-in-l');
+  var sOutL = document.getElementById('s-out-l');
+
+  function md2html(md) {
+    var h = md;
+    h = h.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    h = h.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    h = h.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    h = h.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+    h = h.replace(/__(.*?)__/gim, '<strong>$1</strong>');
+    h = h.replace(/\*(.*)\*/gim, '<em>$1</em>');
+    h = h.replace(/_(.*?)_/gim, '<em>$1</em>');
+    h = h.replace(/```(\w+)?\n([\s\S]*?)```/gim, '<pre><code class="language-$1">$2</code></pre>');
+    h = h.replace(/`([^`]+)`/gim, '<code>$1</code>');
+    h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
+    h = h.replace(/!\[([^\]]*)\]\(([^)]+)\)/gim, '<img alt="$1" src="$2">');
+    h = h.replace(/^\- (.*$)/gim, '<li>$1</li>');
+    h = h.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
+    h = h.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+    h = h.replace(/(<li>.*<\/li>)/gims, function(match) {
+      return match.includes('<ul>') ? match : '<ol>' + match + '</ol>';
+    });
+    h = h.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    h = h.replace(/^---$/gim, '<hr>');
+    h = h.replace(/^\*\*\*$/gim, '<hr>');
+    h = h.replace(/\n\n/gim, '</p><p>');
+    h = h.replace(/\n/gim, '<br>');
+    if (h && !h.startsWith('<')) h = '<p>' + h + '</p>';
+    h = h.replace(/<\/ul>\s*<ul>/gim, '');
+    h = h.replace(/<\/ol>\s*<ol>/gim, '');
+    h = h.replace(/<p><\/p>/gim, '');
+    h = h.replace(/<p>(<h[1-6]>)/gim, '$1');
+    h = h.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
+    return h;
+  }
+
+  function html2md(h) {
+    var m = h;
+    m = m.replace(/<h1>(.*?)<\/h1>/gim, '# $1\n\n');
+    m = m.replace(/<h2>(.*?)<\/h2>/gim, '## $1\n\n');
+    m = m.replace(/<h3>(.*?)<\/h3>/gim, '### $1\n\n');
+    m = m.replace(/<h4>(.*?)<\/h4>/gim, '#### $1\n\n');
+    m = m.replace(/<h5>(.*?)<\/h5>/gim, '##### $1\n\n');
+    m = m.replace(/<h6>(.*?)<\/h6>/gim, '###### $1\n\n');
+    m = m.replace(/<strong>(.*?)<\/strong>/gim, '**$1**');
+    m = m.replace(/<b>(.*?)<\/b>/gim, '**$1**');
+    m = m.replace(/<em>(.*?)<\/em>/gim, '*$1*');
+    m = m.replace(/<i>(.*?)<\/i>/gim, '*$1*');
+    m = m.replace(/<pre><code(?:\s+class="language-(\w+)")?>([\s\S]*?)<\/code><\/pre>/gim, '```$1\n$2\n```\n\n');
+    m = m.replace(/<code>(.*?)<\/code>/gim, '`$1`');
+    m = m.replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/gim, '[$2]($1)');
+    m = m.replace(/<img\s+(?:alt="([^"]*)")?\s*src="([^"]+)"[^>]*>/gim, '![$1]($2)');
+    m = m.replace(/<ul>/gim, '');
+    m = m.replace(/<\/ul>/gim, '\n');
+    m = m.replace(/<ol>/gim, '');
+    m = m.replace(/<\/ol>/gim, '\n');
+    m = m.replace(/<li>(.*?)<\/li>/gim, '- $1\n');
+    m = m.replace(/<blockquote>(.*?)<\/blockquote>/gim, '> $1\n\n');
+    m = m.replace(/<hr\s*\/?>/gim, '---\n\n');
+    m = m.replace(/<p>(.*?)<\/p>/gim, '$1\n\n');
+    m = m.replace(/<br\s*\/?>/gim, '\n');
+    m = m.replace(/<[^>]+>/gim, '');
+    m = m.replace(/\n{3,}/gim, '\n\n');
+    return m.trim();
+  }
+
+  function update() {
+    var val = input.value;
+    var res = '';
+    if (mode === 'md-to-html') {
+      res = md2html(val);
+      preview.innerHTML = res;
+      previewBox.style.display = val.trim() ? 'block' : 'none';
+    } else {
+      res = html2md(val);
+      previewBox.style.display = 'none';
+    }
+    output.textContent = res;
+    
+    sInC.textContent = val.length.toLocaleString();
+    sOutC.textContent = res.length.toLocaleString();
+    sInL.textContent = val ? val.split('\n').length : 0;
+    sOutL.textContent = res ? res.split('\n').length : 0;
+  }
+
+  mM2H.onclick = function() {
+    mode = 'md-to-html';
+    mM2H.classList.add('on');
+    mH2M.classList.remove('on');
+    inLabel.textContent = 'Markdown input';
+    outLabel.textContent = 'HTML output';
+    input.placeholder = '# Hello world';
+    update();
+  };
+  mH2M.onclick = function() {
+    mode = 'html-to-md';
+    mH2M.classList.add('on');
+    mM2H.classList.remove('on');
+    inLabel.textContent = 'HTML input';
+    outLabel.textContent = 'Markdown output';
+    input.placeholder = '<h1>Hello world</h1>';
+    update();
+  };
+
+  input.oninput = update;
+
+  btnSample.onclick = function() {
+    if (mode === 'md-to-html') {
+      input.value = "# Sample Markdown\n\nThis is **bold** and *italic*.\n\n- List item 1\n- List item 2\n\n```js\nconsole.log('hi');\n```\n\n> Quote here";
+    } else {
+      input.value = "<h1>Sample HTML</h1>\n<p>This is <strong>bold</strong> and <em>italic</em>.</p>\n<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>\n<pre><code>console.log('hi');</code></pre>";
+    }
+    update();
+  };
+
+  btnClear.onclick = function() {
+    input.value = '';
+    update();
+  };
+
+  btnCopy.onclick = function() {
+    var txt = output.textContent;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt);
+    btnCopy.textContent = 'Copied ✓';
+    setTimeout(function() { btnCopy.textContent = 'Copy output'; }, 1500);
+  };
+
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -441,7 +663,7 @@ button:disabled{transform:none;}
 
     
     <div class="tp-related">
-      <span class="tp-related-label mono">Related in Text Tools</span>
+      <span class="tp-related-label mono">Related in Text</span>
       <div class="tp-related-list">
         
         <a class="tp-related-card" href="/tools/regex-tester.html">
@@ -476,27 +698,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -556,6 +778,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

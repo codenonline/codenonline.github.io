@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools Catalog — 120 small tools that each do one thing</title>
+  <meta name="description" content="Small tools that each do exactly one thing. Free, private, no sign-up.">
+  <script>
+    // Apply the saved background color before first paint to avoid a flash.
+    (function () {
+      try {
+        var c = localStorage.getItem('tc_v2_bg');
+        if (c) document.documentElement.style.setProperty('--mag', c);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --mag:#ec18e6;
+  --ink:#0b0b0b;
+  --hair:#0b0b0b;
+  --grotesk:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --maxw:1280px;
+  --pad:clamp(18px,4vw,48px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background-color:var(--mag);color:var(--ink);font-family:var(--grotesk);-webkit-font-smoothing:antialiased;}
+body{overflow-x:hidden;background-attachment:fixed;background-repeat:repeat;min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+::selection{background:var(--ink);color:var(--mag);}
+
+/* texture — baked into the page background so it never overlays content */
+body[data-tex="on"]{
+  background-image:
+    radial-gradient(rgba(0,0,0,.20) .9px,transparent 1.35px),
+    linear-gradient(rgba(0,0,0,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.045) 1px,transparent 1px);
+  background-size:5px 5px,160px 160px,160px 160px;
+}
+body[data-tex="soft"]{
+  background-image:radial-gradient(rgba(0,0,0,.14) .8px,transparent 1.5px);
+  background-size:6px 6px;
+}
+body[data-tex="off"]{background-image:none;}
+
+.app{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);width:100%;}
+
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+
+/* top bar -----------------------------------------------------------*/
+.topbar{border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;
+  padding:14px var(--pad);position:sticky;top:0;background:var(--mag);z-index:30;}
+.topbar-left{display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0;}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;}
+.brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
+.brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
+.topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
+@media(max-width:640px){
+  .topbar{padding:14px 18px;}
+  .topbar-left{gap:8px;}
+  .brand{gap:7px;}
+  .brand-name{font-size:18px;}
+  .topcount{font-size:10px;padding:5px 7px;}
+}
+@media(max-width:340px){.topcount{display:none;}}
+
+/* config / color picker --------------------------------------------*/
+.cfg{position:relative;}
+.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;}
+.cfg-btn:hover{background:var(--ink);color:var(--mag);}
+.cfg-btn svg{width:13px;height:13px;display:block;}
+.cfg-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:15px;width:228px;z-index:50;display:none;}
+.cfg-panel.open{display:block;}
+.cfg-panel-label{font-size:10px;display:block;margin-bottom:12px;}
+.cfg-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.cfg-swatch{aspect-ratio:1;border:2px solid var(--ink);cursor:pointer;position:relative;padding:0;}
+.cfg-swatch.on::after{content:"";position:absolute;inset:3px;border:2px solid var(--ink);}
+@media(max-width:640px){.cfg-btn span{display:none;}}
+
+/* hero --------------------------------------------------------------*/
+.hero{padding:clamp(30px,6vw,72px) 0 clamp(24px,4vw,44px);border-bottom:2px solid var(--ink);}
+.hero-main{display:block;}
+.hero-tag{font-size:13px;white-space:nowrap;}
+.hero-head{font-weight:800;letter-spacing:-.045em;line-height:.9;
+  font-size:clamp(38px,8.4vw,116px);text-wrap:balance;}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;
+  margin-top:clamp(28px,5vw,64px);flex-wrap:wrap;}
+.stats{display:flex;gap:clamp(26px,5vw,70px);flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:4px;}
+.stat-label{font-size:12px;}
+.stat-val{font-weight:800;letter-spacing:-.04em;line-height:.9;font-size:clamp(34px,4.6vw,62px);}
+.stat-sub{font-size:.4em;font-weight:700;letter-spacing:0;opacity:.55;margin-left:.1em;font-family:var(--mono);vertical-align:super;}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(18px,3vw,36px);}
+.hero-note{font-size:11px;line-height:1.7;text-align:right;opacity:.85;}
+@media(max-width:560px){.hero-side{align-items:flex-start;gap:18px;}.hero-note{text-align:left;}}
+
+/* controls ----------------------------------------------------------*/
+.controls{padding:clamp(22px,3vw,32px) var(--pad) clamp(16px,2vw,22px);}
+.search{display:flex;align-items:center;gap:14px;border:2px solid var(--ink);padding:clamp(12px,1.6vw,18px) 18px;}
+.search-key{font-size:12px;white-space:nowrap;}
+.search-input{flex:1;background:none;border:none;outline:none;color:var(--ink);
+  font-weight:700;letter-spacing:-.02em;font-size:clamp(20px,2.6vw,32px);min-width:0;}
+.search-input::placeholder{color:var(--ink);opacity:.4;font-weight:700;}
+.search-arrow{font-size:20px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
+.chip.on{background:var(--ink);color:var(--mag);}
+.chip-count{font-size:8px;opacity:.6;}
+
+/* grid + cards ------------------------------------------------------*/
+.gridwrap{padding-bottom:clamp(40px,6vw,80px);}
+.results-bar{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 16px;font-size:11px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;
+  background:var(--ink);border:2px solid var(--ink);}
+.card{background:var(--mag);text-align:left;padding:clamp(16px,1.5vw,22px);display:flex;flex-direction:column;
+  gap:10px;min-height:188px;transition:background .14s,color .14s;position:relative;}
+.card-top{display:flex;justify-content:space-between;font-size:10px;}
+.card-cat{opacity:.7;}
+.card-idx{opacity:.5;}
+.card-name{font-weight:800;letter-spacing:-.035em;line-height:.96;font-size:clamp(20px,1.9vw,27px);}
+.card-desc{font-size:13.5px;line-height:1.4;opacity:.78;margin-top:auto;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-open{font-size:11px;opacity:0;transform:translateX(-4px);transition:.14s;}
+body[data-hover="on"] .card:hover{background:var(--ink);color:var(--mag);}
+body[data-hover="on"] .card:hover .card-cat,body[data-hover="on"] .card:hover .card-idx,body[data-hover="on"] .card:hover .card-desc{opacity:.85;}
+.card:hover .card-open{opacity:1;transform:none;}
+body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
+
+.empty{padding:60px 0 80px;}
+.empty-head{font-weight:800;letter-spacing:-.04em;line-height:.92;font-size:clamp(34px,5vw,64px);margin-top:14px;}
+
+/* category screen ---------------------------------------------------*/
+.cat-hero{padding:clamp(34px,5vw,64px) 0 clamp(20px,3vw,30px);border-bottom:2px solid var(--ink);}
+.cat-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(18px,3vw,34px);}
+.cat-crumb a{opacity:.55;}.cat-crumb a:hover{opacity:1;text-decoration:underline;}
+.cat-crumb .on{opacity:1;}
+.cat-title{font-weight:800;letter-spacing:-.05em;line-height:.86;font-size:clamp(56px,12vw,170px);text-transform:uppercase;}
+.cat-title sup{font-size:.22em;font-family:var(--mono);letter-spacing:0;vertical-align:super;opacity:.6;}
+.cat-sub{font-size:12px;margin-top:18px;max-width:46ch;line-height:1.7;opacity:.8;}
+
+/* tool page ---------------------------------------------------------*/
+.tp{padding:clamp(26px,4vw,48px) 0 clamp(50px,7vw,90px);}
+.tp-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(24px,4vw,44px);flex-wrap:wrap;}
+.tp-crumb a{opacity:.55;}.tp-crumb a:hover{opacity:1;text-decoration:underline;}
+.tp-crumb .on{opacity:1;}
+.tp-head{margin-bottom:clamp(26px,4vw,46px);}
+.tp-kicker{font-size:12px;}
+.tp-title{font-weight:800;letter-spacing:-.045em;line-height:.9;font-size:clamp(40px,7vw,92px);margin:10px 0 14px;}
+.tp-desc{font-size:clamp(14px,1.5vw,17px);line-height:1.5;max-width:60ch;opacity:.85;}
+
+.tp-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-grid--wide{grid-template-columns:1fr 1fr;}
+@media(max-width:780px){.tp-grid,.tp-grid--wide{grid-template-columns:1fr;}}
+.tp-inputs{background:var(--mag);padding:clamp(20px,2.6vw,34px);display:flex;flex-direction:column;gap:18px;}
+.tp-field{display:flex;flex-direction:column;gap:7px;}
+.tp-field-label{font-size:11px;}
+.tp-field-input{display:flex;align-items:center;border:2px solid var(--ink);background:var(--mag);}
+.tp-input{flex:1;background:none;border:none;outline:none;padding:11px 13px;font-weight:700;
+  letter-spacing:-.02em;font-size:clamp(18px,2vw,24px);min-width:0;color:var(--ink);}
+.tp-suffix{padding:0 13px;font-size:13px;opacity:.55;border-left:2px solid var(--ink);align-self:stretch;display:flex;align-items:center;}
+.tp-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tp-breakdown{display:flex;flex-direction:column;gap:0;border:2px solid var(--ink);margin-top:4px;}
+.tp-breakdown div{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;font-size:11px;border-bottom:1px solid rgba(0,0,0,.25);}
+.tp-breakdown div:last-child{border-bottom:none;}
+.tp-breakdown b{font-size:13px;}
+
+.tp-result{background:var(--ink);color:var(--mag);padding:clamp(24px,3vw,40px);
+  display:flex;flex-direction:column;justify-content:center;gap:14px;}
+.tp-result-label{font-size:12px;opacity:.65;}
+.tp-result-val{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;}
+.tp-result-prefix{font-weight:800;font-size:clamp(26px,3vw,42px);letter-spacing:-.04em;}
+.tp-result-num{font-weight:800;letter-spacing:-.05em;line-height:.85;font-size:clamp(46px,7.5vw,104px);word-break:break-word;}
+.tp-result-note{font-size:11px;opacity:.6;}
+.tp-result-sub{font-size:13px;opacity:.6;}
+
+.tp-sentence{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;}
+.tp-sentence .tp-input{border:2px solid var(--ink);max-width:120px;}
+.tp-toggles{display:flex;gap:8px;flex-wrap:wrap;}
+.tp-toggles--wrap{margin-bottom:4px;}
+.tp-toggle{border:2px solid var(--ink);padding:8px 12px;font-size:11px;transition:.12s;}
+.tp-toggle.on{background:var(--ink);color:var(--mag);}
+.tp-gen{border:2px solid var(--ink);padding:12px 16px;font-size:12px;text-align:center;background:var(--ink);color:var(--mag);transition:.12s;}
+.tp-gen:hover{opacity:.82;}
+.tp-hint,.tp-demo-note{font-size:10.5px;opacity:.6;line-height:1.6;}
+.tp-demo-note{margin-top:auto;}
+.tp-textarea{border:2px solid var(--ink);background:var(--mag);padding:13px;font-family:var(--mono);font-size:13px;
+  line-height:1.6;resize:vertical;min-height:120px;outline:none;color:var(--ink);width:100%;}
+.tp-textarea--tall{min-height:220px;}
+.tp-result--pw,.tp-result--list,.tp-result--stats{justify-content:flex-start;}
+.tp-pw{font-family:var(--mono);font-weight:700;font-size:clamp(20px,2.6vw,30px);word-break:break-all;line-height:1.3;letter-spacing:.02em;}
+.tp-uuids{display:flex;flex-direction:column;gap:9px;}
+.tp-uuid{font-size:13px;word-break:break-all;padding-bottom:9px;border-bottom:1px solid rgba(236,24,230,.25);font-family:var(--mono);}
+.tp-uuid:last-child{border-bottom:none;}
+.tp-mono-out{font-size:14px;line-height:1.6;word-break:break-all;white-space:pre-wrap;}
+.tp-stat-big{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.tp-stat-big b{font-weight:800;letter-spacing:-.05em;font-size:clamp(46px,7vw,90px);line-height:.85;}
+.tp-stat-big span{font-size:12px;opacity:.65;}
+.tp-statgrid{display:flex;flex-direction:column;gap:0;border:2px solid var(--mag);}
+.tp-statgrid div{display:flex;justify-content:space-between;padding:10px 13px;font-size:12px;border-bottom:1px solid rgba(236,24,230,.25);}
+.tp-statgrid div:last-child{border-bottom:none;}
+
+.tp-related{margin-top:clamp(34px,5vw,56px);}
+.tp-related-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-related-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-related-card{background:var(--mag);display:flex;justify-content:space-between;align-items:center;
+  padding:16px 18px;transition:.14s;}
+.tp-related-card:hover{background:var(--ink);color:var(--mag);}
+.tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
+.tp-related-arrow{font-size:13px;}
+
+/* footer ------------------------------------------------------------*/
+.footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
+.foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
+.footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
+.foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
+.foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
+.footer-mark{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  margin:clamp(34px,5vw,56px) 0 26px;border-top:2px solid var(--ink);padding-top:26px;}
+.footer-word{font-weight:800;letter-spacing:-.05em;font-size:clamp(40px,10vw,140px);line-height:.8;}
+.footer-base{display:flex;justify-content:space-between;font-size:10px;opacity:.65;border-top:2px solid var(--ink);padding-top:18px;flex-wrap:wrap;gap:10px;}
+
+/* misc --------------------------------------------------------------*/
+.skip-fade{animation:fade .3s ease;}
+@keyframes fade{from{transform:translateY(8px);}to{transform:none;}}
+
+/* live-value animation — result numbers tween + pop when they change
+   (driven by the watcher script on tool pages). */
+@keyframes value-pop{0%{transform:scale(1);}35%{transform:scale(1.06);}100%{transform:scale(1);}}
+.value-animate{display:inline-block;transform-origin:left center;animation:value-pop .42s cubic-bezier(.22,1,.36,1);will-change:transform;}
+.tp-result-num.value-animate{transform-origin:left bottom;}
+
+/* tactile button press, in keeping with the .12s transitions used above */
+button{transition:background .12s,color .12s,opacity .12s,transform .1s;}
+button:active{transform:translateY(1px);}
+button:disabled{transform:none;}
+
+@media (prefers-reduced-motion:reduce){
+  .skip-fade,.value-animate{animation:none;}
+  button:active{transform:none;}
+}
+  </style>
+</head>
+<body data-tex="on" data-hover="on">
+  <div class="app">
+    <header class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="/fr/">
+      <span class="brand-name">TOOLSCATALOG</span>
+      <span class="brand-ver mono">V2</span>
+    </a>
+    <span class="topcount mono">120 Outils</span>
+  </div>
+  <div class="topbar-right">
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>FR</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="en" href="/"><span>English</span><span class="langsel-code">en</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>Français</span><span class="langsel-code">fr</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
+    </div>
+    <div class="cfg">
+      <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3.2"></circle>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"></path>
+        </svg>
+        <span>Thème</span>
+      </button>
+      <div class="cfg-panel" id="cfg-panel" role="menu">
+        <span class="cfg-panel-label mono">Couleur de fond</span>
+        <div class="cfg-swatches" id="cfg-swatches">
+          
+          <button class="cfg-swatch" data-color="#ec18e6" title="Magenta"
+                  aria-label="Magenta" style="background:#ec18e6"></button>
+          
+          <button class="cfg-swatch" data-color="#f472b6" title="Pink"
+                  aria-label="Pink" style="background:#f472b6"></button>
+          
+          <button class="cfg-swatch" data-color="#fb7185" title="Rose"
+                  aria-label="Rose" style="background:#fb7185"></button>
+          
+          <button class="cfg-swatch" data-color="#f87171" title="Red"
+                  aria-label="Red" style="background:#f87171"></button>
+          
+          <button class="cfg-swatch" data-color="#fb923c" title="Orange"
+                  aria-label="Orange" style="background:#fb923c"></button>
+          
+          <button class="cfg-swatch" data-color="#fbbf24" title="Amber"
+                  aria-label="Amber" style="background:#fbbf24"></button>
+          
+          <button class="cfg-swatch" data-color="#facc15" title="Yellow"
+                  aria-label="Yellow" style="background:#facc15"></button>
+          
+          <button class="cfg-swatch" data-color="#a3e635" title="Lime"
+                  aria-label="Lime" style="background:#a3e635"></button>
+          
+          <button class="cfg-swatch" data-color="#4ade80" title="Green"
+                  aria-label="Green" style="background:#4ade80"></button>
+          
+          <button class="cfg-swatch" data-color="#34d399" title="Emerald"
+                  aria-label="Emerald" style="background:#34d399"></button>
+          
+          <button class="cfg-swatch" data-color="#2dd4bf" title="Teal"
+                  aria-label="Teal" style="background:#2dd4bf"></button>
+          
+          <button class="cfg-swatch" data-color="#22d3ee" title="Cyan"
+                  aria-label="Cyan" style="background:#22d3ee"></button>
+          
+          <button class="cfg-swatch" data-color="#38bdf8" title="Sky"
+                  aria-label="Sky" style="background:#38bdf8"></button>
+          
+          <button class="cfg-swatch" data-color="#60a5fa" title="Blue"
+                  aria-label="Blue" style="background:#60a5fa"></button>
+          
+          <button class="cfg-swatch" data-color="#818cf8" title="Indigo"
+                  aria-label="Indigo" style="background:#818cf8"></button>
+          
+          <button class="cfg-swatch" data-color="#a78bfa" title="Violet"
+                  aria-label="Violet" style="background:#a78bfa"></button>
+          
+          <button class="cfg-swatch" data-color="#c084fc" title="Purple"
+                  aria-label="Purple" style="background:#c084fc"></button>
+          
+          <button class="cfg-swatch" data-color="#e879f9" title="Fuchsia"
+                  aria-label="Fuchsia" style="background:#e879f9"></button>
+          
+          <button class="cfg-swatch" data-color="#cbd5e1" title="Slate"
+                  aria-label="Slate" style="background:#cbd5e1"></button>
+          
+          <button class="cfg-swatch" data-color="#f5f5f5" title="White"
+                  aria-label="White" style="background:#f5f5f5"></button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    
+<div class="skip-fade">
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-main">
+        <h1 class="hero-head">De petits outils qui font chacun une seule chose.</h1>
+      </div>
+      <div class="hero-row">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label mono">Outils</span>
+            <span class="stat-val">120</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label mono">Catégories</span>
+            <span class="stat-val">11</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label mono">Prix</span>
+            <span class="stat-val">€0<span class="stat-sub">pour toujours</span></span>
+          </div>
+        </div>
+        <div class="hero-side">
+          <span class="hero-tag mono">(Est. 2026)</span>
+          <p class="hero-note mono">Tous les calculs s&#39;exécutent localement dans votre navigateur. Pas de comptes · pas de suivi.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap controls">
+    <div class="search">
+      <span class="search-key mono">Rechercher /</span>
+      <input class="search-input" id="q" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Tapez pour filtrer 120 outils…">
+      <span class="search-arrow">↘</span>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip mono on" data-cat="all">Tous <span class="chip-count">120</span></button>
+      
+      <button class="chip mono" data-cat="financial">Finance <span class="chip-count">26</span></button>
+      
+      <button class="chip mono" data-cat="business">Affaires <span class="chip-count">53</span></button>
+      
+      <button class="chip mono" data-cat="investment">Investissement <span class="chip-count">19</span></button>
+      
+      <button class="chip mono" data-cat="developer">Développeur <span class="chip-count">1</span></button>
+      
+      <button class="chip mono" data-cat="utility">Utilitaires <span class="chip-count">3</span></button>
+      
+      <button class="chip mono" data-cat="cryptography">Cryptographie <span class="chip-count">1</span></button>
+      
+      <button class="chip mono" data-cat="design">Design <span class="chip-count">3</span></button>
+      
+      <button class="chip mono" data-cat="datetime">Date et heure <span class="chip-count">3</span></button>
+      
+      <button class="chip mono" data-cat="math">Mathématiques <span class="chip-count">1</span></button>
+      
+      <button class="chip mono" data-cat="random">Aléatoire <span class="chip-count">1</span></button>
+      
+      <button class="chip mono" data-cat="text">Texte <span class="chip-count">9</span></button>
+      
+    </div>
+  </div>
+
+  <div class="wrap gridwrap">
+    <div class="results-bar mono">
+      <span id="results-label">Tous les outils</span>
+      <span id="results-count">120 affichés</span>
+    </div>
+    <div class="grid" id="grid">
+      
+      <a class="card" href="/fr/tools/absence-rate-calculator.html"
+         data-cat="business"
+         data-text="calculateur de taux d&#39;absence suivez l&#39;assiduité de la main-d&#39;œuvre en mesurant le pourcentage de jours de travail programmés perdus à cause d&#39;absences non planifiées — utile pour identifier les tendances rh.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">001</span>
+        </div>
+        <div class="card-name">Calculateur de Taux d&#39;Absence</div>
+        <div class="card-desc">Suivez l&#39;assiduité de la main-d&#39;œuvre en mesurant le pourcentage de jours de travail programmés perdus à cause d&#39;absences non planifiées — utile pour identifier les tendances RH.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/acceptance-rate-calculator.html"
+         data-cat="business"
+         data-text="calculateur de taux d&#39;acceptation mesurez quel pourcentage de candidatures, offres ou invitations ont été acceptées pour évaluer l&#39;efficacité de vos efforts ou de votre entonnoir de recrutement.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">002</span>
+        </div>
+        <div class="card-name">Calculateur de Taux d&#39;Acceptation</div>
+        <div class="card-desc">Mesurez quel pourcentage de candidatures, offres ou invitations ont été acceptées pour évaluer l&#39;efficacité de vos efforts ou de votre entonnoir de recrutement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/accounting-profit.html"
+         data-cat="business"
+         data-text="calculateur de bénéfice comptable trouvez le bénéfice net après soustraction des coûts explicites tels que les salaires, le loyer et les matériaux du chiffre d&#39;affaires total — la ligne de fond du compte de résultat standard.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">003</span>
+        </div>
+        <div class="card-name">Calculateur de Bénéfice Comptable</div>
+        <div class="card-desc">Trouvez le bénéfice net après soustraction des coûts explicites tels que les salaires, le loyer et les matériaux du chiffre d&#39;affaires total — la ligne de fond du compte de résultat standard.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/additional-funds-needed.html"
+         data-cat="business"
+         data-text="fonds supplémentaires nécessaires estimez le financement externe requis lorsque la croissance projetée des actifs dépasse les fonds internes disponibles et les passifs, selon les prévisions de ventes.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">004</span>
+        </div>
+        <div class="card-name">Fonds Supplémentaires Nécessaires</div>
+        <div class="card-desc">Estimez le financement externe requis lorsque la croissance projetée des actifs dépasse les fonds internes disponibles et les passifs, selon les prévisions de ventes.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/altman-z-score.html"
+         data-cat="business"
+         data-text="score z d&#39;altman évaluez le risque de faillite d&#39;une entreprise à l&#39;aide du modèle de score z d&#39;altman — combine cinq ratios financiers pour prédire la détresse financière.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">005</span>
+        </div>
+        <div class="card-name">Score Z d&#39;Altman</div>
+        <div class="card-desc">Évaluez le risque de faillite d&#39;une entreprise à l&#39;aide du modèle de Score Z d&#39;Altman — combine cinq ratios financiers pour prédire la détresse financière.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/asset-turnover-ratio.html"
+         data-cat="business"
+         data-text="ratio de rotation des actifs mesure l&#39;efficacité avec laquelle une entreprise génère des revenus à partir de ses actifs totaux — les ratios plus élevés indiquent une meilleure utilisation de la base d&#39;actifs.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">006</span>
+        </div>
+        <div class="card-name">Ratio de Rotation des Actifs</div>
+        <div class="card-desc">Mesure l&#39;efficacité avec laquelle une entreprise génère des revenus à partir de ses actifs totaux — les ratios plus élevés indiquent une meilleure utilisation de la base d&#39;actifs.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/average-collection-period.html"
+         data-cat="business"
+         data-text="période moyenne de recouvrement découvrez combien de jours en moyenne il faut à votre entreprise pour recevoir le paiement après une vente, en mettant en évidence les retards potentiels de trésorerie.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">007</span>
+        </div>
+        <div class="card-name">Période Moyenne de Recouvrement</div>
+        <div class="card-desc">Découvrez combien de jours en moyenne il faut à votre entreprise pour recevoir le paiement après une vente, en mettant en évidence les retards potentiels de trésorerie.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/average-daily-rate.html"
+         data-cat="business"
+         data-text="tarif journalier moyen déterminez le revenu moyen généré par chambre occupée par jour — le kpi de tarification principal pour les hôtels et les locations de courte durée.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">008</span>
+        </div>
+        <div class="card-name">Tarif Journalier Moyen</div>
+        <div class="card-desc">Déterminez le revenu moyen généré par chambre occupée par jour — le KPI de tarification principal pour les hôtels et les locations de courte durée.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bill-rate.html"
+         data-cat="business"
+         data-text="calculateur de taux de facturation définissez le bon taux de facturation à présenter au client en tenant compte des coûts de base, des frais généraux, de la marge bénéficiaire et de l&#39;utilisation souhaitée pour les services de conseil.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">009</span>
+        </div>
+        <div class="card-name">Calculateur de Taux de Facturation</div>
+        <div class="card-desc">Définissez le bon taux de facturation à présenter au client en tenant compte des coûts de base, des frais généraux, de la marge bénéficiaire et de l&#39;utilisation souhaitée pour les services de conseil.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/billable-hours.html"
+         data-cat="business"
+         data-text="calculateur d&#39;heures facturables suivez et valorisez le temps consacré au travail client en entrant les heures travaillées et votre taux de facturation pour voir les revenus totaux par projet ou période.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">010</span>
+        </div>
+        <div class="card-name">Calculateur d&#39;Heures Facturables</div>
+        <div class="card-desc">Suivez et valorisez le temps consacré au travail client en entrant les heures travaillées et votre taux de facturation pour voir les revenus totaux par projet ou période.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/book-profit.html"
+         data-cat="business"
+         data-text="calculatrice de bénéfice comptable déterminez le bénéfice enregistré dans les états financiers en soustrayant les dépenses comptables totales des revenus, y compris les éléments non monétaires.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">011</span>
+        </div>
+        <div class="card-name">Calculatrice de Bénéfice Comptable</div>
+        <div class="card-desc">Déterminez le bénéfice enregistré dans les états financiers en soustrayant les dépenses comptables totales des revenus, y compris les éléments non monétaires.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/break-even.html"
+         data-cat="business"
+         data-text="calculatrice du seuil de rentabilité trouvez le volume exact de ventes où le chiffre d&#39;affaires total égale les coûts totaux — soyez précis sur le moment où un produit ou une entreprise commence à générer des bénéfices.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">012</span>
+        </div>
+        <div class="card-name">Calculatrice du Seuil de Rentabilité</div>
+        <div class="card-desc">Trouvez le volume exact de ventes où le chiffre d&#39;affaires total égale les coûts totaux — soyez précis sur le moment où un produit ou une entreprise commence à générer des bénéfices.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/capital-employed.html"
+         data-cat="business"
+         data-text="calculatrice du capital employé quantifiez les fonds à long terme totaux qu&#39;une entreprise utilise en combinant les capitaux propres et la dette, formant la base pour l&#39;analyse roce et l&#39;efficacité.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">013</span>
+        </div>
+        <div class="card-name">Calculatrice du Capital Employé</div>
+        <div class="card-desc">Quantifiez les fonds à long terme totaux qu&#39;une entreprise utilise en combinant les capitaux propres et la dette, formant la base pour l&#39;analyse ROCE et l&#39;efficacité.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/cash-flow-to-debt-ratio.html"
+         data-cat="business"
+         data-text="ratio flux de trésorerie sur dette voyez à quelle vitesse une entreprise pourrait rembourser sa dette totale en utilisant le flux de trésorerie d&#39;exploitation — un indicateur clé de la solvabilité à long terme.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">014</span>
+        </div>
+        <div class="card-name">Ratio Flux de Trésorerie sur Dette</div>
+        <div class="card-desc">Voyez à quelle vitesse une entreprise pourrait rembourser sa dette totale en utilisant le flux de trésorerie d&#39;exploitation — un indicateur clé de la solvabilité à long terme.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/cash-ratio.html"
+         data-cat="business"
+         data-text="calculateur de ratio de trésorerie mesure la capacité d&#39;une entreprise à couvrir les passifs courants en utilisant uniquement la trésorerie et les équivalents de trésorerie, le test de liquidité le plus conservateur.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">015</span>
+        </div>
+        <div class="card-name">Calculateur de Ratio de Trésorerie</div>
+        <div class="card-desc">Mesure la capacité d&#39;une entreprise à couvrir les passifs courants en utilisant uniquement la trésorerie et les équivalents de trésorerie, le test de liquidité le plus conservateur.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/churn-rate-calculator.html"
+         data-cat="business"
+         data-text="calculateur de taux de désabonnement mesurez le pourcentage de clients perdus au cours d&#39;une période pour évaluer la santé de l&#39;abonnement et identifier les opportunités d&#39;amélioration de la rétention.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">016</span>
+        </div>
+        <div class="card-name">Calculateur de Taux de Désabonnement</div>
+        <div class="card-desc">Mesurez le pourcentage de clients perdus au cours d&#39;une période pour évaluer la santé de l&#39;abonnement et identifier les opportunités d&#39;amélioration de la rétention.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/commission-calculator.html"
+         data-cat="business"
+         data-text="calculateur de commission calculez les gains des représentants commerciaux selon des structures de commission fixes, échelonnées ou basées sur un pourcentage, en fonction des ventes totales et des taux saisis.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">017</span>
+        </div>
+        <div class="card-name">Calculateur de Commission</div>
+        <div class="card-desc">Calculez les gains des représentants commerciaux selon des structures de commission fixes, échelonnées ou basées sur un pourcentage, en fonction des ventes totales et des taux saisis.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/consumer-surplus.html"
+         data-cat="business"
+         data-text="calculatrice du surplus du consommateur quantifiez le bénéfice que les consommateurs reçoivent lorsqu&#39;ils paient moins que le maximum qu&#39;ils seraient prêts à payer, utile dans l&#39;analyse des prix et des politiques.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">018</span>
+        </div>
+        <div class="card-name">Calculatrice du Surplus du Consommateur</div>
+        <div class="card-desc">Quantifiez le bénéfice que les consommateurs reçoivent lorsqu&#39;ils paient moins que le maximum qu&#39;ils seraient prêts à payer, utile dans l&#39;analyse des prix et des politiques.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/contribution-margin.html"
+         data-cat="business"
+         data-text="calculatrice de marge de contribution déterminez combien de revenus subsistent après les coûts variables pour couvrir les dépenses fixes et générer des bénéfices — essentiel pour les décisions de tarification.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">019</span>
+        </div>
+        <div class="card-name">Calculatrice de Marge de Contribution</div>
+        <div class="card-desc">Déterminez combien de revenus subsistent après les coûts variables pour couvrir les dépenses fixes et générer des bénéfices — essentiel pour les décisions de tarification.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/conversion-rate-calculator.html"
+         data-cat="business"
+         data-text="calculatrice de taux de conversion mesurez le pourcentage de visiteurs ou de prospects qui effectuent une action souhaitée, pour évaluer les performances de votre marketing et de votre entonnoir.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">020</span>
+        </div>
+        <div class="card-name">Calculatrice de Taux de Conversion</div>
+        <div class="card-desc">Mesurez le pourcentage de visiteurs ou de prospects qui effectuent une action souhaitée, pour évaluer les performances de votre marketing et de votre entonnoir.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/cpc-calculator.html"
+         data-cat="business"
+         data-text="calculatrice cpc trouvez votre coût par clic à partir du coût total des annonces et du nombre de clics, vous permettant de comparer l&#39;efficacité des campagnes entre les canaux.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">021</span>
+        </div>
+        <div class="card-name">Calculatrice CPC</div>
+        <div class="card-desc">Trouvez votre coût par clic à partir du coût total des annonces et du nombre de clics, vous permettant de comparer l&#39;efficacité des campagnes entre les canaux.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/cpm-calculator.html"
+         data-cat="business"
+         data-text="calculatrice cpm déterminez le coût pour 1 000 impressions publicitaires pour évaluer et comparer l&#39;efficacité de portée des campagnes display ou médias.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">022</span>
+        </div>
+        <div class="card-name">Calculatrice CPM</div>
+        <div class="card-desc">Déterminez le coût pour 1 000 impressions publicitaires pour évaluer et comparer l&#39;efficacité de portée des campagnes display ou médias.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/current-ratio.html"
+         data-cat="business"
+         data-text="calculatrice de ratio de liquidité générale vérifiez la santé financière à court terme en divisant l&#39;actif courant par le passif courant — un ratio supérieur à 1 suggère une liquidité adéquate.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">023</span>
+        </div>
+        <div class="card-name">Calculatrice de Ratio de Liquidité Générale</div>
+        <div class="card-desc">Vérifiez la santé financière à court terme en divisant l&#39;actif courant par le passif courant — un ratio supérieur à 1 suggère une liquidité adéquate.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/customer-acquisition-cost.html"
+         data-cat="business"
+         data-text="coût d&#39;acquisition client divisez les dépenses totales de ventes et marketing par le nombre de nouveaux clients acquis pour comprendre combien il en coûte pour attirer chaque nouveau client.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">024</span>
+        </div>
+        <div class="card-name">Coût d&#39;Acquisition Client</div>
+        <div class="card-desc">Divisez les dépenses totales de ventes et marketing par le nombre de nouveaux clients acquis pour comprendre combien il en coûte pour attirer chaque nouveau client.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/customer-lifetime-value.html"
+         data-cat="business"
+         data-text="valeur à vie du client estimez le revenu total qu&#39;une entreprise peut attendre d&#39;un seul client sur l&#39;ensemble de la relation pour guider les budgets d&#39;acquisition.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">025</span>
+        </div>
+        <div class="card-name">Valeur à Vie du Client</div>
+        <div class="card-desc">Estimez le revenu total qu&#39;une entreprise peut attendre d&#39;un seul client sur l&#39;ensemble de la relation pour guider les budgets d&#39;acquisition.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/customer-retention-rate.html"
+         data-cat="business"
+         data-text="taux de rétention client mesure le pourcentage de clients que votre entreprise conserve sur une période — l&#39;inverse du taux d&#39;attrition, vital pour les modèles saas et par abonnement.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">026</span>
+        </div>
+        <div class="card-name">Taux de Rétention Client</div>
+        <div class="card-desc">Mesure le pourcentage de clients que votre entreprise conserve sur une période — l&#39;inverse du taux d&#39;attrition, vital pour les modèles SaaS et par abonnement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/days-inventory-outstanding.html"
+         data-cat="business"
+         data-text="jours d&#39;inventaire décalés (dio) découvrez combien de jours en moyenne votre inventaire reste avant d&#39;être vendu, vous aidant à optimiser les niveaux de stock et à réduire les frais de stockage.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">027</span>
+        </div>
+        <div class="card-name">Jours d&#39;Inventaire Décalés (DIO)</div>
+        <div class="card-desc">Découvrez combien de jours en moyenne votre inventaire reste avant d&#39;être vendu, vous aidant à optimiser les niveaux de stock et à réduire les frais de stockage.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/days-payable-outstanding.html"
+         data-cat="business"
+         data-text="délai moyen de paiement (dmp) mesure le nombre moyen de jours qu&#39;une entreprise prend pour payer ses fournisseurs — un dmp plus long peut améliorer la trésorerie mais peut affecter les relations avec les fournisseurs.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">028</span>
+        </div>
+        <div class="card-name">Délai Moyen de Paiement (DMP)</div>
+        <div class="card-desc">Mesure le nombre moyen de jours qu&#39;une entreprise prend pour payer ses fournisseurs — un DMP plus long peut améliorer la trésorerie mais peut affecter les relations avec les fournisseurs.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/days-sales-outstanding.html"
+         data-cat="business"
+         data-text="jours de ventes pendantes (dso) déterminez combien de temps il faut pour collecter le paiement après une vente en moyenne, révélant l&#39;efficacité de votre processus de crédit et de recouvrement.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">029</span>
+        </div>
+        <div class="card-name">Jours de Ventes Pendantes (DSO)</div>
+        <div class="card-desc">Déterminez combien de temps il faut pour collecter le paiement après une vente en moyenne, révélant l&#39;efficacité de votre processus de crédit et de recouvrement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/deadweight-loss.html"
+         data-cat="business"
+         data-text="calculatrice de perte sèche quantifiez l&#39;inefficacité économique créée par les distorsions du marché telles que les taxes ou les contrôles de prix qui empêchent les transactions mutuellement bénéfiques.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">030</span>
+        </div>
+        <div class="card-name">Calculatrice de Perte Sèche</div>
+        <div class="card-desc">Quantifiez l&#39;inefficacité économique créée par les distorsions du marché telles que les taxes ou les contrôles de prix qui empêchent les transactions mutuellement bénéfiques.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debt-ratio.html"
+         data-cat="business"
+         data-text="calculatrice de ratio d&#39;endettement exprimez la dette totale en proportion de l&#39;actif total pour évaluer l&#39;effet de levier d&#39;une entreprise et évaluer son niveau de risque financier.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">031</span>
+        </div>
+        <div class="card-name">Calculatrice de Ratio d&#39;Endettement</div>
+        <div class="card-desc">Exprimez la dette totale en proportion de l&#39;actif total pour évaluer l&#39;effet de levier d&#39;une entreprise et évaluer son niveau de risque financier.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debt-to-asset-ratio.html"
+         data-cat="business"
+         data-text="ratio endettement sur actifs comparez le passif total par rapport aux actifs totaux pour comprendre quelle part des actifs est financée par les créanciers par rapport aux actionnaires.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">032</span>
+        </div>
+        <div class="card-name">Ratio Endettement sur Actifs</div>
+        <div class="card-desc">Comparez le passif total par rapport aux actifs totaux pour comprendre quelle part des actifs est financée par les créanciers par rapport aux actionnaires.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debt-to-capital-ratio.html"
+         data-cat="business"
+         data-text="ratio d&#39;endettement sur capitaux mesurer la proportion de la structure de capital d&#39;une entreprise provenant de la dette par rapport aux capitaux propres, indiquant l&#39;effet de levier financier global.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">033</span>
+        </div>
+        <div class="card-name">Ratio d&#39;Endettement sur Capitaux</div>
+        <div class="card-desc">Mesurer la proportion de la structure de capital d&#39;une entreprise provenant de la dette par rapport aux capitaux propres, indiquant l&#39;effet de levier financier global.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debtor-days.html"
+         data-cat="business"
+         data-text="calculatrice des jours de créditeurs estimez le nombre de jours nécessaires aux clients pour régler les factures impayées — des jours de créditeurs plus faibles signifient une conversion de trésorerie plus rapide.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">034</span>
+        </div>
+        <div class="card-name">Calculatrice des Jours de Créditeurs</div>
+        <div class="card-desc">Estimez le nombre de jours nécessaires aux clients pour régler les factures impayées — des jours de créditeurs plus faibles signifient une conversion de trésorerie plus rapide.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/defensive-interval-ratio.html"
+         data-cat="business"
+         data-text="ratio d&#39;intervalle défensif mesure le nombre de jours pendant lesquels une entreprise pourrait fonctionner en utilisant uniquement ses actifs liquides sans avoir besoin de revenus supplémentaires ou de financement.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">035</span>
+        </div>
+        <div class="card-name">Ratio d&#39;Intervalle Défensif</div>
+        <div class="card-desc">Mesure le nombre de jours pendant lesquels une entreprise pourrait fonctionner en utilisant uniquement ses actifs liquides sans avoir besoin de revenus supplémentaires ou de financement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/discount-calculator.html"
+         data-cat="business"
+         data-text="calculatrice de réduction entrez un prix d&#39;origine et un pourcentage de réduction pour voir instantanément le montant économisé et le prix final après la réduction.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">036</span>
+        </div>
+        <div class="card-name">Calculatrice de Réduction</div>
+        <div class="card-desc">Entrez un prix d&#39;origine et un pourcentage de réduction pour voir instantanément le montant économisé et le prix final après la réduction.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/dupont-analysis.html"
+         data-cat="business"
+         data-text="analyse dupont décomposez le rendement des capitaux propres en composantes de rentabilité, d&#39;efficacité et de levier pour identifier les facteurs qui stimulent ou freinent la performance.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">037</span>
+        </div>
+        <div class="card-name">Analyse DuPont</div>
+        <div class="card-desc">Décomposez le rendement des capitaux propres en composantes de rentabilité, d&#39;efficacité et de levier pour identifier les facteurs qui stimulent ou freinent la performance.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/ebit-calculator.html"
+         data-cat="business"
+         data-text="calculateur ebit isolez la rentabilité opérationnelle en soustrayant les dépenses d&#39;exploitation du chiffre d&#39;affaires avant de tenir compte des frais d&#39;intérêts et des impôts.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">038</span>
+        </div>
+        <div class="card-name">Calculateur EBIT</div>
+        <div class="card-desc">Isolez la rentabilité opérationnelle en soustrayant les dépenses d&#39;exploitation du chiffre d&#39;affaires avant de tenir compte des frais d&#39;intérêts et des impôts.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/ebitda-calculator.html"
+         data-cat="business"
+         data-text="calculatrice ebitda calculez un proxy du flux de trésorerie d&#39;exploitation en ajoutant les charges non monétaires au revenu net — largement utilisé dans l&#39;évaluation d&#39;entreprise.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">039</span>
+        </div>
+        <div class="card-name">Calculatrice EBITDA</div>
+        <div class="card-desc">Calculez un proxy du flux de trésorerie d&#39;exploitation en ajoutant les charges non monétaires au revenu net — largement utilisé dans l&#39;évaluation d&#39;entreprise.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/ebitda-margin.html"
+         data-cat="business"
+         data-text="marge ebitda exprimer l&#39;ebitda en pourcentage du chiffre d&#39;affaires pour comparer l&#39;efficacité opérationnelle entre les entreprises ou les périodes, indépendamment de la structure du capital.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">040</span>
+        </div>
+        <div class="card-name">Marge EBITDA</div>
+        <div class="card-desc">Exprimer l&#39;EBITDA en pourcentage du chiffre d&#39;affaires pour comparer l&#39;efficacité opérationnelle entre les entreprises ou les périodes, indépendamment de la structure du capital.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/ebitda-multiple.html"
+         data-cat="business"
+         data-text="multiple ebitda déterminez la valeur implicite d&#39;une entreprise en multipliant l&#39;ebitda par un multiple comparable du secteur — un raccourci standard de valorisation m&amp;a.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">041</span>
+        </div>
+        <div class="card-name">Multiple EBITDA</div>
+        <div class="card-desc">Déterminez la valeur implicite d&#39;une entreprise en multipliant l&#39;EBITDA par un multiple comparable du secteur — un raccourci standard de valorisation M&amp;A.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/economic-order-quantity.html"
+         data-cat="business"
+         data-text="quantité économique de commande (qec) trouvez la quantité de réapprovisionnement idéale qui minimise les coûts totaux d&#39;inventaire — en équilibrant la fréquence des commandes par rapport aux dépenses de stockage et de maintien.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">042</span>
+        </div>
+        <div class="card-name">Quantité Économique de Commande (QEC)</div>
+        <div class="card-desc">Trouvez la quantité de réapprovisionnement idéale qui minimise les coûts totaux d&#39;inventaire — en équilibrant la fréquence des commandes par rapport aux dépenses de stockage et de maintien.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/economic-profit.html"
+         data-cat="business"
+         data-text="calculateur de profit économique allez au-delà du profit comptable en soustrayant les coûts d&#39;opportunité pour révéler si une entreprise crée vraiment de la valeur au-dessus de sa meilleure alternative suivante.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">043</span>
+        </div>
+        <div class="card-name">Calculateur de Profit Économique</div>
+        <div class="card-desc">Allez au-delà du profit comptable en soustrayant les coûts d&#39;opportunité pour révéler si une entreprise crée vraiment de la valeur au-dessus de sa meilleure alternative suivante.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/economic-value-added.html"
+         data-cat="business"
+         data-text="valeur économique ajoutée mesure combien de valeur une entreprise crée au-delà de son rendement requis sur le capital investi — une eva positive signale une véritable création de valeur pour les actionnaires.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">044</span>
+        </div>
+        <div class="card-name">Valeur Économique Ajoutée</div>
+        <div class="card-desc">Mesure combien de valeur une entreprise crée au-delà de son rendement requis sur le capital investi — une EVA positive signale une véritable création de valeur pour les actionnaires.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/employee-turnover-rate.html"
+         data-cat="business"
+         data-text="taux de roulement du personnel suivez le pourcentage d&#39;employés qui partent sur une période pour évaluer les efforts de rétention et estimer les coûts de recrutement et de formation.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">045</span>
+        </div>
+        <div class="card-name">Taux de Roulement du Personnel</div>
+        <div class="card-desc">Suivez le pourcentage d&#39;employés qui partent sur une période pour évaluer les efforts de rétention et estimer les coûts de recrutement et de formation.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/ending-inventory.html"
+         data-cat="business"
+         data-text="calculatrice d&#39;inventaire final déterminez la valeur du stock invendu à la fin d&#39;une période en utilisant l&#39;inventaire initial, les achats et le coût des marchandises vendues.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">046</span>
+        </div>
+        <div class="card-name">Calculatrice d&#39;Inventaire Final</div>
+        <div class="card-desc">Déterminez la valeur du stock invendu à la fin d&#39;une période en utilisant l&#39;inventaire initial, les achats et le coût des marchandises vendues.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/enterprise-value.html"
+         data-cat="business"
+         data-text="calculatrice de valeur d&#39;entreprise estimez la valeur totale de rachat d&#39;une entreprise en combinant la capitalisation boursière avec la dette nette — la mesure standard utilisée en fusions et acquisitions et valorisation.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">047</span>
+        </div>
+        <div class="card-name">Calculatrice de Valeur d&#39;Entreprise</div>
+        <div class="card-desc">Estimez la valeur totale de rachat d&#39;une entreprise en combinant la capitalisation boursière avec la dette nette — la mesure standard utilisée en fusions et acquisitions et valorisation.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/enterprise-value-to-sales.html"
+         data-cat="business"
+         data-text="valeur entreprise sur chiffre d&#39;affaires comparez la valeur totale d&#39;une entreprise par rapport à ses revenus pour évaluer la façon dont le marché valorise la croissance par rapport aux pairs.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">048</span>
+        </div>
+        <div class="card-name">Valeur Entreprise sur Chiffre d&#39;Affaires</div>
+        <div class="card-desc">Comparez la valeur totale d&#39;une entreprise par rapport à ses revenus pour évaluer la façon dont le marché valorise la croissance par rapport aux pairs.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/equity-multiplier.html"
+         data-cat="business"
+         data-text="multiplicateur de capitaux propres découvrez quelle part des actifs d&#39;une entreprise est financée par les capitaux propres des actionnaires — un multiplicateur plus élevé signale un effet de levier financier plus important.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">049</span>
+        </div>
+        <div class="card-name">Multiplicateur de Capitaux Propres</div>
+        <div class="card-desc">Découvrez quelle part des actifs d&#39;une entreprise est financée par les capitaux propres des actionnaires — un multiplicateur plus élevé signale un effet de levier financier plus important.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/equity-ratio.html"
+         data-cat="business"
+         data-text="calculatrice de ratio de fonds propres mesure la proportion des actifs totaux financés par les capitaux propres des actionnaires, montrant l&#39;indépendance financière vis-à-vis des obligations de dettes.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">050</span>
+        </div>
+        <div class="card-name">Calculatrice de Ratio de Fonds Propres</div>
+        <div class="card-desc">Mesure la proportion des actifs totaux financés par les capitaux propres des actionnaires, montrant l&#39;indépendance financière vis-à-vis des obligations de dettes.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/fixed-asset-turnover-ratio.html"
+         data-cat="business"
+         data-text="ratio de rotation des immobilisations évaluer l&#39;efficacité avec laquelle une entreprise utilise ses immeubles, installations et équipements pour générer des revenus de vente.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">051</span>
+        </div>
+        <div class="card-name">Ratio de Rotation des Immobilisations</div>
+        <div class="card-desc">Évaluer l&#39;efficacité avec laquelle une entreprise utilise ses immeubles, installations et équipements pour générer des revenus de vente.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/fixed-charge-coverage-ratio.html"
+         data-cat="business"
+         data-text="ratio de couverture des charges fixes (fccr) déterminer si une entreprise génère suffisamment de revenus pour couvrir les obligations fixes telles que les paiements de dettes et les frais de location avec le revenu d&#39;exploitation.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">052</span>
+        </div>
+        <div class="card-name">Ratio de Couverture des Charges Fixes (FCCR)</div>
+        <div class="card-desc">Déterminer si une entreprise génère suffisamment de revenus pour couvrir les obligations fixes telles que les paiements de dettes et les frais de location avec le revenu d&#39;exploitation.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/free-cash-flow.html"
+         data-cat="business"
+         data-text="calculatrice de flux de trésorerie disponible mesure les liquidités générées après les dépenses d&#39;investissement — le montant disponible pour rembourser la dette, financer les dividendes ou réinvestir pour la croissance.">
+        <div class="card-top mono">
+          <span class="card-cat">Affaires</span>
+          <span class="card-idx">053</span>
+        </div>
+        <div class="card-name">Calculatrice de Flux de Trésorerie Disponible</div>
+        <div class="card-desc">Mesure les liquidités générées après les dépenses d&#39;investissement — le montant disponible pour rembourser la dette, financer les dividendes ou réinvestir pour la croissance.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/base64-encoder.html"
+         data-cat="cryptography"
+         data-text="encodeur/décodeur base64 encodez et décodez du texte et des fichiers au/depuis le format base64.">
+        <div class="card-top mono">
+          <span class="card-cat">Cryptographie</span>
+          <span class="card-idx">054</span>
+        </div>
+        <div class="card-name">Encodeur/Décodeur Base64</div>
+        <div class="card-desc">Encodez et décodez du texte et des fichiers au/depuis le format Base64.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/age-calculator.html"
+         data-cat="datetime"
+         data-text="calculatrice d&#39;âge calculez l&#39;âge exact en années, mois, jours, heures et minutes à partir de la date de naissance.">
+        <div class="card-top mono">
+          <span class="card-cat">Date et heure</span>
+          <span class="card-idx">055</span>
+        </div>
+        <div class="card-name">Calculatrice d&#39;Âge</div>
+        <div class="card-desc">Calculez l&#39;âge exact en années, mois, jours, heures et minutes à partir de la date de naissance.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/business-days-calculator.html"
+         data-cat="datetime"
+         data-text="calculateur de jours ouvrables calculez le nombre de jours ouvrables entre deux dates en excluant les week-ends et les jours fériés.">
+        <div class="card-top mono">
+          <span class="card-cat">Date et heure</span>
+          <span class="card-idx">056</span>
+        </div>
+        <div class="card-name">Calculateur de Jours Ouvrables</div>
+        <div class="card-desc">Calculez le nombre de jours ouvrables entre deux dates en excluant les week-ends et les jours fériés.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/date-calculator.html"
+         data-cat="datetime"
+         data-text="calculatrice de dates calculez les différences entre les dates, ajoutez/soustrayez des jours et convertissez entre les fuseaux horaires.">
+        <div class="card-top mono">
+          <span class="card-cat">Date et heure</span>
+          <span class="card-idx">057</span>
+        </div>
+        <div class="card-name">Calculatrice de Dates</div>
+        <div class="card-desc">Calculez les différences entre les dates, ajoutez/soustrayez des jours et convertissez entre les fuseaux horaires.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/color-palette-generator.html"
+         data-cat="design"
+         data-text="générateur de palettes de couleurs générez de belles palettes de couleurs pour vos projets de conception avec des valeurs hexadécimales, rgb et hsl.">
+        <div class="card-top mono">
+          <span class="card-cat">Design</span>
+          <span class="card-idx">058</span>
+        </div>
+        <div class="card-name">Générateur de Palettes de Couleurs</div>
+        <div class="card-desc">Générez de belles palettes de couleurs pour vos projets de conception avec des valeurs hexadécimales, RGB et HSL.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/css-gradient-generator.html"
+         data-cat="design"
+         data-text="générateur de dégradés css créez de magnifiques dégradés css avec aperçu en direct et fonctionnalité de copie-coller.">
+        <div class="card-top mono">
+          <span class="card-cat">Design</span>
+          <span class="card-idx">059</span>
+        </div>
+        <div class="card-name">Générateur de Dégradés CSS</div>
+        <div class="card-desc">Créez de magnifiques dégradés CSS avec aperçu en direct et fonctionnalité de copie-coller.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/favicon-generator.html"
+         data-cat="design"
+         data-text="générateur de favicon générez des favicons en plusieurs tailles à partir de votre logo ou image.">
+        <div class="card-top mono">
+          <span class="card-cat">Design</span>
+          <span class="card-idx">060</span>
+        </div>
+        <div class="card-name">Générateur de Favicon</div>
+        <div class="card-desc">Générez des favicons en plusieurs tailles à partir de votre logo ou image.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/code-minifier.html"
+         data-cat="developer"
+         data-text="minificateur de code minifiez et embellissez le code javascript, css, html et json avec des algorithmes améliorés basés sur un navigateur.">
+        <div class="card-top mono">
+          <span class="card-cat">Développeur</span>
+          <span class="card-idx">061</span>
+        </div>
+        <div class="card-name">Minificateur de Code</div>
+        <div class="card-desc">Minifiez et embellissez le code JavaScript, CSS, HTML et JSON avec des algorithmes améliorés basés sur un navigateur.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/50-30-20-budget.html"
+         data-cat="financial"
+         data-text="règle budgétaire 50/30/20 divisez vos revenus en besoins, envies et économies selon la règle 50/30/20 — voyez exactement combien allouer à chaque catégorie.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">062</span>
+        </div>
+        <div class="card-name">Règle Budgétaire 50/30/20</div>
+        <div class="card-desc">Divisez vos revenus en besoins, envies et économies selon la règle 50/30/20 — voyez exactement combien allouer à chaque catégorie.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/actual-cash-value.html"
+         data-cat="financial"
+         data-text="valeur de remplacement actuelle (vra) trouvez la valeur dépréciée d&#39;un actif pour les réclamations d&#39;assurance — tient compte de l&#39;âge, de l&#39;état et du coût de remplacement.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">063</span>
+        </div>
+        <div class="card-name">Valeur de Remplacement Actuelle (VRA)</div>
+        <div class="card-desc">Trouvez la valeur dépréciée d&#39;un actif pour les réclamations d&#39;assurance — tient compte de l&#39;âge, de l&#39;état et du coût de remplacement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/after-tax-cost-debt.html"
+         data-cat="financial"
+         data-text="coût de la dette après impôt découvrez le véritable coût d&#39;emprunt après la déduction fiscale des intérêts, pour évaluer précisément vos options de financement.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">064</span>
+        </div>
+        <div class="card-name">Coût de la Dette Après Impôt</div>
+        <div class="card-desc">Découvrez le véritable coût d&#39;emprunt après la déduction fiscale des intérêts, pour évaluer précisément vos options de financement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/amortization-calculator.html"
+         data-cat="financial"
+         data-text="calculatrice d&#39;amortissement consultez votre calendrier complet de remboursement de prêt — voyez comment chaque paiement se divise entre le capital et les intérêts sur la durée du prêt.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">065</span>
+        </div>
+        <div class="card-name">Calculatrice d&#39;Amortissement</div>
+        <div class="card-desc">Consultez votre calendrier complet de remboursement de prêt — voyez comment chaque paiement se divise entre le capital et les intérêts sur la durée du prêt.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/annual-income.html"
+         data-cat="financial"
+         data-text="calculateur de revenu annuel convertissez votre salaire horaire, hebdomadaire ou mensuel en revenu annuel total, y compris les heures supplémentaires et les bonus.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">066</span>
+        </div>
+        <div class="card-name">Calculateur de Revenu Annuel</div>
+        <div class="card-desc">Convertissez votre salaire horaire, hebdomadaire ou mensuel en revenu annuel total, y compris les heures supplémentaires et les bonus.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/apr-calculator.html"
+         data-cat="financial"
+         data-text="calculateur taeg trouvez le coût annuel réel d&#39;un prêt incluant les frais et les intérêts — essentiel pour comparer les offres de prêt côte à côte.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">067</span>
+        </div>
+        <div class="card-name">Calculateur TAEG</div>
+        <div class="card-desc">Trouvez le coût annuel réel d&#39;un prêt incluant les frais et les intérêts — essentiel pour comparer les offres de prêt côte à côte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/apr-to-apy.html"
+         data-cat="financial"
+         data-text="convertisseur de taeg en apy convertissez le taeg en apy pour voir le rendement réel de vos économies en tenant compte de la capitalisation.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">068</span>
+        </div>
+        <div class="card-name">Convertisseur de TAEG en APY</div>
+        <div class="card-desc">Convertissez le TAEG en APY pour voir le rendement réel de vos économies en tenant compte de la capitalisation.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/apy-calculator.html"
+         data-cat="financial"
+         data-text="calculatrice de rendement annuel découvrez le vrai rendement annuel sur les économies ou les investissements une fois que la capitalisation est incluse — une fréquence de capitalisation plus élevée signifie plus de croissance.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">069</span>
+        </div>
+        <div class="card-name">Calculatrice de Rendement Annuel</div>
+        <div class="card-desc">Découvrez le vrai rendement annuel sur les économies ou les investissements une fois que la capitalisation est incluse — une fréquence de capitalisation plus élevée signifie plus de croissance.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/apy-to-apr.html"
+         data-cat="financial"
+         data-text="convertisseur tae en taeg convertissez le tae en taeg pour comprendre le taux nominal derrière un rendement composé.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">070</span>
+        </div>
+        <div class="card-name">Convertisseur TAE en TAEG</div>
+        <div class="card-desc">Convertissez le TAE en TAEG pour comprendre le taux nominal derrière un rendement composé.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/buying-power.html"
+         data-cat="financial"
+         data-text="calculatrice de pouvoir d&#39;achat voyez comment l&#39;inflation érode votre pouvoir d&#39;achat au fil du temps — entrez un montant et découvrez sa valeur en dollars actuels.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">071</span>
+        </div>
+        <div class="card-name">Calculatrice de Pouvoir d&#39;Achat</div>
+        <div class="card-desc">Voyez comment l&#39;inflation érode votre pouvoir d&#39;achat au fil du temps — entrez un montant et découvrez sa valeur en dollars actuels.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/certificate-of-deposit.html"
+         data-cat="financial"
+         data-text="calculatrice de certificat de dépôt projette tes gains de cd en fonction du montant du dépôt, du taux d&#39;intérêt et de la durée — compare différentes périodes de blocage.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">072</span>
+        </div>
+        <div class="card-name">Calculatrice de Certificat de Dépôt</div>
+        <div class="card-desc">Projette tes gains de CD en fonction du montant du dépôt, du taux d&#39;intérêt et de la durée — compare différentes périodes de blocage.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/compound-interest.html"
+         data-cat="financial"
+         data-text="calculateur d&#39;intérêts composés voyez comment votre argent croît au fil du temps avec les intérêts composés — entrez le capital, le taux, la fréquence de capitalisation et les contributions optionnelles.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">073</span>
+        </div>
+        <div class="card-name">Calculateur d&#39;Intérêts Composés</div>
+        <div class="card-desc">Voyez comment votre argent croît au fil du temps avec les intérêts composés — entrez le capital, le taux, la fréquence de capitalisation et les contributions optionnelles.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/credit-card-payment.html"
+         data-cat="financial"
+         data-text="calculatrice de paiement par carte de crédit comprenez votre facturation par carte de crédit — consultez les montants de paiement minimum et le temps qu&#39;il faut pour rembourser votre solde.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">074</span>
+        </div>
+        <div class="card-name">Calculatrice de Paiement par Carte de Crédit</div>
+        <div class="card-desc">Comprenez votre facturation par carte de crédit — consultez les montants de paiement minimum et le temps qu&#39;il faut pour rembourser votre solde.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/credit-card-payoff.html"
+         data-cat="financial"
+         data-text="calculatrice de remboursement de carte de crédit planifiez votre sortie de la dette de carte de crédit — découvrez combien de temps le remboursement prend et le montant total des intérêts payés à différents montants de paiement.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">075</span>
+        </div>
+        <div class="card-name">Calculatrice de Remboursement de Carte de Crédit</div>
+        <div class="card-desc">Planifiez votre sortie de la dette de carte de crédit — découvrez combien de temps le remboursement prend et le montant total des intérêts payés à différents montants de paiement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debt-to-income-ratio.html"
+         data-cat="financial"
+         data-text="ratio d&#39;endettement vérifiez si votre charge de dette mensuelle se situe dans des limites saines — les prêteurs utilisent ce ratio pour évaluer votre solvabilité.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">076</span>
+        </div>
+        <div class="card-name">Ratio d&#39;Endettement</div>
+        <div class="card-desc">Vérifiez si votre charge de dette mensuelle se situe dans des limites saines — les prêteurs utilisent ce ratio pour évaluer votre solvabilité.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/debt-to-limit-ratio.html"
+         data-cat="financial"
+         data-text="ratio d&#39;endettement sur limite suivez votre utilisation du crédit en comparant vos soldes totaux à vos limites de crédit — un facteur clé de votre score de crédit.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">077</span>
+        </div>
+        <div class="card-name">Ratio d&#39;Endettement sur Limite</div>
+        <div class="card-desc">Suivez votre utilisation du crédit en comparant vos soldes totaux à vos limites de crédit — un facteur clé de votre score de crédit.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/discount-factor.html"
+         data-cat="financial"
+         data-text="calculatrice de facteur d&#39;actualisation déterminez la valeur actuelle d&#39;un flux de trésorerie futur en dollars d&#39;aujourd&#39;hui à l&#39;aide d&#39;un taux d&#39;actualisation donné.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">078</span>
+        </div>
+        <div class="card-name">Calculatrice de Facteur d&#39;Actualisation</div>
+        <div class="card-desc">Déterminez la valeur actuelle d&#39;un flux de trésorerie futur en dollars d&#39;aujourd&#39;hui à l&#39;aide d&#39;un taux d&#39;actualisation donné.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/disposable-income.html"
+         data-cat="financial"
+         data-text="calculatrice de revenu disponible estimez combien il vous reste à dépenser ou épargner après impôts et déductions obligatoires prélevés sur votre salaire.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">079</span>
+        </div>
+        <div class="card-name">Calculatrice de Revenu Disponible</div>
+        <div class="card-desc">Estimez combien il vous reste à dépenser ou épargner après impôts et déductions obligatoires prélevés sur votre salaire.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/earnest-money.html"
+         data-cat="financial"
+         data-text="calculatrice de garantie de sérieux estimez le montant de garantie de sérieux dont vous aurez besoin lors de la formulation d&#39;une offre sur un bien — généralement 1–3% du prix d&#39;achat.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">080</span>
+        </div>
+        <div class="card-name">Calculatrice de Garantie de Sérieux</div>
+        <div class="card-desc">Estimez le montant de garantie de sérieux dont vous aurez besoin lors de la formulation d&#39;une offre sur un bien — généralement 1–3% du prix d&#39;achat.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/effective-annual-rate.html"
+         data-cat="financial"
+         data-text="taux d&#39;intérêt annuel effectif révélez le vrai taux d&#39;intérêt annuel après capitalisation — utile pour comparer les prêts ou comptes d&#39;épargne avec des conditions différentes.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">081</span>
+        </div>
+        <div class="card-name">Taux d&#39;Intérêt Annuel Effectif</div>
+        <div class="card-desc">Révélez le vrai taux d&#39;intérêt annuel après capitalisation — utile pour comparer les prêts ou comptes d&#39;épargne avec des conditions différentes.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/effective-tax-rate.html"
+         data-cat="financial"
+         data-text="calculateur de taux d&#39;imposition effectif trouvez votre taux d&#39;imposition réel en pourcentage du revenu total, par rapport à votre taux de tranche marginale.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">082</span>
+        </div>
+        <div class="card-name">Calculateur de Taux d&#39;Imposition Effectif</div>
+        <div class="card-desc">Trouvez votre taux d&#39;imposition réel en pourcentage du revenu total, par rapport à votre taux de tranche marginale.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/emergency-fund.html"
+         data-cat="financial"
+         data-text="calculatrice de fonds d&#39;urgence déterminez votre objectif de fonds d&#39;urgence recommandé en fonction de vos dépenses mensuelles et du nombre de mois de couverture dont vous avez besoin.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">083</span>
+        </div>
+        <div class="card-name">Calculatrice de Fonds d&#39;Urgence</div>
+        <div class="card-desc">Déterminez votre objectif de fonds d&#39;urgence recommandé en fonction de vos dépenses mensuelles et du nombre de mois de couverture dont vous avez besoin.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/emi-calculator.html"
+         data-cat="financial"
+         data-text="calculatrice emi trouvez votre paiement mensuel fixe du prêt (emi) pour tout montant de prêt, taux d&#39;intérêt et période de remboursement.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">084</span>
+        </div>
+        <div class="card-name">Calculatrice EMI</div>
+        <div class="card-desc">Trouvez votre paiement mensuel fixe du prêt (EMI) pour tout montant de prêt, taux d&#39;intérêt et période de remboursement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/equivalent-interest-rate.html"
+         data-cat="financial"
+         data-text="taux d&#39;intérêt équivalent convertissez un taux d&#39;intérêt d&#39;une fréquence de capitalisation à une autre — utile pour comparer des produits avec des calendriers de paiement différents.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">085</span>
+        </div>
+        <div class="card-name">Taux d&#39;Intérêt Équivalent</div>
+        <div class="card-desc">Convertissez un taux d&#39;intérêt d&#39;une fréquence de capitalisation à une autre — utile pour comparer des produits avec des calendriers de paiement différents.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/fisher-equation.html"
+         data-cat="financial"
+         data-text="calculatrice d&#39;équation de fisher séparez les taux d&#39;intérêt nominaux en taux réels et attentes d&#39;inflation en utilisant l&#39;équation de fisher.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">086</span>
+        </div>
+        <div class="card-name">Calculatrice d&#39;Équation de Fisher</div>
+        <div class="card-desc">Séparez les taux d&#39;intérêt nominaux en taux réels et attentes d&#39;inflation en utilisant l&#39;équation de Fisher.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/fixed-deposit.html"
+         data-cat="financial"
+         data-text="calculatrice de dépôt à terme fixe projette la valeur à l&#39;échéance d&#39;un dépôt à terme fixe en fonction de votre capital, de votre taux d&#39;intérêt et de votre durée.">
+        <div class="card-top mono">
+          <span class="card-cat">Finance</span>
+          <span class="card-idx">087</span>
+        </div>
+        <div class="card-name">Calculatrice de Dépôt à Terme Fixe</div>
+        <div class="card-desc">Projette la valeur à l&#39;échéance d&#39;un dépôt à terme fixe en fonction de votre capital, de votre taux d&#39;intérêt et de votre durée.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bond-current-yield.html"
+         data-cat="investment"
+         data-text="rendement courant des obligations trouvez le revenu annuel qu&#39;une obligation génère par rapport à son prix actuel du marché, utile pour comparer les obligations négociées à rabais ou à prime.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">088</span>
+        </div>
+        <div class="card-name">Rendement Courant des Obligations</div>
+        <div class="card-desc">Trouvez le revenu annuel qu&#39;une obligation génère par rapport à son prix actuel du marché, utile pour comparer les obligations négociées à rabais ou à prime.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bond-equivalent-yield.html"
+         data-cat="investment"
+         data-text="rendement équivalent obligation convertissez les rendements des obligations à court terme sur une base annualisée afin de pouvoir les comparer équitablement avec les obligations à paiement annuel.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">089</span>
+        </div>
+        <div class="card-name">Rendement Équivalent Obligation</div>
+        <div class="card-desc">Convertissez les rendements des obligations à court terme sur une base annualisée afin de pouvoir les comparer équitablement avec les obligations à paiement annuel.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bond-price.html"
+         data-cat="investment"
+         data-text="calculatrice de prix d&#39;obligation analysez la tarification des obligations en fonction du taux de coupon, du rendement à l&#39;échéance et du délai d&#39;expiration pour déterminer la valeur marchande équitable.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">090</span>
+        </div>
+        <div class="card-name">Calculatrice de Prix d&#39;Obligation</div>
+        <div class="card-desc">Analysez la tarification des obligations en fonction du taux de coupon, du rendement à l&#39;échéance et du délai d&#39;expiration pour déterminer la valeur marchande équitable.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bond-yield-to-call.html"
+         data-cat="investment"
+         data-text="rendement au rachat d&#39;obligation déterminez le rendement effectif d&#39;une obligation remboursable par anticipation si elle est rachetée par l&#39;émetteur à la première date de rachat.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">091</span>
+        </div>
+        <div class="card-name">Rendement au Rachat d&#39;Obligation</div>
+        <div class="card-desc">Déterminez le rendement effectif d&#39;une obligation remboursable par anticipation si elle est rachetée par l&#39;émetteur à la première date de rachat.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bond-yield-to-maturity.html"
+         data-cat="investment"
+         data-text="rendement à l&#39;échéance des obligations trouvez le rendement annualisé total d&#39;une obligation détenue jusqu&#39;à l&#39;échéance, en tenant compte des paiements de coupon, du prix d&#39;achat et de la valeur nominale.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">092</span>
+        </div>
+        <div class="card-name">Rendement à l&#39;échéance des obligations</div>
+        <div class="card-desc">Trouvez le rendement annualisé total d&#39;une obligation détenue jusqu&#39;à l&#39;échéance, en tenant compte des paiements de coupon, du prix d&#39;achat et de la valeur nominale.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/butterfly-spread-profit.html"
+         data-cat="investment"
+         data-text="profit du butterfly spread évaluez le profit et la perte d&#39;une stratégie d&#39;options butterfly spread dans différents scénarios de prix à l&#39;expiration.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">093</span>
+        </div>
+        <div class="card-name">Profit du Butterfly Spread</div>
+        <div class="card-desc">Évaluez le profit et la perte d&#39;une stratégie d&#39;options butterfly spread dans différents scénarios de prix à l&#39;expiration.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/cagr-calculator.html"
+         data-cat="investment"
+         data-text="calculatrice de tcac mesurez le taux de croissance annuel constant d&#39;un investissement dans le temps, en lissant la volatilité pour révéler la véritable performance à long terme.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">094</span>
+        </div>
+        <div class="card-name">Calculatrice de TCAC</div>
+        <div class="card-desc">Mesurez le taux de croissance annuel constant d&#39;un investissement dans le temps, en lissant la volatilité pour révéler la véritable performance à long terme.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/capital-asset-pricing-model.html"
+         data-cat="investment"
+         data-text="modèle d&#39;évaluation des actifs financiers estimez le rendement attendu d&#39;une action en fonction de son bêta, de la prime de risque du marché et du taux sans risque en utilisant le cadre capm.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">095</span>
+        </div>
+        <div class="card-name">Modèle d&#39;évaluation des actifs financiers</div>
+        <div class="card-desc">Estimez le rendement attendu d&#39;une action en fonction de son bêta, de la prime de risque du marché et du taux sans risque en utilisant le cadre CAPM.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/capital-gains-yield.html"
+         data-cat="investment"
+         data-text="rendement des gains en capital suivez la composante d&#39;appréciation du prix de votre rendement d&#39;investissement, séparée des revenus tels que les dividendes ou les intérêts.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">096</span>
+        </div>
+        <div class="card-name">Rendement des Gains en Capital</div>
+        <div class="card-desc">Suivez la composante d&#39;appréciation du prix de votre rendement d&#39;investissement, séparée des revenus tels que les dividendes ou les intérêts.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/capitalization-rate.html"
+         data-cat="investment"
+         data-text="taux de capitalisation évaluez le potentiel de revenu d&#39;une propriété immobilière en divisant le résultat opérationnel net par sa valeur marchande actuelle.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">097</span>
+        </div>
+        <div class="card-name">Taux de Capitalisation</div>
+        <div class="card-desc">Évaluez le potentiel de revenu d&#39;une propriété immobilière en divisant le résultat opérationnel net par sa valeur marchande actuelle.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/carried-interest.html"
+         data-cat="investment"
+         data-text="calculatrice de carried interest déterminez les frais de performance gagnés par les gestionnaires de fonds en tant que part des bénéfices dépassant le rendement préférentiel.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">098</span>
+        </div>
+        <div class="card-name">Calculatrice de Carried Interest</div>
+        <div class="card-desc">Déterminez les frais de performance gagnés par les gestionnaires de fonds en tant que part des bénéfices dépassant le rendement préférentiel.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/coupon-payment.html"
+         data-cat="investment"
+         data-text="calculatrice de paiement de coupon calculez les paiements d&#39;intérêts périodiques qu&#39;une obligation effectue en fonction de sa valeur nominale, de son taux de coupon et de sa fréquence de paiement.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">099</span>
+        </div>
+        <div class="card-name">Calculatrice de Paiement de Coupon</div>
+        <div class="card-desc">Calculez les paiements d&#39;intérêts périodiques qu&#39;une obligation effectue en fonction de sa valeur nominale, de son taux de coupon et de sa fréquence de paiement.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/crypto-profit.html"
+         data-cat="investment"
+         data-text="calculateur de profit crypto calculez vos gains ou pertes nets sur les transactions crypto en tenant compte du prix d&#39;entrée, du prix de sortie, des frais et de la taille de la position.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">100</span>
+        </div>
+        <div class="card-name">Calculateur de Profit Crypto</div>
+        <div class="card-desc">Calculez vos gains ou pertes nets sur les transactions crypto en tenant compte du prix d&#39;entrée, du prix de sortie, des frais et de la taille de la position.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/dividend-calculator.html"
+         data-cat="investment"
+         data-text="calculatrice de dividendes projetez le revenu annuel de dividendes de vos actions et observez comment le rendement change avec les fluctuations du prix des actions.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">101</span>
+        </div>
+        <div class="card-name">Calculatrice de Dividendes</div>
+        <div class="card-desc">Projetez le revenu annuel de dividendes de vos actions et observez comment le rendement change avec les fluctuations du prix des actions.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/dividend-discount-model.html"
+         data-cat="investment"
+         data-text="modèle d&#39;actualisation des dividendes estimez la juste valeur d&#39;une action en utilisant le modèle de croissance de gordon avec projections de dividendes et taux de rendement requis.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">102</span>
+        </div>
+        <div class="card-name">Modèle d&#39;Actualisation des Dividendes</div>
+        <div class="card-desc">Estimez la juste valeur d&#39;une action en utilisant le modèle de croissance de Gordon avec projections de dividendes et taux de rendement requis.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/dividend-payout-ratio.html"
+         data-cat="investment"
+         data-text="ratio de distribution des dividendes évaluez le pourcentage des bénéfices d&#39;une entreprise versés aux actionnaires sous forme de dividendes par rapport aux bénéfices retenus pour la croissance.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">103</span>
+        </div>
+        <div class="card-name">Ratio de Distribution des Dividendes</div>
+        <div class="card-desc">Évaluez le pourcentage des bénéfices d&#39;une entreprise versés aux actionnaires sous forme de dividendes par rapport aux bénéfices retenus pour la croissance.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/dividend-yield-calculator.html"
+         data-cat="investment"
+         data-text="calculatrice de rendement des dividendes mesurez le retour des dividendes annuels par rapport au prix actuel de l&#39;action pour comparer les investissements générateurs de revenus.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">104</span>
+        </div>
+        <div class="card-name">Calculatrice de Rendement des Dividendes</div>
+        <div class="card-desc">Mesurez le retour des dividendes annuels par rapport au prix actuel de l&#39;action pour comparer les investissements générateurs de revenus.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/earnings-per-share.html"
+         data-cat="investment"
+         data-text="bénéfice par action détermine le bénéfice qu&#39;une entreprise alloue à chaque action en circulation, une mesure clé pour évaluer la valeur des actions.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">105</span>
+        </div>
+        <div class="card-name">Bénéfice par Action</div>
+        <div class="card-desc">Détermine le bénéfice qu&#39;une entreprise alloue à chaque action en circulation, une mesure clé pour évaluer la valeur des actions.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/earnings-per-share-growth.html"
+         data-cat="investment"
+         data-text="croissance du bénéfice par action suivez la rapidité avec laquelle le bénéfice par action d&#39;une entreprise s&#39;accroît au fil du temps pour évaluer l&#39;élan et la rentabilité future.">
+        <div class="card-top mono">
+          <span class="card-cat">Investissement</span>
+          <span class="card-idx">106</span>
+        </div>
+        <div class="card-name">Croissance du Bénéfice par Action</div>
+        <div class="card-desc">Suivez la rapidité avec laquelle le bénéfice par action d&#39;une entreprise s&#39;accroît au fil du temps pour évaluer l&#39;élan et la rentabilité future.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/equation-solver.html"
+         data-cat="math"
+         data-text="solveur d&#39;équations résolvez des équations linéaires et quadratiques avec des solutions étape par étape.">
+        <div class="card-top mono">
+          <span class="card-cat">Mathématiques</span>
+          <span class="card-idx">107</span>
+        </div>
+        <div class="card-name">Solveur d&#39;Équations</div>
+        <div class="card-desc">Résolvez des équations linéaires et quadratiques avec des solutions étape par étape.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/fake-data-generator.html"
+         data-cat="random"
+         data-text="générateur de données fictives générez des données fictives réalistes pour les tests, y compris les noms, adresses, e-mails et numéros de téléphone.">
+        <div class="card-top mono">
+          <span class="card-cat">Aléatoire</span>
+          <span class="card-idx">108</span>
+        </div>
+        <div class="card-name">Générateur de Données Fictives</div>
+        <div class="card-desc">Générez des données fictives réalistes pour les tests, y compris les noms, adresses, e-mails et numéros de téléphone.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/bmi-calculator.html"
+         data-cat="utility"
+         data-text="calculatrice imc calculez votre indice de masse corporelle et votre catégorie de santé.">
+        <div class="card-top mono">
+          <span class="card-cat">Utilitaires</span>
+          <span class="card-idx">109</span>
+        </div>
+        <div class="card-name">Calculatrice IMC</div>
+        <div class="card-desc">Calculez votre Indice de Masse Corporelle et votre catégorie de santé.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/currency-converter.html"
+         data-cat="utility"
+         data-text="convertisseur de devises convertissez entre différentes devises avec des taux en temps réel.">
+        <div class="card-top mono">
+          <span class="card-cat">Utilitaires</span>
+          <span class="card-idx">110</span>
+        </div>
+        <div class="card-name">Convertisseur de Devises</div>
+        <div class="card-desc">Convertissez entre différentes devises avec des taux en temps réel.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/double-discount.html"
+         data-cat="utility"
+         data-text="calculatrice de double réduction calculez l&#39;effet de l&#39;application de deux réductions.">
+        <div class="card-top mono">
+          <span class="card-cat">Utilitaires</span>
+          <span class="card-idx">111</span>
+        </div>
+        <div class="card-name">Calculatrice de Double Réduction</div>
+        <div class="card-desc">Calculez l&#39;effet de l&#39;application de deux réductions.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/accents-remover.html"
+         data-cat="text"
+         data-text="suppresseur d&#39;accents supprime les accents et les marques diacritiques du texte.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">112</span>
+        </div>
+        <div class="card-name">Suppresseur d&#39;Accents</div>
+        <div class="card-desc">Supprime les accents et les marques diacritiques du texte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/add-line-numbers.html"
+         data-cat="text"
+         data-text="ajouter des numéros de ligne ajouter des numéros de ligne à chaque ligne de texte.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">113</span>
+        </div>
+        <div class="card-name">Ajouter des numéros de ligne</div>
+        <div class="card-desc">Ajouter des numéros de ligne à chaque ligne de texte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/add-remove-prefix-suffix.html"
+         data-cat="text"
+         data-text="ajouter/supprimer préfixe suffixe ajouter ou supprimer des préfixes et des suffixes des lignes de texte.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">114</span>
+        </div>
+        <div class="card-name">Ajouter/Supprimer Préfixe Suffixe</div>
+        <div class="card-desc">Ajouter ou supprimer des préfixes et des suffixes des lignes de texte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/character-counter.html"
+         data-cat="text"
+         data-text="compteur de caractères comptez les caractères, mots, lignes et paragraphes dans le texte.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">115</span>
+        </div>
+        <div class="card-name">Compteur de Caractères</div>
+        <div class="card-desc">Comptez les caractères, mots, lignes et paragraphes dans le texte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/combination-generator.html"
+         data-cat="text"
+         data-text="générateur de combinaisons générez toutes les combinaisons possibles à partir d&#39;une liste d&#39;éléments.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">116</span>
+        </div>
+        <div class="card-name">Générateur de Combinaisons</div>
+        <div class="card-desc">Générez toutes les combinaisons possibles à partir d&#39;une liste d&#39;éléments.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/duplicate-lines-remover.html"
+         data-cat="text"
+         data-text="suppression des lignes dupliquées supprime les lignes en double du texte en préservant l&#39;ordre.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">117</span>
+        </div>
+        <div class="card-name">Suppression des Lignes Dupliquées</div>
+        <div class="card-desc">Supprime les lignes en double du texte en préservant l&#39;ordre.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/email-extractor.html"
+         data-cat="text"
+         data-text="extracteur d&#39;e-mails extrait les adresses e-mail du texte à l&#39;aide de la correspondance de motifs.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">118</span>
+        </div>
+        <div class="card-name">Extracteur d&#39;E-mails</div>
+        <div class="card-desc">Extrait les adresses e-mail du texte à l&#39;aide de la correspondance de motifs.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/empty-lines-remover.html"
+         data-cat="text"
+         data-text="supprimeur de lignes vides supprime les lignes vides et les espaces blancs du texte.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">119</span>
+        </div>
+        <div class="card-name">Supprimeur de Lignes Vides</div>
+        <div class="card-desc">Supprime les lignes vides et les espaces blancs du texte.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+      <a class="card" href="/fr/tools/extra-space-remover.html"
+         data-cat="text"
+         data-text="suppression des espaces supplémentaires supprime les espaces supplémentaires, les tabulations et normalise les espaces.">
+        <div class="card-top mono">
+          <span class="card-cat">Texte</span>
+          <span class="card-idx">120</span>
+        </div>
+        <div class="card-name">Suppression des Espaces Supplémentaires</div>
+        <div class="card-desc">Supprime les espaces supplémentaires, les tabulations et normalise les espaces.</div>
+        <div class="card-open mono">Open →</div>
+      </a>
+      
+    </div>
+    <div class="empty" id="empty" style="display:none">
+      <span class="mono">Aucun résultat</span>
+      <div class="empty-head">Rien ici. Essayez un autre mot.</div>
+    </div>
+  </div>
+</div>
+
+    <div class="wrap"><footer class="footer">
+  <div class="footer-top">
+    <div>
+      <span class="foot-label mono">Catégories</span>
+      <div class="footer-catlist">
+        
+        <a class="foot-link" href="/fr/financial/">Finance</a>
+        
+        <a class="foot-link" href="/fr/business/">Affaires</a>
+        
+        <a class="foot-link" href="/fr/investment/">Investissement</a>
+        
+        <a class="foot-link" href="/fr/developer/">Développeur</a>
+        
+        <a class="foot-link" href="/fr/utility/">Utilitaires</a>
+        
+        <a class="foot-link" href="/fr/cryptography/">Cryptographie</a>
+        
+        <a class="foot-link" href="/fr/design/">Design</a>
+        
+        <a class="foot-link" href="/fr/datetime/">Date et heure</a>
+        
+        <a class="foot-link" href="/fr/math/">Mathématiques</a>
+        
+        <a class="foot-link" href="/fr/random/">Aléatoire</a>
+        
+        <a class="foot-link" href="/fr/text/">Texte</a>
+        
+      </div>
+    </div>
+    <div>
+      <span class="foot-label mono">À propos</span>
+      <p class="foot-about-text">Une collection grandissante de petites calculatrices et convertisseurs à usage unique. Tous les calculs s&#39;exécutent localement dans votre navigateur — pas de comptes, pas de publicités, aucune donnée ne quitte votre appareil.</p>
+    </div>
+  </div>
+  <div class="footer-mark">
+    <span class="footer-word">TOOLS</span>
+    <span class="footer-word">CATALOG</span>
+  </div>
+  <div class="footer-base mono">
+    <span>© 2026 ToolsCatalog</span>
+    <span>120 outils · aperçu du nouveau design</span>
+  </div>
+</footer>
+</div>
+  </div>
+  <script>
+  (function () {
+    var btn = document.getElementById('cfg-btn');
+    var panel = document.getElementById('cfg-panel');
+    var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
+    if (!btn || !panel) return;
+    var KEY = 'tc_v2_bg';
+    var DEFAULT = '#ec18e6';
+
+    function current() {
+      try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }
+    }
+    function mark() {
+      var c = current().toLowerCase();
+      swatches.forEach(function (s) {
+        s.classList.toggle('on', s.getAttribute('data-color').toLowerCase() === c);
+      });
+    }
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    document.documentElement.style.setProperty('--mag', current());
+    mark();
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    swatches.forEach(function (s) {
+      s.addEventListener('click', function () {
+        var c = s.getAttribute('data-color');
+        document.documentElement.style.setProperty('--mag', c);
+        try { localStorage.setItem(KEY, c); } catch (e) {}
+        mark();
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  
+<script>
+(function () {
+  var q = document.getElementById('q');
+  var chips = Array.prototype.slice.call(document.querySelectorAll('#chips .chip'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#grid .card'));
+  var grid = document.getElementById('grid');
+  var empty = document.getElementById('empty');
+  var label = document.getElementById('results-label');
+  var count = document.getElementById('results-count');
+  var activeCat = 'all';
+  var I18N = {
+    allTools: "Tous les outils",
+    shown: "{count} affichés"
+  };
+
+  function pad3(n) { return ('000' + n).slice(-3); }
+
+  function apply() {
+    var term = q.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var okCat = activeCat === 'all' || card.getAttribute('data-cat') === activeCat;
+      var okQ = !term || card.getAttribute('data-text').indexOf(term) !== -1;
+      var visible = okCat && okQ;
+      card.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    var catChip = chips.filter(function (c) { return c.getAttribute('data-cat') === activeCat; })[0];
+    var catLabel = activeCat === 'all' ? I18N.allTools : (catChip ? catChip.firstChild.textContent.trim() : activeCat);
+    label.textContent = catLabel + (term ? ' · “' + q.value.trim() + '”' : '');
+    count.textContent = I18N.shown.replace('{count}', pad3(shown));
+    grid.style.display = shown ? '' : 'none';
+    empty.style.display = shown ? 'none' : '';
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      activeCat = chip.getAttribute('data-cat');
+      chips.forEach(function (c) { c.classList.toggle('on', c === chip); });
+      apply();
+    });
+  });
+  q.addEventListener('input', apply);
+
+  // "/" focuses search, like the prototype's key hint
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+  });
+})();
+</script>
+
+</body>
+</html>

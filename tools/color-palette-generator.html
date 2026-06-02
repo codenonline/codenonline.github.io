@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/design/">Design Tools</a>
+      <a href="/design/">Design</a>
       <span>/</span>
       <span class="on">Color Palette Generator</span>
     </div>
@@ -396,32 +446,231 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Design Tools · Tool</div>
+        <div class="tp-kicker mono">Design · Tool</div>
         <h1 class="tp-title">Color Palette Generator</h1>
         <p class="tp-desc">Generate beautiful color palettes for your design projects with hex, RGB, and HSL values.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Base color</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input type="color" id="base-picker" value="#3b82f6" style="width:44px;height:44px;border:none;padding:0;background:none;cursor:pointer">
+        <input type="text" id="base-hex" class="tp-input" value="#3b82f6" style="flex:1;border-left:2px solid var(--ink);font-family:var(--mono)">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">color-palette-generator</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Design Tools</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Color Palette Gene</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Harmony type</span>
+      <div class="tp-field-input">
+        <select id="harmony" class="tp-input">
+          <option value="complementary">Complementary</option>
+          <option value="triadic">Triadic</option>
+          <option value="analogous">Analogous</option>
+          <option value="split-complementary">Split-Complementary</option>
+          <option value="tetradic">Tetradic</option>
+          <option value="monochromatic">Monochromatic</option>
+        </select>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-breakdown" id="palette-details">
+      <!-- Breakdown of values -->
+    </div>
+    
+    <p class="tp-demo-note mono">Click any color to copy HEX code</p>
+  </div>
+
+  <div class="tp-result tp-result--list">
+    <span class="tp-result-label">Generated Palette</span>
+    <div id="swatches" style="display:flex;height:140px;gap:4px;border:2px solid var(--mag);background:var(--mag);padding:4px;margin-bottom:24px">
+      <!-- Swatches -->
+    </div>
+
+    <span class="tp-result-label">Tints (Lighter)</span>
+    <div id="tints" style="display:flex;height:48px;gap:2px;border:2px solid var(--mag);background:var(--mag);padding:2px;margin-bottom:12px">
+      <!-- Tints -->
+    </div>
+
+    <span class="tp-result-label">Shades (Darker)</span>
+    <div id="shades" style="display:flex;height:48px;gap:2px;border:2px solid var(--mag);background:var(--mag);padding:2px">
+      <!-- Shades -->
+    </div>
+
+    <div id="copy-status" class="tp-result-note" style="margin-top:20px;height:1.2em;color:var(--mag)"></div>
   </div>
 </div>
+
+<script>
+(function() {
+  var basePicker = document.getElementById('base-picker');
+  var baseHex = document.getElementById('base-hex');
+  var harmony = document.getElementById('harmony');
+  var swatchesCont = document.getElementById('swatches');
+  var detailsCont = document.getElementById('palette-details');
+  var tintsCont = document.getElementById('tints');
+  var shadesCont = document.getElementById('shades');
+  var statusCont = document.getElementById('copy-status');
+
+  function hexToHsl(hex) {
+    var r = parseInt(hex.slice(1, 3), 16) / 255;
+    var g = parseInt(hex.slice(3, 5), 16) / 255;
+    var b = parseInt(hex.slice(5, 7), 16) / 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  }
+
+  function hslToHex(h, s, l) {
+    h = ((h % 360) + 360) % 360;
+    s = Math.max(0, Math.min(100, s)) / 100;
+    l = Math.max(0, Math.min(100, l)) / 100;
+    var a = s * Math.min(l, 1 - l);
+    var f = function(n) {
+      var k = (n + h / 30) % 12;
+      var color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+  }
+
+  function hexToRgb(hex) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  }
+
+  function copy(val) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(val);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = val;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    statusCont.textContent = 'Copied ' + val.toUpperCase() + ' to clipboard';
+    setTimeout(function() { statusCont.textContent = ''; }, 2000);
+  }
+
+  function createSwatch(hex, label, isLarge) {
+    var div = document.createElement('div');
+    div.style.flex = '1';
+    div.style.backgroundColor = hex;
+    div.style.cursor = 'pointer';
+    div.style.position = 'relative';
+    div.title = (label ? label + ': ' : '') + hex.toUpperCase();
+    
+    div.addEventListener('click', function() { copy(hex); });
+    
+    if (isLarge) {
+      var span = document.createElement('span');
+      span.textContent = hex.toUpperCase();
+      span.className = 'mono';
+      span.style.position = 'absolute';
+      span.style.bottom = '8px';
+      span.style.left = '50%';
+      span.style.transform = 'translateX(-50%)';
+      span.style.fontSize = '10px';
+      span.style.background = 'rgba(0,0,0,0.6)';
+      span.style.color = '#fff';
+      span.style.padding = '2px 4px';
+      span.style.pointerEvents = 'none';
+      div.appendChild(span);
+    }
+    
+    return div;
+  }
+
+  function calc() {
+    var hex = baseHex.value;
+    if (!/^#[0-9A-F]{6}$/i.test(hex)) return;
+    basePicker.value = hex;
+
+    var hsl = hexToHsl(hex);
+    var type = harmony.value;
+    var colors = [];
+
+    switch (type) {
+      case 'complementary':
+        colors = [{ h: hsl.h, l: 'Base' }, { h: hsl.h + 180, l: 'Comp' }];
+        break;
+      case 'triadic':
+        colors = [{ h: hsl.h, l: 'Base' }, { h: hsl.h + 120, l: 'Tri 1' }, { h: hsl.h + 240, l: 'Tri 2' }];
+        break;
+      case 'analogous':
+        colors = [{ h: hsl.h - 30, l: 'Ana 1' }, { h: hsl.h, l: 'Base' }, { h: hsl.h + 30, l: 'Ana 2' }];
+        break;
+      case 'split-complementary':
+        colors = [{ h: hsl.h, l: 'Base' }, { h: hsl.h + 150, l: 'Split 1' }, { h: hsl.h + 210, l: 'Split 2' }];
+        break;
+      case 'tetradic':
+        colors = [{ h: hsl.h, l: 'Base' }, { h: hsl.h + 90, l: 'Tet 1' }, { h: hsl.h + 180, l: 'Tet 2' }, { h: hsl.h + 270, l: 'Tet 3' }];
+        break;
+      case 'monochromatic':
+        colors = [
+          { h: hsl.h, s: hsl.s, l: Math.max(hsl.l - 30, 10), l: 'Darkest' },
+          { h: hsl.h, s: hsl.s, l: Math.max(hsl.l - 15, 15), l: 'Dark' },
+          { h: hsl.h, s: hsl.s, l: hsl.l, l: 'Base' },
+          { h: hsl.h, s: hsl.s, l: Math.min(hsl.l + 15, 85), l: 'Light' },
+          { h: hsl.h, s: hsl.s, l: Math.min(hsl.l + 30, 90), l: 'Lightest' }
+        ];
+        break;
+    }
+
+    // Render Swatches and Details
+    swatchesCont.innerHTML = '';
+    detailsCont.innerHTML = '';
+    colors.forEach(function(c) {
+      var cHex = hslToHex(c.h, c.s !== undefined ? c.s : hsl.s, c.l !== undefined ? c.l : hsl.l);
+      swatchesCont.appendChild(createSwatch(cHex, c.l, true));
+      
+      var row = document.createElement('div');
+      row.innerHTML = '<span class="mono">' + c.l + '</span><b style="cursor:pointer" title="Click to copy">' + cHex.toUpperCase() + '</b>';
+      row.querySelector('b').addEventListener('click', function() { copy(cHex); });
+      detailsCont.appendChild(row);
+    });
+
+    // Tints and Shades
+    tintsCont.innerHTML = '';
+    shadesCont.innerHTML = '';
+    for (var i = 1; i <= 8; i++) {
+      var tHex = hslToHex(hsl.h, hsl.s, Math.min(hsl.l + i * 7, 97));
+      var sHex = hslToHex(hsl.h, hsl.s, Math.max(hsl.l - i * 7, 3));
+      tintsCont.appendChild(createSwatch(tHex, 'Tint ' + i, false));
+      shadesCont.appendChild(createSwatch(sHex, 'Shade ' + i, false));
+    }
+  }
+
+  basePicker.addEventListener('input', function() {
+    baseHex.value = basePicker.value.toUpperCase();
+    calc();
+  });
+  baseHex.addEventListener('input', function() {
+    var val = baseHex.value;
+    if (val[0] !== '#') val = '#' + val;
+    baseHex.value = val.toUpperCase();
+    calc();
+  });
+  harmony.addEventListener('change', calc);
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -441,7 +690,7 @@ button:disabled{transform:none;}
 
     
     <div class="tp-related">
-      <span class="tp-related-label mono">Related in Design Tools</span>
+      <span class="tp-related-label mono">Related in Design</span>
       <div class="tp-related-list">
         
         <a class="tp-related-card" href="/tools/css-gradient-generator.html">
@@ -471,27 +720,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -551,6 +800,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

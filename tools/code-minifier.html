@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
     <div class="tp-crumb mono">
       <a href="/">Catalog</a>
       <span>/</span>
-      <a href="/developer/">Dev Tools</a>
+      <a href="/developer/">Developer</a>
       <span>/</span>
       <span class="on">Code Minifier</span>
     </div>
@@ -396,32 +446,246 @@ button:disabled{transform:none;}
     <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
     <div class="tp-export" id="tp-export">
       <div class="tp-head">
-        <div class="tp-kicker mono">Dev Tools · Tool</div>
+        <div class="tp-kicker mono">Developer · Tool</div>
         <h1 class="tp-title">Code Minifier</h1>
         <p class="tp-desc">Minify and beautify JavaScript, CSS, HTML, and JSON code with enhanced browser-based algorithms.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">Code Type</span>
+      <div class="tp-toggles tp-toggles--wrap" id="cm-types">
+        <button class="tp-toggle mono on" data-type="javascript">JavaScript</button>
+        <button class="tp-toggle mono" data-type="css">CSS</button>
+        <button class="tp-toggle mono" data-type="html">HTML</button>
+        <button class="tp-toggle mono" data-type="json">JSON</button>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">code-minifier</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Dev Tools</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Code Minifier</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Action</span>
+      <div class="tp-toggles" id="cm-modes">
+        <button class="tp-toggle mono on" data-mode="minify">Minify</button>
+        <button class="tp-toggle mono" data-mode="beautify">Beautify</button>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span class="tp-field-label mono">Input Code</span>
+        <button id="cm-clear" class="mono" style="background:none; border:none; border-bottom:1px solid var(--ink); cursor:pointer; font-size:10px; padding:0; opacity:0.6;">Clear</button>
+      </div>
+      <textarea id="cm-input" class="tp-textarea tp-textarea--tall" spellcheck="false" placeholder="Paste your code here...">function example() {
+  console.log("Hello World!");
+  return true;
+}</textarea>
+    </div>
+  </div>
+
+  <div class="tp-result tp-result--stats">
+    <span class="tp-result-label" id="cm-r-label">Reduction</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="cm-r-perc">0</span>
+      <span style="font-size: 2rem; margin-left: 4px; font-family: var(--grotesk);">%</span>
+    </div>
+    <span class="tp-result-note" id="cm-r-note">Ready to process</span>
+
+    <div class="tp-field" style="margin-top: 24px; flex: 1; display: flex; flex-direction: column;">
+      <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span class="tp-field-label mono" style="color: var(--mag)">Output</span>
+        <button id="cm-copy" class="mono" style="background:none; border:none; border-bottom:1px solid var(--mag); color: var(--mag); cursor:pointer; font-size:10px; padding:0;">Copy</button>
+      </div>
+      <textarea id="cm-output" class="tp-textarea tp-textarea--tall" readonly spellcheck="false" style="flex: 1; background: rgba(255,255,255,0.05); color: var(--mag); border-color: var(--mag);" placeholder="Processed code will appear here..."></textarea>
+    </div>
+
+    <div class="tp-statgrid" style="margin-top: 24px;">
+      <div><span class="mono">Original</span><b id="cm-stat-orig">0</b></div>
+      <div><span class="mono">Processed</span><b id="cm-stat-proc">0</b></div>
+      <div><span class="mono">Difference</span><b id="cm-stat-diff">0</b></div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  var types = document.getElementById('cm-types');
+  var modes = document.getElementById('cm-modes');
+  var input = document.getElementById('cm-input');
+  var output = document.getElementById('cm-output');
+  var clearBtn = document.getElementById('cm-clear');
+  var copyBtn = document.getElementById('cm-copy');
+  
+  var statOrig = document.getElementById('cm-stat-orig');
+  var statProc = document.getElementById('cm-stat-proc');
+  var statDiff = document.getElementById('cm-stat-diff');
+  var resPerc = document.getElementById('cm-r-perc');
+  var resLabel = document.getElementById('cm-r-label');
+  var resNote = document.getElementById('cm-r-note');
+
+  var currentType = 'javascript';
+  var currentMode = 'minify';
+
+  function minifyJS(code) {
+    return code
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/.*$/gm, '')
+      .replace(/\s+/g, ' ')
+      .replace(/;\s*}/g, '}')
+      .replace(/\s*([{}();,:])\s*/g, '$1')
+      .trim();
+  }
+
+  function minifyCSS(code) {
+    return code
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+      .replace(/;\s*}/g, '}')
+      .trim();
+  }
+
+  function minifyHTML(code) {
+    return code
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/>\s+</g, '><')
+      .trim();
+  }
+
+  function minifyJSON(code) {
+    try {
+      return JSON.stringify(JSON.parse(code));
+    } catch (e) {
+      return code.replace(/\s+/g, '');
+    }
+  }
+
+  function beautifyJS(code) {
+    var formatted = code.replace(/([{}])/g, '\n$1\n').replace(/;/g, ';\n');
+    var indent = 0;
+    return formatted.split('\n').map(function(line) {
+      line = line.trim();
+      if (!line) return '';
+      if (line.includes('}')) indent--;
+      var res = '  '.repeat(Math.max(0, indent)) + line;
+      if (line.includes('{')) indent++;
+      return res;
+    }).join('\n').replace(/\n\s*\n/g, '\n').trim();
+  }
+
+  function beautifyCSS(code) {
+    return code
+      .replace(/\{/g, ' {\n  ')
+      .replace(/\}/g, '\n}\n')
+      .replace(/;/g, ';\n  ')
+      .replace(/,/g, ',\n')
+      .replace(/\n\s*\n/g, '\n')
+      .trim();
+  }
+
+  function beautifyHTML(code) {
+    var formatted = code.replace(/>\s*</g, '>\n<');
+    var indent = 0;
+    return formatted.split('\n').map(function(line) {
+      line = line.trim();
+      if (!line) return '';
+      if (line.match(/<\/\w+>/)) indent--;
+      var res = '  '.repeat(Math.max(0, indent)) + line;
+      if (line.match(/<\w+[^>]*[^\/]>/)) indent++;
+      return res;
+    }).join('\n').trim();
+  }
+
+  function beautifyJSON(code) {
+    try {
+      return JSON.stringify(JSON.parse(code), null, 2);
+    } catch (e) {
+      return code;
+    }
+  }
+
+  function calc() {
+    var val = input.value;
+    if (!val.trim()) {
+      output.value = '';
+      statOrig.textContent = '0';
+      statProc.textContent = '0';
+      statDiff.textContent = '0';
+      resPerc.textContent = '0';
+      resNote.textContent = 'Ready to process';
+      return;
+    }
+
+    var processed = '';
+    if (currentMode === 'minify') {
+      if (currentType === 'javascript') processed = minifyJS(val);
+      else if (currentType === 'css') processed = minifyCSS(val);
+      else if (currentType === 'html') processed = minifyHTML(val);
+      else if (currentType === 'json') processed = minifyJSON(val);
+    } else {
+      if (currentType === 'javascript') processed = beautifyJS(val);
+      else if (currentType === 'css') processed = beautifyCSS(val);
+      else if (currentType === 'html') processed = beautifyHTML(val);
+      else if (currentType === 'json') processed = beautifyJSON(val);
+    }
+
+    output.value = processed;
+
+    var origLen = val.length;
+    var procLen = processed.length;
+    var diff = origLen - procLen;
+    var perc = origLen > 0 ? Math.round((diff / origLen) * 100) : 0;
+
+    statOrig.textContent = origLen.toLocaleString();
+    statProc.textContent = procLen.toLocaleString();
+    statDiff.textContent = (diff > 0 ? '-' : '+') + Math.abs(diff).toLocaleString();
+    
+    resPerc.textContent = Math.abs(perc);
+    resLabel.textContent = perc >= 0 ? 'Reduction' : 'Expansion';
+    resNote.textContent = Math.abs(diff).toLocaleString() + ' characters ' + (perc >= 0 ? 'saved' : 'added');
+  }
+
+  types.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-type]');
+    if (!btn) return;
+    currentType = btn.getAttribute('data-type');
+    Array.prototype.forEach.call(types.children, function(b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  modes.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-mode]');
+    if (!btn) return;
+    currentMode = btn.getAttribute('data-mode');
+    Array.prototype.forEach.call(modes.children, function(b) {
+      b.classList.toggle('on', b === btn);
+    });
+    calc();
+  });
+
+  input.addEventListener('input', calc);
+  
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    calc();
+    input.focus();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value).then(function() {
+      var oldText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = oldText; }, 2000);
+    });
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -449,27 +713,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -529,6 +793,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

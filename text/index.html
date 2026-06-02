@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Tools — Tools Catalog</title>
-  <meta name="description" content="32 Text Tools tools. Free, private, no sign-up.">
+  <title>Text — Tools Catalog</title>
+  <meta name="description" content="32 Text tools. Free, private, no sign-up.">
   <script>
     // Apply the saved background color before first paint to avoid a flash.
     (function () {
@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -366,9 +416,9 @@ button:disabled{transform:none;}
       <div class="cat-crumb mono">
         <a href="/">Catalog</a>
         <span>/</span>
-        <span class="on">Text Tools</span>
+        <span class="on">Text</span>
       </div>
-      <h1 class="cat-title">Text Tools<sup>32</sup></h1>
+      <h1 class="cat-title">Text<sup>32</sup></h1>
       <p class="cat-sub mono">32 tools shown · every calculation runs locally in your browser. No accounts, no tracking.</p>
     </div>
   </section>
@@ -378,7 +428,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/markdown-converter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">001</span>
         </div>
         <div class="card-name">Markdown Converter</div>
@@ -388,7 +438,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/regex-tester.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">002</span>
         </div>
         <div class="card-name">Regex Tester</div>
@@ -398,7 +448,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/text-formatter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">003</span>
         </div>
         <div class="card-name">Text Formatter</div>
@@ -408,7 +458,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/word-counter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">004</span>
         </div>
         <div class="card-name">Word Counter</div>
@@ -418,7 +468,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/accents-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">005</span>
         </div>
         <div class="card-name">Accents Remover</div>
@@ -428,7 +478,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/add-line-numbers.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">006</span>
         </div>
         <div class="card-name">Add Line Numbers</div>
@@ -438,7 +488,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/add-remove-prefix-suffix.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">007</span>
         </div>
         <div class="card-name">Add/Remove Prefix Suffix</div>
@@ -448,7 +498,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/character-counter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">008</span>
         </div>
         <div class="card-name">Character Counter</div>
@@ -458,7 +508,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/combination-generator.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">009</span>
         </div>
         <div class="card-name">Combination Generator</div>
@@ -468,7 +518,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/duplicate-lines-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">010</span>
         </div>
         <div class="card-name">Duplicate Lines Remover</div>
@@ -478,7 +528,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/email-extractor.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">011</span>
         </div>
         <div class="card-name">Email Extractor</div>
@@ -488,7 +538,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/empty-lines-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">012</span>
         </div>
         <div class="card-name">Empty Lines Remover</div>
@@ -498,7 +548,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/extra-space-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">013</span>
         </div>
         <div class="card-name">Extra Space Remover</div>
@@ -508,7 +558,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/lines-containing.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">014</span>
         </div>
         <div class="card-name">Lines Containing</div>
@@ -518,7 +568,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/list-delimiter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">015</span>
         </div>
         <div class="card-name">List Delimiter</div>
@@ -528,7 +578,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/number-extractor.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">016</span>
         </div>
         <div class="card-name">Number Extractor</div>
@@ -538,7 +588,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/permutation-generator.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">017</span>
         </div>
         <div class="card-name">Permutation Generator</div>
@@ -548,7 +598,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/phone-number-extractor.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">018</span>
         </div>
         <div class="card-name">Phone Number Extractor</div>
@@ -558,7 +608,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/punctuation-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">019</span>
         </div>
         <div class="card-name">Punctuation Remover</div>
@@ -568,7 +618,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/remove-line-breaks.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">020</span>
         </div>
         <div class="card-name">Remove Line Breaks</div>
@@ -578,7 +628,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/reverse-string.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">021</span>
         </div>
         <div class="card-name">Reverse String</div>
@@ -588,7 +638,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/shuffle-letters.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">022</span>
         </div>
         <div class="card-name">Shuffle Letters</div>
@@ -598,7 +648,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/shuffle-lines.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">023</span>
         </div>
         <div class="card-name">Shuffle Lines</div>
@@ -608,7 +658,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/shuffle-words.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">024</span>
         </div>
         <div class="card-name">Shuffle Words</div>
@@ -618,7 +668,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/sort-ip-address.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">025</span>
         </div>
         <div class="card-name">Sort IP Address</div>
@@ -628,7 +678,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/sort-lines.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">026</span>
         </div>
         <div class="card-name">Sort Lines</div>
@@ -638,7 +688,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/sort-numbers.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">027</span>
         </div>
         <div class="card-name">Sort Numbers</div>
@@ -648,7 +698,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/space-remover.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">028</span>
         </div>
         <div class="card-name">Space Remover</div>
@@ -658,7 +708,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/stylish-text-generator.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">029</span>
         </div>
         <div class="card-name">Stylish Text Generator</div>
@@ -668,7 +718,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/text-case-converter.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">030</span>
         </div>
         <div class="card-name">Text Case Converter</div>
@@ -678,7 +728,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/url-extractor.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">031</span>
         </div>
         <div class="card-name">URL Extractor</div>
@@ -688,7 +738,7 @@ button:disabled{transform:none;}
       
       <a class="card" href="/tools/word-repeater.html" data-cat="text">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">032</span>
         </div>
         <div class="card-name">Word Repeater</div>
@@ -706,27 +756,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -786,6 +836,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

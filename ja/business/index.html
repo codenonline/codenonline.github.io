@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ビジネス — Tools Catalog</title>
+  <meta name="description" content="53 ビジネス tools. Free, private, no sign-up.">
+  <script>
+    // Apply the saved background color before first paint to avoid a flash.
+    (function () {
+      try {
+        var c = localStorage.getItem('tc_v2_bg');
+        if (c) document.documentElement.style.setProperty('--mag', c);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --mag:#ec18e6;
+  --ink:#0b0b0b;
+  --hair:#0b0b0b;
+  --grotesk:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --maxw:1280px;
+  --pad:clamp(18px,4vw,48px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background-color:var(--mag);color:var(--ink);font-family:var(--grotesk);-webkit-font-smoothing:antialiased;}
+body{overflow-x:hidden;background-attachment:fixed;background-repeat:repeat;min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+::selection{background:var(--ink);color:var(--mag);}
+
+/* texture — baked into the page background so it never overlays content */
+body[data-tex="on"]{
+  background-image:
+    radial-gradient(rgba(0,0,0,.20) .9px,transparent 1.35px),
+    linear-gradient(rgba(0,0,0,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.045) 1px,transparent 1px);
+  background-size:5px 5px,160px 160px,160px 160px;
+}
+body[data-tex="soft"]{
+  background-image:radial-gradient(rgba(0,0,0,.14) .8px,transparent 1.5px);
+  background-size:6px 6px;
+}
+body[data-tex="off"]{background-image:none;}
+
+.app{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);width:100%;}
+
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+
+/* top bar -----------------------------------------------------------*/
+.topbar{border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;
+  padding:14px var(--pad);position:sticky;top:0;background:var(--mag);z-index:30;}
+.topbar-left{display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0;}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;}
+.brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
+.brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
+.topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
+@media(max-width:640px){
+  .topbar{padding:14px 18px;}
+  .topbar-left{gap:8px;}
+  .brand{gap:7px;}
+  .brand-name{font-size:18px;}
+  .topcount{font-size:10px;padding:5px 7px;}
+}
+@media(max-width:340px){.topcount{display:none;}}
+
+/* config / color picker --------------------------------------------*/
+.cfg{position:relative;}
+.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;}
+.cfg-btn:hover{background:var(--ink);color:var(--mag);}
+.cfg-btn svg{width:13px;height:13px;display:block;}
+.cfg-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:15px;width:228px;z-index:50;display:none;}
+.cfg-panel.open{display:block;}
+.cfg-panel-label{font-size:10px;display:block;margin-bottom:12px;}
+.cfg-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.cfg-swatch{aspect-ratio:1;border:2px solid var(--ink);cursor:pointer;position:relative;padding:0;}
+.cfg-swatch.on::after{content:"";position:absolute;inset:3px;border:2px solid var(--ink);}
+@media(max-width:640px){.cfg-btn span{display:none;}}
+
+/* hero --------------------------------------------------------------*/
+.hero{padding:clamp(30px,6vw,72px) 0 clamp(24px,4vw,44px);border-bottom:2px solid var(--ink);}
+.hero-main{display:block;}
+.hero-tag{font-size:13px;white-space:nowrap;}
+.hero-head{font-weight:800;letter-spacing:-.045em;line-height:.9;
+  font-size:clamp(38px,8.4vw,116px);text-wrap:balance;}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;
+  margin-top:clamp(28px,5vw,64px);flex-wrap:wrap;}
+.stats{display:flex;gap:clamp(26px,5vw,70px);flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:4px;}
+.stat-label{font-size:12px;}
+.stat-val{font-weight:800;letter-spacing:-.04em;line-height:.9;font-size:clamp(34px,4.6vw,62px);}
+.stat-sub{font-size:.4em;font-weight:700;letter-spacing:0;opacity:.55;margin-left:.1em;font-family:var(--mono);vertical-align:super;}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(18px,3vw,36px);}
+.hero-note{font-size:11px;line-height:1.7;text-align:right;opacity:.85;}
+@media(max-width:560px){.hero-side{align-items:flex-start;gap:18px;}.hero-note{text-align:left;}}
+
+/* controls ----------------------------------------------------------*/
+.controls{padding:clamp(22px,3vw,32px) var(--pad) clamp(16px,2vw,22px);}
+.search{display:flex;align-items:center;gap:14px;border:2px solid var(--ink);padding:clamp(12px,1.6vw,18px) 18px;}
+.search-key{font-size:12px;white-space:nowrap;}
+.search-input{flex:1;background:none;border:none;outline:none;color:var(--ink);
+  font-weight:700;letter-spacing:-.02em;font-size:clamp(20px,2.6vw,32px);min-width:0;}
+.search-input::placeholder{color:var(--ink);opacity:.4;font-weight:700;}
+.search-arrow{font-size:20px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
+.chip.on{background:var(--ink);color:var(--mag);}
+.chip-count{font-size:8px;opacity:.6;}
+
+/* grid + cards ------------------------------------------------------*/
+.gridwrap{padding-bottom:clamp(40px,6vw,80px);}
+.results-bar{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 16px;font-size:11px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;
+  background:var(--ink);border:2px solid var(--ink);}
+.card{background:var(--mag);text-align:left;padding:clamp(16px,1.5vw,22px);display:flex;flex-direction:column;
+  gap:10px;min-height:188px;transition:background .14s,color .14s;position:relative;}
+.card-top{display:flex;justify-content:space-between;font-size:10px;}
+.card-cat{opacity:.7;}
+.card-idx{opacity:.5;}
+.card-name{font-weight:800;letter-spacing:-.035em;line-height:.96;font-size:clamp(20px,1.9vw,27px);}
+.card-desc{font-size:13.5px;line-height:1.4;opacity:.78;margin-top:auto;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-open{font-size:11px;opacity:0;transform:translateX(-4px);transition:.14s;}
+body[data-hover="on"] .card:hover{background:var(--ink);color:var(--mag);}
+body[data-hover="on"] .card:hover .card-cat,body[data-hover="on"] .card:hover .card-idx,body[data-hover="on"] .card:hover .card-desc{opacity:.85;}
+.card:hover .card-open{opacity:1;transform:none;}
+body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
+
+.empty{padding:60px 0 80px;}
+.empty-head{font-weight:800;letter-spacing:-.04em;line-height:.92;font-size:clamp(34px,5vw,64px);margin-top:14px;}
+
+/* category screen ---------------------------------------------------*/
+.cat-hero{padding:clamp(34px,5vw,64px) 0 clamp(20px,3vw,30px);border-bottom:2px solid var(--ink);}
+.cat-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(18px,3vw,34px);}
+.cat-crumb a{opacity:.55;}.cat-crumb a:hover{opacity:1;text-decoration:underline;}
+.cat-crumb .on{opacity:1;}
+.cat-title{font-weight:800;letter-spacing:-.05em;line-height:.86;font-size:clamp(56px,12vw,170px);text-transform:uppercase;}
+.cat-title sup{font-size:.22em;font-family:var(--mono);letter-spacing:0;vertical-align:super;opacity:.6;}
+.cat-sub{font-size:12px;margin-top:18px;max-width:46ch;line-height:1.7;opacity:.8;}
+
+/* tool page ---------------------------------------------------------*/
+.tp{padding:clamp(26px,4vw,48px) 0 clamp(50px,7vw,90px);}
+.tp-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(24px,4vw,44px);flex-wrap:wrap;}
+.tp-crumb a{opacity:.55;}.tp-crumb a:hover{opacity:1;text-decoration:underline;}
+.tp-crumb .on{opacity:1;}
+.tp-head{margin-bottom:clamp(26px,4vw,46px);}
+.tp-kicker{font-size:12px;}
+.tp-title{font-weight:800;letter-spacing:-.045em;line-height:.9;font-size:clamp(40px,7vw,92px);margin:10px 0 14px;}
+.tp-desc{font-size:clamp(14px,1.5vw,17px);line-height:1.5;max-width:60ch;opacity:.85;}
+
+.tp-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-grid--wide{grid-template-columns:1fr 1fr;}
+@media(max-width:780px){.tp-grid,.tp-grid--wide{grid-template-columns:1fr;}}
+.tp-inputs{background:var(--mag);padding:clamp(20px,2.6vw,34px);display:flex;flex-direction:column;gap:18px;}
+.tp-field{display:flex;flex-direction:column;gap:7px;}
+.tp-field-label{font-size:11px;}
+.tp-field-input{display:flex;align-items:center;border:2px solid var(--ink);background:var(--mag);}
+.tp-input{flex:1;background:none;border:none;outline:none;padding:11px 13px;font-weight:700;
+  letter-spacing:-.02em;font-size:clamp(18px,2vw,24px);min-width:0;color:var(--ink);}
+.tp-suffix{padding:0 13px;font-size:13px;opacity:.55;border-left:2px solid var(--ink);align-self:stretch;display:flex;align-items:center;}
+.tp-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tp-breakdown{display:flex;flex-direction:column;gap:0;border:2px solid var(--ink);margin-top:4px;}
+.tp-breakdown div{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;font-size:11px;border-bottom:1px solid rgba(0,0,0,.25);}
+.tp-breakdown div:last-child{border-bottom:none;}
+.tp-breakdown b{font-size:13px;}
+
+.tp-result{background:var(--ink);color:var(--mag);padding:clamp(24px,3vw,40px);
+  display:flex;flex-direction:column;justify-content:center;gap:14px;}
+.tp-result-label{font-size:12px;opacity:.65;}
+.tp-result-val{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;}
+.tp-result-prefix{font-weight:800;font-size:clamp(26px,3vw,42px);letter-spacing:-.04em;}
+.tp-result-num{font-weight:800;letter-spacing:-.05em;line-height:.85;font-size:clamp(46px,7.5vw,104px);word-break:break-word;}
+.tp-result-note{font-size:11px;opacity:.6;}
+.tp-result-sub{font-size:13px;opacity:.6;}
+
+.tp-sentence{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;}
+.tp-sentence .tp-input{border:2px solid var(--ink);max-width:120px;}
+.tp-toggles{display:flex;gap:8px;flex-wrap:wrap;}
+.tp-toggles--wrap{margin-bottom:4px;}
+.tp-toggle{border:2px solid var(--ink);padding:8px 12px;font-size:11px;transition:.12s;}
+.tp-toggle.on{background:var(--ink);color:var(--mag);}
+.tp-gen{border:2px solid var(--ink);padding:12px 16px;font-size:12px;text-align:center;background:var(--ink);color:var(--mag);transition:.12s;}
+.tp-gen:hover{opacity:.82;}
+.tp-hint,.tp-demo-note{font-size:10.5px;opacity:.6;line-height:1.6;}
+.tp-demo-note{margin-top:auto;}
+.tp-textarea{border:2px solid var(--ink);background:var(--mag);padding:13px;font-family:var(--mono);font-size:13px;
+  line-height:1.6;resize:vertical;min-height:120px;outline:none;color:var(--ink);width:100%;}
+.tp-textarea--tall{min-height:220px;}
+.tp-result--pw,.tp-result--list,.tp-result--stats{justify-content:flex-start;}
+.tp-pw{font-family:var(--mono);font-weight:700;font-size:clamp(20px,2.6vw,30px);word-break:break-all;line-height:1.3;letter-spacing:.02em;}
+.tp-uuids{display:flex;flex-direction:column;gap:9px;}
+.tp-uuid{font-size:13px;word-break:break-all;padding-bottom:9px;border-bottom:1px solid rgba(236,24,230,.25);font-family:var(--mono);}
+.tp-uuid:last-child{border-bottom:none;}
+.tp-mono-out{font-size:14px;line-height:1.6;word-break:break-all;white-space:pre-wrap;}
+.tp-stat-big{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.tp-stat-big b{font-weight:800;letter-spacing:-.05em;font-size:clamp(46px,7vw,90px);line-height:.85;}
+.tp-stat-big span{font-size:12px;opacity:.65;}
+.tp-statgrid{display:flex;flex-direction:column;gap:0;border:2px solid var(--mag);}
+.tp-statgrid div{display:flex;justify-content:space-between;padding:10px 13px;font-size:12px;border-bottom:1px solid rgba(236,24,230,.25);}
+.tp-statgrid div:last-child{border-bottom:none;}
+
+.tp-related{margin-top:clamp(34px,5vw,56px);}
+.tp-related-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-related-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-related-card{background:var(--mag);display:flex;justify-content:space-between;align-items:center;
+  padding:16px 18px;transition:.14s;}
+.tp-related-card:hover{background:var(--ink);color:var(--mag);}
+.tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
+.tp-related-arrow{font-size:13px;}
+
+/* footer ------------------------------------------------------------*/
+.footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
+.foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
+.footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
+.foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
+.foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
+.footer-mark{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  margin:clamp(34px,5vw,56px) 0 26px;border-top:2px solid var(--ink);padding-top:26px;}
+.footer-word{font-weight:800;letter-spacing:-.05em;font-size:clamp(40px,10vw,140px);line-height:.8;}
+.footer-base{display:flex;justify-content:space-between;font-size:10px;opacity:.65;border-top:2px solid var(--ink);padding-top:18px;flex-wrap:wrap;gap:10px;}
+
+/* misc --------------------------------------------------------------*/
+.skip-fade{animation:fade .3s ease;}
+@keyframes fade{from{transform:translateY(8px);}to{transform:none;}}
+
+/* live-value animation — result numbers tween + pop when they change
+   (driven by the watcher script on tool pages). */
+@keyframes value-pop{0%{transform:scale(1);}35%{transform:scale(1.06);}100%{transform:scale(1);}}
+.value-animate{display:inline-block;transform-origin:left center;animation:value-pop .42s cubic-bezier(.22,1,.36,1);will-change:transform;}
+.tp-result-num.value-animate{transform-origin:left bottom;}
+
+/* tactile button press, in keeping with the .12s transitions used above */
+button{transition:background .12s,color .12s,opacity .12s,transform .1s;}
+button:active{transform:translateY(1px);}
+button:disabled{transform:none;}
+
+@media (prefers-reduced-motion:reduce){
+  .skip-fade,.value-animate{animation:none;}
+  button:active{transform:none;}
+}
+  </style>
+</head>
+<body data-tex="on" data-hover="on">
+  <div class="app">
+    <header class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="/ja/">
+      <span class="brand-name">TOOLSCATALOG</span>
+      <span class="brand-ver mono">V2</span>
+    </a>
+    <span class="topcount mono">120 ツール</span>
+  </div>
+  <div class="topbar-right">
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>JA</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="en" href="/"><span>English</span><span class="langsel-code">en</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>日本語</span><span class="langsel-code">ja</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
+    </div>
+    <div class="cfg">
+      <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3.2"></circle>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"></path>
+        </svg>
+        <span>テーマ</span>
+      </button>
+      <div class="cfg-panel" id="cfg-panel" role="menu">
+        <span class="cfg-panel-label mono">背景色</span>
+        <div class="cfg-swatches" id="cfg-swatches">
+          
+          <button class="cfg-swatch" data-color="#ec18e6" title="Magenta"
+                  aria-label="Magenta" style="background:#ec18e6"></button>
+          
+          <button class="cfg-swatch" data-color="#f472b6" title="Pink"
+                  aria-label="Pink" style="background:#f472b6"></button>
+          
+          <button class="cfg-swatch" data-color="#fb7185" title="Rose"
+                  aria-label="Rose" style="background:#fb7185"></button>
+          
+          <button class="cfg-swatch" data-color="#f87171" title="Red"
+                  aria-label="Red" style="background:#f87171"></button>
+          
+          <button class="cfg-swatch" data-color="#fb923c" title="Orange"
+                  aria-label="Orange" style="background:#fb923c"></button>
+          
+          <button class="cfg-swatch" data-color="#fbbf24" title="Amber"
+                  aria-label="Amber" style="background:#fbbf24"></button>
+          
+          <button class="cfg-swatch" data-color="#facc15" title="Yellow"
+                  aria-label="Yellow" style="background:#facc15"></button>
+          
+          <button class="cfg-swatch" data-color="#a3e635" title="Lime"
+                  aria-label="Lime" style="background:#a3e635"></button>
+          
+          <button class="cfg-swatch" data-color="#4ade80" title="Green"
+                  aria-label="Green" style="background:#4ade80"></button>
+          
+          <button class="cfg-swatch" data-color="#34d399" title="Emerald"
+                  aria-label="Emerald" style="background:#34d399"></button>
+          
+          <button class="cfg-swatch" data-color="#2dd4bf" title="Teal"
+                  aria-label="Teal" style="background:#2dd4bf"></button>
+          
+          <button class="cfg-swatch" data-color="#22d3ee" title="Cyan"
+                  aria-label="Cyan" style="background:#22d3ee"></button>
+          
+          <button class="cfg-swatch" data-color="#38bdf8" title="Sky"
+                  aria-label="Sky" style="background:#38bdf8"></button>
+          
+          <button class="cfg-swatch" data-color="#60a5fa" title="Blue"
+                  aria-label="Blue" style="background:#60a5fa"></button>
+          
+          <button class="cfg-swatch" data-color="#818cf8" title="Indigo"
+                  aria-label="Indigo" style="background:#818cf8"></button>
+          
+          <button class="cfg-swatch" data-color="#a78bfa" title="Violet"
+                  aria-label="Violet" style="background:#a78bfa"></button>
+          
+          <button class="cfg-swatch" data-color="#c084fc" title="Purple"
+                  aria-label="Purple" style="background:#c084fc"></button>
+          
+          <button class="cfg-swatch" data-color="#e879f9" title="Fuchsia"
+                  aria-label="Fuchsia" style="background:#e879f9"></button>
+          
+          <button class="cfg-swatch" data-color="#cbd5e1" title="Slate"
+                  aria-label="Slate" style="background:#cbd5e1"></button>
+          
+          <button class="cfg-swatch" data-color="#f5f5f5" title="White"
+                  aria-label="White" style="background:#f5f5f5"></button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    
+<div class="skip-fade">
+  <section class="cat-hero">
+    <div class="wrap">
+      <div class="cat-crumb mono">
+        <a href="/ja/">カタログ</a>
+        <span>/</span>
+        <span class="on">ビジネス</span>
+      </div>
+      <h1 class="cat-title">ビジネス<sup>53</sup></h1>
+      <p class="cat-sub mono">53 個のツールを表示 · すべての計算はブラウザー内でローカルに実行されます。アカウント不要、追跡なし。</p>
+    </div>
+  </section>
+
+  <div class="wrap gridwrap" style="padding-top:clamp(22px,3vw,34px)">
+    <div class="grid">
+      
+      <a class="card" href="/ja/tools/absence-rate-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">001</span>
+        </div>
+        <div class="card-name">欠勤率計算機</div>
+        <div class="card-desc">予期しない欠勤によって失われた予定労働日数の割合を測定することで、労働力の出勤状況を追跡します — HR トレンドを特定するのに役立ちます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/acceptance-rate-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">002</span>
+        </div>
+        <div class="card-name">受け入れ率計算機</div>
+        <div class="card-desc">アプリケーション、オファー、または招待状の何パーセントが受け入れられたかを測定して、アウトリーチまたは採用ファネルの有効性を評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/accounting-profit.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">003</span>
+        </div>
+        <div class="card-name">会計利益計算機</div>
+        <div class="card-desc">総収益から給与、賃料、材料などの明示的なコストを差し引いた純利益を求めます。これは標準的な損益計算書の最終行です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/additional-funds-needed.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">004</span>
+        </div>
+        <div class="card-name">必要な追加資金</div>
+        <div class="card-desc">売上予測に基づいて、予想資産成長が利用可能な内部資金と負債を超える場合に必要な外部融資を見積もります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/altman-z-score.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">005</span>
+        </div>
+        <div class="card-name">アルトマンZ-スコア</div>
+        <div class="card-desc">アルトマンZ-スコアモデルを使用して企業の破産リスクを評価します。5つの財務比率を組み合わせて財務困難を予測します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/asset-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">006</span>
+        </div>
+        <div class="card-name">資産回転率</div>
+        <div class="card-desc">企業が総資産からどの程度効率的に収益を生成しているかを測定します。高い比率は資産ベースの利用がより優れていることを示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/average-collection-period.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">007</span>
+        </div>
+        <div class="card-name">平均回収期間</div>
+        <div class="card-desc">売上後、あなたのビジネスが平均して支払いを回収するのにかかる日数を確認し、潜在的なキャッシュフローの遅延を明らかにします。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/average-daily-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">008</span>
+        </div>
+        <div class="card-name">平均日次料金</div>
+        <div class="card-desc">占有客室数あたりの1日の平均収益を決定する — ホテルと短期賃貸の中核となる価格KPI。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/bill-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">009</span>
+        </div>
+        <div class="card-name">請求レート計算機</div>
+        <div class="card-desc">基本コスト、オーバーヘッド、利益率、および希望稼働率を考慮して、クライアント向けの適切な請求レートを設定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/billable-hours.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">010</span>
+        </div>
+        <div class="card-name">請求時間計算機</div>
+        <div class="card-desc">クライアント作業に費やした時間を追跡・評価します。作業時間と請求レートを入力して、プロジェクトまたは期間ごとの総収益を確認します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/book-profit.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">011</span>
+        </div>
+        <div class="card-name">簿記利益計算機</div>
+        <div class="card-desc">収益から総会計費用を差し引いて、非現金項目を含む財務諸表に記録された利益を決定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/break-even.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">012</span>
+        </div>
+        <div class="card-name">損益分岐点計算機</div>
+        <div class="card-desc">総収益が総コストと等しくなる正確な売上高を見つけます — 製品またはビジネスがいつから利益を生成し始めるかを正確に知ります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/capital-employed.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">013</span>
+        </div>
+        <div class="card-name">投下資本計算機</div>
+        <div class="card-desc">自己資本と債務を組み合わせることで、企業が使用する総長期資金を定量化し、ROCEと効率分析の基礎を形成します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/cash-flow-to-debt-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">014</span>
+        </div>
+        <div class="card-name">キャッシュフロー対債務比率</div>
+        <div class="card-desc">営業キャッシュフローを使用して企業が総債務を返済できる速さを確認します — 長期的な支払能力の重要な指標です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/cash-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">015</span>
+        </div>
+        <div class="card-name">現金比率計算機</div>
+        <div class="card-desc">現金および現金同等物のみを使用して流動負債をカバーする企業の能力を測定する、最も保守的な流動性テストです。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/churn-rate-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">016</span>
+        </div>
+        <div class="card-name">チャーンレート計算ツール</div>
+        <div class="card-desc">一定期間に失われた顧客の割合を測定し、サブスクリプションの健全性を把握し、顧客維持の改善機会を特定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/commission-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">017</span>
+        </div>
+        <div class="card-name">手数料計算ツール</div>
+        <div class="card-desc">総売上と料率の入力に基づいて、定額、段階的、または割合ベースの手数料体系での営業代表の収入を計算します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/consumer-surplus.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">018</span>
+        </div>
+        <div class="card-name">消費者余剰計算機</div>
+        <div class="card-desc">消費者が支払う意思がある最大額より少なく支払う場合に受け取る利益を定量化します。価格設定とポリシー分析に役立ちます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/contribution-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">019</span>
+        </div>
+        <div class="card-name">貢献利益計算機</div>
+        <div class="card-desc">売上高から変動費を差し引いた後に残る収益を判定し、固定費をカバーして利益を生成します。価格設定の決定に不可欠です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/conversion-rate-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">020</span>
+        </div>
+        <div class="card-name">コンバージョンレート計算機</div>
+        <div class="card-desc">訪問者またはリードが目的のアクションを完了する割合を測定し、マーケティングおよびファネルのパフォーマンスを評価するのに役立ちます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/cpc-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">021</span>
+        </div>
+        <div class="card-name">CPC計算機</div>
+        <div class="card-desc">総広告費とクリック数からクリックあたりのコストを求め、チャネル間でキャンペーン効率を比較できます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/cpm-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">022</span>
+        </div>
+        <div class="card-name">CPM計算機</div>
+        <div class="card-desc">広告インプレッション1,000件あたりのコストを決定して、ディスプレイまたはメディアキャンペーンのリーチ効率を評価および比較します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/current-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">023</span>
+        </div>
+        <div class="card-name">流動比率計算機</div>
+        <div class="card-desc">流動資産を流動負債で割って短期的な財務健全性を確認します。比率が1を上回る場合は、十分な流動性を示唆しています。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/customer-acquisition-cost.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">024</span>
+        </div>
+        <div class="card-name">顧客獲得コスト</div>
+        <div class="card-desc">総販売マーケティング支出を新規顧客数で割ることで、1人の新規顧客を獲得するのにかかるコストを理解できます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/customer-lifetime-value.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">025</span>
+        </div>
+        <div class="card-name">顧客生涯価値</div>
+        <div class="card-desc">単一の顧客が関係全体を通じてビジネスがもたらすと予想できる総収益を推定し、獲得予算を決定するのに役立てます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/customer-retention-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">026</span>
+        </div>
+        <div class="card-name">顧客維持率</div>
+        <div class="card-desc">期間中にビジネスが保持する顧客の割合を測定します。チャーンの反対側であり、SaaSおよびサブスクリプションモデルに不可欠です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/days-inventory-outstanding.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">027</span>
+        </div>
+        <div class="card-name">在庫日数（DIO）</div>
+        <div class="card-desc">在庫が販売されるまでの平均日数を確認し、在庫レベルを最適化して保有コストを削減するのに役立ちます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/days-payable-outstanding.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">028</span>
+        </div>
+        <div class="card-name">支払日数(DPO)</div>
+        <div class="card-desc">企業が仕入先に支払うまでの平均日数を測定します—DPOが長いほどキャッシュフローが改善される可能性がありますが、仕入先との関係に影響する可能性があります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/days-sales-outstanding.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">029</span>
+        </div>
+        <div class="card-name">売上債権回転期間（DSO）</div>
+        <div class="card-desc">販売後の平均的な支払い回収までの期間を決定し、クレジットおよび回収プロセスの有効性を明らかにします。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/deadweight-loss.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">030</span>
+        </div>
+        <div class="card-name">デッドウェイトロス計算機</div>
+        <div class="card-desc">税金や価格規制など、相互に利益のある取引を妨げる市場の歪みによって生じる経済的非効率性を定量化します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/debt-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">031</span>
+        </div>
+        <div class="card-name">負債比率計算機</div>
+        <div class="card-desc">総負債を総資産の割合として表現し、企業のレバレッジを測定し、財務リスク水準を評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/debt-to-asset-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">032</span>
+        </div>
+        <div class="card-name">負債資産比率</div>
+        <div class="card-desc">総負債を総資産と比較して、資産のどの部分が債権者対株主によって資金調達されているかを理解します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/debt-to-capital-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">033</span>
+        </div>
+        <div class="card-name">負債対資本比率</div>
+        <div class="card-desc">企業の資本構成における負債対株式の比率を測定し、全体的な財務レバレッジを示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/debtor-days.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">034</span>
+        </div>
+        <div class="card-name">売掛金回収日数計算機</div>
+        <div class="card-desc">顧客が未払い請求書を決済するまでの日数を推定します — 売掛金回収日数が低いほど、現金化が早くなります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/defensive-interval-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">035</span>
+        </div>
+        <div class="card-name">防衛的インターバル比率</div>
+        <div class="card-desc">追加の収益や融資を必要とせずに、流動資産のみを使用して企業が操業できる日数を測定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/discount-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">036</span>
+        </div>
+        <div class="card-name">割引計算機</div>
+        <div class="card-desc">元の価格と割引率を入力して、節約額と割引後の最終価格をすぐに確認できます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/dupont-analysis.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">037</span>
+        </div>
+        <div class="card-name">デュポン分析</div>
+        <div class="card-desc">株主資本利益率（ROE）を収益性、効率性、レバレッジの構成要素に分解して、業績を左右している要因を特定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/ebit-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">038</span>
+        </div>
+        <div class="card-name">EBIT計算機</div>
+        <div class="card-desc">営業収益から営業費を差し引いて、利息費用と税金を考慮する前の営業利益率を算出します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/ebitda-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">039</span>
+        </div>
+        <div class="card-name">EBITDA計算機</div>
+        <div class="card-desc">営業キャッシュフローのプロキシを計算し、非現金費用を純利益に加算します — ビジネス評価で広く使用されます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/ebitda-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">040</span>
+        </div>
+        <div class="card-name">EBITDA マージン</div>
+        <div class="card-desc">EBITDAを売上高のパーセンテージで表して、資本構造に関係なく企業間または期間の営業効率を比較します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/ebitda-multiple.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">041</span>
+        </div>
+        <div class="card-name">EBITDA倍数</div>
+        <div class="card-desc">EBITDAに業界比較可能倍数を乗じることで、企業の暗黙的な価値を決定します。これはM&amp;A評価の標準的なショートカットです。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/economic-order-quantity.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">042</span>
+        </div>
+        <div class="card-name">経済的発注量 (EOQ)</div>
+        <div class="card-desc">総在庫コストを最小化する理想的な発注数量を見つけます — 発注頻度と保管・保有費用のバランスを取ります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/economic-profit.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">043</span>
+        </div>
+        <div class="card-name">経済利益計算機</div>
+        <div class="card-desc">会計利益を超えて、機会費用を差し引くことで、ビジネスが次善の選択肢を上回る価値を真に創造しているかどうかを明らかにします。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/economic-value-added.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">044</span>
+        </div>
+        <div class="card-name">経済的付加価値</div>
+        <div class="card-desc">企業が必要な投資資本利益率を上回るどれだけの価値を生み出すかを測定します。正のEVAは真の株主価値創造を示しています。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/employee-turnover-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">045</span>
+        </div>
+        <div class="card-name">従業員離職率</div>
+        <div class="card-desc">一定期間に組織を去る従業員の割合を追跡して、人材確保の努力を評価し、採用およびトレーニングコストを見積もります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/ending-inventory.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">046</span>
+        </div>
+        <div class="card-name">期末棚卸資産計算機</div>
+        <div class="card-desc">期首棚卸資産、購入、および売上原価を使用して、期間終了時の未売却在庫の価値を決定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/enterprise-value.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">047</span>
+        </div>
+        <div class="card-name">企業価値計算機</div>
+        <div class="card-desc">時価総額と純債務を組み合わせて企業の買収総額を推定します。これはM&amp;Aと評価で使用される標準的な測度です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/enterprise-value-to-sales.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">048</span>
+        </div>
+        <div class="card-name">企業価値対売上高</div>
+        <div class="card-desc">企業の総価値を収益と比較して、市場がピアと比べて成長をどのように評価するかを評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/equity-multiplier.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">049</span>
+        </div>
+        <div class="card-name">エクイティ・マルチプライヤー</div>
+        <div class="card-desc">企業資産のうち、株主資本で賄われている部分を確認してください。高いマルチプライヤーは、より大きな財務レバレッジを示しています。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/equity-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">050</span>
+        </div>
+        <div class="card-name">自己資本比率計算機</div>
+        <div class="card-desc">株主資本で資金調達された総資産の割合を測定し、債務義務からの財務独立性を示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/fixed-asset-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">051</span>
+        </div>
+        <div class="card-name">固定資産回転率</div>
+        <div class="card-desc">企業が不動産、プラント、設備をどの程度効率的に利用して売上収益を生成しているかを評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/fixed-charge-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">052</span>
+        </div>
+        <div class="card-name">固定費カバレッジ比率 (FCCR)</div>
+        <div class="card-desc">企業が営業利益から債務返済およびリース費用などの固定義務をカバーするのに十分な収益を上げているかどうかを判断します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/free-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">053</span>
+        </div>
+        <div class="card-name">フリー・キャッシュ・フロー計算機</div>
+        <div class="card-desc">資本支出後に生成されるキャッシュを測定します—債務返済、配当金支払い、または成長への再投資に利用可能な金額。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+    </div>
+  </div>
+</div>
+
+    <div class="wrap"><footer class="footer">
+  <div class="footer-top">
+    <div>
+      <span class="foot-label mono">カテゴリ</span>
+      <div class="footer-catlist">
+        
+        <a class="foot-link" href="/ja/financial/">金融</a>
+        
+        <a class="foot-link" href="/ja/business/">ビジネス</a>
+        
+        <a class="foot-link" href="/ja/investment/">投資</a>
+        
+        <a class="foot-link" href="/ja/developer/">開発者</a>
+        
+        <a class="foot-link" href="/ja/utility/">ユーティリティ</a>
+        
+        <a class="foot-link" href="/ja/cryptography/">暗号</a>
+        
+        <a class="foot-link" href="/ja/design/">デザイン</a>
+        
+        <a class="foot-link" href="/ja/datetime/">日付と時刻</a>
+        
+        <a class="foot-link" href="/ja/math/">数学</a>
+        
+        <a class="foot-link" href="/ja/random/">ランダム</a>
+        
+        <a class="foot-link" href="/ja/text/">テキスト</a>
+        
+      </div>
+    </div>
+    <div>
+      <span class="foot-label mono">概要</span>
+      <p class="foot-about-text">単一目的の小さな計算ツールやコンバーターの成長中のコレクション。すべての計算はブラウザー内でローカルに実行されます — アカウント不要、広告なし、データが端末から出ることはありません。</p>
+    </div>
+  </div>
+  <div class="footer-mark">
+    <span class="footer-word">TOOLS</span>
+    <span class="footer-word">CATALOG</span>
+  </div>
+  <div class="footer-base mono">
+    <span>© 2026 ToolsCatalog</span>
+    <span>120 個のツール · リデザインプレビュー</span>
+  </div>
+</footer>
+</div>
+  </div>
+  <script>
+  (function () {
+    var btn = document.getElementById('cfg-btn');
+    var panel = document.getElementById('cfg-panel');
+    var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
+    if (!btn || !panel) return;
+    var KEY = 'tc_v2_bg';
+    var DEFAULT = '#ec18e6';
+
+    function current() {
+      try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }
+    }
+    function mark() {
+      var c = current().toLowerCase();
+      swatches.forEach(function (s) {
+        s.classList.toggle('on', s.getAttribute('data-color').toLowerCase() === c);
+      });
+    }
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    document.documentElement.style.setProperty('--mag', current());
+    mark();
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    swatches.forEach(function (s) {
+      s.addEventListener('click', function () {
+        var c = s.getAttribute('data-color');
+        document.documentElement.style.setProperty('--mag', c);
+        try { localStorage.setItem(KEY, c); } catch (e) {}
+        mark();
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  
+</body>
+</html>

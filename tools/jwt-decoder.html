@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -401,27 +451,223 @@ button:disabled{transform:none;}
         <p class="tp-desc">Decode and validate JSON Web Tokens (JWT) with header and payload inspection.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
-      <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+      <span class="tp-field-label mono">JWT Token</span>
+      <textarea class="tp-textarea tp-textarea--tall" id="token" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+    </div>
+    <div class="tp-toggles tp-toggles--wrap">
+      <button class="tp-toggle mono" id="paste">Paste</button>
+      <button class="tp-toggle mono" id="clear">Clear</button>
+    </div>
+    
+    <div id="structure-box" style="display:none; margin-top: 1.5rem;">
+      <span class="tp-field-label mono">Structure</span>
+      <div id="structure-out" class="mono" style="word-break: break-all; padding: 1rem; border: 2px solid var(--ink); font-size: 0.85rem; line-height: 1.4;"></div>
+      <div class="tp-hint mono" style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.7rem;">
+        <span>[1] Header</span>
+        <span>[2] Payload</span>
+        <span>[3] Signature</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">jwt-decoder</p>
   </div>
+
   <div class="tp-result">
-    <span class="tp-result-label">Cryptography</span>
+    <span class="tp-result-label">Token Status</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">JWT Token Decoder</span>
+      <span class="tp-result-num" id="status">---</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="status-note">Waiting for input...</span>
+
+    <div id="results-content" style="display:none; width: 100%; margin-top: 2rem;">
+      <div class="tp-statgrid" id="expiry-stats"></div>
+      
+      <div style="margin-top: 1.5rem;">
+        <span class="tp-result-label mono">Header</span>
+        <div class="tp-mono-out" id="header-out" style="margin-top: 0.5rem;"></div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="tp-result-label mono">Payload</span>
+        <div class="tp-mono-out" id="payload-out" style="margin-top: 0.5rem;"></div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="tp-result-label mono">Claims</span>
+        <div class="tp-breakdown" id="claims-out" style="margin-top: 0.5rem;"></div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="tp-result-label mono">Signature</span>
+        <div id="sig-out" class="mono" style="word-break: break-all; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;"></div>
+        <div class="tp-result-sub" id="sig-note" style="margin-top: 0.5rem;"></div>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const tokenInput = document.getElementById('token');
+  const pasteBtn = document.getElementById('paste');
+  const clearBtn = document.getElementById('clear');
+  const statusEl = document.getElementById('status');
+  const statusNote = document.getElementById('status-note');
+  const resultsContent = document.getElementById('results-content');
+  const structureBox = document.getElementById('structure-box');
+  const structureOut = document.getElementById('structure-out');
+  const expiryStats = document.getElementById('expiry-stats');
+  const headerOut = document.getElementById('header-out');
+  const payloadOut = document.getElementById('payload-out');
+  const claimsOut = document.getElementById('claims-out');
+  const sigOut = document.getElementById('sig-out');
+  const sigNote = document.getElementById('sig-note');
+
+  function base64UrlDecode(str) {
+    try {
+      str = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (str.length % 4) str += '=';
+      return decodeURIComponent(atob(str).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function syntaxHighlight(obj) {
+    if (!obj) return '';
+    const json = JSON.stringify(obj, null, 2);
+    return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"([^"]+)":/g, '<b>"$1"</b>:')
+      .replace(/: "([^"]*)"/g, ': <span style="opacity: 0.9">"$1"</span>')
+      .replace(/: (\d+)/g, ': <span style="text-decoration: underline">$1</span>');
+  }
+
+  function formatTimestamp(ts) {
+    if (!ts) return 'N/A';
+    return new Date(ts * 1000).toLocaleString();
+  }
+
+  function update() {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      statusEl.textContent = '---';
+      statusNote.textContent = 'Waiting for input...';
+      resultsContent.style.display = 'none';
+      structureBox.style.display = 'none';
+      return;
+    }
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      statusEl.textContent = 'INVALID';
+      statusNote.textContent = 'JWT must have 3 parts (header.payload.signature)';
+      resultsContent.style.display = 'none';
+      structureBox.style.display = 'none';
+      return;
+    }
+
+    structureBox.style.display = 'block';
+    structureOut.innerHTML = `
+      <span style="font-weight: bold">[1] ${parts[0]}</span><span style="opacity: 0.5">.</span>
+      <span style="opacity: 0.8">[2] ${parts[1]}</span><span style="opacity: 0.5">.</span>
+      <span style="opacity: 0.6">[3] ${parts[2]}</span>
+    `;
+
+    const headerJson = base64UrlDecode(parts[0]);
+    const payloadJson = base64UrlDecode(parts[1]);
+
+    if (!headerJson || !payloadJson) {
+      statusEl.textContent = 'ERROR';
+      statusNote.textContent = 'Failed to decode Base64 parts';
+      resultsContent.style.display = 'none';
+      return;
+    }
+
+    try {
+      const header = JSON.parse(headerJson);
+      const payload = JSON.parse(payloadJson);
+
+      resultsContent.style.display = 'block';
+      headerOut.innerHTML = syntaxHighlight(header);
+      payloadOut.innerHTML = syntaxHighlight(payload);
+      sigOut.textContent = parts[2];
+      sigNote.textContent = `Algorithm: ${header.alg || 'unknown'}. Signature verification requires a secret key.`;
+
+      // Expiry Logic
+      const now = Date.now() / 1000;
+      let status = 'VALID';
+      let note = 'Token structure and encoding are correct.';
+
+      if (payload.exp) {
+        if (now > payload.exp) {
+          status = 'EXPIRED';
+          note = `Expired on ${formatTimestamp(payload.exp)}`;
+        } else {
+          note = `Expires on ${formatTimestamp(payload.exp)}`;
+        }
+      }
+
+      statusEl.textContent = status;
+      statusNote.textContent = note;
+
+      // Stats
+      let statsHtml = '';
+      if (payload.iat) statsHtml += `<div><span class="mono">Issued</span><b>${formatTimestamp(payload.iat)}</b></div>`;
+      if (payload.exp) statsHtml += `<div><span class="mono">Expires</span><b>${formatTimestamp(payload.exp)}</b></div>`;
+      if (payload.nbf) statsHtml += `<div><span class="mono">Not Before</span><b>${formatTimestamp(payload.nbf)}</b></div>`;
+      expiryStats.innerHTML = statsHtml;
+      expiryStats.style.display = statsHtml ? 'grid' : 'none';
+
+      // Claims
+      const claimNames = {
+        sub: 'Subject', iss: 'Issuer', aud: 'Audience', exp: 'Expiration',
+        nbf: 'Not Before', iat: 'Issued At', jti: 'JWT ID', name: 'Full Name',
+        email: 'Email', role: 'Role', scope: 'Scope'
+      };
+      
+      let claimsHtml = '';
+      Object.entries(payload).forEach(([key, val]) => {
+        let display = val;
+        if (['exp', 'iat', 'nbf'].includes(key) && typeof val === 'number') {
+          display = formatTimestamp(val);
+        } else if (typeof val === 'object') {
+          display = JSON.stringify(val);
+        }
+        claimsHtml += `<div><span class="mono">${claimNames[key] || key}</span><b>${display}</b></div>`;
+      });
+      claimsOut.innerHTML = claimsHtml;
+
+    } catch (e) {
+      statusEl.textContent = 'PARSE ERROR';
+      statusNote.textContent = 'JSON parsing failed: ' + e.message;
+      resultsContent.style.display = 'none';
+    }
+  }
+
+  tokenInput.addEventListener('input', update);
+
+  pasteBtn.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      tokenInput.value = text;
+      update();
+    } catch (err) {
+      // Fallback or ignore
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    tokenInput.value = '';
+    update();
+  });
+
+  // Initial update
+  update();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
@@ -471,27 +717,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -551,6 +797,27 @@ button:disabled{transform:none;}
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);

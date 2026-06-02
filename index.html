@@ -62,10 +62,18 @@ body[data-tex="off"]{background-image:none;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
-.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
-.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
-.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
@@ -73,7 +81,6 @@ body[data-tex="off"]{background-image:none;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
   .topcount{font-size:10px;padding:5px 7px;}
-  .langs{display:none;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
@@ -118,8 +125,8 @@ body[data-tex="off"]{background-image:none;}
 .search-arrow{font-size:20px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
 .chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
-  transition:background .12s,color .12s;}
-.chip:hover{background:rgba(0,0,0,.08);}
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
 .chip.on{background:var(--ink);color:var(--mag);}
 .chip-count{font-size:8px;opacity:.6;}
 
@@ -227,7 +234,8 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
-.footer-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
 .footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
 .foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
 .foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
@@ -265,21 +273,63 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">297 TOOLS</span>
+    <span class="topcount mono">297 Tools</span>
   </div>
   <div class="topbar-right">
-    <div class="langs mono">
-      
-      <span class="lang on">EN</span>
-      
-      <span class="lang">ES</span>
-      
-      <span class="lang">PT</span>
-      
-      <span class="lang">ZH</span>
-      
-      <span class="lang">RU</span>
-      
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>EN</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>English</span><span class="langsel-code">en</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="pt" href="/pt/"><span>Português</span><span class="langsel-code">pt</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
+          
+        
+      </div>
     </div>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
@@ -383,7 +433,7 @@ button:disabled{transform:none;}
         </div>
         <div class="hero-side">
           <span class="hero-tag mono">(Est. 2026)</span>
-          <p class="hero-note mono">Every calculation runs<br>locally in your browser.<br>No accounts · no tracking.</p>
+          <p class="hero-note mono">Every calculation runs locally in your browser. No accounts · no tracking.</p>
         </div>
       </div>
     </section>
@@ -399,27 +449,27 @@ button:disabled{transform:none;}
     <div class="chips" id="chips">
       <button class="chip mono on" data-cat="all">All <span class="chip-count">297</span></button>
       
-      <button class="chip mono" data-cat="financial">Finance <span class="chip-count">56</span></button>
+      <button class="chip mono" data-cat="financial">Financial <span class="chip-count">56</span></button>
       
       <button class="chip mono" data-cat="business">Business <span class="chip-count">120</span></button>
       
       <button class="chip mono" data-cat="investment">Investment <span class="chip-count">58</span></button>
       
-      <button class="chip mono" data-cat="developer">Dev Tools <span class="chip-count">1</span></button>
+      <button class="chip mono" data-cat="developer">Developer <span class="chip-count">1</span></button>
       
       <button class="chip mono" data-cat="utility">Utility <span class="chip-count">10</span></button>
       
       <button class="chip mono" data-cat="cryptography">Cryptography <span class="chip-count">4</span></button>
       
-      <button class="chip mono" data-cat="design">Design Tools <span class="chip-count">4</span></button>
+      <button class="chip mono" data-cat="design">Design <span class="chip-count">4</span></button>
       
       <button class="chip mono" data-cat="datetime">Date &amp; Time <span class="chip-count">4</span></button>
       
       <button class="chip mono" data-cat="math">Math <span class="chip-count">4</span></button>
       
-      <button class="chip mono" data-cat="random">Random Data <span class="chip-count">4</span></button>
+      <button class="chip mono" data-cat="random">Random <span class="chip-count">4</span></button>
       
-      <button class="chip mono" data-cat="text">Text Tools <span class="chip-count">32</span></button>
+      <button class="chip mono" data-cat="text">Text <span class="chip-count">32</span></button>
       
     </div>
   </div>
@@ -1971,7 +2021,7 @@ button:disabled{transform:none;}
          data-cat="design"
          data-text="color palette generator generate beautiful color palettes for your design projects with hex, rgb, and hsl values.">
         <div class="card-top mono">
-          <span class="card-cat">Design Tools</span>
+          <span class="card-cat">Design</span>
           <span class="card-idx">129</span>
         </div>
         <div class="card-name">Color Palette Generator</div>
@@ -1983,7 +2033,7 @@ button:disabled{transform:none;}
          data-cat="design"
          data-text="css gradient generator create beautiful css gradients with live preview and copy-to-clipboard functionality.">
         <div class="card-top mono">
-          <span class="card-cat">Design Tools</span>
+          <span class="card-cat">Design</span>
           <span class="card-idx">130</span>
         </div>
         <div class="card-name">CSS Gradient Generator</div>
@@ -1995,7 +2045,7 @@ button:disabled{transform:none;}
          data-cat="design"
          data-text="favicon generator generate favicons in multiple sizes from your logo or image.">
         <div class="card-top mono">
-          <span class="card-cat">Design Tools</span>
+          <span class="card-cat">Design</span>
           <span class="card-idx">131</span>
         </div>
         <div class="card-name">Favicon Generator</div>
@@ -2007,7 +2057,7 @@ button:disabled{transform:none;}
          data-cat="design"
          data-text="image resizer resize images while maintaining aspect ratio with batch processing support.">
         <div class="card-top mono">
-          <span class="card-cat">Design Tools</span>
+          <span class="card-cat">Design</span>
           <span class="card-idx">132</span>
         </div>
         <div class="card-name">Image Resizer</div>
@@ -2019,7 +2069,7 @@ button:disabled{transform:none;}
          data-cat="developer"
          data-text="code minifier minify and beautify javascript, css, html, and json code with enhanced browser-based algorithms.">
         <div class="card-top mono">
-          <span class="card-cat">Dev Tools</span>
+          <span class="card-cat">Developer</span>
           <span class="card-idx">133</span>
         </div>
         <div class="card-name">Code Minifier</div>
@@ -2031,7 +2081,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="50/30/20 budget rule split your income into needs, wants, and savings using the 50/30/20 rule — see exactly how much to allocate in each bucket.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">134</span>
         </div>
         <div class="card-name">50/30/20 Budget Rule</div>
@@ -2043,7 +2093,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="actual cash value (acv) find the depreciated value of an asset for insurance claims — factors in age, condition, and replacement cost.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">135</span>
         </div>
         <div class="card-name">Actual Cash Value (ACV)</div>
@@ -2055,7 +2105,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="after-tax cost of debt see the true cost of borrowing after the tax deduction on interest, helping you evaluate financing options accurately.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">136</span>
         </div>
         <div class="card-name">After-tax Cost of Debt</div>
@@ -2067,7 +2117,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="amortization calculator view your full loan repayment schedule — see how each payment splits between principal and interest over the life of the loan.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">137</span>
         </div>
         <div class="card-name">Amortization Calculator</div>
@@ -2079,7 +2129,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="annual income calculator convert hourly, weekly, or monthly pay into your total annual income, including overtime and bonuses.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">138</span>
         </div>
         <div class="card-name">Annual Income Calculator</div>
@@ -2091,7 +2141,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="apr calculator find the true annual cost of a loan including fees and interest — essential for comparing loan offers side by side.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">139</span>
         </div>
         <div class="card-name">APR Calculator</div>
@@ -2103,7 +2153,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="apr to apy converter convert apr to apy to see the real return on your savings when compounding is factored in.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">140</span>
         </div>
         <div class="card-name">APR to APY Converter</div>
@@ -2115,7 +2165,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="apy calculator reveal the true annual yield on savings or investments once compounding is included — higher compounding frequency means more growth.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">141</span>
         </div>
         <div class="card-name">APY Calculator</div>
@@ -2127,7 +2177,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="apy to apr converter convert apy back to apr to understand the nominal rate behind a compounded return.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">142</span>
         </div>
         <div class="card-name">APY to APR Converter</div>
@@ -2139,7 +2189,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="buying power calculator see how inflation erodes your purchasing power over time — enter an amount and find what it&#39;s worth in today&#39;s dollars.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">143</span>
         </div>
         <div class="card-name">Buying Power Calculator</div>
@@ -2151,7 +2201,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="certificate of deposit calculator project your cd earnings based on deposit amount, interest rate, and term length — compare different lock-in periods.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">144</span>
         </div>
         <div class="card-name">Certificate of Deposit Calculator</div>
@@ -2163,7 +2213,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="compound interest calculator see how your money grows over time with compound interest — enter principal, rate, compounding frequency, and optional contributions.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">145</span>
         </div>
         <div class="card-name">Compound Interest Calculator</div>
@@ -2175,7 +2225,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="credit card payment calculator understand your credit card billing — see minimum payment amounts and how long it takes to pay off your balance.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">146</span>
         </div>
         <div class="card-name">Credit Card Payment Calculator</div>
@@ -2187,7 +2237,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="credit card payoff calculator plan your way out of credit card debt — find out how long payoff takes and total interest paid at different payment amounts.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">147</span>
         </div>
         <div class="card-name">Credit Card Payoff Calculator</div>
@@ -2199,7 +2249,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="debt to income ratio check if your monthly debt load is within healthy limits — lenders use this ratio to assess your creditworthiness.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">148</span>
         </div>
         <div class="card-name">Debt to Income Ratio</div>
@@ -2211,7 +2261,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="debt to limit ratio track your credit utilization by comparing your total balances to your credit limits — a key factor in your credit score.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">149</span>
         </div>
         <div class="card-name">Debt to Limit Ratio</div>
@@ -2223,7 +2273,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="discount factor calculator determine how much a future cash flow is worth in today&#39;s dollars using a given discount rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">150</span>
         </div>
         <div class="card-name">Discount Factor Calculator</div>
@@ -2235,7 +2285,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="disposable income calculator estimate how much you have left to spend or save after taxes and essential deductions are taken from your paycheck.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">151</span>
         </div>
         <div class="card-name">Disposable Income Calculator</div>
@@ -2247,7 +2297,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="earnest money calculator estimate how much earnest money you&#39;ll need when making an offer on a home — typically 1–3% of the purchase price.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">152</span>
         </div>
         <div class="card-name">Earnest Money Calculator</div>
@@ -2259,7 +2309,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="effective annual interest rate reveal the true annual interest rate after compounding — useful for comparing loans or savings accounts with different terms.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">153</span>
         </div>
         <div class="card-name">Effective Annual Interest Rate</div>
@@ -2271,7 +2321,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="effective tax rate calculator find your actual tax rate as a percentage of total income, as opposed to your marginal bracket rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">154</span>
         </div>
         <div class="card-name">Effective Tax Rate Calculator</div>
@@ -2283,7 +2333,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="emergency fund calculator determine your recommended emergency fund target based on monthly expenses and how many months of coverage you need.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">155</span>
         </div>
         <div class="card-name">Emergency Fund Calculator</div>
@@ -2295,7 +2345,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="emi calculator find your fixed monthly loan payment (emi) for any loan amount, interest rate, and repayment period.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">156</span>
         </div>
         <div class="card-name">EMI Calculator</div>
@@ -2307,7 +2357,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="equivalent interest rate convert an interest rate from one compounding frequency to another — useful when comparing products with different payment schedules.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">157</span>
         </div>
         <div class="card-name">Equivalent Interest Rate</div>
@@ -2319,7 +2369,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="fisher equation calculator separate nominal interest rates into real rates and inflation expectations using the fisher equation.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">158</span>
         </div>
         <div class="card-name">Fisher Equation Calculator</div>
@@ -2331,7 +2381,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="fixed deposit calculator project the maturity value of a fixed deposit given your principal, interest rate, and tenure.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">159</span>
         </div>
         <div class="card-name">Fixed Deposit Calculator</div>
@@ -2343,7 +2393,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="future value calculator project how much your money will be worth in the future based on an initial investment, rate of return, and time horizon.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">160</span>
         </div>
         <div class="card-name">Future Value Calculator</div>
@@ -2355,7 +2405,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="future value factor (fvf) look up the multiplier used to calculate how much a present sum grows to at a given rate and period.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">161</span>
         </div>
         <div class="card-name">Future Value Factor (FVF)</div>
@@ -2367,7 +2417,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="future value of annuity find the total value of a series of regular payments at a future date, given a fixed interest rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">162</span>
         </div>
         <div class="card-name">Future Value of Annuity</div>
@@ -2379,7 +2429,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="future value of growing annuity (fvga) project the future value of an annuity whose payments grow at a constant rate each period.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">163</span>
         </div>
         <div class="card-name">Future Value of Growing Annuity (FVGA)</div>
@@ -2391,7 +2441,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="gift of equity calculator estimate the equity gift amount when a home is sold below market value to a family member, and its impact on financing.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">164</span>
         </div>
         <div class="card-name">Gift of Equity Calculator</div>
@@ -2403,7 +2453,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="gross to net calculator deduct taxes and other withholdings from a gross amount to see your actual take-home pay or net proceeds.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">165</span>
         </div>
         <div class="card-name">Gross to Net Calculator</div>
@@ -2415,7 +2465,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="home sale profit calculator estimate your net profit from selling a home after accounting for agent commissions, closing costs, and outstanding mortgage.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">166</span>
         </div>
         <div class="card-name">Home Sale Profit Calculator</div>
@@ -2427,7 +2477,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="immediate annuity calculator estimate the regular income payments you&#39;d receive from an immediate annuity based on your lump-sum contribution.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">167</span>
         </div>
         <div class="card-name">Immediate Annuity Calculator</div>
@@ -2439,7 +2489,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="interest only mortgage see what your payments look like during the interest-only period of a mortgage — useful for understanding cash flow before principal kicks in.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">168</span>
         </div>
         <div class="card-name">Interest Only Mortgage</div>
@@ -2451,7 +2501,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="liquid net worth calculator measure your financial cushion by calculating net worth using only assets you can quickly convert to cash.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">169</span>
         </div>
         <div class="card-name">Liquid Net Worth Calculator</div>
@@ -2463,7 +2513,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="loan calculator plan any loan with monthly payment estimates, total interest cost, and a full amortization schedule.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">170</span>
         </div>
         <div class="card-name">Loan Calculator</div>
@@ -2475,7 +2525,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="loan to value (ltv) check your ltv ratio by comparing your loan balance to the property value — affects mortgage rates and pmi requirements.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">171</span>
         </div>
         <div class="card-name">Loan to Value (LTV)</div>
@@ -2487,7 +2537,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="lumpsum calculator estimate the future value of a one-time investment at a projected annual return rate over a given number of years.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">172</span>
         </div>
         <div class="card-name">Lumpsum Calculator</div>
@@ -2499,7 +2549,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="maturity value calculator find the final value of an investment or deposit when it reaches the end of its term, including all accrued interest.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">173</span>
         </div>
         <div class="card-name">Maturity Value Calculator</div>
@@ -2511,7 +2561,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="mortgage calculator plan your home loan with monthly payment breakdowns, total interest paid, and a full amortization schedule.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">174</span>
         </div>
         <div class="card-name">Mortgage Calculator</div>
@@ -2523,7 +2573,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="net to gross calculator work backwards from a net (take-home) amount to find the gross income needed before taxes and deductions.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">175</span>
         </div>
         <div class="card-name">Net to Gross Calculator</div>
@@ -2535,7 +2585,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="periodic interest rate break down an annual interest rate into its equivalent monthly, daily, or other periodic rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">176</span>
         </div>
         <div class="card-name">Periodic Interest Rate</div>
@@ -2547,7 +2597,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="perpetuity calculator value a stream of infinite equal payments by finding its present worth at a given discount rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">177</span>
         </div>
         <div class="card-name">Perpetuity Calculator</div>
@@ -2559,7 +2609,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="present value of annuity find what a series of future equal payments is worth in today&#39;s dollars at a given discount rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">178</span>
         </div>
         <div class="card-name">Present Value of Annuity</div>
@@ -2571,7 +2621,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="private mortgage insurance (pmi) estimate your monthly pmi cost when your down payment is under 20%, and see when you can drop the coverage.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">179</span>
         </div>
         <div class="card-name">Private Mortgage Insurance (PMI)</div>
@@ -2583,7 +2633,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="pvifa calculator find the present value interest factor used to discount a series of annuity payments at a given rate and period.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">180</span>
         </div>
         <div class="card-name">PVIFA Calculator</div>
@@ -2595,7 +2645,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="real estate commission estimate the agent commission on a home sale and see how it affects your net proceeds.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">181</span>
         </div>
         <div class="card-name">Real Estate Commission</div>
@@ -2607,7 +2657,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="rent affordability calculator find out how much rent you can comfortably afford based on your income using the standard 30% guideline.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">182</span>
         </div>
         <div class="card-name">Rent Affordability Calculator</div>
@@ -2619,7 +2669,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="rule of 72 calculator quickly estimate how long it takes your investment to double — just divide 72 by the annual interest rate.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">183</span>
         </div>
         <div class="card-name">Rule of 72 Calculator</div>
@@ -2631,7 +2681,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="salary inflation calculator see how much of a raise you&#39;d need to keep up with inflation and maintain your current purchasing power.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">184</span>
         </div>
         <div class="card-name">Salary Inflation Calculator</div>
@@ -2643,7 +2693,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="savings calculator project how much your savings will grow over time with regular contributions and compound interest.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">185</span>
         </div>
         <div class="card-name">Savings Calculator</div>
@@ -2655,7 +2705,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="simple interest calculator compute interest on a principal amount without compounding — useful for short-term loans and straightforward interest estimates.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">186</span>
         </div>
         <div class="card-name">Simple Interest Calculator</div>
@@ -2667,7 +2717,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="sip calculator estimate the future value of a systematic investment plan with regular contributions at an expected annual return.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">187</span>
         </div>
         <div class="card-name">SIP Calculator</div>
@@ -2679,7 +2729,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="tax calculator estimate your federal and state income taxes and take-home pay based on your income and filing status.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">188</span>
         </div>
         <div class="card-name">Tax Calculator</div>
@@ -2691,7 +2741,7 @@ button:disabled{transform:none;}
          data-cat="financial"
          data-text="taylor rule calculator estimate the optimal central bank interest rate based on inflation and output gap using the taylor rule formula.">
         <div class="card-top mono">
-          <span class="card-cat">Finance</span>
+          <span class="card-cat">Financial</span>
           <span class="card-idx">189</span>
         </div>
         <div class="card-name">Taylor Rule Calculator</div>
@@ -3447,7 +3497,7 @@ button:disabled{transform:none;}
          data-cat="random"
          data-text="fake data generator generate realistic fake data for testing including names, addresses, emails, and phone numbers.">
         <div class="card-top mono">
-          <span class="card-cat">Random Data</span>
+          <span class="card-cat">Random</span>
           <span class="card-idx">252</span>
         </div>
         <div class="card-name">Fake Data Generator</div>
@@ -3459,7 +3509,7 @@ button:disabled{transform:none;}
          data-cat="random"
          data-text="qr code generator generate qr codes for urls, text, contact information, and wifi credentials.">
         <div class="card-top mono">
-          <span class="card-cat">Random Data</span>
+          <span class="card-cat">Random</span>
           <span class="card-idx">253</span>
         </div>
         <div class="card-name">QR Code Generator</div>
@@ -3471,7 +3521,7 @@ button:disabled{transform:none;}
          data-cat="random"
          data-text="random number generator generate random numbers, dice rolls, and lottery numbers with customizable ranges.">
         <div class="card-top mono">
-          <span class="card-cat">Random Data</span>
+          <span class="card-cat">Random</span>
           <span class="card-idx">254</span>
         </div>
         <div class="card-name">Random Number Generator</div>
@@ -3483,7 +3533,7 @@ button:disabled{transform:none;}
          data-cat="random"
          data-text="uuid generator generate unique identifiers (uuid) in various formats for your applications.">
         <div class="card-top mono">
-          <span class="card-cat">Random Data</span>
+          <span class="card-cat">Random</span>
           <span class="card-idx">255</span>
         </div>
         <div class="card-name">UUID Generator</div>
@@ -3495,7 +3545,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="markdown converter convert markdown to html and vice versa with live preview and syntax highlighting.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">256</span>
         </div>
         <div class="card-name">Markdown Converter</div>
@@ -3507,7 +3557,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="regex tester test and debug regular expressions with real-time matching and explanation.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">257</span>
         </div>
         <div class="card-name">Regex Tester</div>
@@ -3519,7 +3569,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="text formatter format text with various transformations including case conversion, line sorting, and whitespace cleanup.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">258</span>
         </div>
         <div class="card-name">Text Formatter</div>
@@ -3531,7 +3581,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="word counter count words, characters, paragraphs, and reading time for your text content.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">259</span>
         </div>
         <div class="card-name">Word Counter</div>
@@ -3663,7 +3713,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="accents remover remove accents and diacritical marks from text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">270</span>
         </div>
         <div class="card-name">Accents Remover</div>
@@ -3675,7 +3725,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="add line numbers add line numbers to each line of text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">271</span>
         </div>
         <div class="card-name">Add Line Numbers</div>
@@ -3687,7 +3737,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="add/remove prefix suffix add or remove prefixes and suffixes from text lines.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">272</span>
         </div>
         <div class="card-name">Add/Remove Prefix Suffix</div>
@@ -3699,7 +3749,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="character counter count characters, words, lines, and paragraphs in text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">273</span>
         </div>
         <div class="card-name">Character Counter</div>
@@ -3711,7 +3761,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="combination generator generate all possible combinations from a list of items.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">274</span>
         </div>
         <div class="card-name">Combination Generator</div>
@@ -3723,7 +3773,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="duplicate lines remover remove duplicate lines from text while preserving order.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">275</span>
         </div>
         <div class="card-name">Duplicate Lines Remover</div>
@@ -3735,7 +3785,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="email extractor extract email addresses from text using pattern matching.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">276</span>
         </div>
         <div class="card-name">Email Extractor</div>
@@ -3747,7 +3797,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="empty lines remover remove empty lines and blank spaces from text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">277</span>
         </div>
         <div class="card-name">Empty Lines Remover</div>
@@ -3759,7 +3809,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="extra space remover remove extra spaces, tabs, and normalize whitespace.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">278</span>
         </div>
         <div class="card-name">Extra Space Remover</div>
@@ -3771,7 +3821,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="lines containing filter lines that contain or don&#39;t contain specific text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">279</span>
         </div>
         <div class="card-name">Lines Containing</div>
@@ -3783,7 +3833,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="list delimiter change delimiters in lists (comma, semicolon, newline, etc.).">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">280</span>
         </div>
         <div class="card-name">List Delimiter</div>
@@ -3795,7 +3845,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="number extractor extract numbers from text using pattern matching.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">281</span>
         </div>
         <div class="card-name">Number Extractor</div>
@@ -3807,7 +3857,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="permutation generator generate all possible permutations from a list of items.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">282</span>
         </div>
         <div class="card-name">Permutation Generator</div>
@@ -3819,7 +3869,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="phone number extractor extract phone numbers from text using pattern matching.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">283</span>
         </div>
         <div class="card-name">Phone Number Extractor</div>
@@ -3831,7 +3881,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="punctuation remover remove punctuation marks from text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">284</span>
         </div>
         <div class="card-name">Punctuation Remover</div>
@@ -3843,7 +3893,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="remove line breaks remove line breaks and join text into single line.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">285</span>
         </div>
         <div class="card-name">Remove Line Breaks</div>
@@ -3855,7 +3905,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="reverse string reverse text character by character or word by word.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">286</span>
         </div>
         <div class="card-name">Reverse String</div>
@@ -3867,7 +3917,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="shuffle letters randomly shuffle letters within words or entire text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">287</span>
         </div>
         <div class="card-name">Shuffle Letters</div>
@@ -3879,7 +3929,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="shuffle lines randomly shuffle the order of lines in text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">288</span>
         </div>
         <div class="card-name">Shuffle Lines</div>
@@ -3891,7 +3941,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="shuffle words randomly shuffle the order of words in text.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">289</span>
         </div>
         <div class="card-name">Shuffle Words</div>
@@ -3903,7 +3953,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="sort ip address sort ip addresses in numerical order.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">290</span>
         </div>
         <div class="card-name">Sort IP Address</div>
@@ -3915,7 +3965,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="sort lines sort lines alphabetically or numerically.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">291</span>
         </div>
         <div class="card-name">Sort Lines</div>
@@ -3927,7 +3977,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="sort numbers sort numbers in ascending or descending order.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">292</span>
         </div>
         <div class="card-name">Sort Numbers</div>
@@ -3939,7 +3989,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="space remover remove all spaces from text or normalize spacing.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">293</span>
         </div>
         <div class="card-name">Space Remover</div>
@@ -3951,7 +4001,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="stylish text generator generate stylish text with unicode characters and fonts.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">294</span>
         </div>
         <div class="card-name">Stylish Text Generator</div>
@@ -3963,7 +4013,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="text case converter convert text between different cases (upper, lower, title, camel, etc.).">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">295</span>
         </div>
         <div class="card-name">Text Case Converter</div>
@@ -3975,7 +4025,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="url extractor extract urls and links from text using pattern matching.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">296</span>
         </div>
         <div class="card-name">URL Extractor</div>
@@ -3987,7 +4037,7 @@ button:disabled{transform:none;}
          data-cat="text"
          data-text="word repeater repeat words or text a specified number of times.">
         <div class="card-top mono">
-          <span class="card-cat">Text Tools</span>
+          <span class="card-cat">Text</span>
           <span class="card-idx">297</span>
         </div>
         <div class="card-name">Word Repeater</div>
@@ -3998,7 +4048,7 @@ button:disabled{transform:none;}
     </div>
     <div class="empty" id="empty" style="display:none">
       <span class="mono">No match</span>
-      <div class="empty-head">Nothing here.<br>Try another word.</div>
+      <div class="empty-head">Nothing here. Try another word.</div>
     </div>
   </div>
 </div>
@@ -4009,27 +4059,27 @@ button:disabled{transform:none;}
       <span class="foot-label mono">Categories</span>
       <div class="footer-catlist">
         
-        <a class="foot-link" href="/financial/">Finance</a>
+        <a class="foot-link" href="/financial/">Financial</a>
         
         <a class="foot-link" href="/business/">Business</a>
         
         <a class="foot-link" href="/investment/">Investment</a>
         
-        <a class="foot-link" href="/developer/">Dev Tools</a>
+        <a class="foot-link" href="/developer/">Developer</a>
         
         <a class="foot-link" href="/utility/">Utility</a>
         
         <a class="foot-link" href="/cryptography/">Cryptography</a>
         
-        <a class="foot-link" href="/design/">Design Tools</a>
+        <a class="foot-link" href="/design/">Design</a>
         
         <a class="foot-link" href="/datetime/">Date &amp; Time</a>
         
         <a class="foot-link" href="/math/">Math</a>
         
-        <a class="foot-link" href="/random/">Random Data</a>
+        <a class="foot-link" href="/random/">Random</a>
         
-        <a class="foot-link" href="/text/">Text Tools</a>
+        <a class="foot-link" href="/text/">Text</a>
         
       </div>
     </div>
@@ -4095,6 +4145,27 @@ button:disabled{transform:none;}
     });
   })();
   </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
   
 <script>
 (function () {
@@ -4106,6 +4177,10 @@ button:disabled{transform:none;}
   var label = document.getElementById('results-label');
   var count = document.getElementById('results-count');
   var activeCat = 'all';
+  var I18N = {
+    allTools: "All tools",
+    shown: "{count} shown"
+  };
 
   function pad3(n) { return ('000' + n).slice(-3); }
 
@@ -4120,9 +4195,9 @@ button:disabled{transform:none;}
       if (visible) shown++;
     });
     var catChip = chips.filter(function (c) { return c.getAttribute('data-cat') === activeCat; })[0];
-    var catLabel = activeCat === 'all' ? 'All tools' : (catChip ? catChip.firstChild.textContent.trim() : activeCat);
+    var catLabel = activeCat === 'all' ? I18N.allTools : (catChip ? catChip.firstChild.textContent.trim() : activeCat);
     label.textContent = catLabel + (term ? ' · “' + q.value.trim() + '”' : '');
-    count.textContent = pad3(shown) + ' shown';
+    count.textContent = I18N.shown.replace('{count}', pad3(shown));
     grid.style.display = shown ? '' : 'none';
     empty.style.display = shown ? 'none' : '';
   }
