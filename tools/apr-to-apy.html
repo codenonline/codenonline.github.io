@@ -404,24 +404,101 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Annual Percentage Rate (APR)</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <input class="tp-input" id="apr" type="number" inputmode="decimal" value="5" step="any">
+        <span class="tp-suffix">%</span>
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">apr-to-apy</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">APR to APY Convert</span>
+    
+    <div class="tp-field">
+      <span class="tp-field-label mono">Compounds per year</span>
+      <div class="tp-field-input">
+        <input class="tp-input" id="comp" type="number" inputmode="numeric" value="12" min="1" step="1">
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    
+    <div class="tp-toggles tp-toggles--wrap" id="presets">
+      <button class="tp-toggle mono on" data-comp="12">12 (Monthly)</button>
+      <button class="tp-toggle mono" data-comp="4">4 (Quarterly)</button>
+      <button class="tp-toggle mono" data-comp="1">1 (Annually)</button>
+      <button class="tp-toggle mono" data-comp="365">365 (Daily)</button>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">APR entered</span><b id="bd-apr">5.00%</b></div>
+      <div><span class="mono">Compounds per year</span><b id="bd-comp">12</b></div>
+      <div><span class="mono">Effective yield increase</span><b id="bd-inc">0.00%</b></div>
+    </div>
+
+    <p class="tp-hint">
+      <strong>Formula:</strong> APY = (1 + (APR ÷ n))<sup>n</sup> − 1, where <em>n</em> is compounding periods per year. APY reflects the effective annual return, accounting for compound interest.
+    </p>
+  </div>
+  
+  <div class="tp-result">
+    <span class="tp-result-label">Annual Percentage Yield (APY)</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="r-apy">0.00</span>
+      <span class="tp-suffix">%</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Based on 5% APR, compounded 12 times a year</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var aprInput = document.getElementById('apr');
+  var compInput = document.getElementById('comp');
+  var presets = document.getElementById('presets');
+
+  function fmtPct(n) {
+    var num = parseFloat(n);
+    if (isNaN(num) || !isFinite(num)) return '0.00%';
+    return num.toFixed(2) + '%';
+  }
+
+  function calc() {
+    var aprVal = parseFloat(aprInput.value) || 0;
+    var comp = parseFloat(compInput.value) || 0;
+
+    var apy = 0;
+    if (comp > 0) {
+      apy = Math.pow(1 + (aprVal / 100) / comp, comp) - 1;
+    }
+    var yieldIncrease = apy - (aprVal / 100);
+
+    var apyPct = apy * 100;
+    var incPct = yieldIncrease * 100;
+
+    document.getElementById('r-apy').textContent = (isFinite(apyPct) ? apyPct : 0).toFixed(2);
+    document.getElementById('bd-apr').textContent = fmtPct(aprVal);
+    document.getElementById('bd-comp').textContent = comp || 0;
+    document.getElementById('bd-inc').textContent = fmtPct(incPct);
+    
+    document.getElementById('r-note').textContent = 
+      'Based on ' + aprVal + '% APR, compounded ' + comp + (comp === 1 ? ' time' : ' times') + ' a year';
+
+    if (presets) {
+      Array.prototype.forEach.call(presets.children, function (btn) {
+        btn.classList.toggle('on', parseFloat(btn.getAttribute('data-comp')) === comp);
+      });
+    }
+  }
+
+  if (presets) {
+    presets.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-comp]');
+      if (!btn) return;
+      compInput.value = btn.getAttribute('data-comp');
+      calc();
+    });
+  }
+
+  [aprInput, compInput].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->

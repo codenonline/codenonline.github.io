@@ -404,24 +404,89 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Gross income</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="gross" type="number" inputmode="decimal" value="75000" min="0" step="1000">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">disposable-income</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Taxes</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="taxes" type="number" inputmode="decimal" value="15000" min="0" step="1000">
+      </div>
+    </div>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Mandatory deductions</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="deductions" type="number" inputmode="decimal" value="5000" min="0" step="1000">
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Monthly disposable</span><b id="bd-monthly">$0</b></div>
+      <div><span class="mono">Savings potential (20%)</span><b id="bd-savings">$0</b></div>
+      <div><span class="mono">Total deductions</span><b id="bd-tot-ded">$0</b></div>
+      <div><span class="mono">Deduction rate</span><b id="bd-rate">0%</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
+    <span class="tp-result-label">Disposable income</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Disposable Income </span>
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-disposable">0</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note">Based on $0 gross income</span>
   </div>
 </div>
+<script>
+(function () {
+  var grossIn = document.getElementById('gross');
+  var taxesIn = document.getElementById('taxes');
+  var deductionsIn = document.getElementById('deductions');
+
+  var money = function (n) { 
+    return '$' + (isFinite(n) ? n : 0).toLocaleString('en-US', {
+      maximumFractionDigits: 0, 
+      minimumFractionDigits: 0
+    }); 
+  };
+  
+  var rate = function (n) { 
+    return (isFinite(n) ? n : 0).toFixed(2) + '%'; 
+  };
+
+  function calc() {
+    var gross = parseFloat(grossIn.value) || 0;
+    var tax = parseFloat(taxesIn.value) || 0;
+    var ded = parseFloat(deductionsIn.value) || 0;
+
+    var disposableIncome = gross - tax - ded;
+    var totalDeductions = tax + ded;
+    var deductionRate = gross > 0 ? (totalDeductions / gross) * 100 : 0;
+    var monthlyDisposable = disposableIncome / 12;
+    var savingsPotential = disposableIncome * 0.2;
+
+    document.getElementById('bd-monthly').textContent = money(monthlyDisposable);
+    document.getElementById('bd-savings').textContent = money(savingsPotential);
+    document.getElementById('bd-tot-ded').textContent = money(totalDeductions);
+    document.getElementById('bd-rate').textContent = rate(deductionRate);
+    
+    document.getElementById('r-disposable').textContent = (isFinite(disposableIncome) ? disposableIncome : 0).toLocaleString('en-US', {
+      maximumFractionDigits: 0, 
+      minimumFractionDigits: 0
+    });
+    document.getElementById('r-note').textContent = 'Based on ' + money(gross) + ' gross income';
+  }
+
+  [grossIn, taxesIn, deductionsIn].forEach(function (el) { 
+    el.addEventListener('input', calc); 
+  });
+  
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->

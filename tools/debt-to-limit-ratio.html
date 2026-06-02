@@ -404,24 +404,78 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Current balance</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="balance" type="number" inputmode="decimal" value="2500" min="0" step="any">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">debt-to-limit-ratio</p>
+    <div class="tp-field">
+      <span class="tp-field-label mono">Credit limit</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="limit" type="number" inputmode="decimal" value="10000" min="0" step="any">
+      </div>
+    </div>
+    <div class="tp-breakdown">
+      <div><span class="mono">Available credit</span><b id="bd-avail">$0</b></div>
+      <div><span class="mono">Credit rating impact</span><b id="bd-rating">Good</b></div>
+    </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
+    <span class="tp-result-label">Utilization Ratio</span>
     <div class="tp-result-val">
-      <span class="tp-result-num">Debt to Limit Rati</span>
+      <span class="tp-result-num" id="r-util">0.00%</span>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+    <span class="tp-result-note" id="r-note"></span>
   </div>
 </div>
+<script>
+(function() {
+  var balanceInput = document.getElementById('balance');
+  var limitInput = document.getElementById('limit');
+  var utilOut = document.getElementById('r-util');
+  var availOut = document.getElementById('bd-avail');
+  var ratingOut = document.getElementById('bd-rating');
+  var noteOut = document.getElementById('r-note');
+
+  var money = function(n) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(isFinite(n) ? n : 0);
+  };
+
+  function calc() {
+    var balance = parseFloat(balanceInput.value) || 0;
+    var limit = parseFloat(limitInput.value) || 0;
+    
+    var utilization = limit > 0 ? (balance / limit) * 100 : 0;
+    var availableCredit = Math.max(0, limit - balance);
+    
+    var rating;
+    if (utilization <= 10) { rating = 'Excellent'; }
+    else if (utilization <= 30) { rating = 'Good'; }
+    else if (utilization <= 50) { rating = 'Fair'; }
+    else if (utilization <= 75) { rating = 'Poor'; }
+    else { rating = 'Very Poor'; }
+
+    utilOut.textContent = utilization.toFixed(2) + '%';
+    availOut.textContent = money(availableCredit);
+    ratingOut.textContent = rating;
+    
+    noteOut.textContent = 'Using ' + money(balance) + ' of ' + money(limit) + ' limit';
+  }
+
+  [balanceInput, limitInput].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+  
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->

@@ -404,24 +404,149 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Property purchase price</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="price" type="number" inputmode="numeric" value="500000" min="0" step="1000">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">earnest-money</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Finance</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Earnest Money Calc</span>
+    
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Earnest money %</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="percentage" type="number" inputmode="decimal" value="2.0" min="0" max="100" step="0.1">
+          <span class="tp-suffix">%</span>
+        </div>
+      </div>
+      
+      <div class="tp-field">
+        <span class="tp-field-label mono">Market type</span>
+        <div class="tp-field-input">
+          <select class="tp-input" id="market">
+            <option value="buyer">Buyer's Market</option>
+            <option value="balanced" selected>Balanced Market</option>
+            <option value="seller">Seller's Market</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Property type</span>
+      <div class="tp-field-input">
+        <select class="tp-input" id="property">
+          <option value="residential" selected>Single Family Residential</option>
+          <option value="condo">Condominium</option>
+          <option value="townhouse">Townhouse</option>
+          <option value="multi-family">Multi-Family</option>
+          <option value="luxury">Luxury Property</option>
+          <option value="commercial">Commercial Property</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tp-toggles tp-toggles--wrap" id="presets">
+      <button class="tp-toggle mono" data-action="min">Use min (1%)</button>
+      <button class="tp-toggle mono on" data-action="rec">Use recommended</button>
+      <button class="tp-toggle mono" data-action="comp">Use competitive (3%)</button>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Min recommended (1%)</span><b id="bd-min">$0</b></div>
+      <div><span class="mono">Competitive amount (3%)</span><b id="bd-comp">$0</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Earnest money amount</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-amount">0</span>
+    </div>
+    <span class="tp-result-note" id="r-note">2% of purchase price</span>
+    <div class="tp-result-sub" id="r-market-rec" style="margin-top: 1.5rem; font-size: 0.95rem; line-height: 1.5; opacity: 0.9;"></div>
   </div>
 </div>
+
+<script>
+(function () {
+  var priceEl = document.getElementById('price');
+  var percentEl = document.getElementById('percentage');
+  var marketEl = document.getElementById('market');
+  var propertyEl = document.getElementById('property');
+  var presets = document.getElementById('presets');
+
+  var money = function (n) { return '$' + (isFinite(n) ? n : 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); };
+  var numMoney = function (n) { return (isFinite(n) ? n : 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); };
+
+  var suggestions = { buyer: 1.5, balanced: 2.0, seller: 2.5 };
+  var recommendations = {
+    buyer: "In a buyer's market, 1-2% earnest money is typically sufficient. You have more negotiating power and less competition.",
+    balanced: "In a balanced market, 1.5-2.5% is recommended to show serious intent while maintaining reasonable risk.",
+    seller: "In a seller's market, consider 2-3% or higher to make your offer competitive and demonstrate strong commitment."
+  };
+
+  function calc() {
+    var price = parseFloat(priceEl.value) || 0;
+    var pct = parseFloat(percentEl.value) || 0;
+    var market = marketEl.value;
+
+    var earnestMoney = 0;
+    var minAmount = 0;
+    var compAmount = 0;
+
+    if (price > 0) {
+      earnestMoney = (price * pct) / 100;
+      minAmount = price * 0.01;
+      compAmount = price * 0.03;
+    }
+
+    document.getElementById('bd-min').textContent = money(minAmount);
+    document.getElementById('bd-comp').textContent = money(compAmount);
+    
+    document.getElementById('r-amount').textContent = numMoney(earnestMoney);
+    document.getElementById('r-note').textContent = pct + '% of purchase price';
+    document.getElementById('r-market-rec').textContent = recommendations[market] || '';
+
+    var recVal = suggestions[market];
+    Array.prototype.forEach.call(presets.children, function (btn) {
+      var act = btn.getAttribute('data-action');
+      var on = false;
+      if (act === 'min' && pct === 1.0) on = true;
+      if (act === 'rec' && pct === recVal) on = true;
+      if (act === 'comp' && pct === 3.0) on = true;
+      btn.classList.toggle('on', on);
+    });
+  }
+
+  marketEl.addEventListener('change', function() {
+    var market = marketEl.value;
+    var currentPct = parseFloat(percentEl.value) || 0;
+    if (Math.abs(currentPct - suggestions[market]) <= 0.5) {
+      percentEl.value = suggestions[market].toFixed(1);
+    }
+    calc();
+  });
+
+  presets.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    var act = btn.getAttribute('data-action');
+    var market = marketEl.value;
+    if (act === 'min') percentEl.value = '1.0';
+    if (act === 'rec') percentEl.value = suggestions[market].toFixed(1);
+    if (act === 'comp') percentEl.value = '3.0';
+    calc();
+  });
+
+  [priceEl, percentEl, propertyEl].forEach(function(el) {
+    el.addEventListener('input', calc);
+  });
+  
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
