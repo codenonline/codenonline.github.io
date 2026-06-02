@@ -57,15 +57,25 @@ body[data-tex="off"]{background-image:none;}
 /* top bar -----------------------------------------------------------*/
 .topbar{border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;
   padding:14px var(--pad);position:sticky;top:0;background:var(--mag);z-index:30;}
-.brand{display:flex;align-items:center;gap:11px;}
+.topbar-left{display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0;}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;}
 .brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
 .brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 .topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
-.langs{display:flex;gap:9px;font-size:11px;}
-.lang{opacity:.45;}
-.lang.on{opacity:1;border-bottom:2px solid var(--ink);}
+.langs{display:flex;gap:2px;font-size:11px;border:2px solid var(--ink);}
+.lang{padding:5px 8px;opacity:.65;line-height:1;transition:background .12s,color .12s,opacity .12s;}
+.lang:hover{background:rgba(0,0,0,.08);opacity:1;}
+.lang.on{background:var(--ink);color:var(--mag);opacity:1;}
 .topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
-@media(max-width:640px){.langs{display:none;}}
+@media(max-width:640px){
+  .topbar{padding:14px 18px;}
+  .topbar-left{gap:8px;}
+  .brand{gap:7px;}
+  .brand-name{font-size:18px;}
+  .topcount{font-size:10px;padding:5px 7px;}
+  .langs{display:none;}
+}
+@media(max-width:340px){.topcount{display:none;}}
 
 /* config / color picker --------------------------------------------*/
 .cfg{position:relative;}
@@ -83,8 +93,8 @@ body[data-tex="off"]{background-image:none;}
 
 /* hero --------------------------------------------------------------*/
 .hero{padding:clamp(30px,6vw,72px) 0 clamp(24px,4vw,44px);border-bottom:2px solid var(--ink);}
-.hero-main{display:flex;gap:clamp(14px,3vw,30px);align-items:flex-start;}
-.hero-tag{font-size:13px;margin-top:clamp(8px,1.4vw,18px);white-space:nowrap;}
+.hero-main{display:block;}
+.hero-tag{font-size:13px;white-space:nowrap;}
 .hero-head{font-weight:800;letter-spacing:-.045em;line-height:.9;
   font-size:clamp(38px,8.4vw,116px);text-wrap:balance;}
 .hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;
@@ -94,8 +104,9 @@ body[data-tex="off"]{background-image:none;}
 .stat-label{font-size:12px;}
 .stat-val{font-weight:800;letter-spacing:-.04em;line-height:.9;font-size:clamp(34px,4.6vw,62px);}
 .stat-sub{font-size:.4em;font-weight:700;letter-spacing:0;opacity:.55;margin-left:.1em;font-family:var(--mono);vertical-align:super;}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(18px,3vw,36px);}
 .hero-note{font-size:11px;line-height:1.7;text-align:right;opacity:.85;}
-@media(max-width:560px){.hero-note{text-align:left;}}
+@media(max-width:560px){.hero-side{align-items:flex-start;gap:18px;}.hero-note{text-align:left;}}
 
 /* controls ----------------------------------------------------------*/
 .controls{padding:clamp(22px,3vw,32px) var(--pad) clamp(16px,2vw,22px);}
@@ -249,10 +260,13 @@ button:disabled{transform:none;}
 <body data-tex="on" data-hover="on">
   <div class="app">
     <header class="topbar">
-  <a class="brand" href="/">
-    <span class="brand-name">TOOLSCATALOG</span>
-    <span class="brand-ver mono">V2</span>
-  </a>
+  <div class="topbar-left">
+    <a class="brand" href="/">
+      <span class="brand-name">TOOLSCATALOG</span>
+      <span class="brand-ver mono">V2</span>
+    </a>
+    <span class="topcount mono">297 TOOLS</span>
+  </div>
   <div class="topbar-right">
     <div class="langs mono">
       
@@ -267,7 +281,6 @@ button:disabled{transform:none;}
       <span class="lang">RU</span>
       
     </div>
-    <span class="topcount mono">297 TOOLS</span>
     <div class="cfg">
       <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -391,24 +404,104 @@ button:disabled{transform:none;}
       <div class="tp-grid">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Status</span>
+      <span class="tp-field-label mono">Annual salary</span>
       <div class="tp-field-input">
-        <input class="tp-input" value="Interactive — original" disabled>
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="salary-annual" type="number" inputmode="decimal" value="75000" min="0" step="0.01">
       </div>
     </div>
-    <p class="tp-hint">This page is rendered in the new design system. The live calculator
-      for this tool keeps its existing logic — only the shell, type, and layout are restyled.
-      A handful of tools in this preview are fully wired up to demonstrate the input/result pattern.</p>
-    <p class="tp-demo-note mono">salary-to-hourly</p>
-  </div>
-  <div class="tp-result">
-    <span class="tp-result-label">Business</span>
-    <div class="tp-result-val">
-      <span class="tp-result-num">Salary to Hourly C</span>
+
+    <div class="tp-two">
+      <div class="tp-field">
+        <span class="tp-field-label mono">Weekly hours</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="salary-hours" type="number" inputmode="decimal" value="40" min="0" step="0.1">
+          <span class="tp-suffix">hrs</span>
+        </div>
+      </div>
+      <div class="tp-field">
+        <span class="tp-field-label mono">Paid weeks / year</span>
+        <div class="tp-field-input">
+          <input class="tp-input" id="salary-weeks" type="number" inputmode="decimal" value="52" min="0" step="0.1">
+          <span class="tp-suffix">wks</span>
+        </div>
+      </div>
     </div>
-    <span class="tp-result-note">Restyled in the new UI · logic unchanged</span>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Daily rate</span><b id="bd-daily">$0.00</b></div>
+      <div><span class="mono">Biweekly pay</span><b id="bd-biweekly">$0</b></div>
+      <div><span class="mono">Monthly pay</span><b id="bd-monthly">$0</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Hourly rate</span>
+    <div class="tp-result-val">
+      <span class="tp-result-prefix">$</span>
+      <span class="tp-result-num" id="r-hourly">0.00</span>
+    </div>
+    <span class="tp-result-note" id="r-note">Annual salary / (weekly hours x paid weeks)</span>
+    <span class="tp-result-sub" id="r-formula">Daily = hourly x (weekly hours / 5) · Biweekly = hourly x weekly hours x 2 · Monthly = annual salary / 12</span>
   </div>
 </div>
+
+<script>
+(function () {
+  var annualInput = document.getElementById('salary-annual');
+  var hoursInput = document.getElementById('salary-hours');
+  var weeksInput = document.getElementById('salary-weeks');
+  var rHourly = document.getElementById('r-hourly');
+  var bdDaily = document.getElementById('bd-daily');
+  var bdBiweekly = document.getElementById('bd-biweekly');
+  var bdMonthly = document.getElementById('bd-monthly');
+  var rNote = document.getElementById('r-note');
+
+  function money2(n) {
+    var v = isFinite(n) ? n : 0;
+    return '$' + v.toFixed(2);
+  }
+
+  function money0(n) {
+    var v = isFinite(n) ? n : 0;
+    return '$' + Math.round(v).toLocaleString();
+  }
+
+  function calc() {
+    var salary = parseFloat(annualInput.value) || 0;
+    var hours = parseFloat(hoursInput.value);
+    var weeks = parseFloat(weeksInput.value);
+
+    if (!isFinite(hours) || hours <= 0) hours = 40;
+    if (!isFinite(weeks) || weeks <= 0) weeks = 52;
+
+    var totalHours = hours * weeks;
+    var hourlyRate = totalHours > 0 ? (salary / totalHours) : 0;
+    var dailyRate = totalHours > 0 ? (hourlyRate * (hours / 5)) : 0;
+    var biweeklyPay = totalHours > 0 ? (hourlyRate * hours * 2) : 0;
+    var monthlyPay = salary / 12;
+
+    rHourly.textContent = (isFinite(hourlyRate) ? hourlyRate : 0).toFixed(2);
+    bdDaily.textContent = money2(dailyRate);
+    bdBiweekly.textContent = money0(biweeklyPay);
+    bdMonthly.textContent = money0(monthlyPay);
+    rNote.textContent =
+      (salary > 0 ? '$' + Math.round(salary).toLocaleString() : '$0') +
+      ' yearly at ' +
+      (isFinite(hours) ? hours.toLocaleString() : '40') +
+      ' hrs/week for ' +
+      (isFinite(weeks) ? weeks.toLocaleString() : '52') +
+      ' paid weeks';
+  }
+
+  [annualInput, hoursInput, weeksInput].forEach(function (el) {
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+
+  calc();
+})();
+</script>
 
 
       <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
