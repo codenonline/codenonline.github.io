@@ -78,19 +78,19 @@ body[data-tex="off"]{background-image:none;}
   padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
 .langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
 .langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
-.topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
+.topcount{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
   .topbar-left{gap:8px;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
-  .topcount{font-size:10px;padding:5px 7px;}
+  .topcount{font-size:9px;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
 /* config / color picker --------------------------------------------*/
 .cfg{position:relative;}
-.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;}
+.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
 .cfg-btn:hover{background:var(--ink);color:var(--mag);}
 .cfg-btn svg{width:13px;height:13px;display:block;}
 .cfg-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
@@ -176,7 +176,7 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-desc{font-size:clamp(14px,1.5vw,17px);line-height:1.5;max-width:60ch;opacity:.85;}
 
 .tp-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2px;background:var(--ink);border:2px solid var(--ink);}
-.tp-grid--wide{grid-template-columns:1fr 1fr;}
+.tp-grid--wide{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
 @media(max-width:780px){.tp-grid,.tp-grid--wide{grid-template-columns:1fr;}}
 .tp-inputs{background:var(--mag);padding:clamp(20px,2.6vw,34px);display:flex;flex-direction:column;gap:18px;}
 .tp-field{display:flex;flex-direction:column;gap:7px;}
@@ -520,6 +520,105 @@ button:disabled{transform:none;}
 </footer>
 </div>
   </div>
+  <!-- Universal feedback widget (v2) ------------------------------------------
+     A floating button that opens a small form. On send it composes a mailto:
+     link pre-filled with the current page URL + the user's message, so the
+     visitor's default email client takes over (no backend required). Shared
+     across every page via base.njk. -->
+<style>
+.fb-fab{position:fixed;right:clamp(14px,3vw,28px);bottom:clamp(14px,3vw,28px);z-index:60;
+  border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:11px;padding:11px 15px;display:inline-flex;align-items:center;gap:8px;}
+.fb-fab:hover{opacity:.85;}
+.fb-fab-ico{font-size:13px;line-height:1;}
+
+.fb-overlay{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;padding:18px;}
+.fb-overlay.open{display:flex;}
+.fb-modal{background:var(--mag);border:2px solid var(--ink);width:100%;max-width:440px;
+  padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:16px;}
+.fb-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.fb-modal-title{font-weight:800;letter-spacing:-.04em;font-size:clamp(22px,3vw,30px);line-height:.95;}
+.fb-modal-sub{font-size:11px;opacity:.7;line-height:1.5;margin-top:6px;}
+.fb-close{font-size:20px;line-height:1;border:2px solid var(--ink);width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;flex:none;}
+.fb-close:hover{background:var(--ink);color:var(--mag);}
+.fb-textarea{border:2px solid var(--ink);background:var(--mag);padding:12px;color:var(--ink);
+  font-family:var(--mono);font-size:13px;line-height:1.6;resize:vertical;min-height:130px;outline:none;width:100%;}
+.fb-textarea::placeholder{color:var(--ink);opacity:.45;}
+.fb-send{border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:12px;padding:13px 16px;text-align:center;}
+.fb-send:hover{opacity:.85;}
+.fb-send:disabled{opacity:.4;cursor:not-allowed;}
+.fb-note{font-size:10px;opacity:.6;line-height:1.6;}
+</style>
+
+<button class="fb-fab" id="fb-fab" type="button" aria-haspopup="dialog" aria-expanded="false">
+  <span class="fb-fab-ico" aria-hidden="true">✎</span>
+  <span>Feedback</span>
+</button>
+
+<div class="fb-overlay" id="fb-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-title">
+  <div class="fb-modal">
+    <div class="fb-modal-head">
+      <div>
+        <div class="fb-modal-title" id="fb-title">Send feedback</div>
+        <div class="fb-modal-sub">Found a bug or have an idea? Tell us — it opens your email app.</div>
+      </div>
+      <button class="fb-close" id="fb-close" type="button" aria-label="Close">×</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text"
+      placeholder="Your feedback…"></textarea>
+    <button class="fb-send" id="fb-send" type="button" disabled>Send via email</button>
+    <p class="fb-note mono">Opens your default mail app · the page link is added automatically.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var FB_TO = "slava@kaushan.com";
+  var fab = document.getElementById('fb-fab');
+  var overlay = document.getElementById('fb-overlay');
+  var closeBtn = document.getElementById('fb-close');
+  var text = document.getElementById('fb-text');
+  var send = document.getElementById('fb-send');
+  if (!fab || !overlay || !text || !send) return;
+
+  function setOpen(open) {
+    overlay.classList.toggle('open', open);
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) setTimeout(function () { text.focus(); }, 0);
+  }
+
+  fab.addEventListener('click', function () { setOpen(true); });
+  closeBtn.addEventListener('click', function () { setOpen(false); });
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) setOpen(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) setOpen(false);
+  });
+
+  text.addEventListener('input', function () {
+    send.disabled = text.value.trim().length === 0;
+  });
+
+  send.addEventListener('click', function () {
+    var body = text.value.trim();
+    if (!body) return;
+    var pageUrl = location.href;
+    var pageTitle = document.title;
+    var subject = 'Feedback: ' + pageTitle;
+    var fullBody = body + '\n\n— — —\nPage: ' + pageTitle + '\n' + pageUrl;
+    var href = 'mailto:' + encodeURIComponent(FB_TO) +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(fullBody);
+    window.location.href = href;
+    setOpen(false);
+  });
+})();
+</script>
+
   <script>
   (function () {
     var btn = document.getElementById('cfg-btn');

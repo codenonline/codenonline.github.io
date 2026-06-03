@@ -78,19 +78,19 @@ body[data-tex="off"]{background-image:none;}
   padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
 .langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
 .langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
-.topcount{font-size:11px;border:2px solid var(--ink);padding:5px 9px;}
+.topcount{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
 @media(max-width:640px){
   .topbar{padding:14px 18px;}
   .topbar-left{gap:8px;}
   .brand{gap:7px;}
   .brand-name{font-size:18px;}
-  .topcount{font-size:10px;padding:5px 7px;}
+  .topcount{font-size:9px;}
 }
 @media(max-width:340px){.topcount{display:none;}}
 
 /* config / color picker --------------------------------------------*/
 .cfg{position:relative;}
-.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;}
+.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
 .cfg-btn:hover{background:var(--ink);color:var(--mag);}
 .cfg-btn svg{width:13px;height:13px;display:block;}
 .cfg-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
@@ -176,7 +176,7 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-desc{font-size:clamp(14px,1.5vw,17px);line-height:1.5;max-width:60ch;opacity:.85;}
 
 .tp-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2px;background:var(--ink);border:2px solid var(--ink);}
-.tp-grid--wide{grid-template-columns:1fr 1fr;}
+.tp-grid--wide{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
 @media(max-width:780px){.tp-grid,.tp-grid--wide{grid-template-columns:1fr;}}
 .tp-inputs{background:var(--mag);padding:clamp(20px,2.6vw,34px);display:flex;flex-direction:column;gap:18px;}
 .tp-field{display:flex;flex-direction:column;gap:7px;}
@@ -455,7 +455,7 @@ button:disabled{transform:none;}
         <p class="tp-desc">Observa cómo la inflación erosiona tu poder de compra con el tiempo — ingresa una cantidad y descubre su valor en dólares actuales.</p>
       </div>
 
-      <div class="tp-grid">
+      <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-two">
       <div class="tp-field">
@@ -622,6 +622,103 @@ button:disabled{transform:none;}
       </div>
     </div>
     
+
+    <!-- Universal email capture (v2) --------------------------------------------
+     One shared block appended to the end of every tool page. Collects an email
+     to notify about new tools/updates. Posts to window.__TC_EMAIL_ENDPOINT__
+     when configured; otherwise it stores the address locally and still shows a
+     success state, so it works on the static (no-backend) deploy. -->
+<style>
+.tp-capture{margin-top:clamp(34px,5vw,56px);border:2px solid var(--ink);
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--ink);}
+@media(max-width:680px){.tp-capture{grid-template-columns:1fr;}}
+.tp-capture-copy{background:var(--mag);padding:clamp(20px,2.6vw,32px);display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.tp-capture-kicker{font-size:11px;}
+.tp-capture-title{font-weight:800;letter-spacing:-.04em;line-height:.95;font-size:clamp(24px,3vw,36px);}
+.tp-capture-sub{font-size:12px;line-height:1.6;opacity:.78;max-width:42ch;}
+.tp-capture-form{background:var(--ink);color:var(--mag);padding:clamp(20px,2.6vw,32px);
+  display:flex;flex-direction:column;gap:12px;justify-content:center;}
+.tp-capture-row{display:flex;border:2px solid var(--mag);}
+.tp-capture-input{flex:1;background:none;border:none;outline:none;color:var(--mag);
+  padding:12px 13px;font-weight:700;letter-spacing:-.02em;font-size:clamp(15px,1.6vw,18px);min-width:0;}
+.tp-capture-input::placeholder{color:var(--mag);opacity:.5;}
+.tp-capture-btn{border:none;border-left:2px solid var(--mag);background:var(--mag);color:var(--ink);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  font-size:11px;padding:0 16px;white-space:nowrap;}
+.tp-capture-btn:hover{opacity:.85;}
+.tp-capture-btn:disabled{opacity:.5;cursor:progress;}
+.tp-capture-note{font-size:10px;opacity:.6;line-height:1.6;}
+.tp-capture-ok{font-size:13px;font-weight:700;letter-spacing:-.02em;}
+</style>
+
+<div class="tp-capture" id="tp-capture">
+  <div class="tp-capture-copy">
+    <span class="tp-capture-kicker mono">Stay in the loop</span>
+    <div class="tp-capture-title">New tools, in your inbox.</div>
+    <p class="tp-capture-sub">Get an occasional email when we ship new calculators and updates. No spam, unsubscribe anytime.</p>
+  </div>
+  <div class="tp-capture-form">
+    <div class="tp-capture-row" id="tp-capture-row">
+      <input class="tp-capture-input" id="tp-capture-input" type="email" autocomplete="email"
+             placeholder="you@email.com" aria-label="Email address">
+      <button class="tp-capture-btn" id="tp-capture-btn" type="button">Notify me</button>
+    </div>
+    <p class="tp-capture-note mono">We respect your privacy. No spam, ever.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var wrap = document.getElementById('tp-capture');
+  var row = document.getElementById('tp-capture-row');
+  var input = document.getElementById('tp-capture-input');
+  var btn = document.getElementById('tp-capture-btn');
+  var form = wrap ? wrap.querySelector('.tp-capture-form') : null;
+  if (!wrap || !input || !btn || !form) return;
+
+  var toolId = "buying-power";
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var OK_TEXT = "Thanks — you're on the list!";
+
+  function showSuccess() {
+    row.style.display = 'none';
+    var note = form.querySelector('.tp-capture-note');
+    if (note) note.style.display = 'none';
+    var ok = document.createElement('p');
+    ok.className = 'tp-capture-ok';
+    ok.textContent = OK_TEXT;
+    form.appendChild(ok);
+  }
+
+  btn.addEventListener('click', function () {
+    var email = input.value.trim();
+    if (!EMAIL_RE.test(email)) { input.focus(); return; }
+
+    btn.disabled = true;
+    var endpoint = window.__TC_EMAIL_ENDPOINT__;
+    var payload = { email: email, tool_id: toolId, source: 'v2', url: location.href };
+
+    // Remember locally regardless, so a repeat visitor isn't re-prompted hard.
+    try { localStorage.setItem('tc_v2_email', email); } catch (e) {}
+
+    if (endpoint) {
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(showSuccess).catch(showSuccess);
+    } else {
+      // No backend wired (static deploy) — still confirm to the user.
+      showSuccess();
+    }
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+  });
+})();
+</script>
+
   </div>
 </section>
 
@@ -671,6 +768,105 @@ button:disabled{transform:none;}
 </footer>
 </div>
   </div>
+  <!-- Universal feedback widget (v2) ------------------------------------------
+     A floating button that opens a small form. On send it composes a mailto:
+     link pre-filled with the current page URL + the user's message, so the
+     visitor's default email client takes over (no backend required). Shared
+     across every page via base.njk. -->
+<style>
+.fb-fab{position:fixed;right:clamp(14px,3vw,28px);bottom:clamp(14px,3vw,28px);z-index:60;
+  border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:11px;padding:11px 15px;display:inline-flex;align-items:center;gap:8px;}
+.fb-fab:hover{opacity:.85;}
+.fb-fab-ico{font-size:13px;line-height:1;}
+
+.fb-overlay{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;padding:18px;}
+.fb-overlay.open{display:flex;}
+.fb-modal{background:var(--mag);border:2px solid var(--ink);width:100%;max-width:440px;
+  padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:16px;}
+.fb-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.fb-modal-title{font-weight:800;letter-spacing:-.04em;font-size:clamp(22px,3vw,30px);line-height:.95;}
+.fb-modal-sub{font-size:11px;opacity:.7;line-height:1.5;margin-top:6px;}
+.fb-close{font-size:20px;line-height:1;border:2px solid var(--ink);width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;flex:none;}
+.fb-close:hover{background:var(--ink);color:var(--mag);}
+.fb-textarea{border:2px solid var(--ink);background:var(--mag);padding:12px;color:var(--ink);
+  font-family:var(--mono);font-size:13px;line-height:1.6;resize:vertical;min-height:130px;outline:none;width:100%;}
+.fb-textarea::placeholder{color:var(--ink);opacity:.45;}
+.fb-send{border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:12px;padding:13px 16px;text-align:center;}
+.fb-send:hover{opacity:.85;}
+.fb-send:disabled{opacity:.4;cursor:not-allowed;}
+.fb-note{font-size:10px;opacity:.6;line-height:1.6;}
+</style>
+
+<button class="fb-fab" id="fb-fab" type="button" aria-haspopup="dialog" aria-expanded="false">
+  <span class="fb-fab-ico" aria-hidden="true">✎</span>
+  <span>Feedback</span>
+</button>
+
+<div class="fb-overlay" id="fb-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-title">
+  <div class="fb-modal">
+    <div class="fb-modal-head">
+      <div>
+        <div class="fb-modal-title" id="fb-title">Send feedback</div>
+        <div class="fb-modal-sub">Found a bug or have an idea? Tell us — it opens your email app.</div>
+      </div>
+      <button class="fb-close" id="fb-close" type="button" aria-label="Close">×</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text"
+      placeholder="Your feedback…"></textarea>
+    <button class="fb-send" id="fb-send" type="button" disabled>Send via email</button>
+    <p class="fb-note mono">Opens your default mail app · the page link is added automatically.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var FB_TO = "slava@kaushan.com";
+  var fab = document.getElementById('fb-fab');
+  var overlay = document.getElementById('fb-overlay');
+  var closeBtn = document.getElementById('fb-close');
+  var text = document.getElementById('fb-text');
+  var send = document.getElementById('fb-send');
+  if (!fab || !overlay || !text || !send) return;
+
+  function setOpen(open) {
+    overlay.classList.toggle('open', open);
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) setTimeout(function () { text.focus(); }, 0);
+  }
+
+  fab.addEventListener('click', function () { setOpen(true); });
+  closeBtn.addEventListener('click', function () { setOpen(false); });
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) setOpen(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) setOpen(false);
+  });
+
+  text.addEventListener('input', function () {
+    send.disabled = text.value.trim().length === 0;
+  });
+
+  send.addEventListener('click', function () {
+    var body = text.value.trim();
+    if (!body) return;
+    var pageUrl = location.href;
+    var pageTitle = document.title;
+    var subject = 'Feedback: ' + pageTitle;
+    var fullBody = body + '\n\n— — —\nPage: ' + pageTitle + '\n' + pageUrl;
+    var href = 'mailto:' + encodeURIComponent(FB_TO) +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(fullBody);
+    window.location.href = href;
+    setOpen(false);
+  });
+})();
+</script>
+
   <script>
   (function () {
     var btn = document.getElementById('cfg-btn');
@@ -915,6 +1111,67 @@ button:disabled{transform:none;}
   }
 
   // Wait for load so the demo's own initial calculation is already on screen.
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+
+<script>
+/* Fit long result numbers (v2) ----------------------------------------------
+   The headline result (.tp-result-num) uses a large clamp() font. For very
+   long values (e.g. "$2,250,000,000,000,000.00") that would wrap to several
+   lines or overflow the result card. This shrinks the font — within a sane
+   range — so the number fits on as few lines as possible before falling back
+   to wrapping. It re-runs whenever the value changes and on resize. */
+(function () {
+  var root = document.getElementById('tp-export');
+  if (!root) return;
+
+  var MIN_PX = 22; // floor: below this we let the number wrap instead
+
+  function fit(el) {
+    var box = el.closest('.tp-result') || el.parentElement;
+    if (!box) return;
+
+    // Reset to the CSS clamp() size, then measure what a single line needs.
+    el.style.fontSize = '';
+    var base = parseFloat(getComputedStyle(el).fontSize);
+    if (!base) return;
+
+    var cs = getComputedStyle(box);
+    var avail = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    if (!(avail > 0)) return;
+
+    var prevWS = el.style.whiteSpace;
+    el.style.whiteSpace = 'nowrap';
+    var needed = el.scrollWidth;
+    el.style.whiteSpace = prevWS;
+
+    if (needed > avail) {
+      // Scale down proportionally; never below MIN_PX (then wrapping kicks in).
+      el.style.fontSize = Math.max(MIN_PX, base * (avail / needed)) + 'px';
+    }
+  }
+
+  function fitAll() {
+    root.querySelectorAll('.tp-result-num').forEach(fit);
+  }
+
+  var scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () { scheduled = false; fitAll(); });
+  }
+
+  function start() {
+    fitAll();
+    new MutationObserver(schedule).observe(root, {
+      childList: true, characterData: true, subtree: true
+    });
+    window.addEventListener('resize', schedule);
+  }
+
   if (document.readyState === 'complete') start();
   else window.addEventListener('load', start);
 })();
