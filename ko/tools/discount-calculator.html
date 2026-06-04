@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>할인 계산기 — Tools Catalog</title>
-  <meta name="description" content="원래 가격과 할인율을 입력하여 절약액과 할인 후 최종 가격을 즉시 확인하세요.">
+  <meta name="description" content="원래 가격과 할인율을 입력하면 절약 금액과 할인 후 최종 가격을 즉시 확인할 수 있습니다.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -277,7 +277,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">120 도구</span>
+    <span class="topcount mono">147 도구</span>
   </div>
   <div class="topbar-right">
     
@@ -327,10 +327,6 @@ button:disabled{transform:none;}
         
           
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
-          
-        
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
           
         
       </div>
@@ -452,20 +448,20 @@ button:disabled{transform:none;}
       <div class="tp-head">
         <div class="tp-kicker mono">비즈니스 · 도구</div>
         <h1 class="tp-title">할인 계산기</h1>
-        <p class="tp-desc">원래 가격과 할인율을 입력하여 절약액과 할인 후 최종 가격을 즉시 확인하세요.</p>
+        <p class="tp-desc">원래 가격과 할인율을 입력하면 절약 금액과 할인 후 최종 가격을 즉시 확인할 수 있습니다.</p>
       </div>
 
       <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Original price</span>
+      <span class="tp-field-label mono">원래 가격</span>
       <div class="tp-field-input">
         <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
         <input class="tp-input" id="dc-price" type="number" inputmode="decimal" value="100" min="0" step="0.01">
       </div>
     </div>
     <div class="tp-field">
-      <span class="tp-field-label mono">Discount</span>
+      <span class="tp-field-label mono">할인</span>
       <div class="tp-field-input">
         <input class="tp-input" id="dc-pct" type="number" inputmode="decimal" value="20" min="0" max="100" step="0.01">
         <span class="tp-suffix">%</span>
@@ -479,17 +475,17 @@ button:disabled{transform:none;}
       <button class="tp-toggle mono" data-pct="50">50%</button>
     </div>
     <div class="tp-breakdown">
-      <div><span class="mono">Original price</span><b id="dc-bd-original">$0.00</b></div>
-      <div><span class="mono">You save</span><b id="dc-bd-saved">$0.00</b></div>
+      <div><span class="mono">원래 가격</span><b id="dc-bd-original">$0.00</b></div>
+      <div><span class="mono">절약액</span><b id="dc-bd-saved">$0.00</b></div>
     </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Final price</span>
+    <span class="tp-result-label">최종 가격</span>
     <div class="tp-result-val">
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="dc-r-final">0</span>
     </div>
-    <span class="tp-result-note" id="dc-r-note">20% off $100.00</span>
+    <span class="tp-result-note" id="dc-r-note"></span>
   </div>
 </div>
 <script>
@@ -497,6 +493,8 @@ button:disabled{transform:none;}
   var price   = document.getElementById('dc-price');
   var pct     = document.getElementById('dc-pct');
   var presets = document.getElementById('dc-presets');
+  // {pct}/{price} are filled at runtime.
+  var NOTE_TPL = "{price}에서 {pct}% 할인";
 
   function money(n) {
     return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
@@ -511,7 +509,7 @@ button:disabled{transform:none;}
     document.getElementById('dc-r-final').textContent    = isFinite(final) ? final.toFixed(2) : '0.00';
     document.getElementById('dc-bd-original').textContent = money(p);
     document.getElementById('dc-bd-saved').textContent    = money(saved);
-    document.getElementById('dc-r-note').textContent      = d + '% off ' + money(p);
+    document.getElementById('dc-r-note').textContent      = NOTE_TPL.replace('{pct}', d).replace('{price}', money(p));
 
     Array.prototype.forEach.call(presets.children, function (btn) {
       btn.classList.toggle('on', parseFloat(btn.getAttribute('data-pct')) === d);
@@ -715,7 +713,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>120개의 도구 · 리디자인 미리보기</span>
+    <span>147개의 도구 · 리디자인 미리보기</span>
   </div>
 </footer>
 </div>

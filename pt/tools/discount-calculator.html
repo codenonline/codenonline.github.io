@@ -277,7 +277,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">120 Ferramentas</span>
+    <span class="topcount mono">147 Ferramentas</span>
   </div>
   <div class="topbar-right">
     
@@ -327,10 +327,6 @@ button:disabled{transform:none;}
         
           
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
-          
-        
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
           
         
       </div>
@@ -458,14 +454,14 @@ button:disabled{transform:none;}
       <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-field">
-      <span class="tp-field-label mono">Original price</span>
+      <span class="tp-field-label mono">Preço original</span>
       <div class="tp-field-input">
         <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
         <input class="tp-input" id="dc-price" type="number" inputmode="decimal" value="100" min="0" step="0.01">
       </div>
     </div>
     <div class="tp-field">
-      <span class="tp-field-label mono">Discount</span>
+      <span class="tp-field-label mono">Desconto</span>
       <div class="tp-field-input">
         <input class="tp-input" id="dc-pct" type="number" inputmode="decimal" value="20" min="0" max="100" step="0.01">
         <span class="tp-suffix">%</span>
@@ -479,17 +475,17 @@ button:disabled{transform:none;}
       <button class="tp-toggle mono" data-pct="50">50%</button>
     </div>
     <div class="tp-breakdown">
-      <div><span class="mono">Original price</span><b id="dc-bd-original">$0.00</b></div>
-      <div><span class="mono">You save</span><b id="dc-bd-saved">$0.00</b></div>
+      <div><span class="mono">Preço original</span><b id="dc-bd-original">$0.00</b></div>
+      <div><span class="mono">Você economiza</span><b id="dc-bd-saved">$0.00</b></div>
     </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label">Final price</span>
+    <span class="tp-result-label">Preço final</span>
     <div class="tp-result-val">
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="dc-r-final">0</span>
     </div>
-    <span class="tp-result-note" id="dc-r-note">20% off $100.00</span>
+    <span class="tp-result-note" id="dc-r-note"></span>
   </div>
 </div>
 <script>
@@ -497,6 +493,8 @@ button:disabled{transform:none;}
   var price   = document.getElementById('dc-price');
   var pct     = document.getElementById('dc-pct');
   var presets = document.getElementById('dc-presets');
+  // {pct}/{price} are filled at runtime.
+  var NOTE_TPL = "{pct}% de desconto em {price}";
 
   function money(n) {
     return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
@@ -511,7 +509,7 @@ button:disabled{transform:none;}
     document.getElementById('dc-r-final').textContent    = isFinite(final) ? final.toFixed(2) : '0.00';
     document.getElementById('dc-bd-original').textContent = money(p);
     document.getElementById('dc-bd-saved').textContent    = money(saved);
-    document.getElementById('dc-r-note').textContent      = d + '% off ' + money(p);
+    document.getElementById('dc-r-note').textContent      = NOTE_TPL.replace('{pct}', d).replace('{price}', money(p));
 
     Array.prototype.forEach.call(presets.children, function (btn) {
       btn.classList.toggle('on', parseFloat(btn.getAttribute('data-pct')) === d);
@@ -715,7 +713,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>120 ferramentas · prévia do redesign</span>
+    <span>147 ferramentas · prévia do redesign</span>
   </div>
 </footer>
 </div>

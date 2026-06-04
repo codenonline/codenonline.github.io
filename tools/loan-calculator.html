@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -506,7 +502,7 @@ button:disabled{transform:none;}
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="lc-r-monthly">0</span>
     </div>
-    <span class="tp-result-note" id="lc-r-note">30-yr loan at 4.5%</span>
+    <span class="tp-result-note" id="lc-r-note"></span>
   </div>
 </div>
 <script>
@@ -516,6 +512,8 @@ button:disabled{transform:none;}
   var rate     = document.getElementById('lc-rate');
   var term     = document.getElementById('lc-term');
   var presets  = document.getElementById('lc-presets');
+  // {years}/{rate} are filled at runtime.
+  var NOTE_TPL = "{years}-yr loan at {rate}%";
 
   function money(n) {
     return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
@@ -545,7 +543,7 @@ button:disabled{transform:none;}
     document.getElementById('lc-bd-interest').textContent = money(Math.max(0, totalInterest));
     document.getElementById('lc-bd-payments').textContent = n.toLocaleString();
     document.getElementById('lc-r-note').textContent =
-      years + '-yr loan at ' + annualRate + '%';
+      NOTE_TPL.replace('{years}', years).replace('{rate}', annualRate);
 
     Array.prototype.forEach.call(presets.children, function (btn) {
       btn.classList.toggle('on', parseInt(btn.getAttribute('data-term'), 10) === years);

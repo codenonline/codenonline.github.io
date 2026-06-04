@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -498,7 +494,7 @@ button:disabled{transform:none;}
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="r-each">0</span>
     </div>
-    <span class="tp-result-note" id="r-note">Bill + 18% tip, split 2 ways</span>
+    <span class="tp-result-note" id="r-note"></span>
   </div>
 </div>
 <script>
@@ -508,6 +504,9 @@ button:disabled{transform:none;}
   var people = document.getElementById('people');
   var presets = document.getElementById('presets');
   var money = function (n) { return '$' + (isFinite(n) ? n : 0).toFixed(2); };
+  // Localized note templates. {pct} and {n} are filled in at runtime.
+  var NOTE_ONE = "Bill + {pct}% tip, split {n} way";
+  var NOTE_MANY = "Bill + {pct}% tip, split {n} ways";
 
   function calc() {
     var b = parseFloat(bill.value) || 0;
@@ -521,7 +520,7 @@ button:disabled{transform:none;}
     document.getElementById('bd-each').textContent = money(each);
     document.getElementById('r-each').textContent = each.toFixed(2);
     document.getElementById('r-note').textContent =
-      'Bill + ' + t + '% tip, split ' + p + (p === 1 ? ' way' : ' ways');
+      (p === 1 ? NOTE_ONE : NOTE_MANY).replace('{pct}', t).replace('{n}', p);
     Array.prototype.forEach.call(presets.children, function (btn) {
       btn.classList.toggle('on', parseFloat(btn.getAttribute('data-tip')) === t);
     });

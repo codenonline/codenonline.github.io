@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -464,15 +460,14 @@ button:disabled{transform:none;}
       <input class="tp-input" id="base" type="number" inputmode="decimal" value="240" step="any">
       <span>?</span>
     </div>
-    <p class="tp-hint">Adjust either number to recompute instantly. The result panel also shows
-      the reverse relationship — how the two numbers relate as a percentage.</p>
+    <p class="tp-hint">Adjust either number to recompute instantly. The result panel also shows the reverse relationship — how the two numbers relate as a percentage.</p>
     <div class="tp-breakdown">
       <div><span class="mono">Result</span><b id="bd-res">0</b></div>
-      <div><span class="mono" id="bd-rev-l">15 is what % of 240</span><b id="bd-rev">0%</b></div>
+      <div><span class="mono" id="bd-rev-l"></span><b id="bd-rev">0%</b></div>
     </div>
   </div>
   <div class="tp-result">
-    <span class="tp-result-label" id="r-label">15% of 240</span>
+    <span class="tp-result-label" id="r-label"></span>
     <div class="tp-result-val">
       <span class="tp-result-num" id="r-out">0</span>
     </div>
@@ -483,6 +478,9 @@ button:disabled{transform:none;}
 (function () {
   var pct = document.getElementById('pct');
   var base = document.getElementById('base');
+  // {pct}/{base}/{res} are filled at runtime.
+  var LABEL_TPL = "{pct}% of {base}";
+  var REV_TPL = "{res} is what % of {base}";
   function fmt(n) {
     if (!isFinite(n)) return '0';
     return (Math.round(n * 1000) / 1000).toLocaleString();
@@ -492,9 +490,9 @@ button:disabled{transform:none;}
     var b = parseFloat(base.value) || 0;
     var res = b * p / 100;
     document.getElementById('r-out').textContent = fmt(res);
-    document.getElementById('r-label').textContent = fmt(p) + '% of ' + fmt(b);
+    document.getElementById('r-label').textContent = LABEL_TPL.replace('{pct}', fmt(p)).replace('{base}', fmt(b));
     document.getElementById('bd-res').textContent = fmt(res);
-    document.getElementById('bd-rev-l').textContent = fmt(res) + ' is what % of ' + fmt(b);
+    document.getElementById('bd-rev-l').textContent = REV_TPL.replace('{res}', fmt(res)).replace('{base}', fmt(b));
     document.getElementById('bd-rev').textContent = (b ? fmt(res / b * 100) : '0') + '%';
   }
   [pct, base].forEach(function (el) { el.addEventListener('input', calc); });

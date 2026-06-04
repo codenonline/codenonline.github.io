@@ -277,7 +277,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">120 Strumenti</span>
+    <span class="topcount mono">147 Strumenti</span>
   </div>
   <div class="topbar-right">
     
@@ -327,10 +327,6 @@ button:disabled{transform:none;}
         
           
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
-          
-        
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
           
         
       </div>
@@ -458,12 +454,12 @@ button:disabled{transform:none;}
       <div class="tp-grid tp-grid--wide">
   <div class="tp-inputs">
     <div class="tp-toggles" id="bmi-units">
-      <button class="tp-toggle mono on" data-unit="metric">Metric (kg/cm)</button>
-      <button class="tp-toggle mono" data-unit="imperial">Imperial (lbs/ft)</button>
+      <button class="tp-toggle mono on" data-unit="metric">Metrico (kg/cm)</button>
+      <button class="tp-toggle mono" data-unit="imperial">Imperiale (lbs/ft)</button>
     </div>
 
     <div class="tp-field" id="bmi-row-wkg">
-      <span class="tp-field-label mono">Weight</span>
+      <span class="tp-field-label mono">Peso</span>
       <div class="tp-field-input">
         <input class="tp-input" id="bmi-wkg" type="number" inputmode="decimal" value="70" min="0" step="0.1">
         <span class="tp-suffix">kg</span>
@@ -471,7 +467,7 @@ button:disabled{transform:none;}
     </div>
 
     <div class="tp-field" id="bmi-row-wlb">
-      <span class="tp-field-label mono">Weight</span>
+      <span class="tp-field-label mono">Peso</span>
       <div class="tp-field-input">
         <input class="tp-input" id="bmi-wlb" type="number" inputmode="decimal" value="154" min="0" step="0.1">
         <span class="tp-suffix">lbs</span>
@@ -479,7 +475,7 @@ button:disabled{transform:none;}
     </div>
 
     <div class="tp-field" id="bmi-row-hcm">
-      <span class="tp-field-label mono">Height</span>
+      <span class="tp-field-label mono">Altezza</span>
       <div class="tp-field-input">
         <input class="tp-input" id="bmi-hcm" type="number" inputmode="decimal" value="175" min="0" step="0.1">
         <span class="tp-suffix">cm</span>
@@ -488,7 +484,7 @@ button:disabled{transform:none;}
 
     <div class="tp-two" id="bmi-row-hft">
       <div class="tp-field">
-        <span class="tp-field-label mono">Height</span>
+        <span class="tp-field-label mono">Altezza</span>
         <div class="tp-field-input">
           <input class="tp-input" id="bmi-hft" type="number" inputmode="numeric" value="5" min="0" max="8" step="1">
           <span class="tp-suffix">ft</span>
@@ -504,22 +500,33 @@ button:disabled{transform:none;}
     </div>
 
     <div class="tp-breakdown">
-      <div><span class="mono">Healthy weight min</span><b id="bmi-bd-min">-</b></div>
-      <div><span class="mono">Healthy weight max</span><b id="bmi-bd-max">-</b></div>
-      <div><span class="mono">To lose / gain</span><b id="bmi-bd-diff">-</b></div>
+      <div><span class="mono">Peso sano minimo</span><b id="bmi-bd-min">-</b></div>
+      <div><span class="mono">Peso sano massimo</span><b id="bmi-bd-max">-</b></div>
+      <div><span class="mono">Da perdere / guadagnare</span><b id="bmi-bd-diff">-</b></div>
     </div>
   </div>
 
   <div class="tp-result">
-    <span class="tp-result-label">Your BMI</span>
+    <span class="tp-result-label">Il tuo IMC</span>
     <div class="tp-result-val">
       <span class="tp-result-num" id="bmi-out">0.0</span>
     </div>
-    <span class="tp-result-note" id="bmi-cat">Enter height and weight</span>
+    <span class="tp-result-note" id="bmi-cat">Inserisci altezza e peso</span>
   </div>
 </div>
 <script>
 (function () {
+  // Localized runtime strings. {w} is filled with a formatted weight at runtime.
+  var I18N = {
+    enter: "Inserisci altezza e peso",
+    underweight: "Sottopeso",
+    normal: "Normale",
+    overweight: "Sovrappeso",
+    obese: "Obeso",
+    gain: "Guadagnare {w}",
+    lose: "Perdere {w}",
+    within: "Entro l'intervallo sano"
+  };
   var unitToggles = document.getElementById('bmi-units');
   var wkg = document.getElementById('bmi-wkg');
   var wlb = document.getElementById('bmi-wlb');
@@ -554,11 +561,11 @@ button:disabled{transform:none;}
     if (!isFinite(bmi)) bmi = 0;
 
     var cat;
-    if (bmi === 0) cat = 'Enter height and weight';
-    else if (bmi < 18.5) cat = 'Underweight';
-    else if (bmi < 25) cat = 'Normal';
-    else if (bmi < 30) cat = 'Overweight';
-    else cat = 'Obese';
+    if (bmi === 0) cat = I18N.enter;
+    else if (bmi < 18.5) cat = I18N.underweight;
+    else if (bmi < 25) cat = I18N.normal;
+    else if (bmi < 30) cat = I18N.overweight;
+    else cat = I18N.obese;
 
     document.getElementById('bmi-out').textContent = bmi.toFixed(1);
     document.getElementById('bmi-cat').textContent = cat;
@@ -570,9 +577,9 @@ button:disabled{transform:none;}
       document.getElementById('bmi-bd-min').textContent = fmtWeight(min);
       document.getElementById('bmi-bd-max').textContent = fmtWeight(max);
       var diffText;
-      if (weightKg < min) diffText = 'Gain ' + fmtWeight(min - weightKg);
-      else if (weightKg > max) diffText = 'Lose ' + fmtWeight(weightKg - max);
-      else diffText = 'Within healthy range';
+      if (weightKg < min) diffText = I18N.gain.replace('{w}', fmtWeight(min - weightKg));
+      else if (weightKg > max) diffText = I18N.lose.replace('{w}', fmtWeight(weightKg - max));
+      else diffText = I18N.within;
       document.getElementById('bmi-bd-diff').textContent = diffText;
     } else {
       document.getElementById('bmi-bd-min').textContent = '-';
@@ -634,6 +641,16 @@ button:disabled{transform:none;}
         
         <a class="tp-related-card" href="/it/tools/double-discount.html">
           <span class="tp-related-name">Calcolatrice Doppio Sconto</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+        <a class="tp-related-card" href="/it/tools/gpa-calculator.html">
+          <span class="tp-related-name">Calcolatore GPA</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+        <a class="tp-related-card" href="/it/tools/gst-calculator.html">
+          <span class="tp-related-name">Calcolatore IVA</span>
           <span class="tp-related-arrow">→</span>
         </a>
         
@@ -781,7 +798,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>120 strumenti · anteprima del nuovo design</span>
+    <span>147 strumenti · anteprima del nuovo design</span>
   </div>
 </footer>
 </div>

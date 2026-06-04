@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -486,7 +482,7 @@ button:disabled{transform:none;}
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="st-result">0.00</span>
     </div>
-    <span class="tp-result-note" id="st-note">$100.00 with 8.25% tax</span>
+    <span class="tp-result-note" id="st-note"></span>
   </div>
 </div>
 
@@ -494,6 +490,8 @@ button:disabled{transform:none;}
 (function () {
   var priceInput = document.getElementById('st-price');
   var rateInput = document.getElementById('st-rate');
+  // {price}/{rate} are filled at runtime.
+  var NOTE_TPL = "{price} with {rate}% tax";
 
   function moneyValue(n) {
     return isFinite(n) ? n : 0;
@@ -525,7 +523,7 @@ button:disabled{transform:none;}
     document.getElementById('st-bd-total').textContent = moneyText(totalPrice);
     document.getElementById('st-result').textContent = compactNumber(totalPrice);
     document.getElementById('st-note').textContent =
-      moneyText(priceBeforeTax) + ' with ' + taxRate.toLocaleString() + '% tax';
+      NOTE_TPL.replace('{price}', moneyText(priceBeforeTax)).replace('{rate}', taxRate.toLocaleString());
   }
 
   priceInput.addEventListener('input', calc);

@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -520,6 +516,17 @@ button:disabled{transform:none;}
 </div>
 <script>
 (function () {
+  // Localized runtime strings. {w} is filled with a formatted weight at runtime.
+  var I18N = {
+    enter: "Enter height and weight",
+    underweight: "Underweight",
+    normal: "Normal",
+    overweight: "Overweight",
+    obese: "Obese",
+    gain: "Gain {w}",
+    lose: "Lose {w}",
+    within: "Within healthy range"
+  };
   var unitToggles = document.getElementById('bmi-units');
   var wkg = document.getElementById('bmi-wkg');
   var wlb = document.getElementById('bmi-wlb');
@@ -554,11 +561,11 @@ button:disabled{transform:none;}
     if (!isFinite(bmi)) bmi = 0;
 
     var cat;
-    if (bmi === 0) cat = 'Enter height and weight';
-    else if (bmi < 18.5) cat = 'Underweight';
-    else if (bmi < 25) cat = 'Normal';
-    else if (bmi < 30) cat = 'Overweight';
-    else cat = 'Obese';
+    if (bmi === 0) cat = I18N.enter;
+    else if (bmi < 18.5) cat = I18N.underweight;
+    else if (bmi < 25) cat = I18N.normal;
+    else if (bmi < 30) cat = I18N.overweight;
+    else cat = I18N.obese;
 
     document.getElementById('bmi-out').textContent = bmi.toFixed(1);
     document.getElementById('bmi-cat').textContent = cat;
@@ -570,9 +577,9 @@ button:disabled{transform:none;}
       document.getElementById('bmi-bd-min').textContent = fmtWeight(min);
       document.getElementById('bmi-bd-max').textContent = fmtWeight(max);
       var diffText;
-      if (weightKg < min) diffText = 'Gain ' + fmtWeight(min - weightKg);
-      else if (weightKg > max) diffText = 'Lose ' + fmtWeight(weightKg - max);
-      else diffText = 'Within healthy range';
+      if (weightKg < min) diffText = I18N.gain.replace('{w}', fmtWeight(min - weightKg));
+      else if (weightKg > max) diffText = I18N.lose.replace('{w}', fmtWeight(weightKg - max));
+      else diffText = I18N.within;
       document.getElementById('bmi-bd-diff').textContent = diffText;
     } else {
       document.getElementById('bmi-bd-min').textContent = '-';

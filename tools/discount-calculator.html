@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -489,7 +485,7 @@ button:disabled{transform:none;}
       <span class="tp-result-prefix">$</span>
       <span class="tp-result-num" id="dc-r-final">0</span>
     </div>
-    <span class="tp-result-note" id="dc-r-note">20% off $100.00</span>
+    <span class="tp-result-note" id="dc-r-note"></span>
   </div>
 </div>
 <script>
@@ -497,6 +493,8 @@ button:disabled{transform:none;}
   var price   = document.getElementById('dc-price');
   var pct     = document.getElementById('dc-pct');
   var presets = document.getElementById('dc-presets');
+  // {pct}/{price} are filled at runtime.
+  var NOTE_TPL = "{pct}% off {price}";
 
   function money(n) {
     return '$' + (isFinite(n) && n >= 0 ? n : 0).toFixed(2);
@@ -511,7 +509,7 @@ button:disabled{transform:none;}
     document.getElementById('dc-r-final').textContent    = isFinite(final) ? final.toFixed(2) : '0.00';
     document.getElementById('dc-bd-original').textContent = money(p);
     document.getElementById('dc-bd-saved').textContent    = money(saved);
-    document.getElementById('dc-r-note').textContent      = d + '% off ' + money(p);
+    document.getElementById('dc-r-note').textContent      = NOTE_TPL.replace('{pct}', d).replace('{price}', money(p));
 
     Array.prototype.forEach.call(presets.children, function (btn) {
       btn.classList.toggle('on', parseFloat(btn.getAttribute('data-pct')) === d);

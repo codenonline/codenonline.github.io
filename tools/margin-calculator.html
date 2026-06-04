@@ -329,10 +329,6 @@ button:disabled{transform:none;}
           <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
           
         
-          
-          <a class="langsel-item" role="menuitem" hreflang="ru" href="/ru/"><span>Русский</span><span class="langsel-code">ru</span></a>
-          
-        
       </div>
     </div>
     <div class="cfg">
@@ -482,13 +478,15 @@ button:disabled{transform:none;}
       <span class="tp-result-num" id="r-margin">0</span>
       <span class="tp-result-prefix">%</span>
     </div>
-    <span class="tp-result-note" id="r-note">Revenue $100 − Cost $60</span>
+    <span class="tp-result-note" id="r-note"></span>
   </div>
 </div>
 <script>
 (function () {
   var revenue = document.getElementById('revenue');
   var cost = document.getElementById('cost');
+  // {rev}/{cost} are filled at runtime (each already includes the $ sign).
+  var NOTE_TPL = "Revenue {rev} − Cost {cost}";
 
   function calc() {
     var rev = parseFloat(revenue.value) || 0;
@@ -504,7 +502,7 @@ button:disabled{transform:none;}
     document.getElementById('bd-profit').textContent = '$' + (isFinite(profit) ? profit : 0).toFixed(2);
     document.getElementById('bd-markup').textContent = markup.toFixed(2) + '%';
     document.getElementById('r-note').textContent =
-      'Revenue $' + rev.toFixed(2) + ' − Cost $' + c.toFixed(2);
+      NOTE_TPL.replace('{rev}', '$' + rev.toFixed(2)).replace('{cost}', '$' + c.toFixed(2));
   }
 
   [revenue, cost].forEach(function (el) { el.addEventListener('input', calc); });
