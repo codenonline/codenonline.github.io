@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>비즈니스 — Tools Catalog</title>
-  <meta name="description" content="61 비즈니스 tools. Free, private, no sign-up.">
+  <meta name="description" content="95 비즈니스 tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 도구</span>
+    <span class="topcount mono">230 도구</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">비즈니스</span>
       </div>
-      <h1 class="cat-title">비즈니스<sup>61</sup></h1>
-      <p class="cat-sub mono">61개의 도구 표시 · 모든 계산은 브라우저에서 로컬로 실행됩니다. 계정 없음, 추적 없음.</p>
+      <h1 class="cat-title">비즈니스<sup>95</sup></h1>
+      <p class="cat-sub mono">95개의 도구 표시 · 모든 계산은 브라우저에서 로컬로 실행됩니다. 계정 없음, 추적 없음.</p>
     </div>
   </section>
 
@@ -1006,30 +1061,370 @@ button:disabled{transform:none;}
         <div class="card-open mono">열기 →</div>
       </a>
       
-      <a class="card" href="/ko/tools/margin-calculator.html" data-cat="business">
+      <a class="card" href="/ko/tools/high-low-method.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">비즈니스</span>
           <span class="card-idx">059</span>
+        </div>
+        <div class="card-name">고저점법</div>
+        <div class="card-desc">최고 및 최저 활동 데이터 포인트를 사용하여 혼합 비용을 고정 및 변동 성분으로 분리합니다 — 빠른 원가 행동 추정.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/hourly-to-salary.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">060</span>
+        </div>
+        <div class="card-name">시급에서 연봉 변환기</div>
+        <div class="card-desc">표준 또는 사용자 정의 주당 근무 시간에 따라 시급을 연봉, 월급 또는 주급으로 변환합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/interest-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">061</span>
+        </div>
+        <div class="card-name">이자보장배수</div>
+        <div class="card-desc">영업이익이 이자 지급을 충당하기에 충분한지 확인합니다 — 낮은 배수는 잠재적 채무불이행 위험을 나타냅니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/inventory-turnover.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">062</span>
+        </div>
+        <div class="card-name">재고 회전율 계산기</div>
+        <div class="card-desc">기간 동안 재고가 판매되고 보충되는 횟수를 측정합니다. 회전율이 높을수록 일반적으로 강한 판매와 낮은 재고 수준을 의미합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/labor-force-participation-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">063</span>
+        </div>
+        <div class="card-name">경제활동참가율</div>
+        <div class="card-desc">일할 수 있는 나이의 인구 중 적극적으로 취업하거나 일자리를 찾고 있는 비율을 찾아 노동 시장 참여를 반영합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/leverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">064</span>
+        </div>
+        <div class="card-name">레버리지 비율 계산기</div>
+        <div class="card-desc">기업이 자본에 상대적으로 차입금을 사용하는 정도를 평가하여 재무 위험과 자본 구조를 나타냅니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/levered-free-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">065</span>
+        </div>
+        <div class="card-name">레버리지 프리 캐시 플로우(LFCF)</div>
+        <div class="card-desc">부채 의무를 충족한 후 주주에게 제공되는 현금을 측정합니다 — 배당금과 자사주 매입을 위해 남은 것.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/liquidity-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">066</span>
+        </div>
+        <div class="card-name">유동성커버리지비율(LCR)</div>
+        <div class="card-desc">은행이 바젤III에서 요구하는 30일간의 스트레스 시나리오를 견디기 위해 충분한 고품질유동자산을 보유하고 있는지 확인합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/loan-to-deposit-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">067</span>
+        </div>
+        <div class="card-name">여수신비율(LDR)</div>
+        <div class="card-desc">은행의 예금 대비 대출 활동을 측정합니다. 너무 높은 비율은 유동성 위험을 나타내고, 너무 낮은 비율은 활용 부족을 나타낼 수 있습니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/loss-given-default.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">068</span>
+        </div>
+        <div class="card-name">채무불이행시손실률 (LGD)</div>
+        <div class="card-desc">차입자가 채무불이행할 경우 담보 회수를 고려한 후 대출자가 입는 손실액을 추정합니다. 노출도의 백분율로 표현됩니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/loss-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">069</span>
+        </div>
+        <div class="card-name">손실 비율 계산기</div>
+        <div class="card-desc">지불된 총 청구액을 획득 보험료로 나누어 보험 인수 수익성을 평가합니다. 100% 이상의 비율은 인수 손실을 나타냅니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/lost-profits.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">070</span>
+        </div>
+        <div class="card-name">손실 이익 계산기</div>
+        <div class="card-desc">사업 중단, 계약 위반 또는 과실로 인한 잃어버린 수익 추정 — 소송 및 보험 청구에서 일반적으로 사용됩니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/margin-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">071</span>
         </div>
         <div class="card-name">마진 계산기</div>
         <div class="card-desc">원가와 판매가를 입력하여 총마진, 마진율, 단위당 이익을 즉시 확인합니다.</div>
         <div class="card-open mono">열기 →</div>
       </a>
       
+      <a class="card" href="/ko/tools/marginal-cost.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">072</span>
+        </div>
+        <div class="card-name">한계비용 계산기</div>
+        <div class="card-desc">추가 단위를 생산할 때 총비용이 얼마나 증가하는지 알아봅니다. 가격 책정 및 생산 수준 결정을 위한 핵심 입력값입니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/marginal-propensity-consume.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">073</span>
+        </div>
+        <div class="card-name">한계소비성향(MPC)</div>
+        <div class="card-desc">추가 소득 1달러 중 가구가 지출할 비율을 결정합니다. 경제 승수 모델의 핵심 입력값입니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/marginal-propensity-save.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">074</span>
+        </div>
+        <div class="card-name">한계저축성향 (MPS)</div>
+        <div class="card-desc">경제 분석에서 한계소비성향(MPC)을 보완하여 가계가 추가 소득의 어느 부분을 지출하지 않고 저축하는지를 나타내는 비율을 찾습니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/marginal-revenue.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">075</span>
+        </div>
+        <div class="card-name">한계수익 계산기</div>
+        <div class="card-desc">한 단위를 더 판매하여 생성되는 추가 수익을 결정합니다. 이익을 극대화하는 생산 수준을 설정하는 데 유용합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
       <a class="card" href="/ko/tools/markup-calculator.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">비즈니스</span>
-          <span class="card-idx">060</span>
+          <span class="card-idx">076</span>
         </div>
         <div class="card-name">마크업 계산기</div>
         <div class="card-desc">원하는 마크업 백분율을 적용하여 원가를 판매 가격으로 변환하거나, 주어진 가격에서 마크업을 역산합니다.</div>
         <div class="card-open mono">열기 →</div>
       </a>
       
+      <a class="card" href="/ko/tools/net-debt.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">077</span>
+        </div>
+        <div class="card-name">순부채 계산기</div>
+        <div class="card-desc">총부채에서 현금 및 현금 등가물을 뺀 기업의 진정한 채무 부담을 구합니다. 순부채가 낮을수록 재무 건강이 더 강하다는 것을 나타냅니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/net-income.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">078</span>
+        </div>
+        <div class="card-name">순이익 계산기</div>
+        <div class="card-desc">주어진 기간 동안 총 수익에서 모든 비용, 세금 및 이자를 차감한 최종 순이익을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/net-operating-assets.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">079</span>
+        </div>
+        <div class="card-name">순영업자산</div>
+        <div class="card-desc">핵심 사업 운영과 관련된 자산과 부채를 분리하고, 금융 항목을 제외하여 운영 효율성을 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/net-profit-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">080</span>
+        </div>
+        <div class="card-name">순이익률</div>
+        <div class="card-desc">순이익을 수익의 백분율로 표현하여 기간별 전체 수익성을 비교하거나 업계 벤치마크와 비교합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/net-stable-funding-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">081</span>
+        </div>
+        <div class="card-name">순안정자금조달비율(NSFR)</div>
+        <div class="card-desc">바젤III 유동성 기준에 따라 1년의 기간 동안 안정적인 자금원으로 활동을 자금 조달할 수 있는 은행의 능력을 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/nopat-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">082</span>
+        </div>
+        <div class="card-name">NOPAT 계산기</div>
+        <div class="card-desc">부채의 세무 이점을 영업 이익에서 제거하여 재무 중립적인 영업 성과의 척도를 얻습니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/okuns-law.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">083</span>
+        </div>
+        <div class="card-name">오쿤의 법칙 계산기</div>
+        <div class="card-desc">오쿤의 경험적 관계를 사용하여 GDP 성장 변화에 따른 실업률의 예상 변화를 추정합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/operating-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">084</span>
+        </div>
+        <div class="card-name">영업 현금 흐름 계산기</div>
+        <div class="card-desc">투자 및 재정 조달을 제외한 핵심 사업 운영에서 생성되는 현금을 측정하여 일일 재무 건강을 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/operating-cash-flow-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">085</span>
+        </div>
+        <div class="card-name">영업현금흐름비율</div>
+        <div class="card-desc">기업의 영업현금흐름이 유동부채를 충당하기에 충분한지 확인합니다 — 실질적인 지급능력 검사입니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/operating-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">086</span>
+        </div>
+        <div class="card-name">영업 이익률 계산기</div>
+        <div class="card-desc">영업 이익을 수익의 백분율로 표현하여 회사가 핵심 비즈니스를 얼마나 효율적으로 운영하는지 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/optimal-price.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">087</span>
+        </div>
+        <div class="card-name">최적 가격 계산기</div>
+        <div class="card-desc">수요 탄력성과 비용 데이터를 결합하여 수익 또는 이익을 최대화하는 가격을 찾으세요.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/osha-dart-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">088</span>
+        </div>
+        <div class="card-name">OSHA DART 비율</div>
+        <div class="card-desc">100명의 정규직 직원당 업무 제외, 업무 제한 또는 업무 변경 사례의 OSHA 비율을 추적하여 직장 안전 성과를 벤치마킹합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/osha-trir-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">089</span>
+        </div>
+        <div class="card-name">OSHA TRIR 비율</div>
+        <div class="card-desc">OSHA 보고 요건을 충족하고 안전 추세를 모니터링하기 위해 100명의 정규직 근무자당 총 기록 가능 사건 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/price-elasticity-demand.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">090</span>
+        </div>
+        <div class="card-name">가격 수요 탄력성</div>
+        <div class="card-desc">고객 수요가 가격 변화에 얼마나 민감한지 측정합니다. 고객의 양을 너무 많이 잃지 않으면서 가격을 책정하는 데 필수적입니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/productivity-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">091</span>
+        </div>
+        <div class="card-name">생산성 계산기</div>
+        <div class="card-desc">근로자당 또는 시간당 생산량을 측정하여 팀 효율성을 벤치마킹하고 리소스를 더 잘 배포할 수 있는 위치를 파악합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/profit-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">092</span>
+        </div>
+        <div class="card-name">이윤 계산기</div>
+        <div class="card-desc">수익과 비용을 입력하여 매출총이익, 순이익 및 이윤률 백분율을 한 곳에서 확인하세요.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/profit-sharing.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">093</span>
+        </div>
+        <div class="card-name">이익 배분 계산기</div>
+        <div class="card-desc">급여, 역할 가중치 또는 균등 배분을 기반으로 직원 또는 파트너 간에 이익 풀을 배분합니다 — 연말 계획에 유용합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/receivables-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">비즈니스</span>
+          <span class="card-idx">094</span>
+        </div>
+        <div class="card-name">매출채권 회전율</div>
+        <div class="card-desc">회사가 평균 매출채권 잔액을 연간 몇 번 징수하는지 측정하며, 청구 및 징수 효율을 반영합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
       <a class="card" href="/ko/tools/sales-tax.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">비즈니스</span>
-          <span class="card-idx">061</span>
+          <span class="card-idx">095</span>
         </div>
         <div class="card-name">판매세 계산기</div>
         <div class="card-desc">관할권의 세율을 입력하여 모든 세전 가격에 올바른 판매세를 추가합니다. 또한 세금 금액을 별도로 표시합니다.</div>
@@ -1081,7 +1476,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147개의 도구 · 리디자인 미리보기</span>
+    <span>230개의 도구 · 리디자인 미리보기</span>
   </div>
 </footer>
 </div>

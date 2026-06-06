@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>商业 — Tools Catalog</title>
-  <meta name="description" content="61 商业 tools. Free, private, no sign-up.">
+  <meta name="description" content="95 商业 tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 工具</span>
+    <span class="topcount mono">229 工具</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">商业</span>
       </div>
-      <h1 class="cat-title">商业<sup>61</sup></h1>
-      <p class="cat-sub mono">显示 61 个工具 · 所有计算均在您的浏览器本地运行。无需账户，无追踪。</p>
+      <h1 class="cat-title">商业<sup>95</sup></h1>
+      <p class="cat-sub mono">显示 95 个工具 · 所有计算均在您的浏览器本地运行。无需账户，无追踪。</p>
     </div>
   </section>
 
@@ -1006,30 +1061,370 @@ button:disabled{transform:none;}
         <div class="card-open mono">打开 →</div>
       </a>
       
-      <a class="card" href="/zh/tools/margin-calculator.html" data-cat="business">
+      <a class="card" href="/zh/tools/high-low-method.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">商业</span>
           <span class="card-idx">059</span>
+        </div>
+        <div class="card-name">高低点法</div>
+        <div class="card-desc">使用最高和最低活动数据点将混合成本分离为固定和可变成分 — 快速估计成本行为。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/hourly-to-salary.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">060</span>
+        </div>
+        <div class="card-name">时薪转年薪转换器</div>
+        <div class="card-desc">根据标准或自定义的每周工作时数，将时薪转换为年薪、月薪或周薪。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/interest-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">061</span>
+        </div>
+        <div class="card-name">利息覆盖比率</div>
+        <div class="card-desc">检查营业收益是否足以支付利息——低比率表明潜在的债务违约风险。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/inventory-turnover.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">062</span>
+        </div>
+        <div class="card-name">库存周转率计算器</div>
+        <div class="card-desc">衡量在一个时期内库存被销售和补充的次数；周转率越高通常意味着销售强劲和库存水平较低。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/labor-force-participation-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">063</span>
+        </div>
+        <div class="card-name">劳动力参与率</div>
+        <div class="card-desc">找出工作年龄人口中积极就业或寻找工作的百分比，反映劳动力市场参与情况。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/leverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">064</span>
+        </div>
+        <div class="card-name">杠杆比率计算器</div>
+        <div class="card-desc">评估企业相对于股本使用借入资金的程度，表示财务风险和资本结构。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/levered-free-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">065</span>
+        </div>
+        <div class="card-name">杠杆自由现金流（LFCF）</div>
+        <div class="card-desc">衡量在满足债务义务后可供股东使用的现金 — 剩余用于股息和股票回购的资金。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/liquidity-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">066</span>
+        </div>
+        <div class="card-name">流动性覆盖比率（LCR）</div>
+        <div class="card-desc">验证银行是否持有足够的高质量流动资产以在30天压力情景中生存，如巴塞尔III所要求的那样。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/loan-to-deposit-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">067</span>
+        </div>
+        <div class="card-name">贷存比（LDR）</div>
+        <div class="card-desc">衡量银行相对于存款的贷款活动；比率过高表明流动性风险，过低可能表明资金使用不足。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/loss-given-default.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">068</span>
+        </div>
+        <div class="card-name">违约损失率 (LGD)</div>
+        <div class="card-desc">在考虑担保品回收后,估计借款人违约时贷款人的损失,表示为敞口的百分比。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/loss-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">069</span>
+        </div>
+        <div class="card-name">损失率计算器</div>
+        <div class="card-desc">将已支付的总赔偿金除以已赚取保费，以评估保险承保盈利能力 — 超过100%的比率表示承保损失。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/lost-profits.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">070</span>
+        </div>
+        <div class="card-name">损失利润计算器</div>
+        <div class="card-desc">估计由于业务中断、合同违约或过失造成的失去的收益——常用于诉讼和保险索赔。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/margin-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">071</span>
         </div>
         <div class="card-name">利润率计算器</div>
         <div class="card-desc">输入成本和销售价格，立即查看总利润率、利润百分比和单位利润。</div>
         <div class="card-open mono">打开 →</div>
       </a>
       
+      <a class="card" href="/zh/tools/marginal-cost.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">072</span>
+        </div>
+        <div class="card-name">边际成本计算器</div>
+        <div class="card-desc">了解生产一个额外单位时总成本增加多少——这是定价和生产水平决策的关键输入。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/marginal-propensity-consume.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">073</span>
+        </div>
+        <div class="card-name">边际消费倾向（MPC）</div>
+        <div class="card-desc">确定家庭在额外每一美元收入中的支出比例，这是经济乘数模型的关键输入。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/marginal-propensity-save.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">074</span>
+        </div>
+        <div class="card-name">边际储蓄倾向 (MPS)</div>
+        <div class="card-desc">找到家庭在经济分析中储蓄而非支出的每一美元额外收入的比例，补充边际消费倾向 (MPC)。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/marginal-revenue.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">075</span>
+        </div>
+        <div class="card-name">边际收益计算器</div>
+        <div class="card-desc">确定多销售一个单位产生的额外收益——对设置利润最大化的产出水平很有用。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
       <a class="card" href="/zh/tools/markup-calculator.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">商业</span>
-          <span class="card-idx">060</span>
+          <span class="card-idx">076</span>
         </div>
         <div class="card-name">加价计算器</div>
         <div class="card-desc">通过应用所需的加价百分比将成本转换为售价，或从给定价格反向计算加价。</div>
         <div class="card-open mono">打开 →</div>
       </a>
       
+      <a class="card" href="/zh/tools/net-debt.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">077</span>
+        </div>
+        <div class="card-name">净债务计算器</div>
+        <div class="card-desc">通过从总债务中减去现金及其等价物来计算公司的真实债务负担。净债务越低表示财务健康状况越好。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/net-income.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">078</span>
+        </div>
+        <div class="card-name">净收入计算器</div>
+        <div class="card-desc">通过从总收入中扣除任何特定期间的所有成本、税款和利息，计算最终净利润。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/net-operating-assets.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">079</span>
+        </div>
+        <div class="card-name">净营运资产</div>
+        <div class="card-desc">分离与核心业务运营相关的资产和负债，排除融资项目，以评估运营效率。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/net-profit-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">080</span>
+        </div>
+        <div class="card-name">净利润率</div>
+        <div class="card-desc">将净收入表示为收入的百分比，以比较各个时期的整体盈利能力或与行业基准进行比较。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/net-stable-funding-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">081</span>
+        </div>
+        <div class="card-name">净稳定资金比率（NSFR）</div>
+        <div class="card-desc">根据巴塞尔III流动性标准，评估银行在一年期间内用稳定资金来源资助其活动的能力。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/nopat-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">082</span>
+        </div>
+        <div class="card-name">NOPAT计算器</div>
+        <div class="card-desc">从营业利润中扣除债务的税收优惠，以获得融资中性的营业绩效指标。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/okuns-law.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">083</span>
+        </div>
+        <div class="card-name">奥肯定律计算器</div>
+        <div class="card-desc">使用奥肯经验关系，估计GDP增长变化带来的失业率预期变化。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/operating-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">084</span>
+        </div>
+        <div class="card-name">营业现金流计算器</div>
+        <div class="card-desc">衡量从核心业务运营产生的现金，不包括投资和融资，以评估日常财务健康。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/operating-cash-flow-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">085</span>
+        </div>
+        <div class="card-name">营运现金流比率</div>
+        <div class="card-desc">查看公司的营运现金流是否足以覆盖其流动负债——一个实用的偿债能力检查。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/operating-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">086</span>
+        </div>
+        <div class="card-name">营业利润率计算器</div>
+        <div class="card-desc">将营业收入表示为收入的百分比，以评估公司如何有效地运营其核心业务。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/optimal-price.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">087</span>
+        </div>
+        <div class="card-name">最优价格计算器</div>
+        <div class="card-desc">通过将需求价格弹性与成本数据结合，找到最大化收入或利润的价格。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/osha-dart-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">088</span>
+        </div>
+        <div class="card-name">OSHA DART 发生率</div>
+        <div class="card-desc">跟踪您每 100 名全职员工的 OSHA 脱离工作日、受限工作或工作转换发生率，以对标职场安全性能。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/osha-trir-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">089</span>
+        </div>
+        <div class="card-name">职业安全卫生署 TRIR 比率</div>
+        <div class="card-desc">计算每 100 名全职员工的总可记录事故率，以满足 OSHA 报告要求并监控安全趋势。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/price-elasticity-demand.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">090</span>
+        </div>
+        <div class="card-name">需求价格弹性</div>
+        <div class="card-desc">衡量客户需求对价格变化的敏感程度——对于在不牺牲太多销量的情况下制定价格至关重要。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/productivity-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">091</span>
+        </div>
+        <div class="card-name">生产力计算器</div>
+        <div class="card-desc">衡量每个工人或每小时的产出，以评估团队效率并确定资源可以更好地部署的位置。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/profit-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">092</span>
+        </div>
+        <div class="card-name">利润计算器</div>
+        <div class="card-desc">输入收入和成本，在一个地方查看毛利润、净利润和利润率百分比。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/profit-sharing.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">093</span>
+        </div>
+        <div class="card-name">利润分配计算器</div>
+        <div class="card-desc">根据薪资、角色权重或均等分配，在员工或合作伙伴之间分配利润池 — 便于年终规划。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
+      <a class="card" href="/zh/tools/receivables-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">商业</span>
+          <span class="card-idx">094</span>
+        </div>
+        <div class="card-name">应收账款周转率</div>
+        <div class="card-desc">衡量公司每年收取其平均应收账款余额的次数，反映账单和收款效率。</div>
+        <div class="card-open mono">打开 →</div>
+      </a>
+      
       <a class="card" href="/zh/tools/sales-tax.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">商业</span>
-          <span class="card-idx">061</span>
+          <span class="card-idx">095</span>
         </div>
         <div class="card-name">销售税计算器</div>
         <div class="card-desc">通过输入您管辖区的税率，将正确的销售税添加到任何税前价格 — 也会单独显示税款金额。</div>
@@ -1081,7 +1476,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147 个工具 · 重新设计预览</span>
+    <span>229 个工具 · 重新设计预览</span>
   </div>
 </footer>
 </div>

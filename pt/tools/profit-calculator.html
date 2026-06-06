@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Lucro — Tools Catalog</title>
+  <meta name="description" content="Digite receita e custos para ver lucro bruto, lucro líquido e percentuais de margem em um só lugar.">
+  <script>
+    // Apply the saved or initial random background color before first paint.
+    (function () {
+      try {
+        var colors = ['#ec18e6','#f472b6','#fb7185','#f87171','#fb923c','#fbbf24','#facc15','#a3e635','#4ade80','#34d399','#2dd4bf','#22d3ee','#38bdf8','#60a5fa','#818cf8','#a78bfa','#c084fc','#e879f9','#cbd5e1','#f5f5f5'];
+        var c = localStorage.getItem('tc_v2_bg') || colors[Math.floor(Math.random() * colors.length)];
+        if (c) {
+          window.__tcInitialBg = c;
+          document.documentElement.style.setProperty('--mag', c);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
+  <style>
+:root{
+  --mag:#ec18e6;
+  --ink:#0b0b0b;
+  --hair:#0b0b0b;
+  --grotesk:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --maxw:1280px;
+  --pad:clamp(18px,4vw,48px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background-color:var(--mag);color:var(--ink);font-family:var(--grotesk);-webkit-font-smoothing:antialiased;}
+body{overflow-x:hidden;background-attachment:fixed;background-repeat:repeat;min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+::selection{background:var(--ink);color:var(--mag);}
+
+/* texture — baked into the page background so it never overlays content */
+body[data-tex="on"]{
+  background-image:
+    radial-gradient(rgba(0,0,0,.20) .9px,transparent 1.35px),
+    linear-gradient(rgba(0,0,0,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.045) 1px,transparent 1px);
+  background-size:5px 5px,160px 160px,160px 160px;
+}
+body[data-tex="soft"]{
+  background-image:radial-gradient(rgba(0,0,0,.14) .8px,transparent 1.5px);
+  background-size:6px 6px;
+}
+body[data-tex="off"]{background-image:none;}
+
+.app{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);width:100%;}
+
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+
+/* top bar -----------------------------------------------------------*/
+.topbar{border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;
+  padding:14px var(--pad);position:sticky;top:0;background:var(--mag);z-index:30;}
+.topbar-left{display:flex;align-items:center;gap:clamp(12px,2vw,22px);min-width:0;}
+.brand{display:flex;align-items:center;gap:11px;min-width:0;}
+.brand-name{font-weight:800;letter-spacing:-.04em;font-size:22px;}
+.brand-ver{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:clamp(14px,3vw,34px);}
+.langsel{position:relative;}
+.langsel-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.langsel-btn:hover{background:var(--ink);color:var(--mag);}
+.langsel-btn svg{width:13px;height:13px;display:block;}
+.langsel-caret{font-size:9px;opacity:.7;}
+.langsel-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:6px;width:190px;max-height:330px;overflow:auto;z-index:50;display:none;}
+.langsel-panel.open{display:block;}
+.langsel-item{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;font-size:13px;text-align:left;transition:background .12s,color .12s;}
+.langsel-item:hover,.langsel-item.on{background:var(--ink);color:var(--mag);}
+.langsel-code{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;}
+.topcount{font-size:10px;opacity:.6;align-self:flex-start;margin-top:2px;}
+@media(max-width:640px){
+  .topbar{padding:14px 18px;}
+  .topbar-left{gap:8px;}
+  .brand{gap:7px;}
+  .brand-name{font-size:18px;}
+  .topcount{font-size:9px;}
+}
+@media(max-width:340px){.topcount{display:none;}}
+
+/* config / color picker --------------------------------------------*/
+.cfg{position:relative;}
+.cfg-btn{font-size:11px;border:2px solid var(--ink);padding:5px 9px;display:flex;align-items:center;gap:6px;line-height:1;}
+.cfg-btn:hover{background:var(--ink);color:var(--mag);}
+.cfg-btn svg{width:13px;height:13px;display:block;}
+.cfg-panel{position:absolute;right:0;top:calc(100% + 10px);background:var(--mag);border:2px solid var(--ink);
+  padding:15px;width:228px;z-index:50;display:none;}
+.cfg-panel.open{display:block;}
+.cfg-panel-label{font-size:10px;display:block;margin-bottom:12px;}
+.cfg-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.cfg-swatch{aspect-ratio:1;border:2px solid var(--ink);cursor:pointer;position:relative;padding:0;}
+.cfg-swatch.on::after{content:"";position:absolute;inset:3px;border:2px solid var(--ink);}
+@media(max-width:640px){.cfg-btn span{display:none;}}
+
+/* hero --------------------------------------------------------------*/
+.hero{padding:clamp(30px,6vw,72px) 0 clamp(24px,4vw,44px);border-bottom:2px solid var(--ink);}
+.hero-main{display:block;}
+.hero-tag{font-size:13px;white-space:nowrap;}
+.hero-head{font-weight:800;letter-spacing:-.045em;line-height:.9;
+  font-size:clamp(38px,8.4vw,116px);text-wrap:balance;}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;
+  margin-top:clamp(28px,5vw,64px);flex-wrap:wrap;}
+.stats{display:flex;gap:clamp(26px,5vw,70px);flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:4px;}
+.stat-label{font-size:12px;}
+.stat-val{font-weight:800;letter-spacing:-.04em;line-height:.9;font-size:clamp(34px,4.6vw,62px);}
+.stat-sub{font-size:.4em;font-weight:700;letter-spacing:0;opacity:.55;margin-left:.1em;font-family:var(--mono);vertical-align:super;}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(18px,3vw,36px);}
+.hero-note{font-size:11px;line-height:1.7;text-align:right;opacity:.85;}
+@media(max-width:560px){.hero-side{align-items:flex-start;gap:18px;}.hero-note{text-align:left;}}
+
+/* controls ----------------------------------------------------------*/
+.controls{padding:clamp(22px,3vw,32px) var(--pad) clamp(16px,2vw,22px);}
+.search{display:flex;align-items:center;gap:14px;border:2px solid var(--ink);padding:clamp(12px,1.6vw,18px) 18px;}
+.search-key{font-size:12px;white-space:nowrap;}
+.search-input{flex:1;background:none;border:none;outline:none;color:var(--ink);
+  font-weight:700;letter-spacing:-.02em;font-size:clamp(20px,2.6vw,32px);min-width:0;}
+.search-input::placeholder{color:var(--ink);opacity:.4;font-weight:700;}
+.search-arrow{font-size:20px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.chip{border:2px solid var(--ink);padding:7px 12px;font-size:11px;display:inline-flex;align-items:center;gap:3px;
+  background:var(--mag);transition:background .12s,color .12s;}
+.chip:hover{background:var(--ink);color:var(--mag);}
+.chip.on{background:var(--ink);color:var(--mag);}
+.chip-count{font-size:8px;opacity:.6;}
+
+/* grid + cards ------------------------------------------------------*/
+.gridwrap{padding-bottom:clamp(40px,6vw,80px);}
+.results-bar{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 16px;font-size:11px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;
+  background:var(--ink);border:2px solid var(--ink);}
+.card{background:var(--mag);text-align:left;padding:clamp(16px,1.5vw,22px);display:flex;flex-direction:column;
+  gap:10px;min-height:188px;transition:background .14s,color .14s;position:relative;}
+.card-top{display:flex;justify-content:space-between;font-size:10px;}
+.card-cat{opacity:.7;}
+.card-idx{opacity:.5;}
+.card-name{font-weight:800;letter-spacing:-.035em;line-height:.96;font-size:clamp(20px,1.9vw,27px);}
+.card-desc{font-size:13.5px;line-height:1.4;opacity:.78;margin-top:auto;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-open{font-size:11px;opacity:0;transform:translateX(-4px);transition:.14s;}
+body[data-hover="on"] .card:hover{background:var(--ink);color:var(--mag);}
+body[data-hover="on"] .card:hover .card-cat,body[data-hover="on"] .card:hover .card-idx,body[data-hover="on"] .card:hover .card-desc{opacity:.85;}
+.card:hover .card-open{opacity:1;transform:none;}
+body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
+
+.empty{padding:60px 0 80px;}
+.empty-head{font-weight:800;letter-spacing:-.04em;line-height:.92;font-size:clamp(34px,5vw,64px);margin-top:14px;}
+
+/* category screen ---------------------------------------------------*/
+.cat-hero{padding:clamp(34px,5vw,64px) 0 clamp(20px,3vw,30px);border-bottom:2px solid var(--ink);}
+.cat-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(18px,3vw,34px);}
+.cat-crumb a{opacity:.55;}.cat-crumb a:hover{opacity:1;text-decoration:underline;}
+.cat-crumb .on{opacity:1;}
+.cat-title{font-weight:800;letter-spacing:-.05em;line-height:.86;font-size:clamp(56px,12vw,170px);text-transform:uppercase;}
+.cat-title sup{font-size:.22em;font-family:var(--mono);letter-spacing:0;vertical-align:super;opacity:.6;}
+.cat-sub{font-size:12px;margin-top:18px;max-width:46ch;line-height:1.7;opacity:.8;}
+
+/* tool page ---------------------------------------------------------*/
+.tp{padding:clamp(26px,4vw,48px) 0 clamp(50px,7vw,90px);}
+.tp-crumb{display:flex;gap:8px;font-size:11px;margin-bottom:clamp(24px,4vw,44px);flex-wrap:wrap;}
+.tp-crumb a{opacity:.55;}.tp-crumb a:hover{opacity:1;text-decoration:underline;}
+.tp-crumb .on{opacity:1;}
+.tp-head{margin-bottom:clamp(26px,4vw,46px);}
+.tp-kicker{font-size:12px;}
+.tp-title{font-weight:800;letter-spacing:-.045em;line-height:.9;font-size:clamp(40px,7vw,92px);margin:10px 0 14px;}
+.tp-desc{font-size:clamp(14px,1.5vw,17px);line-height:1.5;max-width:60ch;opacity:.85;}
+
+.tp-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-grid--wide{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+@media(max-width:780px){.tp-grid,.tp-grid--wide{grid-template-columns:1fr;}}
+.tp-inputs{background:var(--mag);padding:clamp(20px,2.6vw,34px);display:flex;flex-direction:column;gap:18px;}
+.tp-field{display:flex;flex-direction:column;gap:7px;}
+.tp-field-label{font-size:11px;}
+.tp-field-input{display:flex;align-items:center;border:2px solid var(--ink);background:var(--mag);}
+.tp-input{flex:1;background:none;border:none;outline:none;padding:11px 13px;font-weight:700;
+  letter-spacing:-.02em;font-size:clamp(18px,2vw,24px);min-width:0;color:var(--ink);}
+.tp-suffix{padding:0 13px;font-size:13px;opacity:.55;border-left:2px solid var(--ink);align-self:stretch;display:flex;align-items:center;}
+.tp-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tp-breakdown{display:flex;flex-direction:column;gap:0;border:2px solid var(--ink);margin-top:4px;}
+.tp-breakdown div{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;font-size:11px;border-bottom:1px solid rgba(0,0,0,.25);}
+.tp-breakdown div:last-child{border-bottom:none;}
+.tp-breakdown b{font-size:13px;}
+
+.tp-result{background:var(--ink);color:var(--mag);padding:clamp(24px,3vw,40px);
+  display:flex;flex-direction:column;justify-content:center;gap:14px;}
+.tp-result-label{font-size:12px;opacity:.65;}
+.tp-result-val{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;}
+.tp-result-prefix{font-weight:800;font-size:clamp(26px,3vw,42px);letter-spacing:-.04em;}
+.tp-result-num{font-weight:800;letter-spacing:-.05em;line-height:.85;font-size:clamp(46px,7.5vw,104px);word-break:break-word;}
+.tp-result-note{font-size:11px;opacity:.6;}
+.tp-result-sub{font-size:13px;opacity:.6;}
+
+.tp-sentence{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;}
+.tp-sentence .tp-input{border:2px solid var(--ink);max-width:120px;}
+.tp-toggles{display:flex;gap:8px;flex-wrap:wrap;}
+.tp-toggles--wrap{margin-bottom:4px;}
+.tp-toggle{border:2px solid var(--ink);padding:8px 12px;font-size:11px;transition:.12s;}
+.tp-toggle.on{background:var(--ink);color:var(--mag);}
+.tp-gen{border:2px solid var(--ink);padding:12px 16px;font-size:12px;text-align:center;background:var(--ink);color:var(--mag);transition:.12s;}
+.tp-gen:hover{opacity:.82;}
+.tp-hint,.tp-demo-note{font-size:10.5px;opacity:.6;line-height:1.6;}
+.tp-demo-note{margin-top:auto;}
+.tp-textarea{border:2px solid var(--ink);background:var(--mag);padding:13px;font-family:var(--mono);font-size:13px;
+  line-height:1.6;resize:vertical;min-height:120px;outline:none;color:var(--ink);width:100%;}
+.tp-textarea--tall{min-height:220px;}
+.tp-result--pw,.tp-result--list,.tp-result--stats{justify-content:flex-start;}
+.tp-pw{font-family:var(--mono);font-weight:700;font-size:clamp(20px,2.6vw,30px);word-break:break-all;line-height:1.3;letter-spacing:.02em;}
+.tp-uuids{display:flex;flex-direction:column;gap:9px;}
+.tp-uuid{font-size:13px;word-break:break-all;padding-bottom:9px;border-bottom:1px solid rgba(236,24,230,.25);font-family:var(--mono);}
+.tp-uuid:last-child{border-bottom:none;}
+.tp-mono-out{font-size:14px;line-height:1.6;word-break:break-all;white-space:pre-wrap;}
+.tp-stat-big{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.tp-stat-big b{font-weight:800;letter-spacing:-.05em;font-size:clamp(46px,7vw,90px);line-height:.85;}
+.tp-stat-big span{font-size:12px;opacity:.65;}
+.tp-statgrid{display:flex;flex-direction:column;gap:0;border:2px solid var(--mag);}
+.tp-statgrid div{display:flex;justify-content:space-between;padding:10px 13px;font-size:12px;border-bottom:1px solid rgba(236,24,230,.25);}
+.tp-statgrid div:last-child{border-bottom:none;}
+
+.tp-related{margin-top:clamp(34px,5vw,56px);}
+.tp-related-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-related-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-related-card{background:var(--mag);display:flex;justify-content:space-between;align-items:center;
+  padding:16px 18px;transition:.14s;}
+.tp-related-card:hover{background:var(--ink);color:var(--mag);}
+.tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
+.tp-related-arrow{font-size:13px;}
+
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
+/* footer ------------------------------------------------------------*/
+.footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
+.foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
+.footer-top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.footer-top > div{background:var(--mag);border:2px solid var(--ink);padding:clamp(16px,2vw,24px);flex:1 1 280px;}
+.footer-catlist{display:flex;flex-wrap:wrap;gap:8px 18px;max-width:520px;}
+.foot-link{font-size:13px;opacity:.85;}.foot-link:hover{opacity:1;text-decoration:underline;}
+.foot-about-text{font-size:11px;line-height:1.9;opacity:.8;max-width:320px;}
+.footer-mark{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  margin:clamp(34px,5vw,56px) 0 26px;border-top:2px solid var(--ink);padding-top:26px;}
+.footer-word{font-weight:800;letter-spacing:-.05em;font-size:clamp(40px,10vw,140px);line-height:.8;}
+.footer-base{display:flex;justify-content:space-between;font-size:10px;opacity:.65;border-top:2px solid var(--ink);padding-top:18px;flex-wrap:wrap;gap:10px;}
+
+/* misc --------------------------------------------------------------*/
+.skip-fade{animation:fade .3s ease;}
+@keyframes fade{from{transform:translateY(8px);}to{transform:none;}}
+
+/* live-value animation — result numbers tween + pop when they change
+   (driven by the watcher script on tool pages). */
+@keyframes value-pop{0%{transform:scale(1);}35%{transform:scale(1.06);}100%{transform:scale(1);}}
+.value-animate{display:inline-block;transform-origin:left center;animation:value-pop .42s cubic-bezier(.22,1,.36,1);will-change:transform;}
+.tp-result-num.value-animate{transform-origin:left bottom;}
+
+/* tactile button press, in keeping with the .12s transitions used above */
+button{transition:background .12s,color .12s,opacity .12s,transform .1s;}
+button:active{transform:translateY(1px);}
+button:disabled{transform:none;}
+
+@media (prefers-reduced-motion:reduce){
+  .skip-fade,.value-animate{animation:none;}
+  button:active{transform:none;}
+}
+  </style>
+</head>
+<body data-tex="on" data-hover="on">
+  <div class="app">
+    <header class="topbar">
+  <div class="topbar-left">
+    <a class="brand" href="/pt/">
+      <span class="brand-name">TOOLSCATALOG</span>
+      <span class="brand-ver mono">V2</span>
+    </a>
+    <span class="topcount mono">230 Ferramentas</span>
+  </div>
+  <div class="topbar-right">
+    
+    
+    <div class="langsel" id="langsel">
+      <button class="langsel-btn mono" id="langsel-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"></path>
+        </svg>
+        <span>PT</span>
+        <span class="langsel-caret">▾</span>
+      </button>
+      <div class="langsel-panel" id="langsel-panel" role="menu">
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="en" href="/"><span>English</span><span class="langsel-code">en</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="es" href="/es/"><span>Español</span><span class="langsel-code">es</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="fr" href="/fr/"><span>Français</span><span class="langsel-code">fr</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="de" href="/de/"><span>Deutsch</span><span class="langsel-code">de</span></a>
+          
+        
+          
+          <span class="langsel-item on" role="menuitem" aria-current="true"><span>Português</span><span class="langsel-code">pt</span></span>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="it" href="/it/"><span>Italiano</span><span class="langsel-code">it</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ja" href="/ja/"><span>日本語</span><span class="langsel-code">ja</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="ko" href="/ko/"><span>한국어</span><span class="langsel-code">ko</span></a>
+          
+        
+          
+          <a class="langsel-item" role="menuitem" hreflang="zh" href="/zh/"><span>中文</span><span class="langsel-code">zh</span></a>
+          
+        
+      </div>
+    </div>
+    <div class="cfg">
+      <button class="cfg-btn mono" id="cfg-btn" aria-label="Theme settings" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3.2"></circle>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"></path>
+        </svg>
+        <span>Tema</span>
+      </button>
+      <div class="cfg-panel" id="cfg-panel" role="menu">
+        <span class="cfg-panel-label mono">Cor de fundo</span>
+        <div class="cfg-swatches" id="cfg-swatches">
+          
+          <button class="cfg-swatch" data-color="#ec18e6" title="Magenta"
+                  aria-label="Magenta" style="background:#ec18e6"></button>
+          
+          <button class="cfg-swatch" data-color="#f472b6" title="Pink"
+                  aria-label="Pink" style="background:#f472b6"></button>
+          
+          <button class="cfg-swatch" data-color="#fb7185" title="Rose"
+                  aria-label="Rose" style="background:#fb7185"></button>
+          
+          <button class="cfg-swatch" data-color="#f87171" title="Red"
+                  aria-label="Red" style="background:#f87171"></button>
+          
+          <button class="cfg-swatch" data-color="#fb923c" title="Orange"
+                  aria-label="Orange" style="background:#fb923c"></button>
+          
+          <button class="cfg-swatch" data-color="#fbbf24" title="Amber"
+                  aria-label="Amber" style="background:#fbbf24"></button>
+          
+          <button class="cfg-swatch" data-color="#facc15" title="Yellow"
+                  aria-label="Yellow" style="background:#facc15"></button>
+          
+          <button class="cfg-swatch" data-color="#a3e635" title="Lime"
+                  aria-label="Lime" style="background:#a3e635"></button>
+          
+          <button class="cfg-swatch" data-color="#4ade80" title="Green"
+                  aria-label="Green" style="background:#4ade80"></button>
+          
+          <button class="cfg-swatch" data-color="#34d399" title="Emerald"
+                  aria-label="Emerald" style="background:#34d399"></button>
+          
+          <button class="cfg-swatch" data-color="#2dd4bf" title="Teal"
+                  aria-label="Teal" style="background:#2dd4bf"></button>
+          
+          <button class="cfg-swatch" data-color="#22d3ee" title="Cyan"
+                  aria-label="Cyan" style="background:#22d3ee"></button>
+          
+          <button class="cfg-swatch" data-color="#38bdf8" title="Sky"
+                  aria-label="Sky" style="background:#38bdf8"></button>
+          
+          <button class="cfg-swatch" data-color="#60a5fa" title="Blue"
+                  aria-label="Blue" style="background:#60a5fa"></button>
+          
+          <button class="cfg-swatch" data-color="#818cf8" title="Indigo"
+                  aria-label="Indigo" style="background:#818cf8"></button>
+          
+          <button class="cfg-swatch" data-color="#a78bfa" title="Violet"
+                  aria-label="Violet" style="background:#a78bfa"></button>
+          
+          <button class="cfg-swatch" data-color="#c084fc" title="Purple"
+                  aria-label="Purple" style="background:#c084fc"></button>
+          
+          <button class="cfg-swatch" data-color="#e879f9" title="Fuchsia"
+                  aria-label="Fuchsia" style="background:#e879f9"></button>
+          
+          <button class="cfg-swatch" data-color="#cbd5e1" title="Slate"
+                  aria-label="Slate" style="background:#cbd5e1"></button>
+          
+          <button class="cfg-swatch" data-color="#f5f5f5" title="White"
+                  aria-label="White" style="background:#f5f5f5"></button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    
+<style>
+/* Save-as-image: export card framing + action button --------------------*/
+.tp-export{display:flex;flex-direction:column;gap:clamp(20px,3vw,30px);}
+/* When rendered to canvas we add padding + a solid bg so the PNG is a clean,
+   self-contained card rather than a cut-out with transparent edges. */
+.tp-export.is-shooting{padding:clamp(20px,3vw,34px);background:var(--mag);}
+.tp-export.is-shooting .tp-head{margin-bottom:0;}
+
+.tp-stamp{display:none;align-items:center;justify-content:space-between;gap:16px;
+  border-top:2px solid var(--ink);padding-top:14px;font-size:10px;opacity:.8;}
+.tp-export.is-shooting .tp-stamp{display:flex;}
+.tp-stamp-brand{font-weight:800;letter-spacing:-.02em;}
+
+.tp-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:clamp(18px,2.5vw,26px);}
+.tp-save{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--ink);background:var(--ink);
+  color:var(--mag);padding:12px 18px;font-family:var(--mono);font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;font-size:12px;transition:opacity .12s;}
+.tp-save:hover{opacity:.82;}
+.tp-save:disabled{opacity:.5;cursor:progress;}
+.tp-save-ico{font-size:14px;line-height:1;}
+.tp-save-hint{font-size:10px;opacity:.6;}
+</style>
+
+<section class="tp skip-fade">
+  <div class="wrap">
+    <div class="tp-crumb mono">
+      <a href="/pt/">Catálogo</a>
+      <span>/</span>
+      <a href="/pt/business/">Negócios</a>
+      <span>/</span>
+      <span class="on">Calculadora de Lucro</span>
+    </div>
+
+    <!-- Everything inside #tp-export is what the "Save as image" button captures. -->
+    <div class="tp-export" id="tp-export">
+      <div class="tp-head">
+        <div class="tp-kicker mono">Negócios · Ferramenta</div>
+        <h1 class="tp-title">Calculadora de Lucro</h1>
+        <p class="tp-desc">Digite receita e custos para ver lucro bruto, lucro líquido e percentuais de margem em um só lugar.</p>
+      </div>
+
+      <div class="tp-grid tp-grid--wide">
+  <div class="tp-inputs">
+    <div class="tp-field">
+      <span class="tp-field-label mono">Revenue</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="pc-revenue" type="number" inputmode="decimal" value="150000" step="1000">
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Cost of goods sold</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="pc-cogs" type="number" inputmode="decimal" value="90000" step="1000">
+      </div>
+    </div>
+
+    <div class="tp-field">
+      <span class="tp-field-label mono">Operating expenses</span>
+      <div class="tp-field-input">
+        <span class="tp-suffix" style="border-left:none;border-right:2px solid var(--ink)">$</span>
+        <input class="tp-input" id="pc-opex" type="number" inputmode="decimal" value="30000" step="1000">
+      </div>
+    </div>
+
+    <div class="tp-breakdown">
+      <div><span class="mono">Revenue</span><b id="pc-bd-revenue">$0.00</b></div>
+      <div><span class="mono">Total costs</span><b id="pc-bd-costs">$0.00</b></div>
+      <div><span class="mono">Gross profit</span><b id="pc-bd-gross">$0.00</b></div>
+      <div><span class="mono">Net profit</span><b id="pc-bd-net">$0.00</b></div>
+    </div>
+  </div>
+
+  <div class="tp-result">
+    <span class="tp-result-label">Net Profit Margin</span>
+    <div class="tp-result-val">
+      <span class="tp-result-num" id="pc-margin">0.00</span><span style="margin-left:0.25em">%</span>
+    </div>
+    <span class="tp-result-note" id="pc-note">net profit $0.00</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var revenueInput = document.getElementById('pc-revenue');
+  var cogsInput = document.getElementById('pc-cogs');
+  var opexInput = document.getElementById('pc-opex');
+  var marginEl = document.getElementById('pc-margin');
+  var noteEl = document.getElementById('pc-note');
+
+  function money(amount) {
+    return '$' + (isFinite(amount) ? amount : 0).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function calculate() {
+    var revenue = parseFloat(revenueInput.value) || 0;
+    var cogs = parseFloat(cogsInput.value) || 0;
+    var operatingExpenses = parseFloat(opexInput.value) || 0;
+
+    var totalCosts = cogs + operatingExpenses;
+    var grossProfit = revenue - cogs;
+    var netProfit = revenue - totalCosts;
+    var profitMargin = revenue === 0 ? 0 : (netProfit / revenue) * 100;
+
+    document.getElementById('pc-bd-revenue').textContent = money(revenue);
+    document.getElementById('pc-bd-costs').textContent = money(totalCosts);
+    document.getElementById('pc-bd-gross').textContent = money(grossProfit);
+    document.getElementById('pc-bd-net').textContent = money(netProfit);
+
+    marginEl.textContent = isFinite(profitMargin) ? profitMargin.toFixed(2) : '0.00';
+    noteEl.textContent = 'net profit ' + money(netProfit);
+  }
+
+  [revenueInput, cogsInput, opexInput].forEach(function (el) {
+    el.addEventListener('input', calculate);
+  });
+
+  calculate();
+})();
+</script>
+
+
+      <!-- Brand stamp — hidden on the page, shown only in the exported image. -->
+      <div class="tp-stamp mono" aria-hidden="true">
+        <span class="tp-stamp-brand">Tools Catalog</span>
+        <span class="tp-stamp-url" id="tp-stamp-url"></span>
+      </div>
+    </div>
+
+    <div class="tp-actions">
+      <button class="tp-save" id="tp-save" type="button">
+        <span class="tp-save-ico" aria-hidden="true">↓</span>
+        <span class="tp-save-text">Salvar como imagem</span>
+      </button>
+      <span class="tp-save-hint mono">PNG · feito no seu navegador, nada é enviado</span>
+    </div>
+
+    
+
+
+
+
+    
+
+
+
+
+    
+    <div class="tp-related">
+      <span class="tp-related-label mono">Relacionadas em Negócios</span>
+      <div class="tp-related-list">
+        
+        <a class="tp-related-card" href="/pt/tools/absence-rate-calculator.html">
+          <span class="tp-related-name">Calculadora de Taxa de Ausência</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+        <a class="tp-related-card" href="/pt/tools/acceptance-rate-calculator.html">
+          <span class="tp-related-name">Calculadora de Taxa de Aceitação</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+        <a class="tp-related-card" href="/pt/tools/accounting-profit.html">
+          <span class="tp-related-name">Calculadora de Lucro Contábil</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+        <a class="tp-related-card" href="/pt/tools/additional-funds-needed.html">
+          <span class="tp-related-name">Fundos Adicionais Necessários</span>
+          <span class="tp-related-arrow">→</span>
+        </a>
+        
+      </div>
+    </div>
+    
+
+    <!-- Universal email capture (v2) --------------------------------------------
+     One shared block appended to the end of every tool page. Collects an email
+     to notify about new tools/updates. Posts to window.__TC_EMAIL_ENDPOINT__
+     when configured; otherwise it stores the address locally and still shows a
+     success state, so it works on the static (no-backend) deploy. -->
+<style>
+.tp-capture{margin-top:clamp(34px,5vw,56px);border:2px solid var(--ink);
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--ink);}
+@media(max-width:680px){.tp-capture{grid-template-columns:1fr;}}
+.tp-capture-copy{background:var(--mag);padding:clamp(20px,2.6vw,32px);display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.tp-capture-kicker{font-size:11px;}
+.tp-capture-title{font-weight:800;letter-spacing:-.04em;line-height:.95;font-size:clamp(24px,3vw,36px);}
+.tp-capture-sub{font-size:12px;line-height:1.6;opacity:.78;max-width:42ch;}
+.tp-capture-form{background:var(--ink);color:var(--mag);padding:clamp(20px,2.6vw,32px);
+  display:flex;flex-direction:column;gap:12px;justify-content:center;}
+.tp-capture-row{display:flex;border:2px solid var(--mag);}
+.tp-capture-input{flex:1;background:none;border:none;outline:none;color:var(--mag);
+  padding:12px 13px;font-weight:700;letter-spacing:-.02em;font-size:clamp(15px,1.6vw,18px);min-width:0;}
+.tp-capture-input::placeholder{color:var(--mag);opacity:.5;}
+.tp-capture-btn{border:none;border-left:2px solid var(--mag);background:var(--mag);color:var(--ink);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  font-size:11px;padding:0 16px;white-space:nowrap;}
+.tp-capture-btn:hover{opacity:.85;}
+.tp-capture-btn:disabled{opacity:.5;cursor:progress;}
+.tp-capture-note{font-size:10px;opacity:.6;line-height:1.6;}
+.tp-capture-ok{font-size:13px;font-weight:700;letter-spacing:-.02em;}
+</style>
+
+<div class="tp-capture" id="tp-capture">
+  <div class="tp-capture-copy">
+    <span class="tp-capture-kicker mono">Stay in the loop</span>
+    <div class="tp-capture-title">New tools, in your inbox.</div>
+    <p class="tp-capture-sub">Get an occasional email when we ship new calculators and updates. No spam, unsubscribe anytime.</p>
+  </div>
+  <div class="tp-capture-form">
+    <div class="tp-capture-row" id="tp-capture-row">
+      <input class="tp-capture-input" id="tp-capture-input" type="email" autocomplete="email"
+             placeholder="you@email.com" aria-label="Email address">
+      <button class="tp-capture-btn" id="tp-capture-btn" type="button">Notify me</button>
+    </div>
+    <p class="tp-capture-note mono">We respect your privacy. No spam, ever.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var wrap = document.getElementById('tp-capture');
+  var row = document.getElementById('tp-capture-row');
+  var input = document.getElementById('tp-capture-input');
+  var btn = document.getElementById('tp-capture-btn');
+  var form = wrap ? wrap.querySelector('.tp-capture-form') : null;
+  if (!wrap || !input || !btn || !form) return;
+
+  var toolId = "profit-calculator";
+  var toolName = "Calculadora de Lucro";
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var OK_TEXT = "Thanks — you're on the list!";
+
+  function showSuccess() {
+    row.style.display = 'none';
+    var note = form.querySelector('.tp-capture-note');
+    if (note) note.style.display = 'none';
+    var ok = document.createElement('p');
+    ok.className = 'tp-capture-ok';
+    ok.textContent = OK_TEXT;
+    form.appendChild(ok);
+  }
+
+  btn.addEventListener('click', function () {
+    var email = input.value.trim();
+    if (!EMAIL_RE.test(email)) { input.focus(); return; }
+
+    btn.disabled = true;
+    var endpoint = window.__TC_EMAIL_ENDPOINT__;
+    var payload = { email: email, tool_id: toolId, source: 'v2', url: location.href };
+
+    // Tracking — mirror the v1 email capture (Google Ads conversion + PostHog).
+    if (typeof gtag_report_conversion === 'function') {
+      try { gtag_report_conversion(); } catch (e) {}
+    }
+    if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
+      try {
+        posthog.identify(email, { email: email, tool_interest: toolId, capture_type: 'notify' });
+        posthog.capture('email_captured', {
+          email: email,
+          tool_id: toolId,
+          tool_name: toolName,
+          capture_type: 'notify',
+          source: 'v2',
+          timestamp: new Date().toISOString()
+        });
+      } catch (e) {}
+    }
+
+    // Remember locally regardless, so a repeat visitor isn't re-prompted hard.
+    try { localStorage.setItem('tc_v2_email', email); } catch (e) {}
+
+    if (endpoint) {
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(showSuccess).catch(showSuccess);
+    } else {
+      // No backend wired (static deploy) — still confirm to the user.
+      showSuccess();
+    }
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+  });
+})();
+</script>
+
+  </div>
+</section>
+
+    <div class="wrap"><footer class="footer">
+  <div class="footer-top">
+    <div>
+      <span class="foot-label mono">Categorias</span>
+      <div class="footer-catlist">
+        
+        <a class="foot-link" href="/pt/financial/">Financeiras</a>
+        
+        <a class="foot-link" href="/pt/business/">Negócios</a>
+        
+        <a class="foot-link" href="/pt/investment/">Investimento</a>
+        
+        <a class="foot-link" href="/pt/developer/">Desenvolvedor</a>
+        
+        <a class="foot-link" href="/pt/utility/">Utilitários</a>
+        
+        <a class="foot-link" href="/pt/cryptography/">Criptografia</a>
+        
+        <a class="foot-link" href="/pt/design/">Design</a>
+        
+        <a class="foot-link" href="/pt/datetime/">Data e hora</a>
+        
+        <a class="foot-link" href="/pt/math/">Matemática</a>
+        
+        <a class="foot-link" href="/pt/random/">Aleatório</a>
+        
+        <a class="foot-link" href="/pt/text/">Texto</a>
+        
+      </div>
+    </div>
+    <div>
+      <span class="foot-label mono">Sobre</span>
+      <p class="foot-about-text">Uma coleção crescente de pequenas calculadoras e conversores de propósito único. Todos os cálculos são feitos localmente no seu navegador — sem contas, sem anúncios, nenhum dado sai do seu dispositivo.</p>
+    </div>
+  </div>
+  <div class="footer-mark">
+    <span class="footer-word">TOOLS</span>
+    <span class="footer-word">CATALOG</span>
+  </div>
+  <div class="footer-base mono">
+    <span>© 2026 ToolsCatalog</span>
+    <span>230 ferramentas · prévia do redesign</span>
+  </div>
+</footer>
+</div>
+  </div>
+  <!-- Universal feedback widget (v2) ------------------------------------------
+     A floating button that opens a small form. On send it composes a mailto:
+     link pre-filled with the current page URL + the user's message, so the
+     visitor's default email client takes over (no backend required). Shared
+     across every page via base.njk. -->
+<style>
+.fb-fab{position:fixed;right:clamp(14px,3vw,28px);bottom:clamp(14px,3vw,28px);z-index:60;
+  border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:11px;padding:11px 15px;display:inline-flex;align-items:center;gap:8px;}
+.fb-fab:hover{opacity:.85;}
+.fb-fab-ico{font-size:13px;line-height:1;}
+
+.fb-overlay{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;padding:18px;}
+.fb-overlay.open{display:flex;}
+.fb-modal{background:var(--mag);border:2px solid var(--ink);width:100%;max-width:440px;
+  padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:16px;}
+.fb-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.fb-modal-title{font-weight:800;letter-spacing:-.04em;font-size:clamp(22px,3vw,30px);line-height:.95;}
+.fb-modal-sub{font-size:11px;opacity:.7;line-height:1.5;margin-top:6px;}
+.fb-close{font-size:20px;line-height:1;border:2px solid var(--ink);width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;flex:none;}
+.fb-close:hover{background:var(--ink);color:var(--mag);}
+.fb-textarea{border:2px solid var(--ink);background:var(--mag);padding:12px;color:var(--ink);
+  font-family:var(--mono);font-size:13px;line-height:1.6;resize:vertical;min-height:130px;outline:none;width:100%;}
+.fb-textarea::placeholder{color:var(--ink);opacity:.45;}
+.fb-send{border:2px solid var(--ink);background:var(--ink);color:var(--mag);
+  font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:12px;padding:13px 16px;text-align:center;}
+.fb-send:hover{opacity:.85;}
+.fb-send:disabled{opacity:.4;cursor:not-allowed;}
+.fb-note{font-size:10px;opacity:.6;line-height:1.6;}
+</style>
+
+<button class="fb-fab" id="fb-fab" type="button" aria-haspopup="dialog" aria-expanded="false">
+  <span class="fb-fab-ico" aria-hidden="true">✎</span>
+  <span>Feedback</span>
+</button>
+
+<div class="fb-overlay" id="fb-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-title">
+  <div class="fb-modal">
+    <div class="fb-modal-head">
+      <div>
+        <div class="fb-modal-title" id="fb-title">Send feedback</div>
+        <div class="fb-modal-sub">Found a bug or have an idea? Tell us — it opens your email app.</div>
+      </div>
+      <button class="fb-close" id="fb-close" type="button" aria-label="Close">×</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text"
+      placeholder="Your feedback…"></textarea>
+    <button class="fb-send" id="fb-send" type="button" disabled>Send via email</button>
+    <p class="fb-note mono">Opens your default mail app · the page link is added automatically.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var FB_TO = "slava@kaushan.com";
+  var fab = document.getElementById('fb-fab');
+  var overlay = document.getElementById('fb-overlay');
+  var closeBtn = document.getElementById('fb-close');
+  var text = document.getElementById('fb-text');
+  var send = document.getElementById('fb-send');
+  if (!fab || !overlay || !text || !send) return;
+
+  function setOpen(open) {
+    overlay.classList.toggle('open', open);
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) setTimeout(function () { text.focus(); }, 0);
+  }
+
+  fab.addEventListener('click', function () { setOpen(true); });
+  closeBtn.addEventListener('click', function () { setOpen(false); });
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) setOpen(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) setOpen(false);
+  });
+
+  text.addEventListener('input', function () {
+    send.disabled = text.value.trim().length === 0;
+  });
+
+  send.addEventListener('click', function () {
+    var body = text.value.trim();
+    if (!body) return;
+    var pageUrl = location.href;
+    var pageTitle = document.title;
+    var subject = 'Feedback: ' + pageTitle;
+    var fullBody = body + '\n\n— — —\nPage: ' + pageTitle + '\n' + pageUrl;
+    var href = 'mailto:' + encodeURIComponent(FB_TO) +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(fullBody);
+    window.location.href = href;
+    setOpen(false);
+  });
+})();
+</script>
+
+  <script>
+  (function () {
+    var btn = document.getElementById('cfg-btn');
+    var panel = document.getElementById('cfg-panel');
+    var swatches = Array.prototype.slice.call(document.querySelectorAll('#cfg-swatches .cfg-swatch'));
+    if (!btn || !panel) return;
+    var KEY = 'tc_v2_bg';
+    var COLORS = swatches.map(function (s) { return s.getAttribute('data-color'); });
+    var DEFAULT = window.__tcInitialBg || COLORS[Math.floor(Math.random() * COLORS.length)] || '#ec18e6';
+
+    function current() {
+      try { return localStorage.getItem(KEY) || DEFAULT; } catch (e) { return DEFAULT; }
+    }
+    function mark() {
+      var c = current().toLowerCase();
+      swatches.forEach(function (s) {
+        s.classList.toggle('on', s.getAttribute('data-color').toLowerCase() === c);
+      });
+    }
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    document.documentElement.style.setProperty('--mag', current());
+    mark();
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    swatches.forEach(function (s) {
+      s.addEventListener('click', function () {
+        var c = s.getAttribute('data-color');
+        document.documentElement.style.setProperty('--mag', c);
+        try { localStorage.setItem(KEY, c); } catch (e) {}
+        mark();
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && e.target !== btn) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  <script>
+  (function () {
+    var btn = document.getElementById('langsel-btn');
+    var panel = document.getElementById('langsel-panel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+  </script>
+  
+<script src="/assets/html2canvas.min.js"></script>
+<script>
+(function () {
+  var btn = document.getElementById('tp-save');
+  var node = document.getElementById('tp-export');
+  if (!btn || !node || typeof html2canvas !== 'function') return;
+
+  var label = btn.querySelector('.tp-save-text');
+  var stampUrl = document.getElementById('tp-stamp-url');
+  var slug = "profit-calculator";
+
+  // Fill the export stamp with the page URL (host + path), trimmed for length.
+  if (stampUrl) {
+    try {
+      stampUrl.textContent = (location.host + location.pathname).replace(/\/+$/, '');
+    } catch (e) {}
+  }
+
+  function setBusy(busy) {
+    btn.disabled = busy;
+    if (label) label.textContent = busy ? 'Rendering…' : 'Save as image';
+  }
+
+  btn.addEventListener('click', function () {
+    setBusy(true);
+    // Use the live background color (the config picker can change --mag) so the
+    // exported card matches what the user sees.
+    var bg = getComputedStyle(document.documentElement).getPropertyValue('--mag').trim() || '#ec18e6';
+
+    var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    ready.then(function () {
+      node.classList.add('is-shooting');
+      return html2canvas(node, {
+        backgroundColor: bg,
+        scale: Math.min(2, window.devicePixelRatio || 1) * 1.5,
+        useCORS: true,
+        logging: false
+      });
+    }).then(function (canvas) {
+      node.classList.remove('is-shooting');
+      canvas.toBlob(function (blob) {
+        setBusy(false);
+        if (!blob) return;
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = slug + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }, 'image/png');
+    }).catch(function (err) {
+      node.classList.remove('is-shooting');
+      setBusy(false);
+      console.error('Save as image failed:', err);
+      alert('Sorry — could not generate the image in this browser.');
+    });
+  });
+})();
+</script>
+
+<script>
+/* Live result animation (v2) ------------------------------------------------
+   v2 demos are plain JS that write result numbers via textContent. This
+   watcher tweens those numbers (count-up) and adds a brief pop whenever a
+   numeric result cell changes — no per-demo wiring needed. It only touches
+   cells whose whole text is a number (e.g. "27.50", "$1,240.00", "18%"), so
+   labels and notes are left alone. */
+(function () {
+  var root = document.getElementById('tp-export');
+  if (!root) return;
+
+  var reduce = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DURATION = 420;
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // A cell we should animate: its entire trimmed text is a number, with an
+  // optional leading sign/currency mark and an optional trailing %.
+  var NUMERIC_CELL = /^[-+]?[$€£¥]?\s?\d[\d,]*(?:\.\d+)?\s?%?$/;
+  function isNumericCell(text) {
+    return text != null && NUMERIC_CELL.test(text.trim());
+  }
+
+  function parseNumber(text) {
+    var m = String(text).match(/-?\d[\d,]*(?:\.\d+)?/);
+    if (!m) return null;
+    var raw = m[0];
+    var numeric = parseFloat(raw.replace(/,/g, ''));
+    if (!isFinite(numeric)) return null;
+    var dot = raw.indexOf('.');
+    return {
+      prefix: text.slice(0, m.index),
+      value: numeric,
+      decimals: dot === -1 ? 0 : raw.length - dot - 1,
+      grouped: raw.indexOf(',') !== -1,
+      suffix: text.slice(m.index + raw.length)
+    };
+  }
+
+  function formatLike(value, spec) {
+    var fixed = value.toFixed(spec.decimals);
+    if (spec.grouped) {
+      var parts = fixed.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      fixed = parts.join('.');
+    }
+    return spec.prefix + fixed + spec.suffix;
+  }
+
+  function pop(el) {
+    el.classList.remove('value-animate');
+    void el.offsetWidth; // restart the animation on rapid changes
+    el.classList.add('value-animate');
+  }
+
+  function countUp(el, from, to, target) {
+    if (el.__raf) cancelAnimationFrame(el.__raf);
+    var start = null, delta = to.value - from.value;
+    function frame(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / DURATION, 1);
+      el.__animating = true;
+      el.textContent = (p < 1) ? formatLike(from.value + delta * easeOutCubic(p), to) : target;
+      if (p < 1) {
+        el.__raf = requestAnimationFrame(frame);
+      } else {
+        el.__raf = null;
+        el.__lastVal = target;
+        requestAnimationFrame(function () { el.__animating = false; });
+      }
+    }
+    el.__raf = requestAnimationFrame(frame);
+  }
+
+  function onChange(el) {
+    if (el.__animating) return;
+    // never animate mid-export; html2canvas is snapshotting #tp-export
+    if (root.classList.contains('is-shooting')) { el.__lastVal = el.textContent; return; }
+    var next = el.textContent;
+    if (!isNumericCell(next)) { el.__lastVal = next; return; }
+    var prev = el.__lastVal;
+    el.__lastVal = next;
+    if (prev == null || prev === next) return;
+
+    pop(el);
+    if (reduce) return;
+    var to = parseNumber(next), from = isNumericCell(prev) ? parseNumber(prev) : null;
+    if (to && from && to.value !== from.value) countUp(el, from, to, next);
+  }
+
+  function leafFor(node) {
+    var el = node.nodeType === 3 ? node.parentElement : node;
+    // only treat true leaves (no element children) as value cells
+    return (el && el.children && el.children.length === 0) ? el : null;
+  }
+
+  function start() {
+    // Baseline every existing numeric leaf so the first user-driven change
+    // animates but the initial render does not.
+    root.querySelectorAll('*').forEach(function (el) {
+      if (el.children.length === 0 && isNumericCell(el.textContent)) el.__lastVal = el.textContent;
+    });
+    new MutationObserver(function (muts) {
+      var seen = new Set();
+      for (var i = 0; i < muts.length; i++) {
+        var el = leafFor(muts[i].target);
+        if (el && !seen.has(el)) { seen.add(el); onChange(el); }
+      }
+    }).observe(root, { childList: true, characterData: true, subtree: true });
+  }
+
+  // Wait for load so the demo's own initial calculation is already on screen.
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+
+<script>
+/* Fit long result numbers (v2) ----------------------------------------------
+   The headline result (.tp-result-num) uses a large clamp() font. For very
+   long values (e.g. "$2,250,000,000,000,000.00") that would wrap to several
+   lines or overflow the result card. This shrinks the font — within a sane
+   range — so the number fits on as few lines as possible before falling back
+   to wrapping. It re-runs whenever the value changes and on resize. */
+(function () {
+  var root = document.getElementById('tp-export');
+  if (!root) return;
+
+  var MIN_PX = 22; // floor: below this we let the number wrap instead
+
+  function fit(el) {
+    var box = el.closest('.tp-result') || el.parentElement;
+    if (!box) return;
+
+    // Reset to the CSS clamp() size, then measure what a single line needs.
+    el.style.fontSize = '';
+    var base = parseFloat(getComputedStyle(el).fontSize);
+    if (!base) return;
+
+    var cs = getComputedStyle(box);
+    var avail = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    if (!(avail > 0)) return;
+
+    var prevWS = el.style.whiteSpace;
+    el.style.whiteSpace = 'nowrap';
+    var needed = el.scrollWidth;
+    el.style.whiteSpace = prevWS;
+
+    if (needed > avail) {
+      // Scale down proportionally; never below MIN_PX (then wrapping kicks in).
+      el.style.fontSize = Math.max(MIN_PX, base * (avail / needed)) + 'px';
+    }
+  }
+
+  function fitAll() {
+    root.querySelectorAll('.tp-result-num').forEach(fit);
+  }
+
+  var scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () { scheduled = false; fitAll(); });
+  }
+
+  function start() {
+    fitAll();
+    new MutationObserver(schedule).observe(root, {
+      childList: true, characterData: true, subtree: true
+    });
+    window.addEventListener('resize', schedule);
+  }
+
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+
+<script>
+/* PostHog tool tracking (v2) ------------------------------------------------
+   Ported from the v1 tool template. Captures a `Calculate` event with the
+   tool's inputs and computed outputs whenever the user interacts with the
+   live demo. Adapted to the v2 DOM: inputs are plain `.tp-input` fields and
+   outputs are written to the `.tp-result*` / `.tp-breakdown` / `.tp-statgrid`
+   result cells (the v1 version read Alpine `x-text` bindings instead). */
+(function () {
+  var toolRoot = document.getElementById('tp-export');
+  if (!toolRoot) return;
+
+  var toolMeta = {
+    tool_id: "profit-calculator",
+    tool_name: "Calculadora de Lucro",
+    tool_category: "business",
+    page_path: window.location.pathname,
+    page_url: window.location.href
+  };
+
+  var lastCaptureKey = '';
+  var lastCaptureAt = 0;
+
+  function textOf(el) { return el ? (el.textContent || '').trim() : ''; }
+
+  function normalizeKey(value, fallback) {
+    var key = (value || fallback || 'field')
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    return key || fallback || 'field';
+  }
+
+  function fieldLabel(field) {
+    var wrap = field.closest('.tp-field');
+    var label = wrap && wrap.querySelector('.tp-field-label');
+    if (label) return textOf(label);
+    var explicit = field.id && toolRoot.querySelector('label[for="' + field.id + '"]');
+    return explicit ? textOf(explicit) : '';
+  }
+
+  function readFieldValue(field) {
+    var type = (field.type || field.tagName || '').toLowerCase();
+    if (type === 'password' || type === 'email' || type === 'tel') return null;
+    if (type === 'checkbox') return field.checked;
+    if (type === 'radio') return field.checked ? field.value : null;
+    if (field.tagName === 'SELECT') {
+      return {
+        value: field.value,
+        label: field.options[field.selectedIndex] ? field.options[field.selectedIndex].text : field.value
+      };
+    }
+    var value = field.value == null ? '' : String(field.value);
+    if (field.tagName === 'TEXTAREA' || type === 'text' || type === 'search' || type === 'url') {
+      return {
+        value: value.length > 500 ? value.slice(0, 500) : value,
+        length: value.length,
+        truncated: value.length > 500
+      };
+    }
+    return value;
+  }
+
+  function collectInputs() {
+    var fields = toolRoot.querySelectorAll('input, select, textarea');
+    var calculationInput = {};
+    var flatData = {};
+
+    fields.forEach(function (field, index) {
+      if (field.disabled || field.readOnly || field.type === 'hidden' || field.closest('[data-analytics-ignore]')) return;
+      var value = readFieldValue(field);
+      if (value === null || value === '') return;
+
+      var rawKey = field.name || field.id || field.getAttribute('placeholder') || fieldLabel(field);
+      var key = normalizeKey(rawKey, 'field_' + (index + 1));
+      if (calculationInput[key] !== undefined) key = key + '_' + (index + 1);
+
+      calculationInput[key] = value;
+      flatData['input_' + key] = (value && typeof value === 'object' && !Array.isArray(value))
+        ? (value.value !== undefined ? value.value : JSON.stringify(value))
+        : value;
+    });
+
+    return {
+      calculation_input: calculationInput,
+      calculation_input_json: JSON.stringify(calculationInput),
+      input_count: Object.keys(calculationInput).length,
+      flat_data: flatData
+    };
+  }
+
+  function collectOutputs() {
+    var calculationOutput = {};
+    var flatData = {};
+    var idx = 0;
+
+    function add(rawKey, value) {
+      if (value == null) return;
+      value = String(value).trim();
+      if (!value) return;
+      var key = normalizeKey(rawKey, 'output_' + (idx + 1));
+      if (calculationOutput[key] !== undefined) key = key + '_' + (idx + 1);
+      var outputValue = value.length > 500
+        ? { value: value.slice(0, 500), length: value.length, truncated: true }
+        : value;
+      calculationOutput[key] = outputValue;
+      flatData['output_' + key] = outputValue && typeof outputValue === 'object' ? outputValue.value : outputValue;
+      idx++;
+    }
+
+    // Headline result card(s): label + (prefix + number) + sub line.
+    toolRoot.querySelectorAll('.tp-result').forEach(function (card) {
+      var label = textOf(card.querySelector('.tp-result-label')) || 'result';
+      var num = card.querySelector('.tp-result-num');
+      if (num) add(label, textOf(card.querySelector('.tp-result-prefix')) + textOf(num));
+      var sub = card.querySelector('.tp-result-sub');
+      if (sub) add(label + '_sub', textOf(sub));
+    });
+
+    // Big stat blocks: <b> value with a <span> caption.
+    toolRoot.querySelectorAll('.tp-stat-big').forEach(function (s) {
+      var b = s.querySelector('b');
+      if (b) add(textOf(s.querySelector('span')) || 'stat', textOf(b));
+    });
+
+    // Breakdown / stat-grid rows: first child is the label, last is the value.
+    toolRoot.querySelectorAll('.tp-breakdown div, .tp-statgrid div').forEach(function (row) {
+      if (row.children.length >= 2) add(textOf(row.children[0]), textOf(row.children[row.children.length - 1]));
+    });
+
+    // Free-form text outputs.
+    toolRoot.querySelectorAll('.tp-pw').forEach(function (el, i) { add('password_' + (i + 1), textOf(el)); });
+    toolRoot.querySelectorAll('.tp-mono-out').forEach(function (el, i) { add('output_text_' + (i + 1), textOf(el)); });
+    toolRoot.querySelectorAll('.tp-uuid').forEach(function (el, i) { add('uuid_' + (i + 1), textOf(el)); });
+
+    return {
+      calculation_output: calculationOutput,
+      calculation_output_json: JSON.stringify(calculationOutput),
+      output_count: Object.keys(calculationOutput).length,
+      flat_data: flatData
+    };
+  }
+
+  function captureCalculate(trigger, target) {
+    if (typeof posthog === 'undefined' || typeof posthog.capture !== 'function') return;
+
+    setTimeout(function () {
+      var inputData = collectInputs();
+      var outputData = collectOutputs();
+      if (inputData.input_count === 0 && outputData.output_count === 0) return;
+
+      var payload = Object.assign({}, toolMeta, inputData.flat_data, outputData.flat_data, {
+        trigger: trigger,
+        action_label: target ? (target.textContent || target.value || '').trim().slice(0, 80) : '',
+        calculation_input: inputData.calculation_input,
+        calculation_input_json: inputData.calculation_input_json,
+        calculation_output: outputData.calculation_output,
+        calculation_output_json: outputData.calculation_output_json,
+        submitted_data: inputData.calculation_input,
+        submitted_data_json: inputData.calculation_input_json,
+        input_count: inputData.input_count,
+        output_count: outputData.output_count
+      });
+      var captureKey = payload.calculation_input_json + ':' + payload.calculation_output_json;
+      var now = Date.now();
+      if (captureKey === lastCaptureKey && now - lastCaptureAt < 1500) return;
+      lastCaptureKey = captureKey;
+      lastCaptureAt = now;
+
+      posthog.capture('Calculate', payload);
+    }, 0);
+  }
+
+  function scheduleCalculateCapture(trigger, target) {
+    window.clearTimeout(toolRoot.__calculateCaptureTimer);
+    toolRoot.__calculateCaptureTimer = window.setTimeout(function () {
+      captureCalculate(trigger, target);
+    }, 500);
+  }
+
+  function shouldTrackButton(button) {
+    var text = (button.textContent || '').trim().toLowerCase();
+    return /calculate|convert|compute|minify|beautify|generate|sort|analyze|estimate|shuffle|run/.test(text);
+  }
+
+  toolRoot.addEventListener('submit', function (event) {
+    scheduleCalculateCapture('submit', event.target);
+  }, true);
+
+  toolRoot.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('button, input[type="button"], input[type="submit"]');
+    if (!button || !toolRoot.contains(button) || !shouldTrackButton(button)) return;
+    scheduleCalculateCapture(button.type === 'submit' ? 'submit_click' : 'calculate_click', button);
+  });
+
+  toolRoot.addEventListener('input', function (event) {
+    if (!event.target || !event.target.matches('input, textarea')) return;
+    scheduleCalculateCapture('input_change', event.target);
+  }, true);
+
+  toolRoot.addEventListener('change', function (event) {
+    if (!event.target || !event.target.matches('input, select, textarea')) return;
+    scheduleCalculateCapture('field_change', event.target);
+  }, true);
+})();
+</script>
+
+</body>
+</html>

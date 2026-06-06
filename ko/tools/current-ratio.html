@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 도구</span>
+    <span class="topcount mono">230 도구</span>
   </div>
   <div class="topbar-right">
     
@@ -620,6 +675,43 @@ button:disabled{transform:none;}
     </div>
 
     
+
+
+<div class="tp-usecases">
+  <span class="tp-usecases-label mono">Industry use cases</span>
+  <div class="tp-usecases-list">
+    
+    <div class="tp-usecase-card">
+      <span class="tp-usecase-title">Small Business Liquidity Check</span>
+      <span class="tp-usecase-desc">Small business owners assess whether they have enough current assets to cover immediate debts and payroll obligations.</span>
+    </div>
+    
+    <div class="tp-usecase-card">
+      <span class="tp-usecase-title">Loan Application Assessment</span>
+      <span class="tp-usecase-desc">Lenders evaluate a business&#39;s ability to repay short-term obligations before approving credit lines or loans.</span>
+    </div>
+    
+    <div class="tp-usecase-card">
+      <span class="tp-usecase-title">Investment Due Diligence</span>
+      <span class="tp-usecase-desc">Investors compare current ratios across competing companies to identify which has stronger short-term financial stability.</span>
+    </div>
+    
+    <div class="tp-usecase-card">
+      <span class="tp-usecase-title">Vendor Credit Decisions</span>
+      <span class="tp-usecase-desc">Suppliers assess whether customer businesses can meet short-term payment obligations before extending trade credit.</span>
+    </div>
+    
+  </div>
+</div>
+
+
+
+    
+
+
+
+
+    
     <div class="tp-related">
       <span class="tp-related-label mono">비즈니스의 관련 도구</span>
       <div class="tp-related-list">
@@ -702,6 +794,7 @@ button:disabled{transform:none;}
   if (!wrap || !input || !btn || !form) return;
 
   var toolId = "current-ratio";
+  var toolName = "유동비율 계산기";
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   var OK_TEXT = "Thanks — you're on the list!";
 
@@ -722,6 +815,24 @@ button:disabled{transform:none;}
     btn.disabled = true;
     var endpoint = window.__TC_EMAIL_ENDPOINT__;
     var payload = { email: email, tool_id: toolId, source: 'v2', url: location.href };
+
+    // Tracking — mirror the v1 email capture (Google Ads conversion + PostHog).
+    if (typeof gtag_report_conversion === 'function') {
+      try { gtag_report_conversion(); } catch (e) {}
+    }
+    if (typeof posthog !== 'undefined' && typeof posthog.capture === 'function') {
+      try {
+        posthog.identify(email, { email: email, tool_interest: toolId, capture_type: 'notify' });
+        posthog.capture('email_captured', {
+          email: email,
+          tool_id: toolId,
+          tool_name: toolName,
+          capture_type: 'notify',
+          source: 'v2',
+          timestamp: new Date().toISOString()
+        });
+      } catch (e) {}
+    }
 
     // Remember locally regardless, so a repeat visitor isn't re-prompted hard.
     try { localStorage.setItem('tc_v2_email', email); } catch (e) {}
@@ -788,7 +899,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147개의 도구 · 리디자인 미리보기</span>
+    <span>230개의 도구 · 리디자인 미리보기</span>
   </div>
 </footer>
 </div>
@@ -1199,6 +1310,214 @@ button:disabled{transform:none;}
 
   if (document.readyState === 'complete') start();
   else window.addEventListener('load', start);
+})();
+</script>
+
+<script>
+/* PostHog tool tracking (v2) ------------------------------------------------
+   Ported from the v1 tool template. Captures a `Calculate` event with the
+   tool's inputs and computed outputs whenever the user interacts with the
+   live demo. Adapted to the v2 DOM: inputs are plain `.tp-input` fields and
+   outputs are written to the `.tp-result*` / `.tp-breakdown` / `.tp-statgrid`
+   result cells (the v1 version read Alpine `x-text` bindings instead). */
+(function () {
+  var toolRoot = document.getElementById('tp-export');
+  if (!toolRoot) return;
+
+  var toolMeta = {
+    tool_id: "current-ratio",
+    tool_name: "유동비율 계산기",
+    tool_category: "business",
+    page_path: window.location.pathname,
+    page_url: window.location.href
+  };
+
+  var lastCaptureKey = '';
+  var lastCaptureAt = 0;
+
+  function textOf(el) { return el ? (el.textContent || '').trim() : ''; }
+
+  function normalizeKey(value, fallback) {
+    var key = (value || fallback || 'field')
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    return key || fallback || 'field';
+  }
+
+  function fieldLabel(field) {
+    var wrap = field.closest('.tp-field');
+    var label = wrap && wrap.querySelector('.tp-field-label');
+    if (label) return textOf(label);
+    var explicit = field.id && toolRoot.querySelector('label[for="' + field.id + '"]');
+    return explicit ? textOf(explicit) : '';
+  }
+
+  function readFieldValue(field) {
+    var type = (field.type || field.tagName || '').toLowerCase();
+    if (type === 'password' || type === 'email' || type === 'tel') return null;
+    if (type === 'checkbox') return field.checked;
+    if (type === 'radio') return field.checked ? field.value : null;
+    if (field.tagName === 'SELECT') {
+      return {
+        value: field.value,
+        label: field.options[field.selectedIndex] ? field.options[field.selectedIndex].text : field.value
+      };
+    }
+    var value = field.value == null ? '' : String(field.value);
+    if (field.tagName === 'TEXTAREA' || type === 'text' || type === 'search' || type === 'url') {
+      return {
+        value: value.length > 500 ? value.slice(0, 500) : value,
+        length: value.length,
+        truncated: value.length > 500
+      };
+    }
+    return value;
+  }
+
+  function collectInputs() {
+    var fields = toolRoot.querySelectorAll('input, select, textarea');
+    var calculationInput = {};
+    var flatData = {};
+
+    fields.forEach(function (field, index) {
+      if (field.disabled || field.readOnly || field.type === 'hidden' || field.closest('[data-analytics-ignore]')) return;
+      var value = readFieldValue(field);
+      if (value === null || value === '') return;
+
+      var rawKey = field.name || field.id || field.getAttribute('placeholder') || fieldLabel(field);
+      var key = normalizeKey(rawKey, 'field_' + (index + 1));
+      if (calculationInput[key] !== undefined) key = key + '_' + (index + 1);
+
+      calculationInput[key] = value;
+      flatData['input_' + key] = (value && typeof value === 'object' && !Array.isArray(value))
+        ? (value.value !== undefined ? value.value : JSON.stringify(value))
+        : value;
+    });
+
+    return {
+      calculation_input: calculationInput,
+      calculation_input_json: JSON.stringify(calculationInput),
+      input_count: Object.keys(calculationInput).length,
+      flat_data: flatData
+    };
+  }
+
+  function collectOutputs() {
+    var calculationOutput = {};
+    var flatData = {};
+    var idx = 0;
+
+    function add(rawKey, value) {
+      if (value == null) return;
+      value = String(value).trim();
+      if (!value) return;
+      var key = normalizeKey(rawKey, 'output_' + (idx + 1));
+      if (calculationOutput[key] !== undefined) key = key + '_' + (idx + 1);
+      var outputValue = value.length > 500
+        ? { value: value.slice(0, 500), length: value.length, truncated: true }
+        : value;
+      calculationOutput[key] = outputValue;
+      flatData['output_' + key] = outputValue && typeof outputValue === 'object' ? outputValue.value : outputValue;
+      idx++;
+    }
+
+    // Headline result card(s): label + (prefix + number) + sub line.
+    toolRoot.querySelectorAll('.tp-result').forEach(function (card) {
+      var label = textOf(card.querySelector('.tp-result-label')) || 'result';
+      var num = card.querySelector('.tp-result-num');
+      if (num) add(label, textOf(card.querySelector('.tp-result-prefix')) + textOf(num));
+      var sub = card.querySelector('.tp-result-sub');
+      if (sub) add(label + '_sub', textOf(sub));
+    });
+
+    // Big stat blocks: <b> value with a <span> caption.
+    toolRoot.querySelectorAll('.tp-stat-big').forEach(function (s) {
+      var b = s.querySelector('b');
+      if (b) add(textOf(s.querySelector('span')) || 'stat', textOf(b));
+    });
+
+    // Breakdown / stat-grid rows: first child is the label, last is the value.
+    toolRoot.querySelectorAll('.tp-breakdown div, .tp-statgrid div').forEach(function (row) {
+      if (row.children.length >= 2) add(textOf(row.children[0]), textOf(row.children[row.children.length - 1]));
+    });
+
+    // Free-form text outputs.
+    toolRoot.querySelectorAll('.tp-pw').forEach(function (el, i) { add('password_' + (i + 1), textOf(el)); });
+    toolRoot.querySelectorAll('.tp-mono-out').forEach(function (el, i) { add('output_text_' + (i + 1), textOf(el)); });
+    toolRoot.querySelectorAll('.tp-uuid').forEach(function (el, i) { add('uuid_' + (i + 1), textOf(el)); });
+
+    return {
+      calculation_output: calculationOutput,
+      calculation_output_json: JSON.stringify(calculationOutput),
+      output_count: Object.keys(calculationOutput).length,
+      flat_data: flatData
+    };
+  }
+
+  function captureCalculate(trigger, target) {
+    if (typeof posthog === 'undefined' || typeof posthog.capture !== 'function') return;
+
+    setTimeout(function () {
+      var inputData = collectInputs();
+      var outputData = collectOutputs();
+      if (inputData.input_count === 0 && outputData.output_count === 0) return;
+
+      var payload = Object.assign({}, toolMeta, inputData.flat_data, outputData.flat_data, {
+        trigger: trigger,
+        action_label: target ? (target.textContent || target.value || '').trim().slice(0, 80) : '',
+        calculation_input: inputData.calculation_input,
+        calculation_input_json: inputData.calculation_input_json,
+        calculation_output: outputData.calculation_output,
+        calculation_output_json: outputData.calculation_output_json,
+        submitted_data: inputData.calculation_input,
+        submitted_data_json: inputData.calculation_input_json,
+        input_count: inputData.input_count,
+        output_count: outputData.output_count
+      });
+      var captureKey = payload.calculation_input_json + ':' + payload.calculation_output_json;
+      var now = Date.now();
+      if (captureKey === lastCaptureKey && now - lastCaptureAt < 1500) return;
+      lastCaptureKey = captureKey;
+      lastCaptureAt = now;
+
+      posthog.capture('Calculate', payload);
+    }, 0);
+  }
+
+  function scheduleCalculateCapture(trigger, target) {
+    window.clearTimeout(toolRoot.__calculateCaptureTimer);
+    toolRoot.__calculateCaptureTimer = window.setTimeout(function () {
+      captureCalculate(trigger, target);
+    }, 500);
+  }
+
+  function shouldTrackButton(button) {
+    var text = (button.textContent || '').trim().toLowerCase();
+    return /calculate|convert|compute|minify|beautify|generate|sort|analyze|estimate|shuffle|run/.test(text);
+  }
+
+  toolRoot.addEventListener('submit', function (event) {
+    scheduleCalculateCapture('submit', event.target);
+  }, true);
+
+  toolRoot.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('button, input[type="button"], input[type="submit"]');
+    if (!button || !toolRoot.contains(button) || !shouldTrackButton(button)) return;
+    scheduleCalculateCapture(button.type === 'submit' ? 'submit_click' : 'calculate_click', button);
+  });
+
+  toolRoot.addEventListener('input', function (event) {
+    if (!event.target || !event.target.matches('input, textarea')) return;
+    scheduleCalculateCapture('input_change', event.target);
+  }, true);
+
+  toolRoot.addEventListener('change', function (event) {
+    if (!event.target || !event.target.matches('input, select, textarea')) return;
+    scheduleCalculateCapture('field_change', event.target);
+  }, true);
 })();
 </script>
 

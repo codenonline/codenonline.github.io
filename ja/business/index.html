@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ビジネス — Tools Catalog</title>
-  <meta name="description" content="61 ビジネス tools. Free, private, no sign-up.">
+  <meta name="description" content="95 ビジネス tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 ツール</span>
+    <span class="topcount mono">230 ツール</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">ビジネス</span>
       </div>
-      <h1 class="cat-title">ビジネス<sup>61</sup></h1>
-      <p class="cat-sub mono">61 個のツールを表示 · すべての計算はブラウザー内でローカルに実行されます。アカウント不要、追跡なし。</p>
+      <h1 class="cat-title">ビジネス<sup>95</sup></h1>
+      <p class="cat-sub mono">95 個のツールを表示 · すべての計算はブラウザー内でローカルに実行されます。アカウント不要、追跡なし。</p>
     </div>
   </section>
 
@@ -1006,30 +1061,370 @@ button:disabled{transform:none;}
         <div class="card-open mono">開く →</div>
       </a>
       
-      <a class="card" href="/ja/tools/margin-calculator.html" data-cat="business">
+      <a class="card" href="/ja/tools/high-low-method.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">ビジネス</span>
           <span class="card-idx">059</span>
+        </div>
+        <div class="card-name">ハイロー法</div>
+        <div class="card-desc">最高と最低の活動データポイントを使用して、混合コストを固定成分と変動成分に分離します — コスト行動の迅速な推定。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/hourly-to-salary.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">060</span>
+        </div>
+        <div class="card-name">時給から年俸換算ツール</div>
+        <div class="card-desc">標準または custom の週当たり労働時間に基づいて、時給を年俸、月給、または週給に換算します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/interest-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">061</span>
+        </div>
+        <div class="card-name">利息カバレッジレシオ</div>
+        <div class="card-desc">営業利益が利息支払いをカバーするのに十分かどうかを確認します — 低い比率は潜在的な債務不履行リスクを示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/inventory-turnover.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">062</span>
+        </div>
+        <div class="card-name">在庫回転率計算機</div>
+        <div class="card-desc">期間内に在庫がどれだけ売却され交換されるかを測定します。回転率が高いほど、売上が好調で在庫レベルが低いことを示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/labor-force-participation-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">063</span>
+        </div>
+        <div class="card-name">労働力参加率</div>
+        <div class="card-desc">労働年齢人口のうち、積極的に就業しているか、または仕事を求めている割合を探して、労働市場の参加を反映します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/leverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">064</span>
+        </div>
+        <div class="card-name">レバレッジ比率計算機</div>
+        <div class="card-desc">企業が負債に対する資本の相対的な割合でどの程度の借入金を使用しているかを評価し、財務リスクと資本構造を示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/levered-free-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">065</span>
+        </div>
+        <div class="card-name">レバレッジド・フリー・キャッシュフロー（LFCF）</div>
+        <div class="card-desc">債務上の義務を果たした後に株主が利用できるキャッシュを測定します — 配当金と自社株買いのために残されたもの。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/liquidity-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">066</span>
+        </div>
+        <div class="card-name">流動性カバレッジ比率（LCR）</div>
+        <div class="card-desc">銀行がバーゼルIIIの要件に従い、30日間のストレスシナリオを乗り切るのに十分な高質流動資産を保有していることを確認します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/loan-to-deposit-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">067</span>
+        </div>
+        <div class="card-name">貸出金預金比率（LDR）</div>
+        <div class="card-desc">銀行の預金に対する貸出活動を測定します。比率が高すぎるは流動性リスクを示唆し、低すぎるは十分な活用がなされていない可能性があります。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/loss-given-default.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">068</span>
+        </div>
+        <div class="card-name">デフォルト時損失率 (LGD)</div>
+        <div class="card-desc">借り手が債務不履行に陥った場合、担保回収を考慮した後、貸し手がどの程度の損失を被るかを推定します。エクスポージャーの割合として表現されます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/loss-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">069</span>
+        </div>
+        <div class="card-name">損失率計算機</div>
+        <div class="card-desc">支払われた総請求額を獲得保険料で割って、保険引き受けの収益性を評価します。100％を超える比率は、引き受け損失を示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/lost-profits.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">070</span>
+        </div>
+        <div class="card-name">損失利益計算機</div>
+        <div class="card-desc">ビジネス中断、契約違反、過失による失われた収益を推定します — 訴訟および保険請求で一般的に使用されます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/margin-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">071</span>
         </div>
         <div class="card-name">利幅計算機</div>
         <div class="card-desc">原価と売価を入力して、粗利益、利幅率、単位当たりの利益を即座に確認します。</div>
         <div class="card-open mono">開く →</div>
       </a>
       
+      <a class="card" href="/ja/tools/marginal-cost.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">072</span>
+        </div>
+        <div class="card-name">限界費用計算機</div>
+        <div class="card-desc">追加ユニットを生産するときに総費用がどれだけ増加するかを調べます。価格設定と生産水準の決定のための重要な入力です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/marginal-propensity-consume.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">073</span>
+        </div>
+        <div class="card-name">限界消費性向（MPC）</div>
+        <div class="card-desc">追加所得１ドルのうち家計がどれだけの割合を支出するかを決定します。経済乗数モデルの重要な入力値です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/marginal-propensity-save.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">074</span>
+        </div>
+        <div class="card-name">限界貯蓄性向 (MPS)</div>
+        <div class="card-desc">経済分析において限界消費性向（MPC）を補完する、家計が追加所得の何分の1を費やすのではなく貯蓄するかを示すシェアを見つけます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/marginal-revenue.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">075</span>
+        </div>
+        <div class="card-name">限界収益計算機</div>
+        <div class="card-desc">1単位多く販売することで生成される追加収益を決定します。利益最大化の生産レベルを設定するのに役立ちます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
       <a class="card" href="/ja/tools/markup-calculator.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">ビジネス</span>
-          <span class="card-idx">060</span>
+          <span class="card-idx">076</span>
         </div>
         <div class="card-name">マークアップ計算機</div>
         <div class="card-desc">コストに目的のマークアップパーセンテージを適用して販売価格に変換するか、与えられた価格からマークアップを逆算します。</div>
         <div class="card-open mono">開く →</div>
       </a>
       
+      <a class="card" href="/ja/tools/net-debt.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">077</span>
+        </div>
+        <div class="card-name">正味債務計算機</div>
+        <div class="card-desc">総債務から現金及びその等価物を差し引くことで、企業の真の債務負担を求めます。正味債務が低いほど、財務健全性が高いことを示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/net-income.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">078</span>
+        </div>
+        <div class="card-name">純利益計算機</div>
+        <div class="card-desc">任意の期間の総収益からすべての費用、税金、利息を差し引いて、最終的な純利益に到達します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/net-operating-assets.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">079</span>
+        </div>
+        <div class="card-name">営業用純資産</div>
+        <div class="card-desc">コア事業運営に関連する資産と負債を分離し、融資項目を除外して、運営効率を評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/net-profit-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">080</span>
+        </div>
+        <div class="card-name">純利益率</div>
+        <div class="card-desc">純利益を収益のパーセンテージとして表し、期間全体の利益性を比較するか、業界ベンチマークと比較します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/net-stable-funding-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">081</span>
+        </div>
+        <div class="card-name">純安定調達比率（NSFR）</div>
+        <div class="card-desc">バーゼルIII流動性基準に従い、1年間の期間にわたって安定した資金源で活動に資金を供給する銀行の能力を評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/nopat-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">082</span>
+        </div>
+        <div class="card-name">NOPAT計算機</div>
+        <div class="card-desc">営業利益から負債の税務上の利益を差し引いて、ファイナンス中立的な営業成績指標を取得します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/okuns-law.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">083</span>
+        </div>
+        <div class="card-name">オークンの法則計算機</div>
+        <div class="card-desc">オークンの経験的関係を使用して、GDP成長の変化に基づく失業の予想変化を推定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/operating-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">084</span>
+        </div>
+        <div class="card-name">営業キャッシュフロー計算機</div>
+        <div class="card-desc">投資と融資を除いた中核事業操作から生成されたキャッシュを測定し、日々の財務健全性を評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/operating-cash-flow-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">085</span>
+        </div>
+        <div class="card-name">営業キャッシュフロー比率</div>
+        <div class="card-desc">企業の営業キャッシュフローが流動負債をカバーするのに十分であるかどうかを確認します — 実用的なソルベンシーチェック。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/operating-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">086</span>
+        </div>
+        <div class="card-name">営業利益率計算機</div>
+        <div class="card-desc">営業利益を売上高の割合として表現し、企業がコアビジネスをどの程度効率的に運営しているかを評価します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/optimal-price.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">087</span>
+        </div>
+        <div class="card-name">最適価格計算機</div>
+        <div class="card-desc">需要の価格弾性性とコストデータを組み合わせて、収益または利益を最大化する価格を見つけます。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/osha-dart-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">088</span>
+        </div>
+        <div class="card-name">OSHA DART レート</div>
+        <div class="card-desc">100 人のフルタイム従業員あたりの OSHA 業務不可日数、業務制限、または業務転換の割合を追跡して、職場の安全性パフォーマンスをベンチマークします。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/osha-trir-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">089</span>
+        </div>
+        <div class="card-name">OSHA TRIR率</div>
+        <div class="card-desc">OSHA報告要件を満たし、安全トレンドを監視するために、100人の常勤換算従業員あたりの総記録可能事故率を計算します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/price-elasticity-demand.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">090</span>
+        </div>
+        <div class="card-name">価格需要弾性値</div>
+        <div class="card-desc">価格変動に対する顧客需要がどの程度敏感かを測定します。ボリュームを大きく失わずに価格を設定するために不可欠です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/productivity-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">091</span>
+        </div>
+        <div class="card-name">生産性計算機</div>
+        <div class="card-desc">労働者あたりまたは時間あたりの出力を測定して、チーム効率をベンチマークし、リソースをより効果的に配置できる場所を特定します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/profit-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">092</span>
+        </div>
+        <div class="card-name">利益計算機</div>
+        <div class="card-desc">収益とコストを入力して、売上総利益、純利益、利益率パーセンテージをすべて 1 か所で表示します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/profit-sharing.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">093</span>
+        </div>
+        <div class="card-name">利益配分計算機</div>
+        <div class="card-desc">給与、役割の重み、または均等配分に基づいて、従業員またはパートナー間に利益プールを配分します — 年末計画に便利です。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
+      <a class="card" href="/ja/tools/receivables-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">ビジネス</span>
+          <span class="card-idx">094</span>
+        </div>
+        <div class="card-name">売上債権回転率</div>
+        <div class="card-desc">企業が平均売上債権残高を年間で何回回収するかを測定し、請求と回収の効率を反映します。</div>
+        <div class="card-open mono">開く →</div>
+      </a>
+      
       <a class="card" href="/ja/tools/sales-tax.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">ビジネス</span>
-          <span class="card-idx">061</span>
+          <span class="card-idx">095</span>
         </div>
         <div class="card-name">消費税計算機</div>
         <div class="card-desc">あなたの管轄区域の税率を入力することで、すべての税抜き価格に正しい消費税を追加します。また、税額を別途表示します。</div>
@@ -1081,7 +1476,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147 個のツール · リデザインプレビュー</span>
+    <span>230 個のツール · リデザインプレビュー</span>
   </div>
 </footer>
 </div>

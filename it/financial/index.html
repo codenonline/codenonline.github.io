@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Finanza — Tools Catalog</title>
-  <meta name="description" content="33 Finanza tools. Free, private, no sign-up.">
+  <meta name="description" content="49 Finanza tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 Strumenti</span>
+    <span class="topcount mono">230 Strumenti</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">Finanza</span>
       </div>
-      <h1 class="cat-title">Finanza<sup>33</sup></h1>
-      <p class="cat-sub mono">33 strumenti mostrati · tutti i calcoli vengono eseguiti localmente nel tuo browser. Nessun account, nessun tracciamento.</p>
+      <h1 class="cat-title">Finanza<sup>49</sup></h1>
+      <p class="cat-sub mono">49 strumenti mostrati · tutti i calcoli vengono eseguiti localmente nel tuo browser. Nessun account, nessun tracciamento.</p>
     </div>
   </section>
 
@@ -746,13 +801,173 @@ button:disabled{transform:none;}
         <div class="card-open mono">Apri →</div>
       </a>
       
-      <a class="card" href="/it/tools/loan-calculator.html" data-cat="financial">
+      <a class="card" href="/it/tools/home-sale-profit.html" data-cat="financial">
         <div class="card-top mono">
           <span class="card-cat">Finanza</span>
           <span class="card-idx">033</span>
         </div>
+        <div class="card-name">Calcolatore di Profitto per Vendita Casa</div>
+        <div class="card-desc">Stima il tuo profitto netto dalla vendita di una casa dopo aver contabilizzato le commissioni degli agenti, i costi di chiusura e l&#39;ipoteca in sospeso.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/immediate-annuity.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">034</span>
+        </div>
+        <div class="card-name">Calcolatore di Rendita Immediata</div>
+        <div class="card-desc">Stima i pagamenti di reddito regolari che riceveresti da una rendita immediata in base al tuo contributo iniziale.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/interest-only-mortgage.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">035</span>
+        </div>
+        <div class="card-name">Mutuo Solo Interessi</div>
+        <div class="card-desc">Scopri come appaiono i tuoi pagamenti durante il periodo di soli interessi di un mutuo — utile per comprendere il flusso di cassa prima dell&#39;inizio del capitale.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/liquid-net-worth.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">036</span>
+        </div>
+        <div class="card-name">Calcolatore del Patrimonio Netto Liquido</div>
+        <div class="card-desc">Misura il tuo cuscinetto finanziario calcolando il patrimonio netto utilizzando solo i beni che puoi rapidamente convertire in contanti.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/loan-calculator.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">037</span>
+        </div>
         <div class="card-name">Calcolatore di Prestiti</div>
         <div class="card-desc">Pianifica qualsiasi prestito con stime dei pagamenti mensili, costo totale degli interessi e un piano di ammortamento completo.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/loan-to-value.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">038</span>
+        </div>
+        <div class="card-name">Rapporto Mutuo-Valore (LTV)</div>
+        <div class="card-desc">Controlla il tuo rapporto LTV confrontando il saldo del mutuo con il valore della proprietà — influisce sui tassi ipotecari e sui requisiti di assicurazione ipotecaria.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/lumpsum-calculator.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">039</span>
+        </div>
+        <div class="card-name">Calcolatrice di Capitale Singolo</div>
+        <div class="card-desc">Stima il valore futuro di un investimento unico a un tasso di rendimento annuale proiettato su un numero di anni determinato.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/maturity-value.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">040</span>
+        </div>
+        <div class="card-name">Calcolatore del Valore di Scadenza</div>
+        <div class="card-desc">Trova il valore finale di un investimento o un deposito quando raggiunge la fine della sua scadenza, includendo tutti gli interessi accumulati.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/mortgage-calculator.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">041</span>
+        </div>
+        <div class="card-name">Calcolatore di Mutuo</div>
+        <div class="card-desc">Pianifica il tuo mutuo ipotecario con dettagli dei pagamenti mensili, interessi totali pagati e un piano di ammortamento completo.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/net-to-gross.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">042</span>
+        </div>
+        <div class="card-name">Calcolatore da Netto a Lordo</div>
+        <div class="card-desc">Lavora a ritroso da un importo netto (reddito netto) per trovare il reddito lordo necessario prima di tasse e detrazioni.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/periodic-interest-rate.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">043</span>
+        </div>
+        <div class="card-name">Tasso di Interesse Periodico</div>
+        <div class="card-desc">Scomponi un tasso di interesse annuale nel suo tasso periodico equivalente mensile, giornaliero o altro.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/perpetuity-calculator.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">044</span>
+        </div>
+        <div class="card-name">Calcolatore di Perpetuità</div>
+        <div class="card-desc">Valuta un flusso di pagamenti uguali infiniti trovandone il valore presente a un determinato tasso di sconto.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/present-value-of-annuity.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">045</span>
+        </div>
+        <div class="card-name">Valore Attuale di una Rendita</div>
+        <div class="card-desc">Scopri quanto vale una serie di pagamenti futuri uguali in dollari odierni a un determinato tasso di sconto.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/private-mortgage-insurance.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">046</span>
+        </div>
+        <div class="card-name">Assicurazione Ipotecaria Privata (PMI)</div>
+        <div class="card-desc">Stima il costo mensile del PMI quando il tuo acconto è inferiore al 20% e scopri quando potrai cancellare la copertura.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/pvifa-calculator.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">047</span>
+        </div>
+        <div class="card-name">Calcolatore PVIFA</div>
+        <div class="card-desc">Trova il fattore di interesse del valore presente utilizzato per attualizzare una serie di pagamenti di rendita a un determinato tasso e periodo.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/real-estate-commission.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">048</span>
+        </div>
+        <div class="card-name">Commissione Immobiliare</div>
+        <div class="card-desc">Stima la commissione dell&#39;agente su una vendita immobiliare e scopri come influisce sui tuoi ricavi netti.</div>
+        <div class="card-open mono">Apri →</div>
+      </a>
+      
+      <a class="card" href="/it/tools/rent-affordability.html" data-cat="financial">
+        <div class="card-top mono">
+          <span class="card-cat">Finanza</span>
+          <span class="card-idx">049</span>
+        </div>
+        <div class="card-name">Calcolatore dell&#39;Accessibilità dell&#39;Affitto</div>
+        <div class="card-desc">Scopri quanto affitto puoi permetterti in base al tuo reddito usando la linea guida standard del 30%.</div>
         <div class="card-open mono">Apri →</div>
       </a>
       
@@ -801,7 +1016,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147 strumenti · anteprima del nuovo design</span>
+    <span>230 strumenti · anteprima del nuovo design</span>
   </div>
 </footer>
 </div>

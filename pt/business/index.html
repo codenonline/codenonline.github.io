@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Negócios — Tools Catalog</title>
-  <meta name="description" content="61 Negócios tools. Free, private, no sign-up.">
+  <meta name="description" content="95 Negócios tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 Ferramentas</span>
+    <span class="topcount mono">230 Ferramentas</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">Negócios</span>
       </div>
-      <h1 class="cat-title">Negócios<sup>61</sup></h1>
-      <p class="cat-sub mono">61 ferramentas exibidas · todos os cálculos são feitos localmente no seu navegador. Sem contas, sem rastreamento.</p>
+      <h1 class="cat-title">Negócios<sup>95</sup></h1>
+      <p class="cat-sub mono">95 ferramentas exibidas · todos os cálculos são feitos localmente no seu navegador. Sem contas, sem rastreamento.</p>
     </div>
   </section>
 
@@ -1006,30 +1061,370 @@ button:disabled{transform:none;}
         <div class="card-open mono">Abrir →</div>
       </a>
       
-      <a class="card" href="/pt/tools/margin-calculator.html" data-cat="business">
+      <a class="card" href="/pt/tools/high-low-method.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">Negócios</span>
           <span class="card-idx">059</span>
+        </div>
+        <div class="card-name">Método Ponto Alto-Baixo</div>
+        <div class="card-desc">Separe custos mistos em componentes fixos e variáveis usando os pontos de dados de atividade mais alta e mais baixa — uma estimativa rápida do comportamento de custos.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/hourly-to-salary.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">060</span>
+        </div>
+        <div class="card-name">Conversor de Salário Horário</div>
+        <div class="card-desc">Converta um salário horário em um salário anual, mensal ou semanal com base em horas de trabalho padrão ou personalizadas por semana.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/interest-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">061</span>
+        </div>
+        <div class="card-name">Índice de Cobertura de Juros</div>
+        <div class="card-desc">Verifique se os ganhos operacionais são suficientes para cobrir os pagamentos de juros — um índice baixo sinala potencial risco de inadimplência.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/inventory-turnover.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">062</span>
+        </div>
+        <div class="card-name">Calculadora de Rotatividade de Inventário</div>
+        <div class="card-desc">Mede quantas vezes o inventário é vendido e recolocado em um período; uma rotatividade mais alta normalmente indica vendas fortes e níveis de estoque reduzidos.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/labor-force-participation-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">063</span>
+        </div>
+        <div class="card-name">Taxa de Participação na Força de Trabalho</div>
+        <div class="card-desc">Descubra qual percentual da população em idade de trabalhar está ativamente empregada ou procurando emprego, refletindo o engajamento do mercado de trabalho.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/leverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">064</span>
+        </div>
+        <div class="card-name">Calculadora de Índice de Alavancagem</div>
+        <div class="card-desc">Avalie o grau em que um negócio utiliza dinheiro emprestado em relação ao patrimônio, indicando risco financeiro e estrutura de capital.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/levered-free-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">065</span>
+        </div>
+        <div class="card-name">Fluxo de Caixa Livre Alavancado (LFCF)</div>
+        <div class="card-desc">Mede o caixa disponível para os acionistas após o pagamento das obrigações de dívida — o que sobra para dividendos e recompra de ações.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/liquidity-coverage-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">066</span>
+        </div>
+        <div class="card-name">Índice de Cobertura de Liquidez (ICL)</div>
+        <div class="card-desc">Verificar que um banco mantém ativos líquidos de alta qualidade suficientes para sobreviver a um cenário de estresse de 30 dias, conforme exigido sob Basileia III.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/loan-to-deposit-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">067</span>
+        </div>
+        <div class="card-name">Índice de Empréstimos sobre Depósitos (IED)</div>
+        <div class="card-desc">Mede a atividade de empréstimo de um banco em relação aos depósitos; um índice muito alto sinaliza risco de liquidez, muito baixo pode indicar subutilização.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/loss-given-default.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">068</span>
+        </div>
+        <div class="card-name">Perda em Caso de Inadimplência (LGD)</div>
+        <div class="card-desc">Estime quanto um credor perde se um mutuário entrar em inadimplência após contabilizar a recuperação de garantias, expresso como porcentagem da exposição.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/loss-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">069</span>
+        </div>
+        <div class="card-name">Calculadora de Índice de Sinistralidade</div>
+        <div class="card-desc">Divida os sinistros totais pagos pelos prêmios ganhos para avaliar a rentabilidade da subscrição de seguros — um índice acima de 100% indica uma perda de subscrição.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/lost-profits.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">070</span>
+        </div>
+        <div class="card-name">Calculadora de Lucros Perdidos</div>
+        <div class="card-desc">Estime os ganhos não realizados devido a uma interrupção comercial, quebra de contrato ou negligência — comumente usado em litígios e reivindicações de seguros.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/margin-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">071</span>
         </div>
         <div class="card-name">Calculadora de Margem</div>
         <div class="card-desc">Digite o custo e o preço de venda para ver instantaneamente a margem bruta, o percentual de margem e o lucro por unidade.</div>
         <div class="card-open mono">Abrir →</div>
       </a>
       
+      <a class="card" href="/pt/tools/marginal-cost.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">072</span>
+        </div>
+        <div class="card-name">Calculadora de Custo Marginal</div>
+        <div class="card-desc">Descubra quanto o custo total aumenta ao produzir uma unidade adicional — uma entrada chave para decisões de preços e níveis de produção.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/marginal-propensity-consume.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">073</span>
+        </div>
+        <div class="card-name">Propensão Marginal ao Consumo (PMC)</div>
+        <div class="card-desc">Determine qual fração de uma renda adicional de um dólar os domicílios gastarão, um fator essencial para modelos de multiplicador econômico.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/marginal-propensity-save.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">074</span>
+        </div>
+        <div class="card-name">Propensão Marginal a Poupar (PMP)</div>
+        <div class="card-desc">Encontre a parcela de cada dólar adicional de renda que as famílias economizam em vez de gastar, complementando a PMC na análise econômica.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/marginal-revenue.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">075</span>
+        </div>
+        <div class="card-name">Calculadora de Receita Marginal</div>
+        <div class="card-desc">Determine quanto de receita adicional é gerada ao vender uma unidade a mais — útil para estabelecer níveis de produção que maximizem lucros.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
       <a class="card" href="/pt/tools/markup-calculator.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">Negócios</span>
-          <span class="card-idx">060</span>
+          <span class="card-idx">076</span>
         </div>
         <div class="card-name">Calculadora de Margem de Lucro</div>
         <div class="card-desc">Converta o custo em preço de venda aplicando um percentual de margem desejado, ou calcule inversamente a margem a partir de um preço dado.</div>
         <div class="card-open mono">Abrir →</div>
       </a>
       
+      <a class="card" href="/pt/tools/net-debt.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">077</span>
+        </div>
+        <div class="card-name">Calculadora de Dívida Líquida</div>
+        <div class="card-desc">Encontre a verdadeira carga de dívida de uma empresa subtraindo caixa e equivalentes da dívida total — uma dívida líquida mais baixa indica uma saúde financeira mais forte.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/net-income.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">078</span>
+        </div>
+        <div class="card-name">Calculadora de Lucro Líquido</div>
+        <div class="card-desc">Calcule o lucro líquido final após deduzir todos os custos, impostos e juros da receita total para qualquer período.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/net-operating-assets.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">079</span>
+        </div>
+        <div class="card-name">Ativos Operacionais Líquidos</div>
+        <div class="card-desc">Isolar os ativos e passivos vinculados às operações comerciais principais, excluindo itens de financiamento, para avaliar a eficiência operacional.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/net-profit-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">080</span>
+        </div>
+        <div class="card-name">Margem de Lucro Líquido</div>
+        <div class="card-desc">Expresse a renda líquida como uma percentagem das receitas para comparar a lucratividade geral entre períodos ou com referências da indústria.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/net-stable-funding-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">081</span>
+        </div>
+        <div class="card-name">Índice de Financiamento Estável Líquido (NSFR)</div>
+        <div class="card-desc">Avalia a capacidade de um banco financiar suas atividades com fontes estáveis em um horizonte de um ano, conforme os padrões de liquidez de Basileia III.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/nopat-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">082</span>
+        </div>
+        <div class="card-name">Calculadora NOPAT</div>
+        <div class="card-desc">Remova o benefício fiscal da dívida do lucro operacional para obter uma medida neutra de financiamento do desempenho operacional.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/okuns-law.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">083</span>
+        </div>
+        <div class="card-name">Calculadora da Lei de Okun</div>
+        <div class="card-desc">Estime a mudança esperada no desemprego dada uma mudança no crescimento do PIB usando a relação empírica de Okun.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/operating-cash-flow.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">084</span>
+        </div>
+        <div class="card-name">Calculadora de Fluxo de Caixa Operacional</div>
+        <div class="card-desc">Meça o caixa gerado pelas operações comerciais principais, excluindo investimentos e financiamento, para avaliar a saúde financeira diária.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/operating-cash-flow-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">085</span>
+        </div>
+        <div class="card-name">Índice de Fluxo de Caixa Operacional</div>
+        <div class="card-desc">Verifique se o fluxo de caixa operacional de uma empresa é suficiente para cobrir seus passivos circulantes — uma verificação prática de solvência.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/operating-margin.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">086</span>
+        </div>
+        <div class="card-name">Calculadora de Margem Operacional</div>
+        <div class="card-desc">Expresse a renda operacional como uma porcentagem da receita para avaliar a eficiência com que uma empresa opera seu negócio principal.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/optimal-price.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">087</span>
+        </div>
+        <div class="card-name">Calculadora de Preço Ótimo</div>
+        <div class="card-desc">Encontre o preço que maximiza a receita ou o lucro combinando elasticidade de demanda com dados de custo.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/osha-dart-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">088</span>
+        </div>
+        <div class="card-name">Taxa DART OSHA</div>
+        <div class="card-desc">Acompanhe sua taxa OSHA de Dias Afastados, Restritos ou Transferidos por 100 funcionários em tempo integral para avaliar o desempenho de segurança do local de trabalho.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/osha-trir-rate.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">089</span>
+        </div>
+        <div class="card-name">Taxa TRIR da OSHA</div>
+        <div class="card-desc">Calcule a Taxa Total de Incidentes Registráveis por 100 funcionários equivalentes a tempo integral para atender aos requisitos de relatório da OSHA e monitorar tendências de segurança.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/price-elasticity-demand.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">090</span>
+        </div>
+        <div class="card-name">Elasticidade-Preço da Demanda</div>
+        <div class="card-desc">Meça o quão sensível é a demanda do cliente às mudanças de preço — essencial para definir preços sem sacrificar muito volume.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/productivity-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">091</span>
+        </div>
+        <div class="card-name">Calculadora de Produtividade</div>
+        <div class="card-desc">Meça a produção por trabalhador ou por hora para avaliar a eficiência da equipe e identificar onde os recursos poderiam ser melhor alocados.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/profit-calculator.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">092</span>
+        </div>
+        <div class="card-name">Calculadora de Lucro</div>
+        <div class="card-desc">Digite receita e custos para ver lucro bruto, lucro líquido e percentuais de margem em um só lugar.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/profit-sharing.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">093</span>
+        </div>
+        <div class="card-name">Calculadora de Compartilhamento de Lucros</div>
+        <div class="card-desc">Distribua um fundo de lucros entre funcionários ou parceiros com base em salário, peso da função ou cotas iguais — prático para o planejamento de final de ano.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
+      <a class="card" href="/pt/tools/receivables-turnover-ratio.html" data-cat="business">
+        <div class="card-top mono">
+          <span class="card-cat">Negócios</span>
+          <span class="card-idx">094</span>
+        </div>
+        <div class="card-name">Índice de Rotatividade de Contas a Receber</div>
+        <div class="card-desc">Mede quantas vezes por ano uma empresa cobra seu saldo médio de contas a receber, refletindo a eficiência de faturamento e cobrança.</div>
+        <div class="card-open mono">Abrir →</div>
+      </a>
+      
       <a class="card" href="/pt/tools/sales-tax.html" data-cat="business">
         <div class="card-top mono">
           <span class="card-cat">Negócios</span>
-          <span class="card-idx">061</span>
+          <span class="card-idx">095</span>
         </div>
         <div class="card-name">Calculadora de Imposto sobre Vendas</div>
         <div class="card-desc">Adiciona o imposto sobre vendas correto a qualquer preço antes de impostos inserindo sua alíquota de jurisdição — também mostra o valor do imposto separadamente.</div>
@@ -1081,7 +1476,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147 ferramentas · prévia do redesign</span>
+    <span>230 ferramentas · prévia do redesign</span>
   </div>
 </footer>
 </div>

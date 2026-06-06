@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>투자 — Tools Catalog</title>
-  <meta name="description" content="24 투자 tools. Free, private, no sign-up.">
+  <meta name="description" content="44 투자 tools. Free, private, no sign-up.">
   <script>
     // Apply the saved or initial random background color before first paint.
     (function () {
@@ -21,6 +21,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- PostHog (product analytics) -->
+  <script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Cs Fs Pe Rs Ms capture Ve calculateEventProperties Ds register register_once register_for_session unregister unregister_for_session zs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty js As createPersonProfile Ns Is Us opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Os debug I Ls getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_N6c11m2F8fRjW8ItcUiWiAwnEojfjpqJpowWAPtAUI6', {
+      api_host: 'https://us.i.posthog.com',
+      defaults: '2025-05-24',
+      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+    })
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0BG099QVRK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0BG099QVRK');
+  </script>
+
+  <!-- Event snippet for Website lead conversion -->
+  <script>
+  function gtag_report_conversion(url) {
+    var callback = function () {
+      if (typeof(url) != 'undefined') {
+        window.location = url;
+      }
+    };
+    gtag('event', 'conversion', {
+      'send_to': 'AW-1002003462/BFJBCMyAv-sYEIa45d0D',
+      'event_callback': callback
+    });
+    return false;
+  }
+  </script>
+
   <style>
 :root{
   --mag:#ec18e6;
@@ -235,6 +272,24 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-name{font-weight:800;letter-spacing:-.03em;font-size:17px;}
 .tp-related-arrow{font-size:13px;}
 
+.tp-usecases{margin-top:clamp(34px,5vw,56px);}
+.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
+.tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
+.tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
+
+.tp-faq{margin-top:clamp(34px,5vw,56px);}
+.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
+.tp-faq-item{background:var(--mag);}
+.tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.tp-faq-q::-webkit-details-marker{display:none;}
+.tp-faq-q::after{content:'+';font-family:var(--mono);font-weight:700;font-size:18px;line-height:1;flex:none;}
+.tp-faq-item[open] .tp-faq-q::after{content:'–';}
+.tp-faq-a{font-size:13px;line-height:1.6;opacity:.8;padding:0 18px 16px;max-width:64ch;}
+
 /* footer ------------------------------------------------------------*/
 .footer{border-top:2px solid var(--ink);margin-top:auto;padding:clamp(36px,5vw,60px) 0 26px;}
 .foot-label{font-size:11px;opacity:.55;display:block;margin-bottom:16px;}
@@ -277,7 +332,7 @@ button:disabled{transform:none;}
       <span class="brand-name">TOOLSCATALOG</span>
       <span class="brand-ver mono">V2</span>
     </a>
-    <span class="topcount mono">147 도구</span>
+    <span class="topcount mono">230 도구</span>
   </div>
   <div class="topbar-right">
     
@@ -418,8 +473,8 @@ button:disabled{transform:none;}
         <span>/</span>
         <span class="on">투자</span>
       </div>
-      <h1 class="cat-title">투자<sup>24</sup></h1>
-      <p class="cat-sub mono">24개의 도구 표시 · 모든 계산은 브라우저에서 로컬로 실행됩니다. 계정 없음, 추적 없음.</p>
+      <h1 class="cat-title">투자<sup>44</sup></h1>
+      <p class="cat-sub mono">44개의 도구 표시 · 모든 계산은 브라우저에서 로컬로 실행됩니다. 계정 없음, 추적 없음.</p>
     </div>
   </section>
 
@@ -666,6 +721,206 @@ button:disabled{transform:none;}
         <div class="card-open mono">열기 →</div>
       </a>
       
+      <a class="card" href="/ko/tools/holding-period-return.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">025</span>
+        </div>
+        <div class="card-name">보유 기간 수익률</div>
+        <div class="card-desc">사용자 지정 보유 기간 동안 투자에서 얻은 총 수익을 측정합니다. 가격 상승 및 수취한 소득을 포함합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/information-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">026</span>
+        </div>
+        <div class="card-name">정보 비율 계산기</div>
+        <div class="card-desc">활성 관리자의 초과 수익을 추적 오차의 단위당으로 정량화하여 생성된 알파가 활성 위험을 정당화하는지 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/irr-calculator.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">027</span>
+        </div>
+        <div class="card-name">IRR 계산기</div>
+        <div class="card-desc">프로젝트의 순현재가치가 0이 되는 할인율을 찾아 수익이 자본 비용을 초과하는지 결정하는 데 도움을 줍니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/jensens-alpha.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">028</span>
+        </div>
+        <div class="card-name">젠센의 알파 계산기</div>
+        <div class="card-desc">포트폴리오가 CAPM에 의해 예측된 수익률을 얼마나 초과 또는 미달하는지 측정하고, 시장 노출에서 매니저의 기술을 분리합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/leverage-profit.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">029</span>
+        </div>
+        <div class="card-name">레버리지 수익 계산기</div>
+        <div class="card-desc">차입 자본이 투자의 이익과 손실을 어떻게 증폭시키는지 모델화하여 레버리지 사용의 위험-수익 트레이드오프를 이해합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/margin-of-safety.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">030</span>
+        </div>
+        <div class="card-name">안전 마진 계산기</div>
+        <div class="card-desc">주식의 내재 가치와 시장 가격 사이의 간격을 결정하여 가치 투자에서 하락 보호를 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/market-capitalization.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">031</span>
+        </div>
+        <div class="card-name">시가총액 계산기</div>
+        <div class="card-desc">주가에 발행 주식 수를 곱하여 회사의 총 시장 가치를 찾고 소형주, 중형주 또는 대형주로 분류합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/maximum-drawdown.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">032</span>
+        </div>
+        <div class="card-name">최대 낙폭 계산기</div>
+        <div class="card-desc">포트폴리오 가치의 최고값에서 최저값까지의 최대 하락을 식별하여 최악의 손실 사례를 평가하고 위험 허용도를 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/npv-calculator.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">033</span>
+        </div>
+        <div class="card-name">NPV 계산기</div>
+        <div class="card-desc">향후 현금 흐름을 오늘 달러로 할인하여 투자가 필요한 수익률에서 가치를 창출하는지 파괴하는지 판단합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/occupancy-rate.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">034</span>
+        </div>
+        <div class="card-name">입주율 계산기</div>
+        <div class="card-desc">현재 입주한 사용 가능한 임대 단위의 백분율을 측정하여 부동산 성능과 수익 잠재력을 평가합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/optimal-hedge-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">035</span>
+        </div>
+        <div class="card-name">최적 헤지 비율</div>
+        <div class="card-desc">위험 관리를 위한 최적 헤지 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/peg-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">036</span>
+        </div>
+        <div class="card-name">PEG 비율 계산기</div>
+        <div class="card-desc">주가수익비율 성장비율(PEG)을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/present-value.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">037</span>
+        </div>
+        <div class="card-name">현재가치 계산기</div>
+        <div class="card-desc">미래 현금 흐름과 투자의 현재가치를 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/price-to-book-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">038</span>
+        </div>
+        <div class="card-name">주가순자산비율</div>
+        <div class="card-desc">주식 분석을 위해 P/B 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/price-to-cash-flow-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">039</span>
+        </div>
+        <div class="card-name">주가 현금흐름 비율</div>
+        <div class="card-desc">주식 분석을 위해 P/CF 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/price-to-earnings-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">040</span>
+        </div>
+        <div class="card-name">주가수익비율</div>
+        <div class="card-desc">주식 분석을 위한 P/E 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/price-to-sales-ratio.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">041</span>
+        </div>
+        <div class="card-name">주가매출액비율</div>
+        <div class="card-desc">주식 분석을 위해 P/S 비율을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/profitability-index.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">042</span>
+        </div>
+        <div class="card-name">수익성 지수 계산기</div>
+        <div class="card-desc">투자 분석을 위한 수익성 지수를 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/real-rate-of-return.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">043</span>
+        </div>
+        <div class="card-name">실질 수익률 계산기</div>
+        <div class="card-desc">인플레이션 조정 수익을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
+      <a class="card" href="/ko/tools/rental-profit.html" data-cat="investment">
+        <div class="card-top mono">
+          <span class="card-cat">투자</span>
+          <span class="card-idx">044</span>
+        </div>
+        <div class="card-name">임대료 수익 계산기</div>
+        <div class="card-desc">임대 부동산에서 수익을 계산합니다.</div>
+        <div class="card-open mono">열기 →</div>
+      </a>
+      
     </div>
   </div>
 </div>
@@ -711,7 +966,7 @@ button:disabled{transform:none;}
   </div>
   <div class="footer-base mono">
     <span>© 2026 ToolsCatalog</span>
-    <span>147개의 도구 · 리디자인 미리보기</span>
+    <span>230개의 도구 · 리디자인 미리보기</span>
   </div>
 </footer>
 </div>
