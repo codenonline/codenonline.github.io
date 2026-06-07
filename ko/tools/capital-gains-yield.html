@@ -174,6 +174,7 @@ body[data-tex="off"]{background-image:none;}
 /* grid + cards ------------------------------------------------------*/
 .gridwrap{padding-bottom:clamp(40px,6vw,80px);}
 .results-bar{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 16px;font-size:11px;}
+.results-bar span{background:var(--mag);padding:3px 6px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;
   background:var(--ink);border:2px solid var(--ink);}
 .card{background:var(--mag);text-align:left;padding:clamp(16px,1.5vw,22px);display:flex;flex-direction:column;
@@ -265,7 +266,7 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-statgrid div:last-child{border-bottom:none;}
 
 .tp-related{margin-top:clamp(34px,5vw,56px);}
-.tp-related-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-related-label{font-size:11px;display:inline-block;background:var(--mag);padding:3px 6px;margin-bottom:14px;}
 .tp-related-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
 .tp-related-card{background:var(--mag);display:flex;justify-content:space-between;align-items:center;
   padding:16px 18px;transition:.14s;}
@@ -274,14 +275,14 @@ body[data-hover="off"] .card:hover{box-shadow:inset 0 0 0 2px var(--ink);}
 .tp-related-arrow{font-size:13px;}
 
 .tp-usecases{margin-top:clamp(34px,5vw,56px);}
-.tp-usecases-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-usecases-label{font-size:11px;display:inline-block;background:var(--mag);padding:3px 6px;margin-bottom:14px;}
 .tp-usecases-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);}
 .tp-usecase-card{background:var(--mag);display:flex;flex-direction:column;gap:6px;padding:16px 18px;}
 .tp-usecase-title{font-weight:800;letter-spacing:-.03em;font-size:16px;}
 .tp-usecase-desc{font-size:12px;line-height:1.5;opacity:.75;}
 
 .tp-faq{margin-top:clamp(34px,5vw,56px);}
-.tp-faq-label{font-size:11px;display:block;margin-bottom:14px;}
+.tp-faq-label{font-size:11px;display:inline-block;background:var(--mag);padding:3px 6px;margin-bottom:14px;}
 .tp-faq-list{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);}
 .tp-faq-item{background:var(--mag);}
 .tp-faq-q{font-weight:800;letter-spacing:-.02em;font-size:15px;padding:15px 18px;cursor:pointer;
@@ -478,6 +479,13 @@ button:disabled{transform:none;}
   border-top:2px solid var(--ink);padding-top:14px;font-size:10px;opacity:.8;}
 .tp-export.is-shooting .tp-stamp{display:flex;}
 .tp-stamp-brand{font-weight:800;letter-spacing:-.02em;}
+.tp-export.is-shooting .tp-result{position:relative;padding-bottom:clamp(50px,5vw,70px);}
+.tp-result-stamp{display:none;}
+.tp-export.is-shooting .tp-result-stamp{display:flex;position:absolute;left:clamp(18px,2vw,28px);
+  right:clamp(18px,2vw,28px);bottom:clamp(16px,2vw,24px);justify-content:space-between;gap:12px;
+  border-top:2px solid currentColor;padding-top:10px;font-size:10px;line-height:1.2;opacity:.72;}
+.tp-result-stamp-tool{font-weight:800;letter-spacing:-.02em;}
+.tp-result-stamp-url{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 .tp-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:clamp(18px,2.5vw,26px);}
 .tp-save{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--ink);background:var(--ink);
@@ -642,23 +650,23 @@ button:disabled{transform:none;}
       <span class="tp-related-label mono">투자의 관련 도구</span>
       <div class="tp-related-list">
         
-        <a class="tp-related-card" href="/ko/tools/bond-current-yield.html">
-          <span class="tp-related-name">채권 현재 수익률</span>
+        <a class="tp-related-card" href="/ko/tools/profitability-index.html">
+          <span class="tp-related-name">수익성 지수 계산기</span>
           <span class="tp-related-arrow">→</span>
         </a>
         
-        <a class="tp-related-card" href="/ko/tools/bond-equivalent-yield.html">
-          <span class="tp-related-name">채권등가수익률</span>
+        <a class="tp-related-card" href="/ko/tools/price-to-book-ratio.html">
+          <span class="tp-related-name">주가순자산비율</span>
           <span class="tp-related-arrow">→</span>
         </a>
         
-        <a class="tp-related-card" href="/ko/tools/bond-price.html">
-          <span class="tp-related-name">채권 가격 계산기</span>
+        <a class="tp-related-card" href="/ko/tools/earnings-per-share-growth.html">
+          <span class="tp-related-name">주당순이익 성장률</span>
           <span class="tp-related-arrow">→</span>
         </a>
         
-        <a class="tp-related-card" href="/ko/tools/bond-yield-to-call.html">
-          <span class="tp-related-name">콜 수익률</span>
+        <a class="tp-related-card" href="/ko/tools/rental-profit.html">
+          <span class="tp-related-name">임대료 수익 계산기</span>
           <span class="tp-related-arrow">→</span>
         </a>
         
@@ -1008,12 +1016,35 @@ button:disabled{transform:none;}
   var label = btn.querySelector('.tp-save-text');
   var stampUrl = document.getElementById('tp-stamp-url');
   var slug = "capital-gains-yield";
+  var toolName = "시세차익 수익률";
 
   // Fill the export stamp with the page URL (host + path), trimmed for length.
   if (stampUrl) {
     try {
       stampUrl.textContent = (location.host + location.pathname).replace(/\/+$/, '');
     } catch (e) {}
+  }
+
+  function pageStamp() {
+    try {
+      return (location.host + location.pathname).replace(/\/+$/, '');
+    } catch (e) {
+      return 'toolscatalog';
+    }
+  }
+
+  function addResultStamps() {
+    var url = pageStamp();
+    node.querySelectorAll('.tp-result').forEach(function (card) {
+      if (card.querySelector('.tp-result-stamp')) return;
+      var stamp = document.createElement('div');
+      stamp.className = 'tp-result-stamp mono';
+      stamp.setAttribute('aria-hidden', 'true');
+      stamp.innerHTML = '<span class="tp-result-stamp-tool"></span><span class="tp-result-stamp-url"></span>';
+      stamp.querySelector('.tp-result-stamp-tool').textContent = toolName;
+      stamp.querySelector('.tp-result-stamp-url').textContent = url;
+      card.appendChild(stamp);
+    });
   }
 
   function setBusy(busy) {
@@ -1029,6 +1060,7 @@ button:disabled{transform:none;}
 
     var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     ready.then(function () {
+      addResultStamps();
       node.classList.add('is-shooting');
       return html2canvas(node, {
         backgroundColor: bg,
